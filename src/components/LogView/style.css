@@ -1,0 +1,6 @@
+.gitref-link {
+    cursor: pointer;
+    color: darkblue;
+    text-decoration: none;
+}
+.gitref-link:hover { background-color: lightgrey; }
