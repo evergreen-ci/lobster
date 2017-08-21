@@ -1,5 +1,4 @@
 import React from 'react';
-//import logo from './logo.svg';
 import { Switch, Route, Link } from 'react-router-dom'
 import './style.css';
 import About from '../About/index.js';
@@ -31,9 +30,6 @@ const Header = () => (
   </header>
 )
 
-/*
- *  use <Header/> <Main/> to show all components
- */
 const App = () => (
   <div>
     <Header />

@@ -5,9 +5,9 @@ import './style.css';
 
 class LogView extends React.Component { 
 
-    handleClick(gitRef) {
-        window.open(gitRef);
-    }
+  handleClick(gitRef) {
+     window.open(gitRef);
+  }
 
   genHtml(jsonInput) {
      const objects = [];
