@@ -2,12 +2,22 @@ const os = require('os');
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
-const https = require('https');
-const http = require('http');
-const URL = require('url').Url;
+const needle = require('needle');
 const bodyParser = require('body-parser');
+const hash = require('string-hash');
 
 const app = express();
+
+console.log("Starting server to support lobster log viewer.\nOptions:\n  --cache   Cache files after download in the provided directory. Note! All directory content will be deleted on the server start up! [optional]");
+
+var myCache;
+const cache = require('yargs').argv.cache;
+if (cache) {  
+    myCache = require('./local_cache')(cache);
+}
+else {
+    myCache = require('./dummy_cache')();
+}
 
 // Setup logger
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
@@ -32,11 +42,12 @@ app.get('*', (req, res) => {
 });
 
 app.post('/api/log', function(req, res, next) {
-    var log_url = req.body.url;
-    var filter = req.body.filter;
+    let log_url = req.body.url;
+    let filter = req.body.filter;
 
     if(log_url === undefined) {
-        res.send({message: "url cannot be undefined"});
+        console.log("url is undefined" );
+        res.status(500).send("url cannot be undefined");
     }
     console.log("url = " + log_url);
     if (filter) {
@@ -46,71 +57,36 @@ app.post('/api/log', function(req, res, next) {
         console.log("filter is not set");
     }
 
-    https.get(log_url, function(result){
-        var str = '';
-        console.log('Response is '+result.statusCode);
+    let fileName = hash(log_url).toString(); 
 
-        result.on('data', function (chunk) {
-              //console.log('BODY: ' + chunk);
-               str += chunk;
-         });
+    myCache.get(fileName)
+        .then(data => {
+            console.log("got from cache: " + fileName);
+            res.send(data);
+        })
+        .catch(err => {
+            console.log(fileName + " is not in the cache")
 
-        result.on('end', function () {
-//            processResponse(str, filter);
-            res.send(str);
-            console.log("done");
+            let stream = needle.get(log_url);
+            let result = '';
+
+            stream.on('readable', function() {
+                while (data = this.read()) {
+                    result += data;
+                }
+            });
+
+            stream.on('done', function (err) {
+                if (!err) {
+                    console.log("done");
+                    myCache.put(fileName, result)
+                        .then( data => res.send(data) )
+                }
+                else {
+                    console.log("Error: " + err);
+                }
+            });
         });
-
-    });
-
-    var processResponse = function(result, filter) {
-        let processed = {}
-        try {
-            let gitVersionMaster = "master";
-            let gitVersion = "master";
-            let isGitVersionSet = false;
-            const gitPrefix = "https://github.com/mongodb/mongo/blob/";
-            const key = "data";
-            const gitVersionStr = "git version: ";
-            const prefix = "{githash:";
-            const prefixLen = prefix.length + 2;
-            processed[key] = [];
-            
-            let lines = result.split(os.EOL);
-            
-            for (let i in lines) {
-               let line = lines[i];
-               if (!line.match(filter)) {
-                   continue;
-               }
-               if (!isGitVersionSet) {
-                   let gitVersionPos = line.indexOf(gitVersionStr);
-                   if (gitVersionPos !== -1) {
-                       gitVersion = line.substr(gitVersionPos + gitVersionStr.length);
-                       isGitVersionSet = true;
-                   }
-               }
-               const startIdx = line.indexOf(prefix);
-               if (startIdx !== -1) {
-                  const stopIdx = line.indexOf("}", startIdx);
-                  if (stopIdx > startIdx + prefixLen) {
-                      const fileLine = line.substr(startIdx+prefixLen, stopIdx-(startIdx+prefixLen)-1);
-                      const textLine = line.substr(0, startIdx-1) + line.substr(stopIdx+1);
-                      let foobar = line.split('}', 1);
-                      processed[key].push({gitRef:gitPrefix + gitVersion + "/" + fileLine, line:textLine}); 
-                  }
-               }
-               else {
-                 processed[key].push({line:lines[i]}); 
-               }
-            }
-            res.json(processed);
-        }
-        catch (error) {
-            return next(error);
-        }
-    }
-
 });
 
 module.exports = app;

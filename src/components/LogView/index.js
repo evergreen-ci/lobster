@@ -12,8 +12,6 @@ class LogView extends React.Component {
   genHtml(jsonInput) {
      const objects = [];
      for ( let i in jsonInput)   {
-//        console.log("received line ");
-//        console.log(jsonInput[i].line);
          if (jsonInput[i].gitRef) {
              objects.push(
                  <div className="gitref-link" key={i} onClick={this.handleClick.bind(this, jsonInput[i].gitRef)}>{jsonInput[i].line}</div>

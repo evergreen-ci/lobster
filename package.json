@@ -15,13 +15,17 @@
     "http": "0.0.0",
     "https": "^1.0.0",
     "morgan": "^1.8.2",
+    "needle": "^2.0.0",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-form": "^1.3.0",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
-    "react-scripts": "1.0.10"
+    "react-scripts": "1.0.10",
+    "rmdir": "^1.2.0",
+    "string-hash": "^1.1.3",
+    "yargs": "^8.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
