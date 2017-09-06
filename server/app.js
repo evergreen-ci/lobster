@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const hash = require('string-hash');
 
 const app = express();
+const log_prefix = "https://logkeeper.mongodb.org/build/";
 
 console.log("Starting server to support lobster log viewer.\nOptions:\n  --cache   Cache files after download in the provided directory. Note! All directory content will be deleted on the server start up! [optional]");
 
@@ -42,9 +43,17 @@ app.get('*', (req, res) => {
 });
 
 app.post('/api/log', function(req, res, next) {
-    let log_url = req.body.url;
+    let log_buildId = req.body.buildId;
+    let log_testId = req.body.testId;
     let filter = req.body.filter;
-
+    let log_url =  log_prefix + log_buildId;
+    if(log_testId === "all"){
+      log_url =  log_url + "/all";
+    }
+    else{
+      log_url =  log_url + "/test/" + log_testId;
+    }
+    log_url = log_url + "?raw=1";
     if(log_url === undefined) {
         console.log("url is undefined" );
         res.status(500).send("url cannot be undefined");

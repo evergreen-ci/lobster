@@ -9,7 +9,9 @@ const Main = () => (
   <main>
     <Switch>
       <Route exact path='/about' component={About}/>
-      <Route path='/' component={Fetch}/>
+      <Route path='/log/:build/:test' component={Fetch}/>
+      <Route path='/log/:build/' component={Fetch}/>
+      <Route exact path='/' component={Fetch}/>
       <Route path='*' component={NotFound}/>
     </Switch>
   </main>

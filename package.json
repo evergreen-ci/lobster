@@ -23,8 +23,10 @@
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
     "react-scripts": "1.0.10",
+    "react-scroll": "^1.5.4",
     "rmdir": "^1.2.0",
     "string-hash": "^1.1.3",
+    "url-search-params": "^0.10.0",
     "yargs": "^8.0.2"
   },
   "scripts": {
