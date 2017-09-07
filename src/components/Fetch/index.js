@@ -13,7 +13,7 @@ class Fetch extends React.Component {
       let searchParams = new URLSearchParams(props.location.search);
       let params = this.props.match.params;
       // default test param to be "all"
-      let test = "all"
+      let test = "all";
       if(params.test){
         test = params.test;
       }
@@ -27,7 +27,7 @@ class Fetch extends React.Component {
       this.loadData(this.state.build, this.state.test);
   }
 
-    setUrlParams() {
+    getUrlParams() {
       // parse
       let input = this.urlInput.value.trim();
       let buildRegex = /(?:build\/)([^/]+)/g;
@@ -64,7 +64,7 @@ class Fetch extends React.Component {
     handleSubmit(event) {
       event.preventDefault();
       // prepare do to the change
-      let parsedParams = this.setUrlParams(this.urlInput, this.filterInput);
+      let parsedParams = this.getUrlParams(this.urlInput, this.filterInput);
         // make url match this state
         let nextUrl = "/log/" + parsedParams.build + "/" + parsedParams.test;
         // make url match next state

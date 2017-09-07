@@ -13,7 +13,6 @@ class LogView extends React.Component {
   }
   constructor(props){
     super(props);
-    this.handleChangeScrollLine = this.handleChangeScrollLine.bind(this);
     this.handleScrollSubmit = this.handleScrollSubmit.bind(this);
     this.state = {
       /**
@@ -57,12 +56,7 @@ class LogView extends React.Component {
 
   handleScrollSubmit(event){
     event.preventDefault();
-    this.setState({isChanging: false});
-    scroller.scrollTo(this.state.scrollLine, {});
-  }
-
-  handleChangeScrollLine(event){
-    this.setState({scrollLine: event.target.value.trim()});
+    scroller.scrollTo(this.scrollInput.value, {});
   }
 
   render() {
@@ -107,7 +101,7 @@ class LogView extends React.Component {
       return (<div><form onSubmit={this.handleScrollSubmit}>
         <table>
           <tbody>
-          <tr><td><label> Scroll to Line: </label></td><td><input type="text" size="100" onChange={this.handleChangeScrollLine} /></td></tr>
+          <tr><td><label> Scroll to Line: </label></td><td><input type="text" size="100" ref={(input) => { this.scrollInput = input; }} /></td></tr>
           <tr><td><input type="submit" value="Scroll" /></td></tr>
           </tbody>
         </table>
