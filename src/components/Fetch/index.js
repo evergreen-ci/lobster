@@ -18,7 +18,7 @@ class Fetch extends React.Component {
         test = params.test;
       }
         this.state = {
-          serverUrl: 'http://localhost:9000',
+          serverUrl: 'https://logkeeper.mongodb.org',
           build: params.build,
           test: test,
           filter: searchParams.get('filter'),
@@ -47,9 +47,7 @@ class Fetch extends React.Component {
       let params = nextProps.match.params;
       let searchParams = new URLSearchParams(nextProps.location.search);
       if(params.build === this.state.build && params.test === this.state.test){
-        // update the filter in the lower component and return
-        console.log(params);
-        console.log(searchParams.get('filter'));
+        // update the filter in the child component and return
         if(this.state.filter !== searchParams.get('filter')){
           console.log("set filter to " + searchParams.get('filter'))
           this.setState({filter: searchParams.get('filter')});
@@ -66,7 +64,7 @@ class Fetch extends React.Component {
       // prepare do to the change
       let parsedParams = this.getUrlParams(this.urlInput, this.filterInput);
         // make url match this state
-        let nextUrl = "/log/" + parsedParams.build + "/" + parsedParams.test;
+        let nextUrl = "/build/" + parsedParams.build + "/test/" + parsedParams.test;
         // make url match next state
         if(parsedParams.filter){
           this.props.history.push({
@@ -84,20 +82,28 @@ class Fetch extends React.Component {
 
     // Loads content from server
     loadData(build, test){
-      let self = this;
+      let searchParams = new URLSearchParams(this.props.location.search);
       if(!build){
         return;
       }
-      axios.post(this.state.serverUrl + '/api/log', {buildId: build, testId: test })
-        .then(function (response) {
-          console.log("got response");
-          let lines = response.data.split('\n');
-          self.setState({lines: lines});
-          console.log("set state");
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      let serverParam = searchParams.get('server');
+      if(serverParam){
+        axios.post("http://" + serverParam + '/api/log', {buildId: build, testId: test })
+          .then((response) => this.processServerResponse(response))
+          .catch((error) => console.log(error));
+      }
+      else{
+        axios.post(this.state.serverUrl + "/build/" + build + "/test/" + test + "?raw=1")
+          .then((response) => this.processServerResponse(response))
+          .catch((error) => console.log(error));
+      }
+    }
+
+    processServerResponse(response){
+      console.log("got response");
+      let lines = response.data.split('\n');
+      this.setState({lines: lines});
+      console.log("set state");
     }
 
   render() {
