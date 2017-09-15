@@ -7,7 +7,6 @@ const bodyParser = require('body-parser');
 const hash = require('string-hash');
 
 const app = express();
-const log_prefix = "https://logkeeper.mongodb.org/build/";
 
 console.log("Starting server to support lobster log viewer.\nOptions:\n  --cache   Cache files after download in the provided directory. Note! All directory content will be deleted on the server start up! [optional]");
 
@@ -30,11 +29,11 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(express.static(path.resolve(__dirname, '..', 'build')));
 
 app.use(function (err, req, res, next) {
-  if (res.headersSent) {
-    return next(err)
-  }
-  res.status(500)
-  res.render('error', { error: err })
+    if (res.headersSent) {
+      return next(err)
+    }
+    res.status(500)
+    res.render('error', { error: err })
 })
     
 // Always return the main index.html, so react-router render the route in the client
@@ -43,17 +42,8 @@ app.get('*', (req, res) => {
 });
 
 app.post('/api/log', function(req, res, next) {
-    let log_buildId = req.body.buildId;
-    let log_testId = req.body.testId;
+    let log_url = req.body.url;
     let filter = req.body.filter;
-    let log_url =  log_prefix + log_buildId;
-    if(log_testId === "all"){
-      log_url =  log_url + "/all";
-    }
-    else{
-      log_url =  log_url + "/test/" + log_testId;
-    }
-    log_url = log_url + "?raw=1";
     if(log_url === undefined) {
         console.log("url is undefined" );
         res.status(500).send("url cannot be undefined");

@@ -4,3 +4,4 @@
     text-decoration: none;
 }
 .gitref-link:hover { background-color: lightgrey; }
+.goto-line {color: lightgrey; background-color: black; }

@@ -8,27 +8,25 @@ import LogView from "../LogView/index";
 class Fetch extends React.Component {
 
     constructor(props) {
-      super(props);
-      this.handleSubmit = this.handleSubmit.bind(this);
-      let searchParams = new URLSearchParams(props.location.search);
-      let params = this.props.match.params;
-      // default test param to be "all"
-      let test = "all";
-      if(params.test){
-        test = params.test;
-      }
+        super(props);
+        this.logkeeperBaseUrl = 'https://logkeeper.mongodb.org';
+        this.handleSubmit = this.handleSubmit.bind(this);
+        let searchParams = new URLSearchParams(props.location.search);
+        let params = this.props.match.params;
         this.state = {
-          serverUrl: 'https://logkeeper.mongodb.org',
-          build: params.build,
-          test: test,
-          filter: searchParams.get('filter'),
-          lines: []
+            build: params.build,
+            test: params.test,
+            filter: searchParams.get('filter'),
+            scrollLine: searchParams.get('scroll'),
+            server: searchParams.get('server'),
+            lines: []
         };
-      this.loadData(this.state.build, this.state.test);
-  }
+        this.loadData(this.state.build, this.state.test, this.state.server);
+    }
 
     getUrlParams() {
       // parse
+    /*
       let input = this.urlInput.value.trim();
       let buildRegex = /(?:build\/)([^/]+)/g;
       let testRegex = /(?:test\/)([^?|$]+)/g;
@@ -39,93 +37,158 @@ class Fetch extends React.Component {
         return;
       }
       build = build[1];
-      test = test && test[1] ? test[1] : "all";
-      return {build: build, test: test, filter: this.filterInput.value.trim()}
+      test = test && test[1] ? test[1] : "";
+      return {build: build, test: test, filter: this.filterInput.value.trim(), scrollLine: this.scrollInput.value.trim()}
+    */
+        return {build: this.state.build, test: this.state.test, filter: this.filterInput.value.trim(), scrollLine: this.scrollInput.value.trim()}
     }
 
     componentWillReceiveProps(nextProps){
-      let params = nextProps.match.params;
-      let searchParams = new URLSearchParams(nextProps.location.search);
-      if(params.build === this.state.build && params.test === this.state.test){
-        // update the filter in the child component and return
-        if(this.state.filter !== searchParams.get('filter')){
-          console.log("set filter to " + searchParams.get('filter'))
-          this.setState({filter: searchParams.get('filter')});
+        console.log("componentWillReceiveProps");
+        let params = nextProps.match.params;
+        let searchParams = new URLSearchParams(nextProps.location.search);
+        // don't reload, just update state
+        if(params.build === this.state.build && params.test === this.state.test && !searchParams.get('server')){
+            // update the filter in the child component and return
+            if(this.state.filter !== searchParams.get('filter')){
+                console.log("set filter to " + searchParams.get('filter'))
+                this.setState({filter: searchParams.get('filter')});
+            }
+            if(this.state.scrollLine !== searchParams.get('scroll')){
+                console.log("set scroll to: " + searchParams.get('scroll'));
+                this.setState({scrollLine: searchParams.get('scroll')});
+            }
         }
-      }
-      else if(params.build !== this.state.build || params.test !== this.state.test){
-        this.loadData(params.build, params.test);
-        this.setState({build: params.build, test: params.test, filter: searchParams.get('filter')});
-      }
+        // reload and rerender
+        else {
+            console.log("set state to server: " + searchParams.get('server'));
+            this.setState({build: params.build, 
+                       test: params.test, 
+                       filter: searchParams.get('filter'), 
+                       scrollLine: searchParams.get('scroll'),
+                       server: searchParams.get('server')});
+            let url = "";
+            if (this.urlInput) {
+                url = this.urlInput.value.trim();
+            }
+
+            if (url) {
+                this.loadDataUrl(url, this.state.server);
+            }
+            else {
+              this.loadData(this.state.build, this.state.test, this.state.server);
+            }
+        }
     }
 
     handleSubmit(event) {
-      event.preventDefault();
-      // prepare do to the change
-      let parsedParams = this.getUrlParams(this.urlInput, this.filterInput);
+        console.log("handleSubmit");
+        event.preventDefault();
+        // prepare do to the change
+        if (this.urlInput && this.urlInput.value && !this.state.server) {
+            console.log("must set a server parameter for a custom log URL"); 
+            return;
+        }
+
+        let parsedParams = this.getUrlParams();
         // make url match this state
-        let nextUrl = "/build/" + parsedParams.build + "/test/" + parsedParams.test;
+        let nextUrl = "";
+        if (!this.urlInput || !this.urlInput.value) {
+            nextUrl = "/build/" + parsedParams.build + "/test/" + parsedParams.test;
+        }
         // make url match next state
+        let searchString = "?";
         if(parsedParams.filter){
-          this.props.history.push({
-            pathname: nextUrl,
-            search: "?filter=" + parsedParams.filter,
-          });
+            searchString += "filter=" + parsedParams.filter;
+            if(parsedParams.scrollLine || this.state.server){
+                searchString += "&";
+            }
         }
-        else {
-          this.props.history.push({
-            pathname: nextUrl,
-            search: ''
-          });
+        if(parsedParams.scrollLine) {
+            searchString += "scroll=" + parsedParams.scrollLine;
+            if (this.state.server){
+                searchString += "&";
+            }
         }
+        if (this.state.server) {
+            searchString += "server=" + this.state.server;
+        }
+        this.props.history.push({
+            pathname: nextUrl,
+            search: searchString,
+        });
     }
 
     // Loads content from server
-    loadData(build, test){
-      let searchParams = new URLSearchParams(this.props.location.search);
-      if(!build){
-        return;
-      }
-      let serverParam = searchParams.get('server');
-      if(serverParam){
-        axios.post("http://" + serverParam + '/api/log', {buildId: build, testId: test })
-          .then((response) => this.processServerResponse(response))
-          .catch((error) => console.log(error));
-      }
-      else{
-        axios.post(this.state.serverUrl + "/build/" + build + "/test/" + test + "?raw=1")
-          .then((response) => this.processServerResponse(response))
-          .catch((error) => console.log(error));
-      }
+    loadDataUrl(url, server){
+        if(server){
+            console.log("server: " + server );
+            console.log("url: " + url );
+            axios.post("http://" + server, {url: url })
+              .then((response) => this.processServerResponse(response))
+              .catch((error) => console.log(error));
+        }
+    }
+
+    loadData(build, test, server){
+        if(!build){
+            return;
+        }
+        let logkeeperUrl = this.generateLogkeeperUrl(build, test);
+        // default to requesting from the logkeeper url
+        if(server){
+            console.log("server: " + server );
+            console.log("url: " + logkeeperUrl );
+            axios.post("http://" + server, {url: logkeeperUrl})
+                 .then((response) => this.processServerResponse(response))
+                 .catch((error) => console.log(error));
+        }
+        else {
+            console.log("logkeeperUrl: " + logkeeperUrl );
+            axios.get(logkeeperUrl)
+                 .then((response) => this.processServerResponse(response))
+                 .catch((error) => console.log(error));
+        }
+    }
+
+    generateLogkeeperUrl(buildParam, testParam){
+        if(!buildParam){
+            return "";
+        }
+        if(!testParam){
+            return this.logkeeperBaseUrl + "/build/" + buildParam + "/all?raw=1";
+        }
+        return this.logkeeperBaseUrl + "/build/" + buildParam + "/test/" + testParam + "?raw=1";
     }
 
     processServerResponse(response){
-      console.log("got response");
-      let lines = response.data.split('\n');
-      this.setState({lines: lines});
-      console.log("set state");
+        // set the url to the url we requested
+        let lines = response.data.split('\n');
+        this.setState({lines: lines});
     }
 
-  render() {
-      return (
-   <div>
-   <form onSubmit={this.handleSubmit}>
-    <table>
-    <tbody>
-    <tr><td><label> Log: </label></td><td><input type="text" size="100" ref={(input) => { this.urlInput = input; }} /></td></tr>
-    <tr><td><label> Filter: </label></td><td><input type="text" size="100" ref={(input) => { this.filterInput = input; }}/></td></tr>
-    <tr><td><input type="submit" value="Get the log!" /></td></tr>
-    </tbody>
-    </table>
-  </form>
-     {this.state.lines.length > 0 && <LogView lines={this.state.lines}
-                                   filter={this.state.filter}
-                                   scrollLine={this.state.scrollLine}/>
-     }
-     {this.state.lines.length === 0 && this.state.url && <div>Loading!</div>}
-  </div>
+    render() {
+        return (
+            <div>
+            <form onSubmit={this.handleSubmit}>
+            <table className="header-table">
+            <tbody>
+            <tr><td><label> Filter: </label></td><td><input type="text" size="70" placeholder="optional. regexp to match each line" defaultValue={this.state.filter} ref={(input) => { this.filterInput = input; }}/></td>
+            <td><label> Scroll to Line: </label></td><td><input type="text" size="5" placeholder="optional" faultValue={this.state.scrollLine} ref={(input) => { this.scrollInput = input; }} /></td>
+            <td><input className="header-button" type="submit" value="Apply"/></td></tr>
+            {/* commented out to exclude from logkeeper for now
+             <tr><td><label> Log: </label></td><td><input type="text" size="100" placeholder="optional. custom file location iff used with local server" ref={(input) => { this.urlInput = input; }} /></td></tr>
+            */}
+            </tbody>
+            </table>
+            </form>
+             {this.state.lines.length > 0 && <LogView lines={this.state.lines}
+                                           filter={this.state.filter}
+                                           scrollLine={this.state.scrollLine}/>
+             }
+            </div>
 
-  );
-  }
+        );
+    }
 }
 export default withRouter(Fetch);

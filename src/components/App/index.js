@@ -21,7 +21,7 @@ const Main = () => (
 // between routes.
 const Header = () => (
   <header>
-    <h1>Lo<del>g</del>bster</h1>
+    <h3>Lo<del>g</del>bster</h3>
     <nav>
       <table>
       <tbody>
