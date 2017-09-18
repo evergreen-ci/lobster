@@ -26,7 +26,7 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 // Serve static assets
-app.use(express.static(path.resolve(__dirname, '..', 'build')));
+app.use(express.static(path.resolve(__dirname, '..', 'build/lobster')));
 
 app.use(function (err, req, res, next) {
     if (res.headersSent) {
@@ -38,7 +38,7 @@ app.use(function (err, req, res, next) {
     
 // Always return the main index.html, so react-router render the route in the client
 app.get('*', (req, res) => {
-   res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
+   res.sendFile(path.resolve(__dirname, '..', 'build', 'lobster/index.html'));
 });
 
 app.post('/api/log', function(req, res, next) {

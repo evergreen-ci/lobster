@@ -94,7 +94,7 @@ class Fetch extends React.Component {
         // make url match this state
         let nextUrl = "";
         if (!this.urlInput || !this.urlInput.value) {
-            nextUrl = "/build/" + parsedParams.build + "/test/" + parsedParams.test;
+            nextUrl = "/lobster/build/" + parsedParams.build + "/test/" + parsedParams.test;
         }
         // make url match next state
         let searchString = "?";

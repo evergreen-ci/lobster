@@ -8,10 +8,10 @@ import NotFound from '../NotFound/index.js';
 const Main = () => (
   <main>
     <Switch>
-      <Route exact path='/about' component={About}/>
-      <Route path='/build/:build/test/:test' component={Fetch}/>
-      <Route path='/build/:build/' component={Fetch}/>
-      <Route exact path='/' component={Fetch}/>
+      <Route exact path='/lobster/about' component={About}/>
+      <Route path='/lobster/build/:build/test/:test' component={Fetch}/>
+      <Route path='/lobster/build/:build/' component={Fetch}/>
+      <Route exact path='/lobster/' component={Fetch}/>
       <Route path='*' component={NotFound}/>
     </Switch>
   </main>
@@ -25,7 +25,7 @@ const Header = () => (
     <nav>
       <table>
       <tbody>
-        <tr><td><Link to='/about'>About</Link></td><td><Link to='/'>Viewer</Link></td></tr>
+        <tr><td><Link to='/lobster/about'>About</Link></td><td><Link to='/lobster'>Viewer</Link></td></tr>
       </tbody>
       </table>
     </nav>
