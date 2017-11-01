@@ -5,63 +5,110 @@ import './style.css';
 import {Element, scroller} from "react-scroll";
 
 
-class LogView extends React.Component {
+class LogLineText extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+        };
+    }
 
     handleClick(gitRef) {
-        window.open(gitRef);
+        if (gitRef) {
+            window.open(gitRef);
+        }
     }
+    
+    render() {
+        let line = this.props.line;
+        let style = {color: this.props.line.color};
+        return <div style={style}>{line.line}</div>;
+    }
+
+}
+
+class LineNumber extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+        };
+    }
+
+    handleDoubleClick() {
+        this.props.toggleBookmark();
+    }
+
+    render() {
+         return <Element name={this.props.lineNumber}><div className="padded-text no-select" onDoubleClick={this.handleDoubleClick.bind(this)}>{this.props.lineNumber}</div></Element>;
+    }
+
+}
+
+class LogOptions extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+        };
+    }
+
+    handleClick(gitRef) {
+        if (gitRef) {
+            window.open(gitRef);
+        }
+    }
+    
+    render() {
+        if(this.props.line.gitRef) {
+            return<span className="no-select" onClick={this.handleClick.bind(this, this.props.line.gitRef)}>&nbsp;&#128279;&nbsp;</span>;
+        }
+        return <div></div>;
+    }
+
+}
+
+class LogLine extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            bookmarked: false,
+        };
+    }
+    
+    toggleBookmark() {
+        this.setState({bookmarked: !this.state.bookmarked});
+    }
+
+    render() {
+        let className = 'monospace';
+        if (this.props.line.lineNumber === this.props.scrollLine || this.state.bookmarked) {
+            className += ' bookmark-line';
+        }
+        if (!this.props.wrap) {
+           className += ' no-wrap'; 
+        }
+
+         return <tr className={className}><td><LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.toggleBookmark.bind(this)}/></td><td><LogOptions gitVersion={this.props.gitVersion} line={this.props.line}/></td><td><LogLineText line={this.props.line}/></td></tr>;
+    }
+
+}
+
+class LogView extends React.Component {
 
     constructor(props){
         super(props);
         this.state = {
-            /**
-             *  Backend dummy server that returns the logs by fetching from the provided url.
-             */
             processed: '',
             scrollLine: this.props.scrollLine,
-            gitPage: "https://github.com/mongodb/mongo",
         };
     }
 
     genHtml(jsonInput) {
         const objects = [];
         for ( let i in jsonInput)   {
-            let line = i + '. ' + jsonInput[i].line;
-            if ( i === this.state.scrollLine) {
-                if (jsonInput[i].gitRef) {
-                    objects.push(
-                        <Element name={i}> <div className="goto-line" key={i} onClick={this.handleClick.bind(this, jsonInput[i].gitRef)}>{line}</div> </Element>
-                    )
-                }
-                else {
-                    objects.push(
-                       <Element name={i}> <div className="goto-line" key={i}>{line}</div> </Element>
-                    )
-                }
-            }
-            else if (jsonInput[i].gitRef) {
-                objects.push(
-                   <Element name={i}> <div className="gitref-link" key={i} onClick={this.handleClick.bind(this, jsonInput[i].gitRef)}>{line}</div> </Element>
-                );
-            }
-            else {
-                objects.push(
-                    <Element name={i}><div className="nogitref-link" key={i}>{line}</div></Element>
-                );
-            }
+            objects.push(<LogLine gitVersion={this.props.gitVersion} line={jsonInput[i]} wrap={this.props.wrap} scrollLine={this.state.scrollLine}/>);
         }
         return (
-            <div>{objects}</div>
+            <div><table>{objects}</table></div>
         );
-    }
-
-    getGitVersion(line){
-        const gitVersionStr = "git version: ";
-        let gitVersionPos = line.indexOf(gitVersionStr);
-        if (gitVersionPos !== -1) {
-            return line.substr(gitVersionPos + gitVersionStr.length);
-        }
-        return false;
     }
 
     shouldComponentUpdate(nextProps, nextState){
@@ -70,6 +117,10 @@ class LogView extends React.Component {
         }
         if(this.state.scrollLine !== nextProps.scrollLine){
             scroller.scrollTo(nextProps.scrollLine, {});
+        }
+
+        if(this.props.wrap !== nextState.wrap){
+            return true;
         }
         return false;
     }
@@ -93,36 +144,14 @@ class LogView extends React.Component {
     render() {
         let self = this;
         let processed = [];
-        let gitVersion = "master";
-        let isGitVersionSet = false;
-        const gitPrefix = "https://github.com/mongodb/mongo/blob/";
-        const prefix = "{githash:";
-        const prefixLen = prefix.length + 2;
         let lines = self.props.lines;
 
         for (let i in lines) {
             let line = lines[i];
-            if (self.props.filter && !line.match(self.props.filter)) {
+            if (self.props.filter && !line.line.match(self.props.filter)) {
                 continue;
             }
-            if (!isGitVersionSet) {
-                let gitVersionStr = this.getGitVersion(line);
-                if(gitVersionStr){
-                    gitVersion = gitVersionStr;
-                }
-            }
-            const startIdx = line.indexOf(prefix);
-            if (startIdx !== -1) {
-                const stopIdx = line.indexOf("}", startIdx);
-                if (stopIdx > startIdx + prefixLen) {
-                    const fileLine = line.substr(startIdx+prefixLen, stopIdx-(startIdx+prefixLen)-1);
-                    const textLine = line.substr(0, startIdx-1) + line.substr(stopIdx+1);
-                    processed.push({gitRef:gitPrefix + gitVersion + "/" + fileLine, line:textLine});
-                }
-            }
-            else {
-                processed.push({line:lines[i]});
-            }
+            processed.push(line);
         }
         let output = self.genHtml(processed);
         if(output.length !== 0){

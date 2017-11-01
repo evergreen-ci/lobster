@@ -8,3 +8,13 @@
   padding: 20px;
   color: white;
 }
+
+.Nav {
+  background: transparent !important;
+  color:white;
+}
+
+.NavItem {
+  background:black;
+  color:white;
+}

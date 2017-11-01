@@ -1,9 +1,10 @@
 import React from 'react';
+import Jumbotron from 'react-bootstrap/lib/Jumbotron';
 
 import './style.css';
 
 const About = () => (
-<div>
+<Jumbotron>
   <p>
   Lobster is a log viewer implemented as a React-based frontend.  It also includes a node based dummy backend to optionally cache the results locally.
 </p>
@@ -25,7 +26,7 @@ hightlighted). This feature is available in a demo-mode with the <a href='https:
 <p>
    Lobster is an easy to extend system feel free to make changes: here is the <a href='https://github.com/10gen/kernel-tools/tree/master/lobster'>source</a>.
 </p>
-</div>
+</Jumbotron>
 )
 
 export default About;

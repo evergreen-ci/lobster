@@ -8,7 +8,14 @@ const hash = require('string-hash');
 
 const app = express();
 
-console.log("Starting server to support lobster log viewer.\nOptions:\n  --cache   Cache files after download in the provided directory. Note! All directory content will be deleted on the server start up! [optional]");
+console.log("Starting server to support lobster log viewer.\nOptions:\n  --cache   Cache files after download in the provided directory. Note! All directory content will be deleted on the server start up! [optional]\n  --logs  An absolute path to log files that will be available to server [optional]");
+
+function isValidURL(str) {
+    var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+    var regex = new RegExp(expression);
+
+    return str.match(regex);
+}
 
 var myCache;
 const cache = require('yargs').argv.cache;
@@ -18,6 +25,8 @@ if (cache) {
 else {
     myCache = require('./dummy_cache')();
 }
+
+const logs_dir = require('yargs').argv.logs;
 
 // Setup logger
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
@@ -49,6 +58,7 @@ app.post('/api/log', function(req, res, next) {
         res.status(500).send("url cannot be undefined");
     }
     console.log("url = " + log_url);
+
     if (filter) {
         console.log("filter = " + filter);
     }
@@ -56,36 +66,45 @@ app.post('/api/log', function(req, res, next) {
         console.log("filter is not set");
     }
 
-    let fileName = hash(log_url).toString(); 
+    if (isValidURL(log_url)) {
+        let fileName = hash(log_url).toString(); 
 
-    myCache.get(fileName)
-        .then(data => {
-            console.log("got from cache: " + fileName);
-            res.send(data);
-        })
-        .catch(err => {
-            console.log(fileName + " is not in the cache")
+        myCache.get(fileName)
+            .then(data => {
+                console.log("got from cache: " + fileName);
+                res.send(data);
+            })
+            .catch(err => {
+                console.log(fileName + " is not in the cache")
 
-            let stream = needle.get(log_url);
-            let result = '';
+                let stream = needle.get(log_url);
+                let result = '';
 
-            stream.on('readable', function() {
-                while (data = this.read()) {
-                    result += data;
-                }
+                stream.on('readable', function() {
+                    while (data = this.read()) {
+                        result += data;
+                    }
+                });
+
+                stream.on('done', function (err) {
+                    if (!err) {
+                        console.log("done");
+                        myCache.put(fileName, result)
+                            .then( data => res.send(data) )
+                    }
+                    else {
+                        console.log("Error: " + err);
+                    }
+                });
             });
+    }
+    else if (logs_dir) {
+        res.sendFile(path.resolve(logs_dir, log_url));
+    }
+    else {
+        console.log("Must provide the --logs argument to handle local files");
+    }
 
-            stream.on('done', function (err) {
-                if (!err) {
-                    console.log("done");
-                    myCache.put(fileName, result)
-                        .then( data => res.send(data) )
-                }
-                else {
-                    console.log("Error: " + err);
-                }
-            });
-        });
 });
 
 module.exports = app;

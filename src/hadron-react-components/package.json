@@ -1,0 +1,207 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "hadron-react-components",
+        "scope": null,
+        "escapedName": "hadron-react-components",
+        "name": "hadron-react-components",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/Users/pavelduchovny/Documents/projects/Skunkworks2017/kernel-tools/lobster"
+    ]
+  ],
+  "_from": "hadron-react-components@latest",
+  "_id": "hadron-react-components@1.10.0",
+  "_inCache": true,
+  "_location": "/hadron-react-components",
+  "_nodeVersion": "7.4.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/hadron-react-components-1.10.0.tgz_1504611635612_0.709940449334681"
+  },
+  "_npmUser": {
+    "name": "durran",
+    "email": "durran@gmail.com"
+  },
+  "_npmVersion": "4.0.5",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "hadron-react-components",
+    "scope": null,
+    "escapedName": "hadron-react-components",
+    "name": "hadron-react-components",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/hadron-react-components/-/hadron-react-components-1.10.0.tgz",
+  "_shasum": "7b23a6d4ad32c1459b191ceed77012f42a7b853d",
+  "_shrinkwrap": null,
+  "_spec": "hadron-react-components",
+  "_where": "/Users/pavelduchovny/Documents/projects/Skunkworks2017/kernel-tools/lobster",
+  "author": {
+    "name": "Durran Jordan",
+    "email": "durran@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/mongodb-js/hadron-react/issues"
+  },
+  "dependencies": {
+    "babel-preset-react": "^6.5.0",
+    "babel-register": "^6.5.2",
+    "lodash.fill": "^3.4.0",
+    "lodash.get": "^4.4.2",
+    "lodash.isarray": "^4.0.0",
+    "lodash.isfunction": "^3.0.8",
+    "lodash.isnumber": "^3.0.3",
+    "lodash.isplainobject": "^4.0.6",
+    "lodash.isstring": "^4.0.1",
+    "lodash.map": "^4.6.0",
+    "prop-types": "^15.5.8",
+    "react": "^15.5.4",
+    "react-bootstrap": "0.31.0",
+    "react-dom": "^15.5.4",
+    "react-fontawesome": "^1.6.1",
+    "react-tooltip": "^3.2.6"
+  },
+  "description": "Hadron React Components",
+  "devDependencies": {
+    "babel-cli": "^6.9.0",
+    "mocha": "^3.1.2",
+    "mongodb-js-precommit": "^0.2.9",
+    "sinon-chai": "^2.10.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "7b23a6d4ad32c1459b191ceed77012f42a7b853d",
+    "tarball": "https://registry.npmjs.org/hadron-react-components/-/hadron-react-components-1.10.0.tgz"
+  },
+  "homepage": "https://github.com/mongodb-js/hadron-react/packages/hadron-react-components",
+  "keywords": [
+    "mongodb-js"
+  ],
+  "license": "Apache-2.0",
+  "maintainers": [
+    {
+      "name": "danulf",
+      "email": "danagroff@hotmail.com"
+    },
+    {
+      "name": "matt_d_rat",
+      "email": "matt@mattfairbrass.com"
+    },
+    {
+      "name": "satyasinha",
+      "email": "satyendra.n.sinha@gmail.com"
+    },
+    {
+      "name": "jlord",
+      "email": "to.jlord@gmail.com"
+    },
+    {
+      "name": "terakilobyte",
+      "email": "terakilobyte@gmail.com"
+    },
+    {
+      "name": "jimol",
+      "email": "jim.oleary@gmail.com"
+    },
+    {
+      "name": "hswolff",
+      "email": "hello@hswolff.com"
+    },
+    {
+      "name": "mpobrien",
+      "email": "mpobrien005@gmail.com"
+    },
+    {
+      "name": "christkv",
+      "email": "christkv@gmail.com"
+    },
+    {
+      "name": "mbroadst",
+      "email": "mbroadst@gmail.com"
+    },
+    {
+      "name": "fredtruman",
+      "email": "fred.truman@mongodb.com"
+    },
+    {
+      "name": "pzrq",
+      "email": "peter@peterjs.com"
+    },
+    {
+      "name": "justinjmoses",
+      "email": "justinjmoses@gmail.com"
+    },
+    {
+      "name": "aherlihy",
+      "email": "anna@mongodb.com"
+    },
+    {
+      "name": "redondos",
+      "email": "aolivera@gmail.com"
+    },
+    {
+      "name": "dpercy",
+      "email": "davetp425@gmail.com"
+    },
+    {
+      "name": "cilix",
+      "email": "matthewlevenstein@gmail.com"
+    },
+    {
+      "name": "kay-kim",
+      "email": "kay@mongodb.com"
+    },
+    {
+      "name": "glowe",
+      "email": "graham.lowe@gmail.com"
+    },
+    {
+      "name": "micheal.parks",
+      "email": "michealparks1989@gmail.com"
+    },
+    {
+      "name": "schwartzrw",
+      "email": "schwartzrw@gmail.com"
+    },
+    {
+      "name": "durran",
+      "email": "durran@gmail.com"
+    },
+    {
+      "name": "rueckstiess",
+      "email": "thomas@rueckstiess.net"
+    },
+    {
+      "name": "imlucas",
+      "email": "hrabovsky.lucas@gmail.com"
+    },
+    {
+      "name": "mongodb-js-user",
+      "email": "dana.groff+mongodb-js@mongodb.com"
+    }
+  ],
+  "name": "hadron-react-components",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mongodb-js/hadron-react.git"
+  },
+  "scripts": {
+    "check": "mongodb-js-precommit",
+    "prepublish": "babel ./src --out-dir ./lib --presets react",
+    "pretest": "babel ./src --out-dir ./lib --presets react",
+    "test": "mocha test/setup.js test/**/*.test.jsx"
+  },
+  "version": "1.10.0"
+}
