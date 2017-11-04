@@ -1,5 +1,6 @@
 .bookmark-line { background-color: yellow; }
-.monospace { font-family: monospace; }
+.monospace { font-family: monospace;}
+.inline { display: inline-block; }
 .no-wrap { white-space: nowrap; }
 .padded-text { padding-left: 5px; padding-right: 5px; }
 .no-select {

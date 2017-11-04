@@ -2,7 +2,7 @@ import React from 'react';
 
 
 import './style.css';
-import {Element, scroller} from "react-scroll";
+import ReactList from 'react-list';
 
 
 class LogLineText extends React.Component {
@@ -12,16 +12,9 @@ class LogLineText extends React.Component {
         };
     }
 
-    handleClick(gitRef) {
-        if (gitRef) {
-            window.open(gitRef);
-        }
-    }
-    
     render() {
-        let line = this.props.line;
-        let style = {color: this.props.line.color};
-        return <div style={style}>{line.line}</div>;
+        let style = {color: this.props.colorMap[this.props.port]};
+        return <span style={style}>{this.props.text}</span>;
     }
 
 }
@@ -34,11 +27,12 @@ class LineNumber extends React.Component {
     }
 
     handleDoubleClick() {
-        this.props.toggleBookmark();
+        this.props.toggleBookmark(this.props.lineNumber);
     }
 
     render() {
-         return <Element name={this.props.lineNumber}><div className="padded-text no-select" onDoubleClick={this.handleDoubleClick.bind(this)}>{this.props.lineNumber}</div></Element>;
+        let style = {width: "60px", display:"inline-block"};
+         return <span className="padded-text no-select" style={style}  onDoubleClick={this.handleDoubleClick.bind(this)}>{this.props.lineNumber}</span>;
     }
 
 }
@@ -57,36 +51,33 @@ class LogOptions extends React.Component {
     }
     
     render() {
-        if(this.props.line.gitRef) {
-            return<span className="no-select" onClick={this.handleClick.bind(this, this.props.line.gitRef)}>&nbsp;&#128279;&nbsp;</span>;
+        let style = {width: "30px", display:"inline-block"};
+        let classStr = "no-select";
+        if(this.props.gitRef) {
+            return<span style={style} className={classStr} onClick={this.handleClick.bind(this, this.props.gitRef)}>&nbsp;&#128279;&nbsp;</span>;
         }
-        return <div></div>;
+        return <span style={style} className={classStr} ></span>;
     }
 
 }
 
-class LogLine extends React.Component {
+class FullLogLine extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            bookmarked: false,
         };
-    }
-    
-    toggleBookmark() {
-        this.setState({bookmarked: !this.state.bookmarked});
     }
 
     render() {
         let className = 'monospace';
-        if (this.props.line.lineNumber === this.props.scrollLine || this.state.bookmarked) {
+        if (this.props.bookmarked) {
             className += ' bookmark-line';
         }
         if (!this.props.wrap) {
            className += ' no-wrap'; 
         }
 
-         return <tr className={className}><td><LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.toggleBookmark.bind(this)}/></td><td><LogOptions gitVersion={this.props.gitVersion} line={this.props.line}/></td><td><LogLineText line={this.props.line}/></td></tr>;
+        return (<div key={this.props.key} className={className}><LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} /> <LogOptions gitRef={this.props.line.gitRef} /> <LogLineText text={this.props.line.text} port={this.props.line.port} colorMap={this.props.colorMap} /></div>);
     }
 
 }
@@ -97,26 +88,31 @@ class LogView extends React.Component {
         super(props);
         this.state = {
             processed: '',
-            scrollLine: this.props.scrollLine,
         };
+        this.indexMap= {};
     }
 
-    genHtml(jsonInput) {
-        const objects = [];
-        for ( let i in jsonInput)   {
-            objects.push(<LogLine gitVersion={this.props.gitVersion} line={jsonInput[i]} wrap={this.props.wrap} scrollLine={this.state.scrollLine}/>);
-        }
-        return (
-            <div><table>{objects}</table></div>
+    genList(filteredLines) {
+        let list =  (
+          <ReactList
+            ref="logList"
+            itemRenderer={(index, key) => (<FullLogLine key={key} bookmarked={this.props.findBookmark(this.props.bookmarks, filteredLines[index].lineNumber) !== -1} wrap={this.props.wrap} line={filteredLines[index]} toggleBookmark={this.props.toggleBookmark} colorMap={this.props.colorMap} />)}
+            length={filteredLines.length}
+            type={this.props.wrap ? 'variable' :'uniform'}
+            useStaticSize={true}
+          />
         );
+        return list;
     }
 
     shouldComponentUpdate(nextProps, nextState){
-        if(nextProps.lines !== this.props.lines || nextProps.filter !== this.props.filter){
+        if(nextProps.lines !== this.props.lines || nextProps.filter !== this.props.filter) {
             return true;
         }
-        if(this.state.scrollLine !== nextProps.scrollLine){
-            scroller.scrollTo(nextProps.scrollLine, {});
+
+        if (this.props.scrollLine !== nextProps.scrollLine) {
+            this.refs.logList.scrollTo(this.indexMap[nextProps.scrollLine]);
+            return false;
         }
 
         if(this.props.wrap !== nextState.wrap){
@@ -129,31 +125,22 @@ class LogView extends React.Component {
         this.setState({scrollLine: nextProps.scrollLine});
     }
 
-    componentDidMount(){
-        if(this.state.scrollLine){
-            scroller.scrollTo(this.state.scrollLine, {});
-        }
-    }
-
-    componentDidUpdate(){
-        if(this.state.scrollLine) {
-            scroller.scrollTo(this.state.scrollLine, {});
-        }
-    }
-
     render() {
         let self = this;
         let processed = [];
         let lines = self.props.lines;
+        let j = 0;
+        this.indexMap={};
 
-        for (let i in lines) {
+        for (let i = 0;i < lines.length; i++) {
             let line = lines[i];
-            if (self.props.filter && !line.line.match(self.props.filter)) {
+            if ((this.props.findBookmark(this.props.bookmarks, i) === -1) && self.props.filter && !line.text.match(self.props.filter)) {
                 continue;
             }
+            this.indexMap[i] = j++;
             processed.push(line);
         }
-        let output = self.genHtml(processed);
+        let output = self.genList(processed);
         if(output.length !== 0){
             return (<div>
                 {output}

@@ -30,5 +30,6 @@ To run:
 
 * ```npm run build``` wild build the project into ```./build``` directory
 * ```node server``` will start the server at ```http://localhost:9000``` and will serve the content from the
+* If the server is running locally, go to ```http://<Host>:<Port>/lobster?server=<Host>:<Port>/api/log```
 root directory ```./build ```. Hence you can also view the local log files if they are resolved by the
 server (i.e. is in ./build).

@@ -29,6 +29,11 @@ class Fetch extends Component {
         //this.componentWillReceiveProps = this.componentWillReceiveProps(this);
         let searchParams = new URLSearchParams(props.location.search);
         let params = this.props.match.params;
+        let bookmarksList = searchParams.get('bookmarks');
+        let bookmarksArr = [];
+        if (bookmarksList) {
+            bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n)}));
+        }
         this.state = {
             build: params.build,
             test: params.test,
@@ -38,7 +43,8 @@ class Fetch extends Component {
             url : "",
             wrap: false,
             detailsOpen: false,
-            filterList: {} 
+            filterList: {},
+            bookmarks: bookmarksArr,
         };
     }
 
@@ -94,17 +100,13 @@ class Fetch extends Component {
                 this.setState({url : url});
             }
         }
+        if(nextProps.lines.length >0) {
+            this.ensureBookmark(0);
+            this.ensureBookmark(nextProps.lines[nextProps.lines.length-1].lineNumber);
+        }
     }
 
-    handleSubmit(event) {
-        console.log("handleSubmit");
-        event.preventDefault();
-        // prepare do to the change
-        if (this.urlInput && this.urlInput.value && !this.state.server) {
-            console.log("must set a server parameter for a custom log URL");
-            return;
-        }
-
+    updateURL(bookmarks) {
         let parsedParams = this.getUrlParams();
         // make url match this state
         let nextUrl = "";
@@ -123,6 +125,18 @@ class Fetch extends Component {
         }
         if(parsedParams.scrollLine) {
             searchString += "scroll=" + parsedParams.scrollLine;
+            if (bookmarks.length > 0 || this.state.server){
+                searchString += "&";
+            }
+        }
+        if(bookmarks.length > 0) {
+            searchString +="bookmarks=";
+            for(let i = 0; i < bookmarks.length; i++) {
+                searchString += bookmarks[i].lineNumber;
+                if (i != bookmarks.length-1) {
+                    searchString += ',';
+                }
+            }
             if (this.state.server){
                 searchString += "&";
             }
@@ -135,10 +149,70 @@ class Fetch extends Component {
             search: searchString,
         });
 
+    }
+
+    handleSubmit(event) {
+        console.log("handleSubmit");
+        event.preventDefault();
+        // prepare do to the change
+        if (this.urlInput && this.urlInput.value && !this.state.server) {
+            console.log("must set a server parameter for a custom log URL");
+            return;
+        }
+
+        this.updateURL(this.state.bookmarks);
+
         if (this.urlInput.value != this.state.url)
         {
           Actions.loadDataUrl(this.urlInput.value, this.state.server);
         }
+    }
+
+    setScroll(lineNum) {
+        this.setState({scrollLine: lineNum});
+    }
+    
+    findBookmark(bookmarkList, lineNum) {
+         return bookmarkList.findIndex(function(bookmark) {
+            return bookmark.lineNumber === lineNum;
+        });
+    }
+    
+    bookmarkSort(b1, b2) {
+        return b1.lineNumber - b2.lineNumber;
+    }
+
+    toggleBookmark(lineNum) {
+     let newBookmarks = this.state.bookmarks.slice();
+     var i = this.findBookmark(newBookmarks, lineNum);
+     if (i === -1) {
+        newBookmarks.push({lineNumber: lineNum});
+     } else {
+        newBookmarks.splice(i, 1);
+     }
+     newBookmarks.sort(this.bookmarkSort);
+     this.setState({bookmarks: newBookmarks});
+     this.updateURL(newBookmarks);
+    }
+
+    ensureBookmark(lineNum) {
+     let newBookmarks = this.state.bookmarks.slice();
+     var i = this.findBookmark(newBookmarks, lineNum);
+     if (i === -1) {
+        newBookmarks.push({lineNumber: lineNum});
+        newBookmarks.sort(this.bookmarkSort);
+        this.setState({bookmarks: newBookmarks});
+        this.updateURL(newBookmarks);
+     } 
+    }
+
+    showBookmarks() {
+        let self = this;
+        return (
+              <div>{self.state.bookmarks.map(function(bookmark){
+                return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)}>{bookmark.lineNumber}</div>;
+              })}</div>
+          );
     }
 
     showLines() {
@@ -146,14 +220,24 @@ class Fetch extends Component {
        return <div/>
      } else {
        return <LogView lines={this.props.lines}
+       colorMap={this.props.colorMap}
        filter={this.state.filter}
        scrollLine={this.state.scrollLine}
-       wrap={this.state.wrap}/>
+       wrap={this.state.wrap}
+       findBookmark={this.findBookmark}
+       toggleBookmark={this.toggleBookmark.bind(this)}
+       bookmarks={this.state.bookmarks}
+       />
      }
    }
     render() {
         debugger;
         return (
+            <div>
+            <div className="bookmarks-bar monospace">
+            {this.showBookmarks()}
+            </div>
+            <div className="main">
             <div>
             <Form horizontal onSubmit={this.handleSubmit}>
                 <FormGroup controlId="filterInput">
@@ -186,7 +270,11 @@ class Fetch extends Component {
                     <Col lg={7}> <Button type="submit"> Apply </Button> </Col>
                 </FormGroup>
             </Form>
+            </div>
+            <div className="log-list">
              {this.showLines()}
+            </div>
+            </div>
              </div>
         );
     }

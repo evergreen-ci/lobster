@@ -19,7 +19,7 @@ const LobsterStore =  Reflux.createStore ({
 
       getInitialState: function(){
         this.loadData = this.loadData.bind(this);
-        return {lines: []};
+        return {lines: [], colorMap: {}};
 
       },
 
@@ -89,7 +89,7 @@ const LobsterStore =  Reflux.createStore ({
             "orangered", "darkseagreen", "royalblue",
             "slategray",];
   
-          for (let i in lines) {
+          for (let i=0; i < lines.length; i++) {
               const line = lines[i];
 	      let lineObj = {lineNumber: i};
   
@@ -107,11 +107,11 @@ const LobsterStore =  Reflux.createStore ({
                   if (gitStopIdx > gitStartIdx + gitPrefixLen) {
                       const fileLine = line.substr(gitStartIdx+gitPrefixLen, gitStopIdx-(gitStartIdx+gitPrefixLen)-1);
                       const textLine = line.substr(0, gitStartIdx-1) + line.substr(gitStopIdx+1);
-                      lineObj['line'] = textLine;
+                      lineObj['text'] = textLine;
                       lineObj['gitRef'] = fileLine;
                   }
               } else {
-                  lineObj['line'] = line;
+                  lineObj['text'] = line;
               }
 
 	      const portArray = portRegex.exec(line);
@@ -122,8 +122,6 @@ const LobsterStore =  Reflux.createStore ({
                   if(!colorMap[port]) {
                      colorMap[port] = colorList[Object.keys(colorMap).length];
                   }
-
-                  lineObj['color'] = colorMap[port];
               }
               
               
@@ -136,12 +134,12 @@ const LobsterStore =  Reflux.createStore ({
               }
 	  }
 
-          this.triggerUpdate(processed);
+          this.triggerUpdate(processed, colorMap);
       },
 
-      triggerUpdate: function(lines)
+      triggerUpdate: function(lines, colorMap)
       {
-        this.setState({lines: lines});
+        this.setState({lines: lines, colorMap: colorMap});
         this.trigger(this.state);
       }
 });
