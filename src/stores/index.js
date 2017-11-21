@@ -80,6 +80,7 @@ const LobsterStore =  Reflux.createStore ({
           const gitPrefixLen = gitPrefix.length + 2;
           let gitVersionStr = "master";
           const portRegex = / [sdbc](\d{1,5})\|/;
+          const stateRegex = /:(initsync|primary|secondary\d*|node\d*)]/;
       
           let colorMap = {};
           
@@ -121,6 +122,16 @@ const LobsterStore =  Reflux.createStore ({
                   
                   if(!colorMap[port]) {
                      colorMap[port] = colorList[Object.keys(colorMap).length];
+                  }
+              } else {
+	        const stateArray = stateRegex.exec(line);
+                if(stateArray && stateArray[0]) {
+                      let port = stateArray[1];
+                      lineObj['port'] = port;
+ 
+                      if(!colorMap[port]) {
+                         colorMap[port] = colorList[Object.keys(colorMap).length];
+                      }
                   }
               }
               

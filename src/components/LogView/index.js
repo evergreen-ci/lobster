@@ -74,7 +74,9 @@ class FullLogLine extends React.Component {
             className += ' bookmark-line';
         }
         if (!this.props.wrap) {
-           className += ' no-wrap'; 
+            className += ' no-wrap';
+        } else {
+            className += ' wrap';
         }
 
         return (<div key={this.props.key} className={className}><LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} /> <LogOptions gitRef={this.props.line.gitRef} /> <LogLineText text={this.props.line.text} port={this.props.line.port} colorMap={this.props.colorMap} /></div>);
