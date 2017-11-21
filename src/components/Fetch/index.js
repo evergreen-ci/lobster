@@ -37,15 +37,21 @@ class Fetch extends Component {
         this.state = {
             build: params.build,
             test: params.test,
-            filter: searchParams.get('filter'),
-            scrollLine: searchParams.get('scroll'),
+            scrollLine: parseInt(searchParams.get('scroll')),
             server: searchParams.get('server'),
-            url : "",
+            url : searchParams.get('url'),
             wrap: false,
-            detailsOpen: false,
-            filterList: {},
+            detailsOpen: true,
+            filterList: searchParams.getAll('f').map((f) => ({text: f, on: true, inverse: false})),
+            find: "",
+            findIdx: -1,
+            findResults: [],
             bookmarks: bookmarksArr,
         };
+
+        if(this.state.url) {
+            Actions.loadDataUrl(this.state.url, this.state.server);
+        }
     }
 
     getUrlParams() {
@@ -64,7 +70,7 @@ class Fetch extends Component {
       test = test && test[1] ? test[1] : "";
       return {build: build, test: test, filter: this.filterInput.value.trim(), scrollLine: this.scrollInput.value.trim()}
     */
-        return {build: this.state.build, test: this.state.test, filter: this.filterInput.value.trim(), scrollLine: this.scrollInput.value.trim()}
+        return {build: this.state.build, test: this.state.test};
     }
 
     componentWillReceiveProps(nextProps){
@@ -78,9 +84,9 @@ class Fetch extends Component {
                 console.log("set filter to " + searchParams.get('filter'))
                 this.setState({filter: searchParams.get('filter')});
             }
-            if(this.state.scrollLine !== searchParams.get('scroll')){
+            if(this.state.scrollLine !== parseInt(searchParams.get('scroll'))){
                 console.log("set scroll to: " + searchParams.get('scroll'));
-                this.setState({scrollLine: searchParams.get('scroll')});
+                this.setState({scrollLine: parseInt(searchParams.get('scroll'))});
             }
         }
         // reload and rerender
@@ -89,7 +95,7 @@ class Fetch extends Component {
             this.setState({build: params.build,
                        test: params.test,
                        filter: searchParams.get('filter'),
-                       scrollLine: searchParams.get('scroll'),
+                       scrollLine: parseInt(searchParams.get('scroll')),
                        server: searchParams.get('server')});
             let url = "";
             if (this.urlInput) {
@@ -106,47 +112,39 @@ class Fetch extends Component {
         }
     }
 
-    updateURL(bookmarks) {
+    updateURL(bookmarks, filters) {
         let parsedParams = this.getUrlParams();
+        var searchParams = new URLSearchParams();
+        
         // make url match this state
         let nextUrl = "";
         if (!this.urlInput || !this.urlInput.value) {
             nextUrl = "/lobster/build/" + parsedParams.build + "/test/" + parsedParams.test;
         } else {
-              this.setState({url : this.urlInput.value});
+            searchParams.append("url", this.urlInput.value);
         }
-        // make url match next state
-        let searchString = "?";
-        if(parsedParams.filter){
-            searchString += "filter=" + parsedParams.filter;
-            if(parsedParams.scrollLine || this.state.server){
-                searchString += "&";
-            }
+        for(let i = 0; i < filters.length; i++) {
+            searchParams.append("f", filters[i].text);
         }
         if(parsedParams.scrollLine) {
-            searchString += "scroll=" + parsedParams.scrollLine;
-            if (bookmarks.length > 0 || this.state.server){
-                searchString += "&";
-            }
+            searchParams.append("scroll", parsedParams.scrollLine);
         }
         if(bookmarks.length > 0) {
-            searchString +="bookmarks=";
+            let bookmarkStr = '';
             for(let i = 0; i < bookmarks.length; i++) {
-                searchString += bookmarks[i].lineNumber;
+                bookmarkStr += bookmarks[i].lineNumber;
                 if (i != bookmarks.length-1) {
-                    searchString += ',';
+                    bookmarkStr += ',';
                 }
             }
-            if (this.state.server){
-                searchString += "&";
-            }
+            searchParams.append('bookmarks', bookmarkStr);
         }
         if (this.state.server) {
-            searchString += "server=" + this.state.server;
+            searchParams.append('server', this.state.server);
         }
         this.props.history.push({
             pathname: nextUrl,
-            search: searchString,
+            search: searchParams.toString(),
         });
 
     }
@@ -160,10 +158,11 @@ class Fetch extends Component {
             return;
         }
 
-        this.updateURL(this.state.bookmarks);
+        this.updateURL(this.state.bookmarks, this.state.filterList);
 
         if (this.urlInput.value != this.state.url)
         {
+          this.setState({url : this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
           Actions.loadDataUrl(this.urlInput.value, this.state.server);
         }
     }
@@ -192,7 +191,7 @@ class Fetch extends Component {
      }
      newBookmarks.sort(this.bookmarkSort);
      this.setState({bookmarks: newBookmarks});
-     this.updateURL(newBookmarks);
+     this.updateURL(newBookmarks, this.state.filterList);
     }
 
     ensureBookmark(lineNum) {
@@ -202,7 +201,7 @@ class Fetch extends Component {
         newBookmarks.push({lineNumber: lineNum});
         newBookmarks.sort(this.bookmarkSort);
         this.setState({bookmarks: newBookmarks});
-        this.updateURL(newBookmarks);
+        this.updateURL(newBookmarks, this.state.filterList);
      } 
     }
 
@@ -214,63 +213,244 @@ class Fetch extends Component {
               })}</div>
           );
     }
+    
+    nextFind() {
+        let nextIdx = this.state.findIdx+1;
+        if (nextIdx==this.state.findResults.length) {
+            nextIdx = 0;
+        }
+        this.setState({findIdx: nextIdx})
+        this.setScroll(this.state.findResults[nextIdx].lineNumber);
+    }
+
+    prevFind() {
+        let nextIdx = this.state.findIdx-1;
+        if (nextIdx==-1) {
+            nextIdx = this.state.findResults.length-1;
+        }
+        this.setState({findIdx: nextIdx})
+        this.setScroll(this.state.findResults[nextIdx].lineNumber);
+    }
+
+    find(event) {
+        event.preventDefault();
+        // Trim |'s so highlighter doesn't hang.
+        this.findInput.value=this.findInput.value.replace(/(^\|)|(\|$)/g, "");
+
+        if(this.findInput.value == "") {
+            return;
+        }
+
+        if(this.findInput.value == this.state.find) {
+            return this.nextFind();
+        }
+
+        let findResults = [];
+        let filter = this.mergeOnFilters(this.state.filterList);
+        let inverseFilter = this.mergeOnInverseFilters(this.state.filterList);
+
+        for(let i=0; i< this.props.lines.length; i++) {
+            let line = this.props.lines[i];
+            if(line.text.match(this.findInput.value) && this.shouldPrintLine(this.state.bookmarks, line, filter, inverseFilter)) {
+                findResults.push(line);
+            }
+        }
+        if(findResults.length > 0) {
+            this.setState({find: this.findInput.value, findIdx: 0, findResults: findResults})
+            this.setScroll(findResults[0].lineNumber);
+        } else {
+            this.setState({find: this.findInput.value, findIdx: -1, findResults: findResults})
+        }
+    }
+
+    shouldPrintLine(bookmarks, line, filter, inverseFilter) {
+        if(this.findBookmark(bookmarks, line.lineNumber) !== -1) {
+            return true;
+        }
+        if(!filter && !inverseFilter) {
+            return true;
+        } else if(!filter) {
+            if(line.text.match(inverseFilter)) {
+                return false;
+            } 
+            return true;
+        } else if(!inverseFilter) {
+            if(line.text.match(filter)) {
+                return true;
+            }
+            return false;
+        } else {
+            // If there are both types of filters, it has to match the filter and not match
+            // the inverseFilter.
+            if(line.text.match(filter) && !line.text.match(inverseFilter)) {
+                return true;
+            }
+            return false;
+        }
+        throw 'Unreachable';
+    }
+
+    addFilter() {
+        if(this.findInput.value == "" || this.state.filterList.find((elem) => elem.text == this.findInput.value)) {
+            return;
+        }
+        let newFilters = this.state.filterList.slice();
+        newFilters.push({text: this.findInput.value, on: true, inverse: false});
+        this.setState({filterList: newFilters});
+        this.updateURL(this.state.bookmarks, newFilters);
+    }
+
+    toggleFilter(text) {
+        let newFilters = this.state.filterList.slice();
+        let filterIdx = newFilters.findIndex((elem) => text == elem.text);
+        newFilters[filterIdx].on = !newFilters[filterIdx].on;
+
+        this.setState({filterList: newFilters});
+    }
+
+    toggleFilterInverse(text) {
+        let newFilters = this.state.filterList.slice();
+        let filterIdx = newFilters.findIndex((elem) => text == elem.text);
+        newFilters[filterIdx].inverse = !newFilters[filterIdx].inverse;
+
+        this.setState({filterList: newFilters});
+    }
+
+    removeFilter(text) {
+        let newFilters = this.state.filterList.slice();
+        let filterIdx = newFilters.findIndex((elem) => text == elem.text);
+        newFilters.splice(filterIdx, 1);
+
+        this.setState({filterList: newFilters});
+        this.updateURL(this.state.bookmarks, newFilters);
+    }
+    showFilters() {
+        let self = this;
+        return (
+              <div className="filter-box">{self.state.filterList.map(function(filter){
+                return <div className='filter'>
+                        <Button className='filter-button' onClick={self.removeFilter.bind(self, filter.text)} bsStyle="danger" bsSize="xsmall">{"\u2715"}</Button>
+                        <Button className='filter-button' onClick={self.toggleFilter.bind(self, filter.text)} bsStyle="warning" bsSize="xsmall">{filter.on ? "||" : "\u25B6"}</Button>
+                        <Button className='filter-button-big' onClick={self.toggleFilterInverse.bind(self, filter.text)} bsStyle="success" bsSize="xsmall">{filter.inverse ? "out" : "in"}</Button>
+                        <span className='filter-text'>{filter.text}</span>
+                    </div>;
+              })}</div>
+          );
+    }
+
+    mergeOnFilters(filterList) {
+        return filterList.filter((elem) => elem.on && !elem.inverse).map((elem) => elem.text).join('|');
+    }
+
+    mergeOnInverseFilters(filterList) {
+        return filterList.filter((elem) => elem.on && elem.inverse).map((elem) => elem.text).join('|');
+    }
 
     showLines() {
+     let filter = this.mergeOnFilters(this.state.filterList);
+     let inverseFilter = this.mergeOnInverseFilters(this.state.filterList);
      if (!this.props.lines) {
        return <div/>
      } else {
        return <LogView lines={this.props.lines}
        colorMap={this.props.colorMap}
-       filter={this.state.filter}
+       filter={filter}
+       inverseFilter={inverseFilter}
        scrollLine={this.state.scrollLine}
        wrap={this.state.wrap}
        findBookmark={this.findBookmark}
        toggleBookmark={this.toggleBookmark.bind(this)}
        bookmarks={this.state.bookmarks}
+       find={this.state.find}
+       findLine={this.state.findIdx == -1 ? -1 : this.state.findResults[this.state.findIdx].lineNumber}
+       shouldPrintLine={this.shouldPrintLine.bind(this)}
        />
      }
    }
+
+    showFind() {
+        if(this.state.find != "" ){
+            if(this.state.findResults.length > 0) {
+                return <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx+1}/{this.state.findResults.length}</Col>
+                <Button lg={1} onClick={this.nextFind.bind(this)}>Next</Button>
+                <Button lg={1} onClick={this.prevFind.bind(this)}>Prev</Button></span>
+            } else {
+                return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
+            }
+        }
+    }
+
+    showJIRA() {
+        if(this.state.bookmarks.length == 0 || this.props.lines.length == 0) {
+            return '';
+        }
+
+        let text = "{noformat}\n"
+        for(let i = 0; i< this.state.bookmarks.length; i++) {
+            let curr = this.state.bookmarks[i].lineNumber;
+            if(curr >= this.props.lines.length) {
+                text += '{noformat}';
+                return text;
+            }
+
+            text += this.props.lines[curr].text + '\n'
+            if((i != (this.state.bookmarks.length-1)) && (this.state.bookmarks[i+1].lineNumber != (curr+1))) {
+                text += '...\n';
+            }
+        }
+        text += '{noformat}';
+        return text;
+    }
+
+    showLogBox() {
+        if(this.state.server) {
+            return (<FormGroup controlId="urlInput">
+                <Col componentClass={ControlLabel} lg={1}>Log</Col>
+                <Col lg={6}><FormControl type="text" defaultValue={this.state.url}
+                    placeholder="optional. custom file location iff used with local server" inputRef={ref => { this.urlInput = ref; }}  /></Col>
+                <Col lg={1}> <Button type="submit"> Apply </Button> </Col>
+            </FormGroup>);
+        }
+    }
+
     render() {
-        debugger;
         return (
             <div>
             <div className="bookmarks-bar monospace">
             {this.showBookmarks()}
             </div>
             <div className="main">
-            <div>
-            <Form horizontal onSubmit={this.handleSubmit}>
-                <FormGroup controlId="filterInput">
-                    <Col componentClass={ControlLabel} lg={2}>Filter</Col>
-                    <Col lg={7}><FormControl type="text"
-                        placeholder="optional. regexp to match each line"
-                        defaultValue={this.state.filter} inputRef={ref => { this.filterInput = ref; }}/></Col>
-                </FormGroup>
-                <Collapse in={this.state.detailsOpen}>
-                <div>
-                    <FormGroup controlId="urlInput">
-                        <Col componentClass={ControlLabel} lg={2}>Log</Col>
-                        <Col lg={7}><FormControl type="text"
-                            placeholder="optional. custom file location iff used with local server" inputRef={ref => { this.urlInput = ref; }}  /></Col>
+            <Col lg={11} lgOffset={1}>
+            <div className="find-box">
+                <Form horizontal >
+                    <FormGroup controlId="findInput" className='filter-header'>
+                        <Col lg={6} ><FormControl type="text"
+                            placeholder="optional. regexp to search for"
+                            inputRef={ref => { this.findInput = ref; }}/></Col>
+                        <Button type="submit" lg={1} onClick={this.find.bind(this)}>Find</Button>
+                        {this.showFind()}
+                        <Button lg={1} onClick={this.addFilter.bind(this)}>Add Filter</Button>
+                        <Button lg={1} onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>{this.state.detailsOpen ? "Hide Details" : "Show Details"}</Button>
                     </FormGroup>
-                    <FormGroup controlId="wrap">
-                        <Col componentClass={ControlLabel} lg={2}>Wrap</Col>
-                        <Col lg={7}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value})}} /></Col>
-                    </FormGroup>
-                    <FormGroup controlId="scrollInput">
-                        <Col componentClass={ControlLabel} lg={2}>Scroll to Line</Col>
-                        <Col lg={7}><FormControl type="text"
-                            placeholder="optional"
-                            defaultValue={this.state.scrollLine} inputRef={ref => { this.scrollInput = ref; }}/></Col>
-                    </FormGroup>
-                </div>
+                <Collapse className='collapse-menu' in={this.state.detailsOpen}>
+                    <div>
+                        <Form horizontal onSubmit={this.handleSubmit}>
+                                {this.showLogBox()}
+                                <FormGroup controlId="wrap">
+                                    <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
+                                    <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value})}} /></Col>
+                                    <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
+                                    <Col lg={1}><textarea readOnly className='unmoving' value={this.showJIRA()}></textarea></Col>
+                                </FormGroup>
+                        </Form>
+                    <div className="filterBox">
+                        {this.showFilters()}
+                    </div>
+                    </div>
                 </Collapse>
-                <FormGroup>
-                    <Col componentClass={ControlLabel} lg={2} onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>Details</Col>
-                    <Col lg={7}> <Button type="submit"> Apply </Button> </Col>
-                </FormGroup>
-            </Form>
+                </Form>
             </div>
+            </Col>
             <div className="log-list">
              {this.showLines()}
             </div>

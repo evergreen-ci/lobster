@@ -11,16 +11,73 @@
 }
 .bookmarks-bar {
     width: 60px;
-    height: 90%;
-    background-color: lightgrey;
+    height: calc(100vh - 45px);
+    background-color: #DDDDDD;
     position: fixed;
     float: left;
     padding-left:5px;
+    margin-top: 45px;
     z-index: 100;
     overflow: auto;
+    box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.2), 0 6px 20px -4px rgba(0, 0, 0, 0.19);
 }
+
+.collapse-menu {
+    box-shadow: 1px 2px 4px -4px rgba(0,0,0,.2), -2px 4px 9px -4px rgba(0,0,0,.19);
+    margin-top: 15px;
+}
+
 .log-list {
+    padding-top: 45px;
 }
+
 .main {
     margin-left: 65px;
+}
+
+.find-box {
+    position: fixed;
+    top: 0px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    background-color: white;
+    z-index: 50;
+    display: inline-block;
+    width: calc(100vw - 190px);
+
+}
+
+.filter-button {
+    width: 22px;
+    margin-left: 5px;
+}
+
+.filter-button-big {
+    width: 30px;
+    margin-left: 5px;
+}
+
+.filter-text {
+    margin-left: 5px;
+}
+
+.filter {
+    padding-bottom: 5px;
+}
+
+.filter-box {
+    padding-left: 5px;
+    padding-bottom: 10px;
+}
+
+.filter-header {
+    margin-bottom: 0px;
+}
+
+.not-found {
+    color: #FF9494;
+}
+
+.unmoving {
+    resize: none;
 }
