@@ -6,7 +6,7 @@ import './style.css';
 const About = () => (
 <Jumbotron>
   <p>
-  Lobster is a log viewer implemented as a React-based frontend.  It also includes a node based dummy backend to optionally cache the results locally.
+  Lobster is a log viewer implemented as a React-based frontend.  It also includes a node based dummy backend to view local log files or cache the results locally.
 </p>
 <p> Lobster can: </p>
 <ul>
@@ -14,7 +14,8 @@ const About = () => (
 <li>apply multiple regexp filters to the log lines returned by the backend (the "Add Filter" button)</li>
 <li>pause and play filters</li>
 <li>filter a regexp in or out</li>
-<li>cache the recently accessed files locally to improve load time. It can be set with the --cache
+<li>cache the recently accessed files locally to improve load time. It can be set with the --cache</li>
+<li>view the local log files generated with resmoke.py . the option --logs sets the absolute path that is available to the server for read 
   server command line argument</li>
 <li>once it is supported by the mongod and mongos binaries it will link the log lines of the evergreen
 log viewer raw output to the corresponding lines of code that printed them. This feature is available in a demo-mode with the <a href='https://evergreen.mongodb.com/build/mongodb_mongo_master_linux_64_debug_patch_2318942c2ec98c0107a83d72f352d2878490ce09_598117962fbabe1e0f0d5c3c_17_08_02_00_08_20'>POC evergreen build</a>.</li>
