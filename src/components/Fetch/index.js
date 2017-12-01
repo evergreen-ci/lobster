@@ -24,7 +24,6 @@ class Fetch extends Component {
 
     constructor(props) {
         super(props);
-        this.logkeeperBaseUrl = 'https://logkeeper.mongodb.org';
         this.handleSubmit = this.handleSubmit.bind(this);
         //this.componentWillReceiveProps = this.componentWillReceiveProps(this);
         let searchParams = new URLSearchParams(props.location.search);
@@ -51,6 +50,9 @@ class Fetch extends Component {
 
         if(this.state.url) {
             Actions.loadDataUrl(this.state.url, this.state.server);
+        }
+        else if (this.state.build && this.state.test) { // this is direct route to a file
+            Actions.loadData(this.state.build, this.state.test, this.state.server);
         }
     }
 

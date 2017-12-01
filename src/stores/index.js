@@ -3,7 +3,9 @@ import StateMixin from 'reflux-state-mixin';
 import Actions from '../actions';
 import axios from 'axios';
 
+
 const LobsterStore =  Reflux.createStore ({
+     LOGKEEPER_BASE: "https://logkeeper.mongodb.org",
      listenables: [Actions],
      mixins: [StateMixin.store],
       // Loads content from server
@@ -28,9 +30,9 @@ const LobsterStore =  Reflux.createStore ({
               return "";
           }
           if(!testParam){
-              return this.logkeeperBaseUrl + "/build/" + buildParam + "/all?raw=1";
+              return this.LOGKEEPER_BASE + "/build/" + buildParam + "/all?raw=1";
           }
-          return this.logkeeperBaseUrl + "/build/" + buildParam + "/test/" + testParam + "?raw=1";
+          return this.LOGKEEPER_BASE + "/build/" + buildParam + "/test/" + testParam + "?raw=1";
       },
 
       loadData: function(build, test, server){
