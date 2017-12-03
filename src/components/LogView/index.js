@@ -16,7 +16,7 @@ class LogLineText extends React.Component {
     render() {
         let style = {color: this.props.colorMap[this.props.port]};
         let highlightStyle = {color: this.props.colorMap[this.props.port], 'background-image': 'inherit', 'background-color': 'pink'};
-        return <Highlighter caseSensitive={true} unhighlightStyle={style} highlightStyle={highlightStyle} textToHighlight={this.props.text} searchWords={[this.props.find]} />;
+        return <Highlighter highlightClassName={'findResult' + this.props.lineNumber} caseSensitive={this.props.caseSensitive} unhighlightStyle={style} highlightStyle={highlightStyle} textToHighlight={this.props.text} searchWords={[this.props.find]} />;
     }
 
 }
@@ -84,7 +84,7 @@ class FullLogLine extends React.Component {
             className += ' highlighted';
         }
 
-        return (<div key={this.props.key} className={className}><LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} /> <LogOptions gitRef={this.props.line.gitRef} /> <LogLineText text={this.props.line.text} port={this.props.line.port} colorMap={this.props.colorMap} find={this.props.find} /></div>);
+        return (<div key={this.props.key} className={className}><LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} /> <LogOptions gitRef={this.props.line.gitRef} /> <LogLineText text={this.props.line.text} lineNumber={this.props.line.lineNumber} port={this.props.line.port} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive}/></div>);
     }
 
 }
@@ -95,6 +95,7 @@ class LogView extends React.Component {
         super(props);
         this.state = {
             processed: '',
+            dummyCounter: 0,
         };
         this.indexMap= {};
     }
@@ -103,7 +104,7 @@ class LogView extends React.Component {
         let list =  (
           <ReactList
             ref="logList"
-            itemRenderer={(index, key) => (<FullLogLine key={key} found={filteredLines[index].lineNumber == this.props.findLine} bookmarked={this.props.findBookmark(this.props.bookmarks, filteredLines[index].lineNumber) !== -1} wrap={this.props.wrap} line={filteredLines[index]} toggleBookmark={this.props.toggleBookmark} colorMap={this.props.colorMap} find={this.props.find} />)}
+            itemRenderer={(index, key) => (<FullLogLine key={key} found={filteredLines[index].lineNumber == this.props.findLine} bookmarked={this.props.findBookmark(this.props.bookmarks, filteredLines[index].lineNumber) !== -1} wrap={this.props.wrap} line={filteredLines[index]} toggleBookmark={this.props.toggleBookmark} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive}/>)}
             length={filteredLines.length}
             initialIndex={this.props.scrollLine}
             type={this.props.wrap ? 'variable' :'uniform'}
@@ -119,6 +120,8 @@ class LogView extends React.Component {
             scrollIndex = 0;
         }
         this.refs.logList.scrollTo(scrollIndex);
+
+        window.scrollBy(0, -45);
     }
 
     shouldComponentUpdate(nextProps, nextState){
@@ -135,6 +138,9 @@ class LogView extends React.Component {
         if(nextProps.filter !== this.props.filter) {
             return true;
         }
+        if(nextProps.inverseFilter !== this.props.inverseFilter) {
+            return true;
+        }
         if(nextProps.find !== this.props.find) {
             return true;
         }
@@ -144,15 +150,50 @@ class LogView extends React.Component {
         if(nextProps.wrap !== this.props.wrap) {
             return true;
         }
+        if(nextProps.caseSensitive !== this.props.caseSensitive) {
+            return true;
+        }
+        if(nextState.dummyCounter != this.state.dummyCounter){
+            return true;
+        }
+
         return false;
+    }
+
+    scrollFindIntoView() {
+        if(this.props.findLine < 0) {
+            return;
+        }
+
+        let findElements = document.getElementsByClassName("findResult" + this.props.findLine);
+        if(findElements.length > 0) {
+            let elem = findElements[0];
+            let position = elem.getBoundingClientRect();
+            let windowHeight = window.innerHeight;
+            let windowWidth = window.innerWidth;
+
+            let scrollX = window.scrollX;
+            let scrollY = window.scrollY - 45; // Account for header
+
+            if(position.right > windowWidth) {
+                // Scroll so the leftmost part of the component is 2/3 of the way into the screen.
+                scrollX = position.left - windowWidth/3; 
+            }
+            window.scrollTo(scrollX, scrollY);
+        } else {
+            // We probably just need to setState again.
+            this.setState({dummyCounter: this.state.dummyCounter + 1})
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (this.props.scrollLine !== null && this.props.scrollLine >= 0 && this.props.scrollLine !== prevProps.scrollLine) {
             this.scrollToLine(this.props.scrollLine);
         }
+        this.scrollFindIntoView();
+
     }
-    
+
     render() {
         let self = this;
         let processed = [];

@@ -40,6 +40,7 @@ class Fetch extends Component {
             server: searchParams.get('server'),
             url : searchParams.get('url'),
             wrap: false,
+            caseSensitive: false,
             detailsOpen: true,
             filterList: searchParams.getAll('f').map((f) => ({text: f, on: true, inverse: false})),
             find: "",
@@ -108,7 +109,7 @@ class Fetch extends Component {
                 this.setState({url : url});
             }
         }
-        if(nextProps.lines.length >0) {
+        if(this.props.lines.length != nextProps.lines.length && nextProps.lines.length >0) {
             this.ensureBookmark(0);
             this.ensureBookmark(nextProps.lines[nextProps.lines.length-1].lineNumber);
         }
@@ -222,7 +223,7 @@ class Fetch extends Component {
             nextIdx = 0;
         }
         this.setState({findIdx: nextIdx})
-        this.setScroll(this.state.findResults[nextIdx].lineNumber);
+        this.setScroll(this.state.findResults[nextIdx]);
     }
 
     prevFind() {
@@ -231,38 +232,50 @@ class Fetch extends Component {
             nextIdx = this.state.findResults.length-1;
         }
         this.setState({findIdx: nextIdx})
-        this.setScroll(this.state.findResults[nextIdx].lineNumber);
+        this.setScroll(this.state.findResults[nextIdx]);
     }
 
-    find(event) {
-        event.preventDefault();
+    find(caseSensitive, event) {
+        if(event) {
+            event.preventDefault();
+        }
         // Trim |'s so highlighter doesn't hang.
         this.findInput.value=this.findInput.value.replace(/(^\|)|(\|$)/g, "");
+        let findRegexp = this.findInput.value;
 
-        if(this.findInput.value == "") {
+        if(findRegexp == "") {
+            this.clearFind();
             return;
         }
 
-        if(this.findInput.value == this.state.find) {
-            return this.nextFind();
+        if(findRegexp == this.state.find && caseSensitive == this.state.caseSensitive) {
+            if(this.state.findResults.length > 0) {
+                return this.nextFind();
+            }
+            return;
         }
 
         let findResults = [];
-        let filter = this.mergeOnFilters(this.state.filterList);
-        let inverseFilter = this.mergeOnInverseFilters(this.state.filterList);
+        let filter = this.mergeOnFilters(this.state.filterList, caseSensitive);
+        let inverseFilter = this.mergeOnInverseFilters(this.state.filterList, caseSensitive);
+        let findRegexpFull = this.makeRegexp(findRegexp, caseSensitive);
 
         for(let i=0; i< this.props.lines.length; i++) {
             let line = this.props.lines[i];
-            if(line.text.match(this.findInput.value) && this.shouldPrintLine(this.state.bookmarks, line, filter, inverseFilter)) {
-                findResults.push(line);
+            if(line.text.match(findRegexpFull) && this.shouldPrintLine(this.state.bookmarks, line, filter, inverseFilter)) {
+                findResults.push(line.lineNumber);
             }
         }
         if(findResults.length > 0) {
-            this.setState({find: this.findInput.value, findIdx: 0, findResults: findResults})
-            this.setScroll(findResults[0].lineNumber);
+            this.setState({find: findRegexp, findIdx: 0, findResults: findResults})
+            this.setScroll(findResults[0]);
         } else {
-            this.setState({find: this.findInput.value, findIdx: -1, findResults: findResults})
+            this.setState({find: findRegexp, findIdx: -1, findResults: findResults})
         }
+    }
+
+    clearFind() {
+        this.setState({find: "", findIdx: -1, findResults: []});
     }
 
     shouldPrintLine(bookmarks, line, filter, inverseFilter) {
@@ -300,6 +313,7 @@ class Fetch extends Component {
         newFilters.push({text: this.findInput.value, on: true, inverse: false});
         this.setState({filterList: newFilters});
         this.updateURL(this.state.bookmarks, newFilters);
+        this.clearFind();
     }
 
     toggleFilter(text) {
@@ -308,6 +322,7 @@ class Fetch extends Component {
         newFilters[filterIdx].on = !newFilters[filterIdx].on;
 
         this.setState({filterList: newFilters});
+        this.clearFind();
     }
 
     toggleFilterInverse(text) {
@@ -316,6 +331,7 @@ class Fetch extends Component {
         newFilters[filterIdx].inverse = !newFilters[filterIdx].inverse;
 
         this.setState({filterList: newFilters});
+        this.clearFind();
     }
 
     removeFilter(text) {
@@ -325,6 +341,7 @@ class Fetch extends Component {
 
         this.setState({filterList: newFilters});
         this.updateURL(this.state.bookmarks, newFilters);
+        this.clearFind();
     }
     showFilters() {
         let self = this;
@@ -340,17 +357,30 @@ class Fetch extends Component {
           );
     }
 
-    mergeOnFilters(filterList) {
-        return filterList.filter((elem) => elem.on && !elem.inverse).map((elem) => elem.text).join('|');
+    makeRegexp(regexp, caseSensitive) {
+        if(!regexp) {
+            return '';
+        }
+
+        if (!caseSensitive) {
+            return new RegExp(regexp, "i");
+        }
+        return new RegExp(regexp);
     }
 
-    mergeOnInverseFilters(filterList) {
-        return filterList.filter((elem) => elem.on && elem.inverse).map((elem) => elem.text).join('|');
+    mergeOnFilters(filterList, caseSensitive) {
+        let fullFilter = filterList.filter((elem) => elem.on && !elem.inverse).map((elem) => elem.text).join('|');
+        return this.makeRegexp(fullFilter, caseSensitive);
+    }
+
+    mergeOnInverseFilters(filterList, caseSensitive) {
+        let fullInverseFilter = filterList.filter((elem) => elem.on && elem.inverse).map((elem) => elem.text).join('|'); 
+        return this.makeRegexp(fullInverseFilter, caseSensitive);
     }
 
     showLines() {
-     let filter = this.mergeOnFilters(this.state.filterList);
-     let inverseFilter = this.mergeOnInverseFilters(this.state.filterList);
+     let filter = this.mergeOnFilters(this.state.filterList, this.state.caseSensitive);
+     let inverseFilter = this.mergeOnInverseFilters(this.state.filterList, this.state.caseSensitive);
      if (!this.props.lines) {
        return <div/>
      } else {
@@ -360,11 +390,12 @@ class Fetch extends Component {
        inverseFilter={inverseFilter}
        scrollLine={this.state.scrollLine}
        wrap={this.state.wrap}
+       caseSensitive={this.state.caseSensitive}
        findBookmark={this.findBookmark}
        toggleBookmark={this.toggleBookmark.bind(this)}
        bookmarks={this.state.bookmarks}
        find={this.state.find}
-       findLine={this.state.findIdx == -1 ? -1 : this.state.findResults[this.state.findIdx].lineNumber}
+       findLine={this.state.findIdx == -1 ? -1 : this.state.findResults[this.state.findIdx]}
        shouldPrintLine={this.shouldPrintLine.bind(this)}
        />
      }
@@ -414,6 +445,11 @@ class Fetch extends Component {
             </FormGroup>);
         }
     }
+    
+    toggleCaseSensitive(value) {
+        this.setState({caseSensitive: !value});
+        this.find(!value);
+    }
 
     render() {
         return (
@@ -429,7 +465,7 @@ class Fetch extends Component {
                         <Col lg={6} ><FormControl type="text"
                             placeholder="optional. regexp to search for"
                             inputRef={ref => { this.findInput = ref; }}/></Col>
-                        <Button type="submit" lg={1} onClick={this.find.bind(this)}>Find</Button>
+                        <Button type="submit" lg={1} onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
                         {this.showFind()}
                         <Button lg={1} onClick={this.addFilter.bind(this)}>Add Filter</Button>
                         <Button lg={1} onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>{this.state.detailsOpen ? "Hide Details" : "Show Details"}</Button>
@@ -441,6 +477,8 @@ class Fetch extends Component {
                                 <FormGroup controlId="wrap">
                                     <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
                                     <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value})}} /></Col>
+                                    <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
+                                    <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
                                     <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
                                     <Col lg={1}><textarea readOnly className='unmoving' value={this.showJIRA()}></textarea></Col>
                                 </FormGroup>
