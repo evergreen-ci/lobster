@@ -42,7 +42,7 @@ class Fetch extends Component {
             wrap: false,
             caseSensitive: false,
             detailsOpen: true,
-            filterList: searchParams.getAll('f').map((f) => ({text: f, on: true, inverse: false})),
+            filterList: searchParams.getAll('f').map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
             find: "",
             findIdx: -1,
             findResults: [],
@@ -110,9 +110,21 @@ class Fetch extends Component {
             }
         }
         if(this.props.lines.length != nextProps.lines.length && nextProps.lines.length >0) {
-            this.ensureBookmark(0);
-            this.ensureBookmark(nextProps.lines[nextProps.lines.length-1].lineNumber);
+            let newBookmarks = this.ensureBookmark(0, this.state.bookmarks);
+            newBookmarks = this.ensureBookmark(nextProps.lines[nextProps.lines.length-1].lineNumber, newBookmarks);
+            if(newBookmarks.length != this.state.bookmarks.length) {
+                this.updateURL(newBookmarks, this.state.filterList);
+                this.setState({bookmarks: newBookmarks});
+            }
         }
+    }
+
+    makeFilterURLString(filter) {
+        let res = "";
+        res += (filter.on ? '1' : '0');
+        res += (filter.inverse ? '1' : '0');
+        res += filter.text;
+        return res;
     }
 
     updateURL(bookmarks, filters) {
@@ -127,7 +139,7 @@ class Fetch extends Component {
             searchParams.append("url", this.urlInput.value);
         }
         for(let i = 0; i < filters.length; i++) {
-            searchParams.append("f", filters[i].text);
+            searchParams.append("f", this.makeFilterURLString(filters[i]));
         }
         if(parsedParams.scrollLine) {
             searchParams.append("scroll", parsedParams.scrollLine);
@@ -197,15 +209,14 @@ class Fetch extends Component {
      this.updateURL(newBookmarks, this.state.filterList);
     }
 
-    ensureBookmark(lineNum) {
-     let newBookmarks = this.state.bookmarks.slice();
+    ensureBookmark(lineNum, bookmarks) {
+     let newBookmarks = bookmarks.slice();
      var i = this.findBookmark(newBookmarks, lineNum);
      if (i === -1) {
         newBookmarks.push({lineNumber: lineNum});
         newBookmarks.sort(this.bookmarkSort);
-        this.setState({bookmarks: newBookmarks});
-        this.updateURL(newBookmarks, this.state.filterList);
      } 
+     return newBookmarks;
     }
 
     showBookmarks() {
@@ -322,6 +333,7 @@ class Fetch extends Component {
         newFilters[filterIdx].on = !newFilters[filterIdx].on;
 
         this.setState({filterList: newFilters});
+        this.updateURL(this.state.bookmarks, newFilters);
         this.clearFind();
     }
 
@@ -331,6 +343,7 @@ class Fetch extends Component {
         newFilters[filterIdx].inverse = !newFilters[filterIdx].inverse;
 
         this.setState({filterList: newFilters});
+        this.updateURL(this.state.bookmarks, newFilters);
         this.clearFind();
     }
 

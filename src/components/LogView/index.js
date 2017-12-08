@@ -34,7 +34,7 @@ class LineNumber extends React.Component {
 
     render() {
         let style = {width: "60px", display:"inline-block"};
-         return <span className="padded-text no-select" style={style}  onDoubleClick={this.handleDoubleClick.bind(this)}>{this.props.lineNumber}</span>;
+         return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style}  onDoubleClick={this.handleDoubleClick.bind(this)}></span>;
     }
 
 }
@@ -54,11 +54,10 @@ class LogOptions extends React.Component {
     
     render() {
         let style = {width: "30px", display:"inline-block"};
-        let classStr = "no-select";
         if(this.props.gitRef) {
-            return<span style={style} className={classStr} onClick={this.handleClick.bind(this, this.props.gitRef)}>&nbsp;&#128279;&nbsp;</span>;
+            return<span style={style} data-pseudo-content="&nbsp;&#128279;&nbsp;" onClick={this.handleClick.bind(this, this.props.gitRef)}></span>;
         }
-        return <span style={style} className={classStr} ></span>;
+        return <span style={style}></span>;
     }
 
 }
@@ -153,7 +152,7 @@ class LogView extends React.Component {
         if(nextProps.caseSensitive !== this.props.caseSensitive) {
             return true;
         }
-        if(nextState.dummyCounter != this.state.dummyCounter){
+        if(nextState.dummyCounter !== this.state.dummyCounter){
             return true;
         }
 
@@ -190,7 +189,11 @@ class LogView extends React.Component {
         if (this.props.scrollLine !== null && this.props.scrollLine >= 0 && this.props.scrollLine !== prevProps.scrollLine) {
             this.scrollToLine(this.props.scrollLine);
         }
-        this.scrollFindIntoView();
+
+        // If the find index changed, scroll to the right if necessary.
+        if(this.props.findLine !== prevProps.findLine || this.props.find !== prevProps.find || this.state.dummyCounter !== prevState.dummyCounter) {
+            this.scrollFindIntoView();
+        }
 
     }
 
