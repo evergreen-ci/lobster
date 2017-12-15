@@ -15,7 +15,7 @@ const Main = () => (
     <Switch>
       <Route exact path='/lobster/about' component={About}/>
       <Route  path='/lobster/build/:build/test/:test' component={ConnectedFetch}/>
-      <Route path='/lobster/build/:build/' component={ConnectedFetch}/>
+      <Route path='/lobster/build/:build/all' component={ConnectedFetch}/>
       <Route  exact path='/lobster/' component={ConnectedFetch}/>
       <Route path='*' component={NotFound}/>
     </Switch>

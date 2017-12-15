@@ -52,7 +52,7 @@ class Fetch extends Component {
         if(this.state.url) {
             Actions.loadDataUrl(this.state.url, this.state.server);
         }
-        else if (this.state.build && this.state.test) { // this is direct route to a file
+        else if (this.state.build) { // this is direct route to a file
             Actions.loadData(this.state.build, this.state.test, this.state.server);
         }
     }
