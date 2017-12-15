@@ -459,6 +459,12 @@ class Fetch extends Component {
         }
     }
     
+    showJobLogs() {
+        if(!this.state.server) {
+            return (<Col lg={1}><Button href={"/build/" + this.state.build}>Job Logs</Button></Col>);
+        }
+    }
+
     toggleCaseSensitive(value) {
         this.setState({caseSensitive: !value});
         this.find(!value);
@@ -493,7 +499,8 @@ class Fetch extends Component {
                                     <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
                                     <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
                                     <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
-                                    <Col lg={1}><textarea readOnly className='unmoving' value={this.showJIRA()}></textarea></Col>
+                                    <Col lg={2}><textarea readOnly className='unmoving' value={this.showJIRA()}></textarea></Col>
+                                    {this.showJobLogs()}
                                 </FormGroup>
                         </Form>
                     <div className="filterBox">
