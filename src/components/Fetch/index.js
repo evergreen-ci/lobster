@@ -470,6 +470,33 @@ class Fetch extends Component {
         this.find(!value);
     }
 
+    componentDidMount() {
+          document.addEventListener("keydown", this.handleKeyDown.bind(this));
+    }
+    componentWillUnmount() {
+          document.removeEventListener("keydown", this.handleKeyDown.bind(this));
+    }
+
+    handleKeyDown(event) {
+        switch( event.keyCode ) {
+            case 114: // F3
+                this.focusOnFind(event);
+                break;
+            case 70: // F
+                if(event.ctrlKey) {
+                    this.focusOnFind(event);
+                }
+                break;
+            default:
+                break;
+       }
+    }
+
+    focusOnFind(event) {
+        this.findInput.focus();
+        event.preventDefault();
+    }
+
     render() {
         return (
             <div>
