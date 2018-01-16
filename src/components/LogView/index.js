@@ -51,7 +51,7 @@ class LogOptions extends React.Component {
             window.open(gitRef);
         }
     }
-    
+
     render() {
         let style = {width: "30px", display:"inline-block"};
         if(this.props.gitRef) {
@@ -124,7 +124,7 @@ class LogView extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState){
-        if (nextProps.scrollLine !== null && nextProps.scrollLine >= 0 && this.props.scrollLine !== nextProps.scrollLine) {
+        if (nextProps.scrollLine !== null && nextProps.scrollLine >= 0) {
             this.scrollToLine(nextProps.scrollLine);
         }
 
@@ -176,7 +176,7 @@ class LogView extends React.Component {
 
             if(position.right > windowWidth) {
                 // Scroll so the leftmost part of the component is 2/3 of the way into the screen.
-                scrollX = position.left - windowWidth/3; 
+                scrollX = position.left - windowWidth/3;
             }
             window.scrollTo(scrollX, scrollY);
         } else {
