@@ -15,7 +15,7 @@ const About = () => (
 <li>pause and play filters</li>
 <li>filter a regexp in or out</li>
 <li>cache the recently accessed files locally to improve load time. It can be set with the --cache</li>
-<li>view the local log files generated with resmoke.py . the option --logs sets the absolute path that is available to the server for read 
+<li>view the local log files generated with resmoke.py . the option --logs sets the absolute path that is available to the server for read
   server command line argument</li>
 <li>once it is supported by the mongod and mongos binaries it will link the log lines of the evergreen
 log viewer raw output to the corresponding lines of code that printed them. This feature is available in a demo-mode with the <a href='https://evergreen.mongodb.com/build/mongodb_mongo_master_linux_64_debug_patch_2318942c2ec98c0107a83d72f352d2878490ce09_598117962fbabe1e0f0d5c3c_17_08_02_00_08_20'>POC evergreen build</a>.</li>
@@ -26,10 +26,10 @@ log viewer raw output to the corresponding lines of code that printed them. This
 <p>
 </p>
 <p>
-   To run the server locally follow the <a href='https://github.com/10gen/kernel-tools/tree/master/lobster'>readme</a>. To query the local server instead of logkeeper, append <b>?server=host:9000/api/log</b> to the url.
+   To run the server locally follow the <a href='https://github.com/evergreen-ci/lobster/tree/master'>readme</a>. To query the local server instead of logkeeper, append <b>?server=host:9000/api/log</b> to the url.
 </p>
 <p>
-   Lobster is an easy to extend system. Feel free to make changes: here is the <a href='https://github.com/10gen/kernel-tools/tree/master/lobster'>source</a>.
+   Lobster is an easy to extend system. Feel free to make changes: here is the <a href='https://github.com/evergreen-ci/lobster/tree/master'>source</a>.
 </p>
 <p>
    NOTE: Lobster only renders the logs on the screen. As a result, the browser's "find" functionality only searches the current window. Use lobster's find feature instead.
