@@ -41,7 +41,7 @@ class Fetch extends Component {
       url : searchParams.get('url'),
       wrap: false,
       caseSensitive: false,
-      detailsOpen: true,
+      detailsOpen: false,
       filterList: searchParams.getAll('f').map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
       find: "",
       findIdx: -1,
