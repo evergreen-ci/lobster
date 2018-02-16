@@ -483,7 +483,7 @@ componentWillReceiveProps(nextProps){
       this.focusOnFind(event);
       break;
       case 70: // F
-      if(event.ctrlKey) {
+      if (event.ctrlKey || event.metaKey) {
         this.focusOnFind(event);
       }
       break;
