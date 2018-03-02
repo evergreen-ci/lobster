@@ -250,8 +250,6 @@ componentWillReceiveProps(nextProps){
     if(event) {
       event.preventDefault();
     }
-    // Trim |'s so highlighter doesn't hang.
-    this.findInput.value=this.findInput.value.replace(/(^\|)|(\|$)/g, "");
     let findRegexp = this.findInput.value;
 
     if(findRegexp == "") {
