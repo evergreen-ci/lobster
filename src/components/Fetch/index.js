@@ -41,6 +41,7 @@ class Fetch extends Component {
       url : searchParams.get('url'),
       wrap: false,
       caseSensitive: false,
+      filterIntersection: false,
       detailsOpen: false,
       filterList: searchParams.getAll('f').map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
       find: "",
@@ -523,6 +524,8 @@ componentWillReceiveProps(nextProps){
       <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value})}} /></Col>
       <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
       <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
+      <Col componentClass={ControlLabel} lg={2}>Filter Intersection</Col>
+      <Col lg={1}><ToggleButton value={this.state.filterIntersection || false} onToggle={(value) => {this.setState({filterIntersection: !value})}} /></Col>
       <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
       <Col lg={2}><textarea readOnly className='unmoving' value={this.showJIRA()}></textarea></Col>
       {this.showJobLogs()}
