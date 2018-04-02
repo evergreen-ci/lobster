@@ -293,14 +293,14 @@ componentWillReceiveProps(nextProps){
       return true;
     }
 
-    if (filter.length === 0 && inverseFilter.length === 0) {
+    if ((!filter && !inverseFilter) || (filter.length === 0 && inverseFilter.length === 0)) {
       return true;
-    } else if(filter.length === 0) {
+    } else if(!filter || filter.length === 0) {
       if(this.matchFilters(inverseFilter, line.text)) {
         return false;
       }
       return true;
-    } else if(inverseFilter.length === 0) {
+    } else if(!inverseFilter || inverseFilter.length === 0) {
       if(this.matchFilters(filter, line.text, this.state.filterIntersection)) {
         return true;
       }
