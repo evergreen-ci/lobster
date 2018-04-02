@@ -42,7 +42,6 @@ class Fetch extends Component {
       wrap: false,
       caseSensitive: false,
       filterIntersection: false,
-      inverseFilterIntersection: false,
       detailsOpen: false,
       filterList: searchParams.getAll('f').map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
       find: "",
@@ -294,10 +293,10 @@ componentWillReceiveProps(nextProps){
       return true;
     }
 
-    if(filter.length === 0 && inverseFilter.length === 0) {
+    if (filter.length === 0 && inverseFilter.length === 0) {
       return true;
     } else if(filter.length === 0) {
-      if(this.matchFilters(inverseFilter, line.text, this.state.inverseFilterIntersection)) {
+      if(this.matchFilters(inverseFilter, line.text)) {
         return false;
       }
       return true;
@@ -310,7 +309,7 @@ componentWillReceiveProps(nextProps){
       // If there are both types of filters, it has to match the filter and not match
       // the inverseFilter.
       if(this.matchFilters(filter, line.text, this.state.filterIntersection) &&
-          !this.matchFilters(inverseFilter, line.text, this.state.inverseFilterIntersection)) {
+          !this.matchFilters(inverseFilter, line.text)) {
         return true;
       }
       return false;
@@ -399,7 +398,6 @@ componentWillReceiveProps(nextProps){
   // If isIntersection === false, will return true if the string matches at least one regex
   // Otherwise, will return true if the string matches all regexes
   matchFilters(filter, string, isIntersection) {
-    console.log()
     if (isIntersection) {
       return filter.every(regex => string.match(regex));
     } else {
@@ -491,11 +489,6 @@ componentWillReceiveProps(nextProps){
     this.find(this.caseSensitive);
   }
 
-  toggleInverseFilterIntersection(value) {
-    this.setState({inverseFilterIntersection: !value});
-    this.find(this.caseSensitive);
-  }
-
   componentDidMount() {
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
   }
@@ -553,8 +546,6 @@ componentWillReceiveProps(nextProps){
       <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
       <Col componentClass={ControlLabel} lg={2}>Filter Intersection</Col>
       <Col lg={1}><ToggleButton value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
-      <Col componentClass={ControlLabel} lg={2}>Inverse Filter Intersection</Col>
-      <Col lg={1}><ToggleButton value={this.state.inverseFilterIntersection || false} onToggle={this.toggleInverseFilterIntersection.bind(this)} /></Col>
       <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
       <Col lg={2}><textarea readOnly className='unmoving' value={this.showJIRA()}></textarea></Col>
       {this.showJobLogs()}
