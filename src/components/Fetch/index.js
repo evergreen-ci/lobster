@@ -544,8 +544,8 @@ componentWillReceiveProps(nextProps){
       <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value})}} /></Col>
       <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
       <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
-      <Col componentClass={ControlLabel} lg={2}>Filter Intersection</Col>
-      <Col lg={1}><ToggleButton value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
+      <Col componentClass={ControlLabel} lg={2}>Filter Logic</Col>
+      <Col lg={1}><ToggleButton inactiveLabel={"OR"} activeLabel={"AND"} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
       <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
       <Col lg={2}><textarea readOnly className='unmoving' value={this.showJIRA()}></textarea></Col>
       {this.showJobLogs()}
