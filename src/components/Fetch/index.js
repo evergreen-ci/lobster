@@ -486,7 +486,6 @@ componentWillReceiveProps(nextProps){
 
   toggleFilterIntersection(value) {
     this.setState({filterIntersection: !value});
-    this.find(this.caseSensitive);
   }
 
   componentDidMount() {
