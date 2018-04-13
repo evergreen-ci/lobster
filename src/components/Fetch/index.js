@@ -41,6 +41,7 @@ class Fetch extends Component {
       url : searchParams.get('url'),
       wrap: false,
       caseSensitive: false,
+      filterIntersection: false,
       detailsOpen: false,
       filterList: searchParams.getAll('f').map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
       find: "",
@@ -265,8 +266,8 @@ componentWillReceiveProps(nextProps){
     }
 
     let findResults = [];
-    let filter = this.mergeOnFilters(this.state.filterList, caseSensitive);
-    let inverseFilter = this.mergeOnInverseFilters(this.state.filterList, caseSensitive);
+    let filter = this.mergeActiveFilters(this.state.filterList, caseSensitive);
+    let inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, caseSensitive);
     let findRegexpFull = this.makeRegexp(findRegexp, caseSensitive);
 
     for(let i=0; i< this.props.lines.length; i++) {
@@ -291,22 +292,24 @@ componentWillReceiveProps(nextProps){
     if(this.findBookmark(bookmarks, line.lineNumber) !== -1) {
       return true;
     }
-    if(!filter && !inverseFilter) {
+
+    if ((!filter && !inverseFilter) || (filter.length === 0 && inverseFilter.length === 0)) {
       return true;
-    } else if(!filter) {
-      if(line.text.match(inverseFilter)) {
+    } else if(!filter || filter.length === 0) {
+      if(this.matchFilters(inverseFilter, line.text)) {
         return false;
       }
       return true;
-    } else if(!inverseFilter) {
-      if(line.text.match(filter)) {
+    } else if(!inverseFilter || inverseFilter.length === 0) {
+      if(this.matchFilters(filter, line.text, this.state.filterIntersection)) {
         return true;
       }
       return false;
     } else {
       // If there are both types of filters, it has to match the filter and not match
       // the inverseFilter.
-      if(line.text.match(filter) && !line.text.match(inverseFilter)) {
+      if(this.matchFilters(filter, line.text, this.state.filterIntersection) &&
+          !this.matchFilters(inverseFilter, line.text)) {
         return true;
       }
       return false;
@@ -379,19 +382,32 @@ componentWillReceiveProps(nextProps){
     return new RegExp(regexp);
   }
 
-  mergeOnFilters(filterList, caseSensitive) {
-    let fullFilter = filterList.filter((elem) => elem.on && !elem.inverse).map((elem) => elem.text).join('|');
-    return this.makeRegexp(fullFilter, caseSensitive);
+  mergeActiveFilters(filterList, caseSensitive) {
+    return filterList
+      .filter((elem) => elem.on && !elem.inverse)
+      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, "i"))
   }
 
-  mergeOnInverseFilters(filterList, caseSensitive) {
-    let fullInverseFilter = filterList.filter((elem) => elem.on && elem.inverse).map((elem) => elem.text).join('|');
-    return this.makeRegexp(fullInverseFilter, caseSensitive);
+  mergeActiveInverseFilters(filterList, caseSensitive) {
+    return filterList
+      .filter((elem) => elem.on && elem.inverse)
+      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, "i"))
+  }
+
+  // Checks a given string against a list of regular expression filters
+  // If isIntersection === false, will return true if the string matches at least one regex
+  // Otherwise, will return true if the string matches all regexes
+  matchFilters(filter, string, isIntersection) {
+    if (isIntersection) {
+      return filter.every(regex => string.match(regex));
+    } else {
+      return filter.some(regex => string.match(regex));
+    }
   }
 
   showLines() {
-    let filter = this.mergeOnFilters(this.state.filterList, this.state.caseSensitive);
-    let inverseFilter = this.mergeOnInverseFilters(this.state.filterList, this.state.caseSensitive);
+    let filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
+    let inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
     if (!this.props.lines) {
       return <div/>
     } else {
@@ -468,6 +484,10 @@ componentWillReceiveProps(nextProps){
     this.find(!value);
   }
 
+  toggleFilterIntersection(value) {
+    this.setState({filterIntersection: !value});
+  }
+
   componentDidMount() {
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
   }
@@ -523,6 +543,8 @@ componentWillReceiveProps(nextProps){
       <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value})}} /></Col>
       <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
       <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
+      <Col componentClass={ControlLabel} lg={2}>Filter Logic</Col>
+      <Col lg={1}><ToggleButton inactiveLabel={"OR"} activeLabel={"AND"} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
       <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
       <Col lg={2}><textarea readOnly className='unmoving' value={this.showJIRA()}></textarea></Col>
       {this.showJobLogs()}
