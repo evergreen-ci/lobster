@@ -1,2 +1,49 @@
-    "jsx-a11y/href-no-hash": "off",
-    "jsx-a11y/anchor-is-valid": ["warn", { "aspects": ["invalidHref"] }]
+{
+    "extends": "eslint-config-mongodb-js",
+    "root": true,
+    "rules": {
+        "no-console": "off",
+    },
+    "env": {
+        "es6": true
+    },
+    "overrides": [{
+        "files": "**/*.js",
+        "excludedFiles": ["hadron-react-components/**/*.js", "server/*.js"],
+        "env": {
+            "browser": true,
+        },
+        "plugins": ["react"],
+        "parserOptions": {
+            "sourceType": "module",
+            "ecmaFeatures": {
+                "jsx": true
+            }
+        },
+    },
+    {
+        "files": ["server/*.js"],
+        "env": {
+            "node": true,
+            "parserOptions": {
+                "sourceType": "scripts",
+            },
+        },
+        "rules": {
+            "no-sync": "warn",
+        }
+    },
+    {
+        "files": ["test/**/*.js"],
+        "env": {
+            "node": true,
+            "plugins": ["mocha", "chai"],
+            "parserOptions": {
+                "sourceType": "scripts",
+            },
+        },
+        "rules": {
+            "no-sync": "warn",
+        }
+    }]
+}
