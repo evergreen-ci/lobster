@@ -45,12 +45,15 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build &&  mv ./build ./build.tmp; mkdir -p ./build; mv ./build.tmp ./build/lobster",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test $JEST_REPORTER --env=jsdom",
+    "test-ci": "CI=true JEST_REPORTER=--testResultsProcessor=jest-junit npm test",
     "eject": "react-scripts eject",
     "eslint": "eslint $ESLINT_REPORTER src",
-    "eslint-ci": "ESLINT_REPORTER='-f ./node_modules/eslint-junit/index.js' npm run eslint"
+    "eslint-ci": "CI=true ESLINT_REPORTER='-f ./node_modules/eslint-junit/index.js' npm run eslint"
   },
   "devDependencies": {
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-15": "^1.0.5",
     "eslint": "^4.19.1",
     "eslint-config-defaults": "^9.0.0",
     "eslint-config-mongodb-js": "^3.0.1",
@@ -58,12 +61,26 @@
     "eslint-plugin-flowtype": "^2.35.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
-    "eslint-plugin-react": "^7.7.0"
+    "eslint-plugin-react": "^7.7.0",
+    "react-hot-loader": "^4.1.3",
+    "react-test-renderer": "^15.6.2"
   },
   "eslint-junit": {
     "suiteName": "eslint tests",
-    "output": "./eslint-junit.xml",
+    "output": "./lint-junit.xml",
     "classNameTemplate": "{ruleId}",
     "titleTemplate": "{line} : {source}"
+  },
+  "jest-junit": {
+    "suiteName": "jest tests",
+    "output": "./test-junit.xml",
+    "classNameTemplate": "{classname}-{title}",
+    "titleTemplate": "{classname}-{title}",
+    "usePathForSuiteName": "true"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
   }
 }

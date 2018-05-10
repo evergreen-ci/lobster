@@ -1,9 +1,7 @@
 import React from 'react';
-
-
-import './style.css';
 import ReactList from 'react-list';
 import Highlighter from 'react-highlight-words';
+import './style.css';
 
 
 class LogLineText extends React.Component {
