@@ -512,6 +512,7 @@ componentWillReceiveProps(nextProps){
 
   focusOnFind(event) {
     this.findInput.focus();
+    this.findInput.select();
     event.preventDefault();
   }
 
