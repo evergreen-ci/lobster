@@ -2,25 +2,23 @@ import assert from 'assert';
 import Adapter from 'enzyme-adapter-react-15';
 import React from 'react';
 import Enzyme from 'enzyme';
-import LineNumber from '../src/components/LogView'
 
 Enzyme.configure({ adapter: new Adapter() });
 
-class Test extends React.Component {
-  constructor(props){
+class Test extends React.Component { // eslint-disable-line no-unused-vars
+  constructor(props) {
     super(props);
     this.state = {
-        test: true
+      test: true
     };
   }
 
   render() {
-      if (this.state) {
-          return <span>test</span>;
+    if (this.state) {
+      return <span>test</span>;
+    }
 
-      }else {
-          return <span>not test</span>;
-      }
+    return <span>not test</span>;
   }
 }
 

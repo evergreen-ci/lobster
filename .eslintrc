@@ -1,49 +1,47 @@
 {
     "extends": "eslint-config-mongodb-js",
-    "root": true,
-    "rules": {
-        "no-console": "off",
-    },
-    "env": {
-        "es6": true
-    },
-    "overrides": [{
-        "files": "**/*.js",
-        "excludedFiles": ["hadron-react-components/**/*.js", "server/*.js"],
-        "env": {
-            "browser": true,
+        "root": true,
+        "rules": {
+            "no-console": "off",
         },
-        "plugins": ["react"],
-        "parserOptions": {
-            "sourceType": "module",
-            "ecmaFeatures": {
-                "jsx": true
+        "env": {
+            "es6": true
+        },
+        "overrides": [
+        {
+            "files": "**/*.js",
+            "excludedFiles": ["hadron-react-components/**/*.js", "server/*.js"],
+            "env": {
+                "browser": true,
+            },
+            "plugins": ["react", "jest"],
+            "parserOptions": {
+                "sourceType": "module",
+                "ecmaFeatures": {
+                    "jsx": true
+                }
+            },
+        },
+        {
+            "files": ["server/*.js"],
+            "env": {
+                "node": true,
+                "parserOptions": {
+                    "sourceType": "scripts",
+                },
+            },
+            "rules": {
+                "no-sync": "warn",
             }
         },
-    },
-    {
-        "files": ["server/*.js"],
-        "env": {
-            "node": true,
-            "parserOptions": {
-                "sourceType": "scripts",
+        {
+            "files": ["<rootDir>/*.js", "<rootDir>/.*rc"],
+            "env": {
+                "node": true,
+                "parserOptions": {
+                    "sourceType": "scripts",
+                },
             },
         },
-        "rules": {
-            "no-sync": "warn",
-        }
-    },
-    {
-        "files": ["test/**/*.js"],
-        "env": {
-            "node": true,
-            "plugins": ["mocha", "chai"],
-            "parserOptions": {
-                "sourceType": "scripts",
-            },
-        },
-        "rules": {
-            "no-sync": "warn",
-        }
-    }]
+    ]
 }
