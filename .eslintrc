@@ -11,6 +11,20 @@
   "overrides": [
     {
       "files": "src/**/*.js",
+      "excludedFiles": "src/**/*.spec.js",
+      "env": {
+        "browser": true,
+      },
+      "plugins": ["react", "babel"],
+      "parserOptions": {
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        }
+      },
+    },
+    {
+      "files": "src/**/*.spec.js",
       "env": {
         "browser": true,
       },
@@ -33,15 +47,6 @@
       "rules": {
         "no-sync": "warn",
       }
-    },
-    {
-      "files": [".babelrc"],
-      "env": {
-        "node": true,
-        "parserOptions": {
-          "sourceType": "scripts",
-        },
-      },
     }
   ]
 }
