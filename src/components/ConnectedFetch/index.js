@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StoreConnector } from '../../hadron-react-components';
+import { StoreConnector } from 'hadron-react-components';
 import Fetch from '../Fetch';
 import store from '../../stores';
 import actions from '../../actions';

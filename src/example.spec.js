@@ -2,7 +2,6 @@ import assert from 'assert';
 import Adapter from 'enzyme-adapter-react-15';
 import React from 'react';
 import Enzyme from 'enzyme';
-
 Enzyme.configure({ adapter: new Adapter() });
 
 class Test extends React.Component { // eslint-disable-line no-unused-vars

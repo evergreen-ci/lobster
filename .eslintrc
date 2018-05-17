@@ -1,47 +1,47 @@
 {
-    "extends": "eslint-config-mongodb-js",
-        "root": true,
-        "rules": {
-            "no-console": "off",
+  "parser": "babel-eslint",
+  "extends": "eslint-config-mongodb-js",
+  "root": true,
+  "rules": {
+    "no-console": "off",
+  },
+  "env": {
+    "es6": true
+  },
+  "overrides": [
+    {
+      "files": "src/**/*.js",
+      "env": {
+        "browser": true,
+      },
+      "plugins": ["react", "jest", "babel"],
+      "parserOptions": {
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        }
+      },
+    },
+    {
+      "files": ["server/**/*.js"],
+      "env": {
+        "node": true,
+        "parserOptions": {
+            "sourceType": "scripts",
         },
-        "env": {
-            "es6": true
+      },
+      "rules": {
+        "no-sync": "warn",
+      }
+    },
+    {
+      "files": [".babelrc"],
+      "env": {
+        "node": true,
+        "parserOptions": {
+          "sourceType": "scripts",
         },
-        "overrides": [
-        {
-            "files": "**/*.js",
-            "excludedFiles": ["hadron-react-components/**/*.js", "server/*.js"],
-            "env": {
-                "browser": true,
-            },
-            "plugins": ["react", "jest"],
-            "parserOptions": {
-                "sourceType": "module",
-                "ecmaFeatures": {
-                    "jsx": true
-                }
-            },
-        },
-        {
-            "files": ["server/*.js"],
-            "env": {
-                "node": true,
-                "parserOptions": {
-                    "sourceType": "scripts",
-                },
-            },
-            "rules": {
-                "no-sync": "warn",
-            }
-        },
-        {
-            "files": ["<rootDir>/*.js", "<rootDir>/.*rc"],
-            "env": {
-                "node": true,
-                "parserOptions": {
-                    "sourceType": "scripts",
-                },
-            },
-        },
-    ]
+      },
+    }
+  ]
 }
