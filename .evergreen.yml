@@ -66,29 +66,29 @@ tasks:
         vars:
           cmd: run-script build
 
-#  - name: lint
-#    commands:
-#      - func: preamble
-#      - func: npm
-#        type: test
-#        vars:
-#          cmd: run-script eslint
-#      - command: attach.xunit_results
-#        params:
-#          files:
-#            - "./eslint-xunit.xml"
-#
-#  - name: test
-#    commands:
-#      - func: preamble
-#      - func: npm
-#        type: test
-#        vars:
-#          cmd: test
-#      - command: attach.xunit_results
-#        params:
-#          files:
-#            - "./jest-xunit.xml"
+  - name: lint
+    commands:
+      - func: preamble
+      - func: npm
+        type: test
+        vars:
+          cmd: run-script eslint
+      - command: attach.xunit_results
+        params:
+          files:
+            - "./eslint-xunit.xml"
+
+  - name: test
+    commands:
+      - func: preamble
+      - func: npm
+        type: test
+        vars:
+          cmd: test
+      - command: attach.xunit_results
+        params:
+          files:
+            - "./jest-xunit.xml"
 
 buildvariants:
   - name: ubuntu1604
@@ -97,5 +97,5 @@ buildvariants:
       - ubuntu1604-test
     tasks:
       - name: "dist"
-#      - name: "test"
-#      - name: "lint"
+      - name: "test"
+      - name: "lint"
