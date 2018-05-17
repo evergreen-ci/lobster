@@ -47,13 +47,13 @@
   },
   "eslint-junit": {
     "suiteName": "eslint tests",
-    "output": "./lint-junit.xml",
+    "output": "./eslint-junit.xml",
     "classNameTemplate": "{ruleId}",
     "titleTemplate": "{line} : {source}"
   },
   "jest-junit": {
     "suiteName": "jest tests",
-    "output": "./test-junit.xml",
+    "output": "./jest-junit.xml",
     "classNameTemplate": "{classname}-{title}",
     "titleTemplate": "{classname}-{title}",
     "usePathForSuiteName": "true"
