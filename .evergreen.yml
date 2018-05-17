@@ -1,0 +1,101 @@
+stepback: true
+ignore:
+    - "*.md"
+    - ".github/*" # github CODEOWNERS configuration
+
+variables:
+  - NODEJS_VERSION: 8.9.3
+  - NPM: ../nodejs/npm
+
+#######################################
+#              Functions              #
+#######################################
+functions:
+  get-project: &get-project
+    command: git.get_project
+    type: setup
+    params:
+      directory: lobster
+
+  fetch-node: &fetch-node
+    command: shell.exec
+    type: setup
+    params:
+      working_dir: .
+      script: |
+        set -ex
+        curl --silent --show-error --fail --location --retry=3 --output nodejs.tar.xz https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-linux-x64.tar.xz
+        tar xf nodejs.tar.xz
+        mv node-v* nodejs
+        chmod +x nodejs/bin/*
+
+  install: &install
+    command: subprocess.exec
+    type: setup
+    params:
+      env:
+        CI: "true"
+      working_dir: lobster
+      command: ${NPM} install
+
+  preamble:
+    - *get-project
+    - *fetch-node
+    - *install
+
+  npm:
+    command: subprocess.exec
+    type: test
+    params:
+      env:
+        CI: "true"
+      working_dir: lobster
+      command: ${NPM} ${cmd}
+
+
+#######################################
+#                Tasks                #
+#######################################
+
+tasks:
+  - name: dist
+    commands:
+      - func: preamble
+      - func: npm
+        type: test
+        vars:
+          cmd: run-script build
+
+#  - name: lint
+#    commands:
+#      - func: preamble
+#      - func: npm
+#        type: test
+#        vars:
+#          cmd: run-script eslint
+#      - command: attach.xunit_results
+#        params:
+#          files:
+#            - "./eslint-xunit.xml"
+#
+#  - name: test
+#    commands:
+#      - func: preamble
+#      - func: npm
+#        type: test
+#        vars:
+#          cmd: test
+#      - command: attach.xunit_results
+#        params:
+#          files:
+#            - "./jest-xunit.xml"
+
+buildvariants:
+  - name: ubuntu1604
+    display_name: Ubuntu 16.04
+    run_on:
+      - ubuntu1604-test
+    tasks:
+      - name: "dist"
+#      - name: "test"
+#      - name: "lint"
