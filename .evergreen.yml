@@ -1,3 +1,4 @@
+stepback: true
 ignore:
     - "*.md"
     - ".github/*" # github CODEOWNERS configuration
