@@ -5,7 +5,7 @@ import axios from 'axios';
 
 
 const LobsterStore =  Reflux.createStore ({
-  LOGKEEPER_BASE: "https://logkeeper.mongodb.org",
+  LOGKEEPER_BASE: process.env.REACT_APP_LOGKEEPER_BASE || "",
   listenables: [Actions],
   mixins: [StateMixin.store],
   // Loads content from server

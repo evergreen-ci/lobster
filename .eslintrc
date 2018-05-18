@@ -1,2 +1,52 @@
-    "jsx-a11y/href-no-hash": "off",
-    "jsx-a11y/anchor-is-valid": ["warn", { "aspects": ["invalidHref"] }]
+{
+  "parser": "babel-eslint",
+  "extends": "eslint-config-mongodb-js",
+  "root": true,
+  "rules": {
+    "no-console": "off",
+  },
+  "env": {
+    "es6": true
+  },
+  "overrides": [
+    {
+      "files": "src/**/*.js",
+      "excludedFiles": "src/**/*.spec.js",
+      "env": {
+        "browser": true,
+      },
+      "plugins": ["react", "babel"],
+      "parserOptions": {
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        }
+      },
+    },
+    {
+      "files": "src/**/*.spec.js",
+      "env": {
+        "browser": true,
+      },
+      "plugins": ["react", "jest", "babel"],
+      "parserOptions": {
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        }
+      },
+    },
+    {
+      "files": ["server/**/*.js"],
+      "env": {
+        "node": true,
+        "parserOptions": {
+            "sourceType": "scripts",
+        },
+      },
+      "rules": {
+        "no-sync": "warn",
+      }
+    }
+  ]
+}
