@@ -28,9 +28,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build &&  mv ./build ./build.tmp; mkdir -p ./build; mv ./build.tmp ./build/lobster",
     "test": "react-scripts test $JEST_REPORTER --env=jsdom",
-    "test-ci": "CI=true JEST_REPORTER=--testResultsProcessor=jest-junit npm test",
+    "test-ci": "JEST_REPORTER=--testResultsProcessor=jest-junit npm test",
     "eslint": "eslint $ESLINT_REPORTER src",
-    "eslint-ci": "CI=true ESLINT_REPORTER='-f ./node_modules/eslint-junit/index.js' npm run eslint"
+    "eslint-ci": "ESLINT_REPORTER='-f ./node_modules/eslint-junit/index.js' npm run eslint"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
@@ -49,13 +49,13 @@
     "suiteName": "eslint tests",
     "output": "./eslint-junit.xml",
     "classNameTemplate": "{ruleId}",
-    "titleTemplate": "{line} : {source}"
+    "titleTemplate": "{filePath}:{line}"
   },
   "jest-junit": {
     "suiteName": "jest tests",
     "output": "./jest-junit.xml",
-    "classNameTemplate": "{classname}-{title}",
-    "titleTemplate": "{classname}-{title}",
+    "classNameTemplate": "{filepath}",
+    "titleTemplate": "{title}",
     "usePathForSuiteName": "true"
   }
 }

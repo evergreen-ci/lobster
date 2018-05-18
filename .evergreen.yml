@@ -3,14 +3,18 @@ ignore:
     - "*.md"
     - ".github/*" # github CODEOWNERS configuration
 
-variables:
-  - NODEJS_VERSION: 8.9.3
-  - NPM: ../nodejs/npm
 
-#######################################
-#              Functions              #
-#######################################
+variables:
+  - &node
+    NODEJS_VERSION: 8.9.3
+
+
 functions:
+  preamble:
+    - *get-project
+    - *fetch-node
+    - *install
+
   get-project: &get-project
     command: git.get_project
     type: setup
@@ -22,47 +26,61 @@ functions:
     type: setup
     params:
       working_dir: .
+      shell: bash
       script: |
         set -ex
-        curl --silent --show-error --fail --location --retry=3 --output nodejs.tar.xz https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-linux-x64.tar.xz
+        curl --silent --show-error --fail --location --retry 3 --output nodejs.tar.xz https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-linux-x64.tar.xz
         tar xf nodejs.tar.xz
         mv node-v* nodejs
         chmod +x nodejs/bin/*
 
   install: &install
-    command: subprocess.exec
+    command: shell.exec
     type: setup
     params:
-      env:
-        CI: "true"
       working_dir: lobster
-      command: ${NPM} install
-
-  preamble:
-    - *get-project
-    - *fetch-node
-    - *install
+      shell: bash
+      script: |
+        set -ex
+        export PATH="${workdir}/nodejs/bin:$PATH"
+        export CI=true
+        export NPM_CONFIG_CACHE="./.node_cache"
+        npm install
 
   npm:
-    command: subprocess.exec
+    command: shell.exec
     type: test
     params:
-      env:
-        CI: "true"
       working_dir: lobster
-      command: ${NPM} ${cmd}
+      shell: bash
+      script: |
+        set -ex
+        export PATH="${workdir}/nodejs/bin:$PATH"
+        export CI=true
+        export NPM_CONFIG_CACHE="./.node_cache"
+        npm ${cmd}
 
 
-#######################################
-#                Tasks                #
-#######################################
+post:
+  - command: shell.exec
+    params:
+      working_dir: lobster
+      shell: bash
+      continue_on_err: true
+      silent: true
+      script: cat ./.node_cache/_logs/*.log
+
+  - command: attach.xunit_results
+    params:
+      files:
+        - "./lobster/*-junit.xml"
+
 
 tasks:
   - name: dist
     commands:
       - func: preamble
       - func: npm
-        type: test
         vars:
           cmd: run-script build
 
@@ -70,29 +88,22 @@ tasks:
     commands:
       - func: preamble
       - func: npm
-        type: test
         vars:
-          cmd: run-script eslint
-      - command: attach.xunit_results
-        params:
-          files:
-            - "./eslint-xunit.xml"
+          cmd: run-script eslint-ci
 
   - name: test
     commands:
       - func: preamble
       - func: npm
-        type: test
         vars:
-          cmd: test
-      - command: attach.xunit_results
-        params:
-          files:
-            - "./jest-xunit.xml"
+          cmd: run-script test-ci
+
 
 buildvariants:
   - name: ubuntu1604
     display_name: Ubuntu 16.04
+    expansions:
+      <<: *node
     run_on:
       - ubuntu1604-test
     tasks:
