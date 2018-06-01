@@ -10,8 +10,8 @@
   },
   "overrides": [
     {
-      "files": "src/**/*.js",
-      "excludedFiles": "src/**/*.spec.js",
+      "files": ["src/**/*.js", "src/**/*.jsx"],
+      "excludedFiles": ["src/**/*.spec.js", "src/**/*.test.js", "src/setupTests.js"],
       "env": {
         "browser": true,
       },
@@ -22,9 +22,12 @@
           "jsx": true
         }
       },
+      "rules": {
+        "complexity": "off"
+      }
     },
     {
-      "files": "src/**/*.spec.js",
+      "files": ["src/**/*.spec.js", "src/**/*.test.js", "src/setupTests.js"],
       "env": {
         "browser": true,
       },
@@ -37,7 +40,7 @@
       },
     },
     {
-      "files": ["server/**/*.js"],
+      "files": ["server/**/*.js", "generate-tasks.js"],
       "env": {
         "node": true,
         "parserOptions": {
@@ -45,7 +48,8 @@
         },
       },
       "rules": {
-        "no-sync": "warn",
+        "no-sync": "off",
+        "complexity": "off"
       }
     }
   ]

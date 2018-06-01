@@ -1,6 +1,5 @@
 {
   "name": "lobster",
-  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
@@ -29,8 +28,8 @@
     "build": "react-scripts build &&  mv ./build ./build.tmp; mkdir -p ./build; mv ./build.tmp ./build/lobster",
     "test": "react-scripts test $JEST_REPORTER --env=jsdom",
     "test-ci": "JEST_REPORTER=--testResultsProcessor=jest-junit npm test",
-    "eslint": "eslint $ESLINT_REPORTER src",
-    "eslint-ci": "ESLINT_REPORTER='-f ./node_modules/eslint-junit/index.js' npm run eslint"
+    "eslint": "eslint",
+    "generate-tasks": "node generate-tasks.js"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
@@ -45,17 +44,11 @@
     "jest-junit": "^3.7.0",
     "react-test-renderer": "^15.6.2"
   },
-  "eslint-junit": {
-    "suiteName": "eslint tests",
-    "output": "./eslint-junit.xml",
-    "classNameTemplate": "{ruleId}",
-    "titleTemplate": "{filePath}:{line}"
-  },
   "jest-junit": {
-    "suiteName": "jest tests",
-    "output": "./jest-junit.xml",
-    "classNameTemplate": "{filepath}",
-    "titleTemplate": "{title}",
-    "usePathForSuiteName": "true"
+    "suiteName": "lobster jest tests",
+    "output": "build/jest-junit.xml",
+    "suiteNameTemplate": "{filename}",
+    "classNameTemplate": "{filename}",
+    "titleTemplate": "{title}"
   }
 }

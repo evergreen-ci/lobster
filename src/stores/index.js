@@ -5,7 +5,7 @@ import axios from 'axios';
 
 
 const LobsterStore =  Reflux.createStore ({
-  LOGKEEPER_BASE: process.env.REACT_APP_LOGKEEPER_BASE || "",
+  LOGKEEPER_BASE: process.env.REACT_APP_LOGKEEPER_BASE || '', // eslint-disable-line no-undef
   listenables: [Actions],
   mixins: [StateMixin.store],
   // Loads content from server
