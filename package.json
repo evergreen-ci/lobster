@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build &&  mv ./build ./build.tmp; mkdir -p ./build; mv ./build.tmp ./build/lobster",
+    "build": "react-scripts build",
     "test": "react-scripts test $JEST_REPORTER --env=jsdom",
     "test-ci": "JEST_REPORTER=--testResultsProcessor=jest-junit npm test",
     "eslint": "eslint",
@@ -50,5 +50,6 @@
     "suiteNameTemplate": "{filename}",
     "classNameTemplate": "{filename}",
     "titleTemplate": "{title}"
-  }
+  },
+  "proxy": "https://logkeeper.mongodb.org/"
 }
