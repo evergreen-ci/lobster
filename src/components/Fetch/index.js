@@ -1,10 +1,9 @@
-
 import React, {Component} from 'react';
 import Reflux from 'reflux';
 import axios from 'axios';
 import Actions from '../../actions';
 import './style.css';
-import withRouter from "react-router-dom/es/withRouter";
+import withRouter from 'react-router-dom/es/withRouter';
 import ToggleButton from 'react-toggle-button';
 import Button from 'react-bootstrap/lib/Button';
 import Form from 'react-bootstrap/lib/Form';
@@ -13,19 +12,19 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Col from 'react-bootstrap/lib/Col';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Collapse from 'react-bootstrap/lib/Collapse';
-import LogView from "../LogView/index";
+import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
 import LobsterStore from '../../stores';
 
 class Fetch extends Component {
   static propTypes = {
-    lines: PropTypes.array,
+    lines: PropTypes.array
   };
 
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-    //this.componentWillReceiveProps = this.componentWillReceiveProps(this);
+    // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
     let searchParams = new URLSearchParams(props.location.search);
     let params = this.props.match.params;
     let bookmarksList = searchParams.get('bookmarks');
@@ -38,22 +37,21 @@ class Fetch extends Component {
       test: params.test,
       scrollLine: parseInt(searchParams.get('scroll')),
       server: searchParams.get('server'),
-      url : searchParams.get('url'),
+      url: searchParams.get('url'),
       wrap: false,
       caseSensitive: false,
       filterIntersection: false,
       detailsOpen: false,
       filterList: searchParams.getAll('f').map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
-      find: "",
+      find: '',
       findIdx: -1,
       findResults: [],
-      bookmarks: bookmarksArr,
+      bookmarks: bookmarksArr
     };
 
-    if(this.state.url) {
+    if (this.state.url) {
       Actions.loadDataUrl(this.state.url, this.state.server);
-    }
-    else if (this.state.build) { // this is direct route to a file
+    } else if (this.state.build) { // this is direct route to a file
       Actions.loadData(this.state.build, this.state.test, this.state.server);
     }
   }
@@ -74,46 +72,46 @@ class Fetch extends Component {
   test = test && test[1] ? test[1] : "";
   return {build: build, test: test, filter: this.filterInput.value.trim(), scrollLine: this.scrollInput.value.trim()}
   */
-  return {build: this.state.build, test: this.state.test};
-}
-
-componentWillReceiveProps(nextProps){
-  console.log("componentWillReceiveProps");
-  let params = nextProps.match.params;
-  let searchParams = new URLSearchParams(nextProps.location.search);
-  // don't reload, just update state
-  if(params.build === this.state.build && params.test === this.state.test && !searchParams.get('server')){
-    // update the filter in the child component and return
-    if(this.state.filter !== searchParams.get('filter')){
-      console.log("set filter to " + searchParams.get('filter'))
-      this.setState({filter: searchParams.get('filter')});
-    }
-    if(this.state.scrollLine !== parseInt(searchParams.get('scroll'))){
-      console.log("set scroll to: " + searchParams.get('scroll'));
-      this.setState({scrollLine: parseInt(searchParams.get('scroll'))});
-    }
+    return {build: this.state.build, test: this.state.test};
   }
-  // reload and rerender
-  else {
-    console.log("set state to server: " + searchParams.get('server'));
-    this.setState({build: params.build,
-      test: params.test,
-      filter: searchParams.get('filter'),
-      scrollLine: parseInt(searchParams.get('scroll')),
-      server: searchParams.get('server')});
-      let url = "";
+
+  componentWillReceiveProps(nextProps) {
+    console.log('componentWillReceiveProps');
+    let params = nextProps.match.params;
+    let searchParams = new URLSearchParams(nextProps.location.search);
+    // don't reload, just update state
+    if (params.build === this.state.build && params.test === this.state.test && !searchParams.get('server')) {
+    // update the filter in the child component and return
+      if (this.state.filter !== searchParams.get('filter')) {
+        console.log('set filter to ' + searchParams.get('filter'));
+        this.setState({filter: searchParams.get('filter')});
+      }
+      if (this.state.scrollLine !== parseInt(searchParams.get('scroll'))) {
+        console.log('set scroll to: ' + searchParams.get('scroll'));
+        this.setState({scrollLine: parseInt(searchParams.get('scroll'))});
+      }
+    }
+    // reload and rerender
+    else {
+      console.log('set state to server: ' + searchParams.get('server'));
+      this.setState({build: params.build,
+        test: params.test,
+        filter: searchParams.get('filter'),
+        scrollLine: parseInt(searchParams.get('scroll')),
+        server: searchParams.get('server')});
+      let url = '';
       if (this.urlInput) {
         url = this.urlInput.value.trim();
       }
 
       if (url) {
-        this.setState({url : url});
+        this.setState({url: url});
       }
     }
-    if(this.props.lines.length != nextProps.lines.length && nextProps.lines.length >0) {
+    if (this.props.lines.length != nextProps.lines.length && nextProps.lines.length > 0) {
       let newBookmarks = this.ensureBookmark(0, this.state.bookmarks);
-      newBookmarks = this.ensureBookmark(nextProps.lines[nextProps.lines.length-1].lineNumber, newBookmarks);
-      if(newBookmarks.length != this.state.bookmarks.length) {
+      newBookmarks = this.ensureBookmark(nextProps.lines[nextProps.lines.length - 1].lineNumber, newBookmarks);
+      if (newBookmarks.length != this.state.bookmarks.length) {
         this.updateURL(newBookmarks, this.state.filterList);
         this.setState({bookmarks: newBookmarks});
       }
@@ -121,7 +119,7 @@ componentWillReceiveProps(nextProps){
   }
 
   makeFilterURLString(filter) {
-    let res = "";
+    let res = '';
     res += (filter.on ? '1' : '0');
     res += (filter.inverse ? '1' : '0');
     res += filter.text;
@@ -133,23 +131,23 @@ componentWillReceiveProps(nextProps){
     var searchParams = new URLSearchParams();
 
     // make url match this state
-    let nextUrl = "";
+    let nextUrl = '';
     if (!this.urlInput || !this.urlInput.value) {
-      nextUrl = "/lobster/build/" + parsedParams.build + "/test/" + parsedParams.test;
+      nextUrl = '/lobster/build/' + parsedParams.build + '/test/' + parsedParams.test;
     } else {
-      searchParams.append("url", this.urlInput.value);
+      searchParams.append('url', this.urlInput.value);
     }
-    for(let i = 0; i < filters.length; i++) {
-      searchParams.append("f", this.makeFilterURLString(filters[i]));
+    for (let i = 0; i < filters.length; i++) {
+      searchParams.append('f', this.makeFilterURLString(filters[i]));
     }
-    if(parsedParams.scrollLine) {
-      searchParams.append("scroll", parsedParams.scrollLine);
+    if (parsedParams.scrollLine) {
+      searchParams.append('scroll', parsedParams.scrollLine);
     }
-    if(bookmarks.length > 0) {
+    if (bookmarks.length > 0) {
       let bookmarkStr = '';
-      for(let i = 0; i < bookmarks.length; i++) {
+      for (let i = 0; i < bookmarks.length; i++) {
         bookmarkStr += bookmarks[i].lineNumber;
-        if (i != bookmarks.length-1) {
+        if (i != bookmarks.length - 1) {
           bookmarkStr += ',';
         }
       }
@@ -160,25 +158,23 @@ componentWillReceiveProps(nextProps){
     }
     this.props.history.push({
       pathname: nextUrl,
-      search: searchParams.toString(),
+      search: searchParams.toString()
     });
-
   }
 
   handleSubmit(event) {
-    console.log("handleSubmit");
+    console.log('handleSubmit');
     event.preventDefault();
     // prepare do to the change
     if (this.urlInput && this.urlInput.value && !this.state.server) {
-      console.log("must set a server parameter for a custom log URL");
+      console.log('must set a server parameter for a custom log URL');
       return;
     }
 
     this.updateURL(this.state.bookmarks, this.state.filterList);
 
-    if (this.urlInput.value != this.state.url)
-    {
-      this.setState({url : this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
+    if (this.urlInput.value != this.state.url) {
+      this.setState({url: this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
       Actions.loadDataUrl(this.urlInput.value, this.state.server);
     }
   }
@@ -223,43 +219,43 @@ componentWillReceiveProps(nextProps){
   showBookmarks() {
     let self = this;
     return (
-      <div>{self.state.bookmarks.map(function(bookmark){
+      <div>{self.state.bookmarks.map(function(bookmark) {
         return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)}>{bookmark.lineNumber}</div>;
       })}</div>
     );
   }
 
   nextFind() {
-    let nextIdx = this.state.findIdx+1;
-    if (nextIdx==this.state.findResults.length) {
+    let nextIdx = this.state.findIdx + 1;
+    if (nextIdx == this.state.findResults.length) {
       nextIdx = 0;
     }
-    this.setState({findIdx: nextIdx})
+    this.setState({findIdx: nextIdx});
     this.setScroll(this.state.findResults[nextIdx]);
   }
 
   prevFind() {
-    let nextIdx = this.state.findIdx-1;
-    if (nextIdx==-1) {
-      nextIdx = this.state.findResults.length-1;
+    let nextIdx = this.state.findIdx - 1;
+    if (nextIdx == -1) {
+      nextIdx = this.state.findResults.length - 1;
     }
-    this.setState({findIdx: nextIdx})
+    this.setState({findIdx: nextIdx});
     this.setScroll(this.state.findResults[nextIdx]);
   }
 
   find(caseSensitive, event) {
-    if(event) {
+    if (event) {
       event.preventDefault();
     }
     let findRegexp = this.findInput.value;
 
-    if(findRegexp == "") {
+    if (findRegexp == '') {
       this.clearFind();
       return;
     }
 
-    if(findRegexp == this.state.find && caseSensitive == this.state.caseSensitive) {
-      if(this.state.findResults.length > 0) {
+    if (findRegexp == this.state.find && caseSensitive == this.state.caseSensitive) {
+      if (this.state.findResults.length > 0) {
         return this.nextFind();
       }
       return;
@@ -270,55 +266,55 @@ componentWillReceiveProps(nextProps){
     let inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, caseSensitive);
     let findRegexpFull = this.makeRegexp(findRegexp, caseSensitive);
 
-    for(let i=0; i< this.props.lines.length; i++) {
+    for (let i = 0; i < this.props.lines.length; i++) {
       let line = this.props.lines[i];
-      if(line.text.match(findRegexpFull) && this.shouldPrintLine(this.state.bookmarks, line, filter, inverseFilter)) {
+      if (line.text.match(findRegexpFull) && this.shouldPrintLine(this.state.bookmarks, line, filter, inverseFilter)) {
         findResults.push(line.lineNumber);
       }
     }
-    if(findResults.length > 0) {
-      this.setState({find: findRegexp, findIdx: 0, findResults: findResults})
+    if (findResults.length > 0) {
+      this.setState({find: findRegexp, findIdx: 0, findResults: findResults});
       this.setScroll(findResults[0]);
     } else {
-      this.setState({find: findRegexp, findIdx: -1, findResults: findResults})
+      this.setState({find: findRegexp, findIdx: -1, findResults: findResults});
     }
   }
 
   clearFind() {
-    this.setState({find: "", findIdx: -1, findResults: []});
+    this.setState({find: '', findIdx: -1, findResults: []});
   }
 
   shouldPrintLine(bookmarks, line, filter, inverseFilter) {
-    if(this.findBookmark(bookmarks, line.lineNumber) !== -1) {
+    if (this.findBookmark(bookmarks, line.lineNumber) !== -1) {
       return true;
     }
 
     if ((!filter && !inverseFilter) || (filter.length === 0 && inverseFilter.length === 0)) {
       return true;
-    } else if(!filter || filter.length === 0) {
-      if(this.matchFilters(inverseFilter, line.text)) {
+    } else if (!filter || filter.length === 0) {
+      if (this.matchFilters(inverseFilter, line.text)) {
         return false;
       }
       return true;
-    } else if(!inverseFilter || inverseFilter.length === 0) {
-      if(this.matchFilters(filter, line.text, this.state.filterIntersection)) {
-        return true;
-      }
-      return false;
-    } else {
-      // If there are both types of filters, it has to match the filter and not match
-      // the inverseFilter.
-      if(this.matchFilters(filter, line.text, this.state.filterIntersection) &&
-          !this.matchFilters(inverseFilter, line.text)) {
+    } else if (!inverseFilter || inverseFilter.length === 0) {
+      if (this.matchFilters(filter, line.text, this.state.filterIntersection)) {
         return true;
       }
       return false;
     }
+    // If there are both types of filters, it has to match the filter and not match
+    // the inverseFilter.
+    if (this.matchFilters(filter, line.text, this.state.filterIntersection) &&
+          !this.matchFilters(inverseFilter, line.text)) {
+      return true;
+    }
+    return false;
+
     throw 'Unreachable';
   }
 
   addFilter() {
-    if(this.findInput.value == "" || this.state.filterList.find((elem) => elem.text == this.findInput.value)) {
+    if (this.findInput.value == '' || this.state.filterList.find((elem) => elem.text == this.findInput.value)) {
       return;
     }
     let newFilters = this.state.filterList.slice();
@@ -360,24 +356,24 @@ componentWillReceiveProps(nextProps){
   showFilters() {
     let self = this;
     return (
-      <div className="filter-box">{self.state.filterList.map(function(filter){
-        return <div className='filter'>
-        <Button className='filter-button' onClick={self.removeFilter.bind(self, filter.text)} bsStyle="danger" bsSize="xsmall">{"\u2715"}</Button>
-        <Button className='filter-button' onClick={self.toggleFilter.bind(self, filter.text)} bsStyle="warning" bsSize="xsmall">{filter.on ? "||" : "\u25B6"}</Button>
-        <Button className='filter-button-big' onClick={self.toggleFilterInverse.bind(self, filter.text)} bsStyle="success" bsSize="xsmall">{filter.inverse ? "out" : "in"}</Button>
-        <span className='filter-text'>{filter.text}</span>
+      <div className="filter-box">{self.state.filterList.map(function(filter) {
+        return <div className="filter">
+          <Button className="filter-button" onClick={self.removeFilter.bind(self, filter.text)} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
+          <Button className="filter-button" onClick={self.toggleFilter.bind(self, filter.text)} bsStyle="warning" bsSize="xsmall">{filter.on ? '||' : '\u25B6'}</Button>
+          <Button className="filter-button-big" onClick={self.toggleFilterInverse.bind(self, filter.text)} bsStyle="success" bsSize="xsmall">{filter.inverse ? 'out' : 'in'}</Button>
+          <span className="filter-text">{filter.text}</span>
         </div>;
       })}</div>
     );
   }
 
   makeRegexp(regexp, caseSensitive) {
-    if(!regexp) {
+    if (!regexp) {
       return '';
     }
 
     if (!caseSensitive) {
-      return new RegExp(regexp, "i");
+      return new RegExp(regexp, 'i');
     }
     return new RegExp(regexp);
   }
@@ -385,13 +381,13 @@ componentWillReceiveProps(nextProps){
   mergeActiveFilters(filterList, caseSensitive) {
     return filterList
       .filter((elem) => elem.on && !elem.inverse)
-      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, "i"))
+      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
   mergeActiveInverseFilters(filterList, caseSensitive) {
     return filterList
       .filter((elem) => elem.on && elem.inverse)
-      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, "i"))
+      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
   // Checks a given string against a list of regular expression filters
@@ -400,18 +396,17 @@ componentWillReceiveProps(nextProps){
   matchFilters(filter, string, isIntersection) {
     if (isIntersection) {
       return filter.every(regex => string.match(regex));
-    } else {
-      return filter.some(regex => string.match(regex));
     }
+    return filter.some(regex => string.match(regex));
   }
 
   showLines() {
     let filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
     let inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
     if (!this.props.lines) {
-      return <div/>
-    } else {
-      return <LogView lines={this.props.lines}
+      return <div/>;
+    }
+    return <LogView lines={this.props.lines}
       colorMap={this.props.colorMap}
       filter={filter}
       inverseFilter={inverseFilter}
@@ -424,37 +419,35 @@ componentWillReceiveProps(nextProps){
       find={this.state.find}
       findLine={this.state.findIdx == -1 ? -1 : this.state.findResults[this.state.findIdx]}
       shouldPrintLine={this.shouldPrintLine.bind(this)}
-      />
-    }
+    />;
   }
 
   showFind() {
-    if(this.state.find != "" ){
-      if(this.state.findResults.length > 0) {
-        return <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx+1}/{this.state.findResults.length}</Col>
-        <Button lg={1} onClick={this.nextFind.bind(this)}>Next</Button>
-        <Button lg={1} onClick={this.prevFind.bind(this)}>Prev</Button></span>
-      } else {
-        return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
+    if (this.state.find != '' ) {
+      if (this.state.findResults.length > 0) {
+        return <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
+          <Button lg={1} onClick={this.nextFind.bind(this)}>Next</Button>
+          <Button lg={1} onClick={this.prevFind.bind(this)}>Prev</Button></span>;
       }
+      return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
     }
   }
 
   showJIRA() {
-    if(this.state.bookmarks.length == 0 || this.props.lines.length == 0) {
+    if (this.state.bookmarks.length == 0 || this.props.lines.length == 0) {
       return '';
     }
 
-    let text = "{noformat}\n"
-    for(let i = 0; i< this.state.bookmarks.length; i++) {
+    let text = '{noformat}\n';
+    for (let i = 0; i < this.state.bookmarks.length; i++) {
       let curr = this.state.bookmarks[i].lineNumber;
-      if(curr >= this.props.lines.length) {
+      if (curr >= this.props.lines.length) {
         text += '{noformat}';
         return text;
       }
 
-      text += this.props.lines[curr].text + '\n'
-      if((i != (this.state.bookmarks.length-1)) && (this.state.bookmarks[i+1].lineNumber != (curr+1))) {
+      text += this.props.lines[curr].text + '\n';
+      if ((i != (this.state.bookmarks.length - 1)) && (this.state.bookmarks[i + 1].lineNumber != (curr + 1))) {
         text += '...\n';
       }
     }
@@ -463,19 +456,19 @@ componentWillReceiveProps(nextProps){
   }
 
   showLogBox() {
-    if(this.state.server) {
+    if (this.state.server) {
       return (<FormGroup controlId="urlInput">
-      <Col componentClass={ControlLabel} lg={1}>Log</Col>
-      <Col lg={6}><FormControl type="text" defaultValue={this.state.url}
-      placeholder="optional. custom file location iff used with local server" inputRef={ref => { this.urlInput = ref; }}  /></Col>
-      <Col lg={1}> <Button type="submit"> Apply </Button> </Col>
+        <Col componentClass={ControlLabel} lg={1}>Log</Col>
+        <Col lg={6}><FormControl type="text" defaultValue={this.state.url}
+          placeholder="optional. custom file location iff used with local server" inputRef={ref => { this.urlInput = ref; }} /></Col>
+        <Col lg={1}> <Button type="submit"> Apply </Button> </Col>
       </FormGroup>);
     }
   }
 
   showJobLogs() {
-    if(!this.state.server) {
-      return (<Col lg={1}><Button href={"/build/" + this.state.build}>Job Logs</Button></Col>);
+    if (!this.state.server) {
+      return (<Col lg={1}><Button href={'/build/' + this.state.build}>Job Logs</Button></Col>);
     }
   }
 
@@ -489,24 +482,24 @@ componentWillReceiveProps(nextProps){
   }
 
   componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown.bind(this));
+    document.addEventListener('keydown', this.handleKeyDown.bind(this));
   }
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown.bind(this));
+    document.removeEventListener('keydown', this.handleKeyDown.bind(this));
   }
 
   handleKeyDown(event) {
-    switch( event.keyCode ) {
+    switch ( event.keyCode ) {
       case 114: // F3
-      this.focusOnFind(event);
-      break;
-      case 70: // F
-      if (event.ctrlKey || event.metaKey) {
         this.focusOnFind(event);
-      }
-      break;
+        break;
+      case 70: // F
+        if (event.ctrlKey || event.metaKey) {
+          this.focusOnFind(event);
+        }
+        break;
       default:
-      break;
+        break;
     }
   }
 
@@ -519,50 +512,50 @@ componentWillReceiveProps(nextProps){
   render() {
     return (
       <div>
-      <div className="bookmarks-bar monospace">
-      {this.showBookmarks()}
-      </div>
-      <div className="main">
-      <Col lg={11} lgOffset={1}>
-      <div className="find-box">
-      <Form horizontal >
-      <FormGroup controlId="findInput" className='filter-header'>
-      <Col lg={6} ><FormControl type="text"
-      placeholder="optional. regexp to search for"
-      inputRef={ref => { this.findInput = ref; }}/></Col>
-      <Button type="submit" lg={1} onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
-      {this.showFind()}
-      <Button lg={1} onClick={this.addFilter.bind(this)}>Add Filter</Button>
-      <Button lg={1} onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>{this.state.detailsOpen ? "Hide Details" : "Show Details"}</Button>
-      </FormGroup>
-      <Collapse className='collapse-menu' in={this.state.detailsOpen}>
-      <div>
-      <Form horizontal onSubmit={this.handleSubmit}>
-      {this.showLogBox()}
-      <FormGroup controlId="wrap">
-      <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
-      <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value})}} /></Col>
-      <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
-      <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
-      <Col componentClass={ControlLabel} lg={2}>Filter Logic</Col>
-      <Col lg={1}><ToggleButton inactiveLabel={"OR"} activeLabel={"AND"} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
-      <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
-      <Col lg={2}><textarea readOnly className='unmoving' value={this.showJIRA()}></textarea></Col>
-      {this.showJobLogs()}
-      </FormGroup>
-      </Form>
-      <div className="filterBox">
-      {this.showFilters()}
-      </div>
-      </div>
-      </Collapse>
-      </Form>
-      </div>
-      </Col>
-      <div className="log-list">
-      {this.showLines()}
-      </div>
-      </div>
+        <div className="bookmarks-bar monospace">
+          {this.showBookmarks()}
+        </div>
+        <div className="main">
+          <Col lg={11} lgOffset={1}>
+            <div className="find-box">
+              <Form horizontal >
+                <FormGroup controlId="findInput" className="filter-header">
+                  <Col lg={6} ><FormControl type="text"
+                    placeholder="optional. regexp to search for"
+                    inputRef={ref => { this.findInput = ref; }}/></Col>
+                  <Button type="submit" lg={1} onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
+                  {this.showFind()}
+                  <Button lg={1} onClick={this.addFilter.bind(this)}>Add Filter</Button>
+                  <Button lg={1} onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
+                </FormGroup>
+                <Collapse className="collapse-menu" in={this.state.detailsOpen}>
+                  <div>
+                    <Form horizontal onSubmit={this.handleSubmit}>
+                      {this.showLogBox()}
+                      <FormGroup controlId="wrap">
+                        <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
+                        <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value});}} /></Col>
+                        <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
+                        <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
+                        <Col componentClass={ControlLabel} lg={2}>Filter Logic</Col>
+                        <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
+                        <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
+                        <Col lg={2}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
+                        {this.showJobLogs()}
+                      </FormGroup>
+                    </Form>
+                    <div className="filterBox">
+                      {this.showFilters()}
+                    </div>
+                  </div>
+                </Collapse>
+              </Form>
+            </div>
+          </Col>
+          <div className="log-list">
+            {this.showLines()}
+          </div>
+        </div>
       </div>
     );
   }
