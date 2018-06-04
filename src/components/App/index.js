@@ -1,16 +1,12 @@
-import React from 'react';
-import { Switch, Route, Link } from 'react-router-dom';
+import { Switch, Route, Link } from 'react-router-dom'; // eslint-disable-line no-unused-vars
 import './style.css';
 import About from '../About/index.js';
 import ConnectedFetch from '../ConnectedFetch/index.js';
 import NotFound from '../NotFound/index.js';
-import Nav from 'react-bootstrap/lib/Nav';
-import Grid from 'react-bootstrap/lib/Grid';
-import Row from 'react-bootstrap/lib/Row';
-import Col from 'react-bootstrap/lib/Col';
-import NavItem from 'react-bootstrap/lib/NavItem';
+import Nav from 'react-bootstrap/lib/Nav'; // eslint-disable-line no-unused-vars
+import NavItem from 'react-bootstrap/lib/NavItem'; // eslint-disable-line no-unused-vars
 
-const Main = () => (
+const Main = () => ( // eslint-disable-line no-unused-vars
   <main>
     <Switch>
       <Route exact path="/lobster/about" component={About}/>
@@ -23,12 +19,12 @@ const Main = () => (
 );
 
 
-const handleSelect = (selectedKey) => {
+const handleSelect = (selectedKey) => { // eslint-disable-line no-unused-vars
   this.activeKey = selectedKey;
 };
 // The Header creates links that can be used to navigate
 // between routes.
-const Header = () => (
+const Header = () => ( // eslint-disable-line no-unused-vars
   <header className="head">
     <Nav bsStyle="pills" activeKey={this.activeKey} onSelect={this.handleSelect}>
       <NavItem eventKey={1} href="/lobster/about">About</NavItem>

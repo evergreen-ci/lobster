@@ -10,7 +10,7 @@ const LobsterStore = Reflux.createStore({
   mixins: [StateMixin.store],
   // Loads content from server
   loadDataUrl: function(url, server) {
-    if (server && url != '') {
+    if (server && url !== '') {
       console.log('server: ' + server );
       console.log('url: ' + url );
       axios.post('http://' + server, {url: url })

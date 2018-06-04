@@ -1,10 +1,8 @@
 import React from 'react';
-import ReactList from 'react-list';
-import Highlighter from 'react-highlight-words';
 import './style.css';
 
 
-class LogLineText extends React.Component {
+class LogLineText extends React.Component { // eslint-disable-line no-unused-vars
   constructor(props) {
     super(props);
     this.state = {
@@ -18,7 +16,7 @@ class LogLineText extends React.Component {
   }
 }
 
-class LineNumber extends React.Component {
+class LineNumber extends React.Component { // eslint-disable-line no-unused-vars
   constructor(props) {
     super(props);
     this.state = {
@@ -35,7 +33,7 @@ class LineNumber extends React.Component {
   }
 }
 
-class LogOptions extends React.Component {
+class LogOptions extends React.Component { // eslint-disable-line no-unused-vars
   constructor(props) {
     super(props);
     this.state = {
@@ -57,7 +55,7 @@ class LogOptions extends React.Component {
   }
 }
 
-class FullLogLine extends React.Component {
+class FullLogLine extends React.Component { // eslint-disable-line no-unused-vars
   constructor(props) {
     super(props);
     this.state = {
@@ -96,7 +94,7 @@ class LogView extends React.Component {
     let list = (
       <ReactList
         ref="logList"
-        itemRenderer={(index, key) => (<FullLogLine key={key} found={filteredLines[index].lineNumber == this.props.findLine} bookmarked={this.props.findBookmark(this.props.bookmarks, filteredLines[index].lineNumber) !== -1} wrap={this.props.wrap} line={filteredLines[index]} toggleBookmark={this.props.toggleBookmark} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive}/>)}
+        itemRenderer={(index, key) => (<FullLogLine key={key} found={filteredLines[index].lineNumber === this.props.findLine} bookmarked={this.props.findBookmark(this.props.bookmarks, filteredLines[index].lineNumber) !== -1} wrap={this.props.wrap} line={filteredLines[index]} toggleBookmark={this.props.toggleBookmark} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive}/>)}
         length={filteredLines.length}
         initialIndex={this.props.scrollLine}
         type={this.props.wrap ? 'variable' : 'uniform'}
@@ -161,7 +159,7 @@ class LogView extends React.Component {
     if (findElements.length > 0) {
       let elem = findElements[0];
       let position = elem.getBoundingClientRect();
-      let windowHeight = window.innerHeight;
+      let windowHeight = window.innerHeight; // eslint-disable-line no-unused-vars
       let windowWidth = window.innerWidth;
 
       let scrollX = window.scrollX;

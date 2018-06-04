@@ -1,5 +1,4 @@
-import React from 'react';
-import Jumbotron from 'react-bootstrap/lib/Jumbotron';
+import Jumbotron from 'react-bootstrap/lib/Jumbotron'; // eslint-disable-line no-unused-vars
 
 import './style.css';
 

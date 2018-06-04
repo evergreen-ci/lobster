@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { StoreConnector } from 'hadron-react-components';
-import Fetch from '../Fetch';
+import React from 'react';
+import { StoreConnector } from 'hadron-react-components'; // eslint-disable-line no-unused-vars
+import Fetch from '../Fetch'; // eslint-disable-line no-unused-vars
 import store from '../../stores';
 import actions from '../../actions';
 
-class ConnectedFetch extends Component {
+class ConnectedFetch extends React.Component {
   static displayName = 'ConnectedFetch';
   render() {
     return (
