@@ -5,7 +5,7 @@ import './style.css';
 
 
 class LogLineText extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
     };
@@ -16,11 +16,10 @@ class LogLineText extends React.Component {
     let highlightStyle = {color: this.props.colorMap[this.props.port], 'background-image': 'inherit', 'background-color': 'pink'};
     return <Highlighter highlightClassName={'findResult' + this.props.lineNumber} caseSensitive={this.props.caseSensitive} unhighlightStyle={style} highlightStyle={highlightStyle} textToHighlight={this.props.text} searchWords={[this.props.find]} />;
   }
-
 }
 
 class LineNumber extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
     };
@@ -31,14 +30,13 @@ class LineNumber extends React.Component {
   }
 
   render() {
-    let style = {width: "60px", display:"inline-block"};
-    return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style}  onDoubleClick={this.handleDoubleClick.bind(this)}></span>;
+    let style = {width: '60px', display: 'inline-block'};
+    return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style} onDoubleClick={this.handleDoubleClick.bind(this)}></span>;
   }
-
 }
 
 class LogOptions extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
     };
@@ -51,17 +49,16 @@ class LogOptions extends React.Component {
   }
 
   render() {
-    let style = {width: "30px", display:"inline-block"};
-    if(this.props.gitRef) {
-      return<span style={style} data-pseudo-content="&nbsp;&#128279;&nbsp;" onClick={this.handleClick.bind(this, this.props.gitRef)}></span>;
+    let style = {width: '30px', display: 'inline-block'};
+    if (this.props.gitRef) {
+      return <span style={style} data-pseudo-content="&nbsp;&#128279;&nbsp;" onClick={this.handleClick.bind(this, this.props.gitRef)}></span>;
     }
     return <span style={style}></span>;
   }
-
 }
 
 class FullLogLine extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
     };
@@ -83,29 +80,27 @@ class FullLogLine extends React.Component {
 
     return (<div key={this.props.key} className={className}><LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} /> <LogOptions gitRef={this.props.line.gitRef} /> <LogLineText text={this.props.line.text} lineNumber={this.props.line.lineNumber} port={this.props.line.port} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive}/></div>);
   }
-
 }
 
 class LogView extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       processed: '',
-      dummyCounter: 0,
+      dummyCounter: 0
     };
-    this.indexMap= {};
+    this.indexMap = {};
   }
 
   genList(filteredLines) {
-    let list =  (
+    let list = (
       <ReactList
-      ref="logList"
-      itemRenderer={(index, key) => (<FullLogLine key={key} found={filteredLines[index].lineNumber == this.props.findLine} bookmarked={this.props.findBookmark(this.props.bookmarks, filteredLines[index].lineNumber) !== -1} wrap={this.props.wrap} line={filteredLines[index]} toggleBookmark={this.props.toggleBookmark} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive}/>)}
-      length={filteredLines.length}
-      initialIndex={this.props.scrollLine}
-      type={this.props.wrap ? 'variable' :'uniform'}
-      useStaticSize={true}
+        ref="logList"
+        itemRenderer={(index, key) => (<FullLogLine key={key} found={filteredLines[index].lineNumber == this.props.findLine} bookmarked={this.props.findBookmark(this.props.bookmarks, filteredLines[index].lineNumber) !== -1} wrap={this.props.wrap} line={filteredLines[index]} toggleBookmark={this.props.toggleBookmark} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive}/>)}
+        length={filteredLines.length}
+        initialIndex={this.props.scrollLine}
+        type={this.props.wrap ? 'variable' : 'uniform'}
+        useStaticSize={true}
       />
     );
     return list;
@@ -113,7 +108,7 @@ class LogView extends React.Component {
 
   scrollToLine(lineNumber) {
     let scrollIndex = this.indexMap[lineNumber] - 20;
-    if(scrollIndex < 0) {
+    if (scrollIndex < 0) {
       scrollIndex = 0;
     }
     this.refs.logList.scrollTo(scrollIndex);
@@ -121,36 +116,36 @@ class LogView extends React.Component {
     window.scrollBy(0, -45);
   }
 
-  shouldComponentUpdate(nextProps, nextState){
+  shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.scrollLine !== null && nextProps.scrollLine >= 0) {
       this.scrollToLine(nextProps.scrollLine);
     }
 
-    if(nextProps.lines !== this.props.lines) {
+    if (nextProps.lines !== this.props.lines) {
       return true;
     }
-    if(nextProps.bookmarks !== this.props.bookmarks) {
+    if (nextProps.bookmarks !== this.props.bookmarks) {
       return true;
     }
-    if(nextProps.filter !== this.props.filter) {
+    if (nextProps.filter !== this.props.filter) {
       return true;
     }
-    if(nextProps.inverseFilter !== this.props.inverseFilter) {
+    if (nextProps.inverseFilter !== this.props.inverseFilter) {
       return true;
     }
-    if(nextProps.find !== this.props.find) {
+    if (nextProps.find !== this.props.find) {
       return true;
     }
-    if(nextProps.findLine !== this.props.findLine) {
+    if (nextProps.findLine !== this.props.findLine) {
       return true;
     }
-    if(nextProps.wrap !== this.props.wrap) {
+    if (nextProps.wrap !== this.props.wrap) {
       return true;
     }
-    if(nextProps.caseSensitive !== this.props.caseSensitive) {
+    if (nextProps.caseSensitive !== this.props.caseSensitive) {
       return true;
     }
-    if(nextState.dummyCounter !== this.state.dummyCounter){
+    if (nextState.dummyCounter !== this.state.dummyCounter) {
       return true;
     }
 
@@ -158,12 +153,12 @@ class LogView extends React.Component {
   }
 
   scrollFindIntoView() {
-    if(this.props.findLine < 0) {
+    if (this.props.findLine < 0) {
       return;
     }
 
-    let findElements = document.getElementsByClassName("findResult" + this.props.findLine);
-    if(findElements.length > 0) {
+    let findElements = document.getElementsByClassName('findResult' + this.props.findLine);
+    if (findElements.length > 0) {
       let elem = findElements[0];
       let position = elem.getBoundingClientRect();
       let windowHeight = window.innerHeight;
@@ -172,14 +167,14 @@ class LogView extends React.Component {
       let scrollX = window.scrollX;
       let scrollY = window.scrollY - 45; // Account for header
 
-      if(position.right > windowWidth) {
+      if (position.right > windowWidth) {
         // Scroll so the leftmost part of the component is 2/3 of the way into the screen.
-        scrollX = position.left - windowWidth/3;
+        scrollX = position.left - windowWidth / 3;
       }
       window.scrollTo(scrollX, scrollY);
     } else {
       // We probably just need to setState again.
-      this.setState({dummyCounter: this.state.dummyCounter + 1})
+      this.setState({dummyCounter: this.state.dummyCounter + 1});
     }
   }
 
@@ -189,7 +184,7 @@ class LogView extends React.Component {
     }
 
     // If the find index changed, scroll to the right if necessary.
-    if(this.props.findLine !== prevProps.findLine || this.props.find !== prevProps.find || this.state.dummyCounter !== prevState.dummyCounter) {
+    if (this.props.findLine !== prevProps.findLine || this.props.find !== prevProps.find || this.state.dummyCounter !== prevState.dummyCounter) {
       this.scrollFindIntoView();
     }
   }
@@ -199,9 +194,9 @@ class LogView extends React.Component {
     let processed = [];
     let lines = self.props.lines;
     let j = 0;
-    this.indexMap={};
+    this.indexMap = {};
 
-    for (let i = 0;i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i++) {
       let line = lines[i];
       if (!this.props.shouldPrintLine(this.props.bookmarks, line, this.props.filter, this.props.inverseFilter)) {
         continue;
@@ -210,11 +205,11 @@ class LogView extends React.Component {
       processed.push(line);
     }
     let output = self.genList(processed);
-    if(output.length !== 0){
+    if (output.length !== 0) {
       return (<div>
         {output}
-        </div>
-      )
+      </div>
+      );
     }
     return (<div>Failed!</div>);
   }
