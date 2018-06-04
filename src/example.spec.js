@@ -2,7 +2,7 @@ import assert from 'assert';
 import React from 'react';
 import Enzyme from 'enzyme';
 
-class Test extends React.Component { // eslint-disable-line no-unused-vars
+class Test extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

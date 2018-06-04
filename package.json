@@ -28,6 +28,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test $JEST_REPORTER --env=jsdom",
     "test-ci": "JEST_REPORTER=--testResultsProcessor=jest-junit npm test",
+    "lint": "eslint -- .",
     "eslint": "eslint",
     "generate-tasks": "node generate-tasks.js"
   },

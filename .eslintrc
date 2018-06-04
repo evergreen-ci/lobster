@@ -1,10 +1,7 @@
 {
   "parser": "babel-eslint",
-  "extends": "eslint-config-mongodb-js",
+  "extends": ["eslint-config-mongodb-js", "plugin:react/recommended"],
   "root": true,
-  "rules": {
-    "no-console": "off",
-  },
   "env": {
     "es6": true
   },
@@ -23,7 +20,7 @@
         }
       },
       "rules": {
-        "complexity": "off"
+        "react/no-deprecated": "warn",
       }
     },
     {
@@ -38,6 +35,9 @@
           "jsx": true
         }
       },
+      "rules": {
+        "react/no-deprecated": "warn",
+      }
     },
     {
       "files": ["server/**/*.js", "generate-tasks.js"],
@@ -48,9 +48,13 @@
         },
       },
       "rules": {
-        "no-sync": "off",
-        "complexity": "off"
+        "no-sync": "off"
       }
     }
-  ]
+  ],
+  "rules": {
+    "complexity": "off",
+    "no-console": "off",
+    "no-unused-vars": ["error", {"argsIgnorePattern": "^_"}]
+  }
 }
