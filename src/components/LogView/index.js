@@ -187,7 +187,6 @@ class LogView extends React.Component {
     if (findElements.length > 0) {
       let elem = findElements[0];
       let position = elem.getBoundingClientRect();
-      let _windowHeight = window.innerHeight;
       let windowWidth = window.innerWidth;
 
       let scrollX = window.scrollX;

@@ -1,7 +1,16 @@
+
 import React from 'react';
 import Actions from '../../actions';
 import './style.css';
+import ToggleButton from 'react-toggle-button';
+import Button from 'react-bootstrap/lib/Button';
+import Form from 'react-bootstrap/lib/Form';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import Col from 'react-bootstrap/lib/Col';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+import Collapse from 'react-bootstrap/lib/Collapse';
+import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
 
 class Fetch extends React.Component {
@@ -241,7 +250,7 @@ class Fetch extends React.Component {
       return;
     }
 
-    if (findRegexp == this.state.find && caseSensitive === this.state.caseSensitive) { // eslint-disable-line eqeqeq
+    if (findRegexp === this.state.find && caseSensitive === this.state.caseSensitive) {
       if (this.state.findResults.length > 0) {
         return this.nextFind();
       }

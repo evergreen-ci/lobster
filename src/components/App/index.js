@@ -20,14 +20,14 @@ const Main = () => (
 );
 
 
-const _handleSelect = (selectedKey) => {
+const handleSelect = (selectedKey) => {
   this.activeKey = selectedKey;
 };
 // The Header creates links that can be used to navigate
 // between routes.
 const Header = () => (
   <header className="head">
-    <Nav bsStyle="pills" activeKey={this.activeKey} onSelect={this.handleSelect}>
+    <Nav bsStyle="pills" activeKey={this.activeKey} onSelect={handleSelect}>
       <NavItem eventKey={1} href="/lobster/about">About</NavItem>
       <NavItem eventKey={2} href="/lobster">Viewer</NavItem>
     </Nav>
