@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Actions from '../../actions';
 import './style.css';
@@ -216,7 +215,7 @@ class Fetch extends React.Component {
     let self = this;
     return (
       <div>{self.state.bookmarks.map(function(bookmark) {
-        return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)}>{bookmark.lineNumber}</div>;
+        return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)} key={bookmark.id}>{bookmark.lineNumber}</div>;
       })}</div>
     );
   }
@@ -351,7 +350,7 @@ class Fetch extends React.Component {
     let self = this;
     return (
       <div className="filter-box">{self.state.filterList.map(function(filter) {
-        return <div className="filter">
+        return <div className="filter" key={filter.id}>
           <Button className="filter-button" onClick={self.removeFilter.bind(self, filter.text)} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
           <Button className="filter-button" onClick={self.toggleFilter.bind(self, filter.text)} bsStyle="warning" bsSize="xsmall">{filter.on ? '||' : '\u25B6'}</Button>
           <Button className="filter-button-big" onClick={self.toggleFilterInverse.bind(self, filter.text)} bsStyle="success" bsSize="xsmall">{filter.inverse ? 'out' : 'in'}</Button>

@@ -1,5 +1,6 @@
-import Highlighter from 'react-highlight-words';
 import React from 'react';
+import ReactList from 'react-list';
+import Highlighter from 'react-highlight-words';
 import './style.css';
 
 
@@ -109,7 +110,7 @@ class LogView extends React.Component {
   genList(filteredLines) {
     let list = (
       <ReactList
-        ref="logList"
+        ref={(c) => { this.logList = c; }}
         itemRenderer={(index, key) => (
           <FullLogLine
             key={key}
@@ -137,7 +138,7 @@ class LogView extends React.Component {
     if (scrollIndex < 0) {
       scrollIndex = 0;
     }
-    this.refs.logList.scrollTo(scrollIndex);
+    this.ref.logList.scrollTo(scrollIndex);
 
     window.scrollBy(0, -45);
   }
