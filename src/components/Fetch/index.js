@@ -296,8 +296,6 @@ class Fetch extends React.Component {
       return true;
     }
     return false;
-
-    throw 'Unreachable'; // eslint-disable-line no-unreachable, no-throw-literal
   }
 
   addFilter() {

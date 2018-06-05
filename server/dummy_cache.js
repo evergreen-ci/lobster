@@ -3,7 +3,7 @@
 module.exports = function() {
   return {
     put: function(filename, data) {
-      return new Promise(function(resolve, reject) { resolve(data); }); // eslint-disable-line no-unused-vars
+      return new Promise(function(resolve, _reject) { resolve(data); });
     },
 
     get: function(filename) {

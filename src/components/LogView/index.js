@@ -1,8 +1,9 @@
+import Highlighter from 'react-highlight-words';
 import React from 'react';
 import './style.css';
 
 
-class LogLineText extends React.Component { // eslint-disable-line no-unused-vars
+class LogLineText extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -12,11 +13,20 @@ class LogLineText extends React.Component { // eslint-disable-line no-unused-var
   render() {
     let style = {color: this.props.colorMap[this.props.port]};
     let highlightStyle = {color: this.props.colorMap[this.props.port], 'background-image': 'inherit', 'background-color': 'pink'};
-    return <Highlighter highlightClassName={'findResult' + this.props.lineNumber} caseSensitive={this.props.caseSensitive} unhighlightStyle={style} highlightStyle={highlightStyle} textToHighlight={this.props.text} searchWords={[this.props.find]} />;
+    return (
+      <Highlighter
+        highlightClassName={'findResult' + this.props.lineNumber}
+        caseSensitive={this.props.caseSensitive}
+        unhighlightStyle={style}
+        highlightStyle={highlightStyle}
+        textToHighlight={this.props.text}
+        searchWords={[this.props.find]}
+      />
+    );
   }
 }
 
-class LineNumber extends React.Component { // eslint-disable-line no-unused-vars
+class LineNumber extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -33,7 +43,7 @@ class LineNumber extends React.Component { // eslint-disable-line no-unused-vars
   }
 }
 
-class LogOptions extends React.Component { // eslint-disable-line no-unused-vars
+class LogOptions extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -55,7 +65,7 @@ class LogOptions extends React.Component { // eslint-disable-line no-unused-vars
   }
 }
 
-class FullLogLine extends React.Component { // eslint-disable-line no-unused-vars
+class FullLogLine extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -76,7 +86,13 @@ class FullLogLine extends React.Component { // eslint-disable-line no-unused-var
       className += ' highlighted';
     }
 
-    return (<div key={this.props.key} className={className}><LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} /> <LogOptions gitRef={this.props.line.gitRef} /> <LogLineText text={this.props.line.text} lineNumber={this.props.line.lineNumber} port={this.props.line.port} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive}/></div>);
+    return (
+      <div key={this.props.key} className={className}>
+        <LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} />
+        <LogOptions gitRef={this.props.line.gitRef} />
+        <LogLineText text={this.props.line.text} lineNumber={this.props.line.lineNumber} port={this.props.line.port} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive} />
+      </div>
+    );
   }
 }
 
@@ -94,7 +110,19 @@ class LogView extends React.Component {
     let list = (
       <ReactList
         ref="logList"
-        itemRenderer={(index, key) => (<FullLogLine key={key} found={filteredLines[index].lineNumber === this.props.findLine} bookmarked={this.props.findBookmark(this.props.bookmarks, filteredLines[index].lineNumber) !== -1} wrap={this.props.wrap} line={filteredLines[index]} toggleBookmark={this.props.toggleBookmark} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive}/>)}
+        itemRenderer={(index, key) => (
+          <FullLogLine
+            key={key}
+            found={filteredLines[index].lineNumber === this.props.findLine}
+            bookmarked={this.props.findBookmark(this.props.bookmarks, filteredLines[index].lineNumber) !== -1}
+            wrap={this.props.wrap}
+            line={filteredLines[index]}
+            toggleBookmark={this.props.toggleBookmark}
+            colorMap={this.props.colorMap}
+            find={this.props.find}
+            caseSensitive={this.props.caseSensitive}
+          />
+        )}
         length={filteredLines.length}
         initialIndex={this.props.scrollLine}
         type={this.props.wrap ? 'variable' : 'uniform'}
@@ -159,7 +187,7 @@ class LogView extends React.Component {
     if (findElements.length > 0) {
       let elem = findElements[0];
       let position = elem.getBoundingClientRect();
-      let windowHeight = window.innerHeight; // eslint-disable-line no-unused-vars
+      let _windowHeight = window.innerHeight;
       let windowWidth = window.innerWidth;
 
       let scrollX = window.scrollX;

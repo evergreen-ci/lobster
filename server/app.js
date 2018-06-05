@@ -1,4 +1,3 @@
-const os = require('os'); // eslint-disable-line no-unused-vars
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
@@ -49,7 +48,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'build', 'lobster/index.html'));
 });
 
-app.post('/api/log', function(req, res, next) { // eslint-disable-line no-unused-vars
+app.post('/api/log', function(req, res, _next) {
   let logUrl = req.body.url;
   let filter = req.body.filter;
   if (logUrl === undefined) {
@@ -72,7 +71,7 @@ app.post('/api/log', function(req, res, next) { // eslint-disable-line no-unused
         console.log('got from cache: ' + fileName);
         res.send(data);
       })
-      .catch(_ => { // eslint-disable-line no-unused-vars
+      .catch(_ => {
         console.log(fileName + ' is not in the cache');
 
         let stream = needle.get(logUrl);
