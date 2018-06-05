@@ -14,7 +14,15 @@ import PropTypes from 'prop-types';
 
 class Fetch extends React.Component {
   static propTypes = {
-    lines: PropTypes.array
+    lines: PropTypes.array,
+    location: PropTypes.shape({
+      search: PropTypes.any
+    }),
+    match: PropTypes.shape({
+      params: PropTypes.object
+    }),
+    history: PropTypes.array,
+    colorMap: PropTypes.array
   };
 
   constructor(props) {

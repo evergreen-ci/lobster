@@ -1,10 +1,21 @@
 import React from 'react';
 import ReactList from 'react-list';
 import Highlighter from 'react-highlight-words';
+import PropTypes from 'prop-types';
+
 import './style.css';
 
 
 class LogLineText extends React.Component {
+  static propTypes = {
+    colorMap: PropTypes.array,
+    port: PropTypes.number,
+    caseSensitive: PropTypes.bool,
+    lineNumber: PropTypes.number,
+    find: PropTypes.any,
+    text: PropTypes.string
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -28,6 +39,11 @@ class LogLineText extends React.Component {
 }
 
 class LineNumber extends React.Component {
+  static propTypes = {
+    toggleBookmark: PropTypes.func,
+    lineNumber: PropTypes.number
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -45,6 +61,10 @@ class LineNumber extends React.Component {
 }
 
 class LogOptions extends React.Component {
+  static propTypes = {
+    gitRef: PropTypes.any
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -67,6 +87,23 @@ class LogOptions extends React.Component {
 }
 
 class FullLogLine extends React.Component {
+  static propTypes = {
+    bookmarked: PropTypes.bool,
+    wrap: PropTypes.bool,
+    found: PropTypes.bool,
+    key: PropTypes.any,
+    line: PropTypes.shape({
+      gitRef: PropTypes.any,
+      port: PropTypes.number,
+      text: PropTypes.toString,
+      lineNumber: PropTypes.number
+    }),
+    toggleBookmark: PropTypes.func,
+    caseSensitive: PropTypes.bool,
+    colorMap: PropTypes.array,
+    find: PropTypes.any
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -98,6 +135,21 @@ class FullLogLine extends React.Component {
 }
 
 class LogView extends React.Component {
+  static propTypes = {
+    findBookmark: PropTypes.func,
+    findLine: PropTypes.number,
+    bookmarks: PropTypes.any,
+    wrap: PropTypes.bool,
+    toggleBookmark: PropTypes.func,
+    colorMap: PropTypes.array,
+    find: PropTypes.any,
+    caseSensitive: PropTypes.bool,
+    scrollLine: PropTypes.number,
+    lines: PropTypes.any,
+    filter: PropTypes.any,
+    inverseFilter: PropTypes.any,
+    shouldPrintLine: PropTypes.func
+  };
   constructor(props) {
     super(props);
     this.state = {
