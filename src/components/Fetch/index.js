@@ -223,7 +223,7 @@ class Fetch extends React.Component {
     let self = this;
     return (
       <div>{self.state.bookmarks.map(function(bookmark) {
-        return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)} key={bookmark.id}>{bookmark.lineNumber}</div>;
+        return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)} key={bookmark.lineNumber}>{bookmark.lineNumber}</div>;
       })}</div>
     );
   }
