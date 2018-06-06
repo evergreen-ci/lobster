@@ -100,8 +100,7 @@ class FullLogLine extends React.Component {
     toggleBookmark: PropTypes.func,
     caseSensitive: PropTypes.bool,
     colorMap: PropTypes.object,
-    find: PropTypes.any,
-    key: PropTypes.any
+    find: PropTypes.any
   };
 
   constructor(props) {
@@ -125,7 +124,7 @@ class FullLogLine extends React.Component {
     }
 
     return (
-      <div className={className} key={this.props.key}>
+      <div className={className}>
         <LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} />
         <LogOptions gitRef={this.props.line.gitRef} />
         <LogLineText text={this.props.line.text} lineNumber={this.props.line.lineNumber} port={this.props.line.port} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive} />
@@ -156,16 +155,20 @@ class LogView extends React.Component {
       processed: '',
       dummyCounter: 0
     };
+    this.logListRef = null;
     this.indexMap = {};
+    this.setLogListRef = element => {
+      this.logListRef = element;
+    };
   }
 
   genList(filteredLines) {
     let list = (
       <ReactList
-        ref = "logList"
-        itemRenderer={(index, key) => (
+        ref = {this.setLogListRef}
+        itemRenderer={(index, _key) => (
           <FullLogLine
-            key={key}
+            key={index}
             found={filteredLines[index].lineNumber === this.props.findLine}
             bookmarked={this.props.findBookmark(this.props.bookmarks, filteredLines[index].lineNumber) !== -1}
             wrap={this.props.wrap}
@@ -190,7 +193,7 @@ class LogView extends React.Component {
     if (scrollIndex < 0) {
       scrollIndex = 0;
     }
-    this.refs.logList.scrollTo(scrollIndex);
+    this.logListRef.scrollTo(scrollIndex);
 
     window.scrollBy(0, -45);
   }
