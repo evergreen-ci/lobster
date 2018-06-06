@@ -8,7 +8,7 @@ import './style.css';
 
 class LogLineText extends React.Component {
   static propTypes = {
-    colorMap: PropTypes.array,
+    colorMap: PropTypes.object,
     port: PropTypes.number,
     caseSensitive: PropTypes.bool,
     lineNumber: PropTypes.number,
@@ -100,7 +100,7 @@ class FullLogLine extends React.Component {
     }),
     toggleBookmark: PropTypes.func,
     caseSensitive: PropTypes.bool,
-    colorMap: PropTypes.array,
+    colorMap: PropTypes.object,
     find: PropTypes.any
   };
 
@@ -141,7 +141,7 @@ class LogView extends React.Component {
     bookmarks: PropTypes.any,
     wrap: PropTypes.bool,
     toggleBookmark: PropTypes.func,
-    colorMap: PropTypes.array,
+    colorMap: PropTypes.object,
     find: PropTypes.any,
     caseSensitive: PropTypes.bool,
     scrollLine: PropTypes.number,

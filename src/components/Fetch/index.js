@@ -21,8 +21,8 @@ class Fetch extends React.Component {
     match: PropTypes.shape({
       params: PropTypes.object
     }),
-    history: PropTypes.array,
-    colorMap: PropTypes.array
+    history: PropTypes.object,
+    colorMap: PropTypes.object
   };
 
   constructor(props) {
