@@ -357,8 +357,8 @@ class Fetch extends React.Component {
   showFilters() {
     let self = this;
     return (
-      <div className="filter-box">{self.state.filterList.map(function(filter) {
-        return <div className="filter" key={filter}>
+      <div className="filter-box">{self.state.filterList.map(function(filter, _index) {
+        return <div className="filter" key={filter.text}>
           <Button className="filter-button" onClick={self.removeFilter.bind(self, filter.text)} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
           <Button className="filter-button" onClick={self.toggleFilter.bind(self, filter.text)} bsStyle="warning" bsSize="xsmall">{filter.on ? '||' : '\u25B6'}</Button>
           <Button className="filter-button-big" onClick={self.toggleFilterInverse.bind(self, filter.text)} bsStyle="success" bsSize="xsmall">{filter.inverse ? 'out' : 'in'}</Button>
@@ -427,8 +427,8 @@ class Fetch extends React.Component {
     if (this.state.find !== '' ) {
       if (this.state.findResults.length > 0) {
         return <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
-          <Button lg={1} onClick={this.nextFind.bind(this)}>Next</Button>
-          <Button lg={1} onClick={this.prevFind.bind(this)}>Prev</Button></span>;
+          <Button onClick={this.nextFind.bind(this)}>Next</Button>
+          <Button onClick={this.prevFind.bind(this)}>Prev</Button></span>;
       }
       return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
     }
@@ -519,38 +519,38 @@ class Fetch extends React.Component {
         <div className="main">
           <Col lg={11} lgOffset={1}>
             <div className="find-box">
-              <Form horizontal >
+              <Form horizontal>
                 <FormGroup controlId="findInput" className="filter-header">
                   <Col lg={6} ><FormControl type="text"
                     placeholder="optional. regexp to search for"
                     inputRef={ref => { this.findInput = ref; }}/></Col>
-                  <Button type="submit" lg={1} onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
+                  <Button type="submit" onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
                   {this.showFind()}
-                  <Button lg={1} onClick={this.addFilter.bind(this)}>Add Filter</Button>
-                  <Button lg={1} onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
+                  <Button onClick={this.addFilter.bind(this)}>Add Filter</Button>
+                  <Button onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
                 </FormGroup>
-                <Collapse className="collapse-menu" in={this.state.detailsOpen}>
-                  <div>
-                    <Form horizontal onSubmit={this.handleSubmit}>
-                      {this.showLogBox()}
-                      <FormGroup controlId="wrap">
-                        <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
-                        <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value});}} /></Col>
-                        <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
-                        <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
-                        <Col componentClass={ControlLabel} lg={2}>Filter Logic</Col>
-                        <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
-                        <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
-                        <Col lg={2}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
-                        {this.showJobLogs()}
-                      </FormGroup>
-                    </Form>
-                    <div className="filterBox">
-                      {this.showFilters()}
-                    </div>
-                  </div>
-                </Collapse>
               </Form>
+              <Collapse className="collapse-menu" in={this.state.detailsOpen}>
+                <div>
+                  <Form horizontal onSubmit={this.handleSubmit}>
+                    {this.showLogBox()}
+                    <FormGroup controlId="wrap">
+                      <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
+                      <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value});}} /></Col>
+                      <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
+                      <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
+                      <Col componentClass={ControlLabel} lg={2}>Filter Logic</Col>
+                      <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
+                      <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
+                      <Col lg={2}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
+                      {this.showJobLogs()}
+                    </FormGroup>
+                  </Form>
+                  <div className="filterBox">
+                    {this.showFilters()}
+                  </div>
+                </div>
+              </Collapse>
             </div>
           </Col>
           <div className="log-list">

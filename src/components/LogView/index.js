@@ -24,7 +24,7 @@ class LogLineText extends React.Component {
 
   render() {
     let style = {color: this.props.colorMap[this.props.port]};
-    let highlightStyle = {color: this.props.colorMap[this.props.port], 'background-image': 'inherit', 'background-color': 'pink'};
+    let highlightStyle = {color: this.props.colorMap[this.props.port], 'backgroundImage': 'inherit', 'backgroundColor': 'pink'};
     return (
       <Highlighter
         highlightClassName={'findResult' + this.props.lineNumber}
