@@ -514,6 +514,11 @@ class Fetch extends React.Component {
     event.preventDefault();
   }
 
+  handleChangeFind(caseSensitive) {
+    this.find(caseSensitive);
+    this.showFind();
+  }
+
   render() {
     return (
       <div>
@@ -527,7 +532,8 @@ class Fetch extends React.Component {
                 <FormGroup controlId="findInput" className="filter-header">
                   <Col lg={6} ><FormControl type="text"
                     placeholder="optional. regexp to search for"
-                    inputRef={ref => { this.findInput = ref; }}/></Col>
+                    inputRef={ref => { this.findInput = ref; }}
+                    onChange={this.handleChangeFind.bind(this, this.state.caseSensitive)}/></Col>
                   <Button type="submit" onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
                   {this.showFind()}
                   <Button onClick={this.addFilter.bind(this)}>Add Filter</Button>
