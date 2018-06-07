@@ -9,10 +9,10 @@ import './style.css';
 class LogLineText extends React.Component {
   static propTypes = {
     colorMap: PropTypes.object,
-    port: PropTypes.number,
+    port: PropTypes.string,
     caseSensitive: PropTypes.bool,
     lineNumber: PropTypes.number,
-    find: PropTypes.any,
+    find: PropTypes.string,
     text: PropTypes.string
   };
 
@@ -93,14 +93,14 @@ class FullLogLine extends React.Component {
     found: PropTypes.bool,
     line: PropTypes.shape({
       gitRef: PropTypes.any,
-      port: PropTypes.number,
+      port: PropTypes.string,
       text: PropTypes.string,
       lineNumber: PropTypes.number
     }),
     toggleBookmark: PropTypes.func,
     caseSensitive: PropTypes.bool,
     colorMap: PropTypes.object,
-    find: PropTypes.any
+    find: PropTypes.string
   };
 
   constructor(props) {
@@ -137,16 +137,16 @@ class LogView extends React.Component {
   static propTypes = {
     findBookmark: PropTypes.func,
     findLine: PropTypes.number,
-    bookmarks: PropTypes.any,
+    bookmarks: PropTypes.array,
     wrap: PropTypes.bool,
     toggleBookmark: PropTypes.func,
     colorMap: PropTypes.object,
-    find: PropTypes.any,
+    find: PropTypes.string,
     caseSensitive: PropTypes.bool,
     scrollLine: PropTypes.number,
-    lines: PropTypes.any,
-    filter: PropTypes.any,
-    inverseFilter: PropTypes.any,
+    lines: PropTypes.array,
+    filter: PropTypes.array,
+    inverseFilter: PropTypes.array,
     shouldPrintLine: PropTypes.func
   };
   constructor(props) {

@@ -16,10 +16,13 @@ class Fetch extends React.Component {
   static propTypes = {
     lines: PropTypes.array,
     location: PropTypes.shape({
-      search: PropTypes.any
+      search: PropTypes.string
     }),
     match: PropTypes.shape({
-      params: PropTypes.object
+      params: PropTypes.shape({
+        build: PropTypes.string,
+        test: PropTypes.string
+      })
     }),
     history: PropTypes.object,
     colorMap: PropTypes.object
@@ -357,7 +360,7 @@ class Fetch extends React.Component {
   showFilters() {
     let self = this;
     return (
-      <div className="filter-box">{self.state.filterList.map(function(filter, _index) {
+      <div className="filter-box">{self.state.filterList.map(function(filter) {
         return <div className="filter" key={filter.text}>
           <Button className="filter-button" onClick={self.removeFilter.bind(self, filter.text)} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
           <Button className="filter-button" onClick={self.toggleFilter.bind(self, filter.text)} bsStyle="warning" bsSize="xsmall">{filter.on ? '||' : '\u25B6'}</Button>
@@ -427,6 +430,7 @@ class Fetch extends React.Component {
     if (this.state.find !== '' ) {
       if (this.state.findResults.length > 0) {
         return <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
+
           <Button onClick={this.nextFind.bind(this)}>Next</Button>
           <Button onClick={this.prevFind.bind(this)}>Prev</Button></span>;
       }
