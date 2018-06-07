@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { StoreConnector } from 'hadron-react-components';
 import {LobsterStore} from './stores';
 import Actions from './actions';
-import 'url-search-params-polyfill';
+import 'babel-polyfill';
 
 import './index.css';
 
