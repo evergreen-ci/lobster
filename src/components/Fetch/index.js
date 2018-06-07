@@ -1,9 +1,6 @@
-import React, {Component} from 'react';
-import Reflux from 'reflux';
-import axios from 'axios';
+import React from 'react';
 import Actions from '../../actions';
 import './style.css';
-import withRouter from 'react-router-dom/es/withRouter';
 import ToggleButton from 'react-toggle-button';
 import Button from 'react-bootstrap/lib/Button';
 import Form from 'react-bootstrap/lib/Form';
@@ -14,11 +11,21 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Collapse from 'react-bootstrap/lib/Collapse';
 import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
-import LobsterStore from '../../stores';
 
-class Fetch extends Component {
+class Fetch extends React.Component {
   static propTypes = {
-    lines: PropTypes.array
+    lines: PropTypes.array,
+    location: PropTypes.shape({
+      search: PropTypes.string
+    }),
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        build: PropTypes.string,
+        test: PropTypes.string
+      })
+    }),
+    history: PropTypes.object,
+    colorMap: PropTypes.object
   };
 
   constructor(props) {
@@ -30,12 +37,12 @@ class Fetch extends Component {
     let bookmarksList = searchParams.get('bookmarks');
     let bookmarksArr = [];
     if (bookmarksList) {
-      bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n)}));
+      bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n, 10)}));
     }
     this.state = {
       build: params.build,
       test: params.test,
-      scrollLine: parseInt(searchParams.get('scroll')),
+      scrollLine: parseInt(searchParams.get('scroll'), 10),
       server: searchParams.get('server'),
       url: searchParams.get('url'),
       wrap: false,
@@ -86,18 +93,17 @@ class Fetch extends Component {
         console.log('set filter to ' + searchParams.get('filter'));
         this.setState({filter: searchParams.get('filter')});
       }
-      if (this.state.scrollLine !== parseInt(searchParams.get('scroll'))) {
+      if (this.state.scrollLine !== parseInt(searchParams.get('scroll'), 10)) {
         console.log('set scroll to: ' + searchParams.get('scroll'));
-        this.setState({scrollLine: parseInt(searchParams.get('scroll'))});
+        this.setState({scrollLine: parseInt(searchParams.get('scroll'), 10)});
       }
-    }
     // reload and rerender
-    else {
+    } else {
       console.log('set state to server: ' + searchParams.get('server'));
       this.setState({build: params.build,
         test: params.test,
         filter: searchParams.get('filter'),
-        scrollLine: parseInt(searchParams.get('scroll')),
+        scrollLine: parseInt(searchParams.get('scroll'), 10),
         server: searchParams.get('server')});
       let url = '';
       if (this.urlInput) {
@@ -108,10 +114,10 @@ class Fetch extends Component {
         this.setState({url: url});
       }
     }
-    if (this.props.lines.length != nextProps.lines.length && nextProps.lines.length > 0) {
+    if (this.props.lines.length !== nextProps.lines.length && nextProps.lines.length > 0) {
       let newBookmarks = this.ensureBookmark(0, this.state.bookmarks);
       newBookmarks = this.ensureBookmark(nextProps.lines[nextProps.lines.length - 1].lineNumber, newBookmarks);
-      if (newBookmarks.length != this.state.bookmarks.length) {
+      if (newBookmarks.length !== this.state.bookmarks.length) {
         this.updateURL(newBookmarks, this.state.filterList);
         this.setState({bookmarks: newBookmarks});
       }
@@ -147,7 +153,7 @@ class Fetch extends Component {
       let bookmarkStr = '';
       for (let i = 0; i < bookmarks.length; i++) {
         bookmarkStr += bookmarks[i].lineNumber;
-        if (i != bookmarks.length - 1) {
+        if (i !== bookmarks.length - 1) {
           bookmarkStr += ',';
         }
       }
@@ -173,7 +179,7 @@ class Fetch extends Component {
 
     this.updateURL(this.state.bookmarks, this.state.filterList);
 
-    if (this.urlInput.value != this.state.url) {
+    if (this.urlInput.value !== this.state.url) {
       this.setState({url: this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
       Actions.loadDataUrl(this.urlInput.value, this.state.server);
     }
@@ -220,14 +226,14 @@ class Fetch extends Component {
     let self = this;
     return (
       <div>{self.state.bookmarks.map(function(bookmark) {
-        return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)}>{bookmark.lineNumber}</div>;
+        return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)} key={bookmark.lineNumber}>{bookmark.lineNumber}</div>;
       })}</div>
     );
   }
 
   nextFind() {
     let nextIdx = this.state.findIdx + 1;
-    if (nextIdx == this.state.findResults.length) {
+    if (nextIdx === this.state.findResults.length) {
       nextIdx = 0;
     }
     this.setState({findIdx: nextIdx});
@@ -236,7 +242,7 @@ class Fetch extends Component {
 
   prevFind() {
     let nextIdx = this.state.findIdx - 1;
-    if (nextIdx == -1) {
+    if (nextIdx === -1) {
       nextIdx = this.state.findResults.length - 1;
     }
     this.setState({findIdx: nextIdx});
@@ -249,12 +255,12 @@ class Fetch extends Component {
     }
     let findRegexp = this.findInput.value;
 
-    if (findRegexp == '') {
+    if (findRegexp === '') {
       this.clearFind();
       return;
     }
 
-    if (findRegexp == this.state.find && caseSensitive == this.state.caseSensitive) {
+    if (findRegexp === this.state.find && caseSensitive === this.state.caseSensitive) {
       if (this.state.findResults.length > 0) {
         return this.nextFind();
       }
@@ -309,12 +315,10 @@ class Fetch extends Component {
       return true;
     }
     return false;
-
-    throw 'Unreachable';
   }
 
   addFilter() {
-    if (this.findInput.value == '' || this.state.filterList.find((elem) => elem.text == this.findInput.value)) {
+    if (this.findInput.value === '' || this.state.filterList.find((elem) => elem.text === this.findInput.value)) {
       return;
     }
     let newFilters = this.state.filterList.slice();
@@ -326,7 +330,7 @@ class Fetch extends Component {
 
   toggleFilter(text) {
     let newFilters = this.state.filterList.slice();
-    let filterIdx = newFilters.findIndex((elem) => text == elem.text);
+    let filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters[filterIdx].on = !newFilters[filterIdx].on;
 
     this.setState({filterList: newFilters});
@@ -336,7 +340,7 @@ class Fetch extends Component {
 
   toggleFilterInverse(text) {
     let newFilters = this.state.filterList.slice();
-    let filterIdx = newFilters.findIndex((elem) => text == elem.text);
+    let filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters[filterIdx].inverse = !newFilters[filterIdx].inverse;
 
     this.setState({filterList: newFilters});
@@ -346,7 +350,7 @@ class Fetch extends Component {
 
   removeFilter(text) {
     let newFilters = this.state.filterList.slice();
-    let filterIdx = newFilters.findIndex((elem) => text == elem.text);
+    let filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters.splice(filterIdx, 1);
 
     this.setState({filterList: newFilters});
@@ -357,7 +361,7 @@ class Fetch extends Component {
     let self = this;
     return (
       <div className="filter-box">{self.state.filterList.map(function(filter) {
-        return <div className="filter">
+        return <div className="filter" key={filter.text}>
           <Button className="filter-button" onClick={self.removeFilter.bind(self, filter.text)} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
           <Button className="filter-button" onClick={self.toggleFilter.bind(self, filter.text)} bsStyle="warning" bsSize="xsmall">{filter.on ? '||' : '\u25B6'}</Button>
           <Button className="filter-button-big" onClick={self.toggleFilterInverse.bind(self, filter.text)} bsStyle="success" bsSize="xsmall">{filter.inverse ? 'out' : 'in'}</Button>
@@ -417,24 +421,25 @@ class Fetch extends Component {
       toggleBookmark={this.toggleBookmark.bind(this)}
       bookmarks={this.state.bookmarks}
       find={this.state.find}
-      findLine={this.state.findIdx == -1 ? -1 : this.state.findResults[this.state.findIdx]}
+      findLine={this.state.findIdx === -1 ? -1 : this.state.findResults[this.state.findIdx]}
       shouldPrintLine={this.shouldPrintLine.bind(this)}
     />;
   }
 
   showFind() {
-    if (this.state.find != '' ) {
+    if (this.state.find !== '' ) {
       if (this.state.findResults.length > 0) {
         return <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
-          <Button lg={1} onClick={this.nextFind.bind(this)}>Next</Button>
-          <Button lg={1} onClick={this.prevFind.bind(this)}>Prev</Button></span>;
+
+          <Button onClick={this.nextFind.bind(this)}>Next</Button>
+          <Button onClick={this.prevFind.bind(this)}>Prev</Button></span>;
       }
       return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
     }
   }
 
   showJIRA() {
-    if (this.state.bookmarks.length == 0 || this.props.lines.length == 0) {
+    if (this.state.bookmarks.length === 0 || this.props.lines.length === 0) {
       return '';
     }
 
@@ -447,7 +452,7 @@ class Fetch extends Component {
       }
 
       text += this.props.lines[curr].text + '\n';
-      if ((i != (this.state.bookmarks.length - 1)) && (this.state.bookmarks[i + 1].lineNumber != (curr + 1))) {
+      if ((i !== (this.state.bookmarks.length - 1)) && (this.state.bookmarks[i + 1].lineNumber !== (curr + 1))) {
         text += '...\n';
       }
     }
@@ -518,38 +523,38 @@ class Fetch extends Component {
         <div className="main">
           <Col lg={11} lgOffset={1}>
             <div className="find-box">
-              <Form horizontal >
+              <Form horizontal>
                 <FormGroup controlId="findInput" className="filter-header">
                   <Col lg={6} ><FormControl type="text"
                     placeholder="optional. regexp to search for"
                     inputRef={ref => { this.findInput = ref; }}/></Col>
-                  <Button type="submit" lg={1} onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
+                  <Button type="submit" onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
                   {this.showFind()}
-                  <Button lg={1} onClick={this.addFilter.bind(this)}>Add Filter</Button>
-                  <Button lg={1} onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
+                  <Button onClick={this.addFilter.bind(this)}>Add Filter</Button>
+                  <Button onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
                 </FormGroup>
-                <Collapse className="collapse-menu" in={this.state.detailsOpen}>
-                  <div>
-                    <Form horizontal onSubmit={this.handleSubmit}>
-                      {this.showLogBox()}
-                      <FormGroup controlId="wrap">
-                        <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
-                        <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value});}} /></Col>
-                        <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
-                        <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
-                        <Col componentClass={ControlLabel} lg={2}>Filter Logic</Col>
-                        <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
-                        <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
-                        <Col lg={2}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
-                        {this.showJobLogs()}
-                      </FormGroup>
-                    </Form>
-                    <div className="filterBox">
-                      {this.showFilters()}
-                    </div>
-                  </div>
-                </Collapse>
               </Form>
+              <Collapse className="collapse-menu" in={this.state.detailsOpen}>
+                <div>
+                  <Form horizontal onSubmit={this.handleSubmit}>
+                    {this.showLogBox()}
+                    <FormGroup controlId="wrap">
+                      <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
+                      <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value});}} /></Col>
+                      <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
+                      <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
+                      <Col componentClass={ControlLabel} lg={2}>Filter Logic</Col>
+                      <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
+                      <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
+                      <Col lg={2}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
+                      {this.showJobLogs()}
+                    </FormGroup>
+                  </Form>
+                  <div className="filterBox">
+                    {this.showFilters()}
+                  </div>
+                </div>
+              </Collapse>
             </div>
           </Col>
           <div className="log-list">

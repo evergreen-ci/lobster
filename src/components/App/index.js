@@ -1,13 +1,10 @@
 import React from 'react';
-import { Switch, Route, Link } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import './style.css';
 import About from '../About/index.js';
 import ConnectedFetch from '../ConnectedFetch/index.js';
 import NotFound from '../NotFound/index.js';
 import Nav from 'react-bootstrap/lib/Nav';
-import Grid from 'react-bootstrap/lib/Grid';
-import Row from 'react-bootstrap/lib/Row';
-import Col from 'react-bootstrap/lib/Col';
 import NavItem from 'react-bootstrap/lib/NavItem';
 
 const Main = () => (
@@ -30,7 +27,7 @@ const handleSelect = (selectedKey) => {
 // between routes.
 const Header = () => (
   <header className="head">
-    <Nav bsStyle="pills" activeKey={this.activeKey} onSelect={this.handleSelect}>
+    <Nav bsStyle="pills" activeKey={this.activeKey} onSelect={handleSelect}>
       <NavItem eventKey={1} href="/lobster/about">About</NavItem>
       <NavItem eventKey={2} href="/lobster">Viewer</NavItem>
     </Nav>

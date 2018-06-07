@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { StoreConnector } from 'hadron-react-components';
 import Fetch from '../Fetch';
 import store from '../../stores';
 import actions from '../../actions';
 
-class ConnectedFetch extends Component {
+class ConnectedFetch extends React.Component {
   static displayName = 'ConnectedFetch';
   render() {
     return (

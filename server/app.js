@@ -1,4 +1,3 @@
-const os = require('os');
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
@@ -25,7 +24,7 @@ if (cache) {
   myCache = require('./dummy_cache')();
 }
 
-const logs_dir = require('yargs').argv.logs;
+const logsDir = require('yargs').argv.logs;
 
 // Setup logger
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
@@ -49,14 +48,14 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'build', 'lobster/index.html'));
 });
 
-app.post('/api/log', function(req, res, next) {
-  let log_url = req.body.url;
+app.post('/api/log', function(req, res, _next) {
+  let logUrl = req.body.url;
   let filter = req.body.filter;
-  if (log_url === undefined) {
+  if (logUrl === undefined) {
     console.log('url is undefined' );
     res.status(500).send('url cannot be undefined');
   }
-  console.log('url = ' + log_url);
+  console.log('url = ' + logUrl);
 
   if (filter) {
     console.log('filter = ' + filter);
@@ -64,22 +63,22 @@ app.post('/api/log', function(req, res, next) {
     console.log('filter is not set');
   }
 
-  if (isValidURL(log_url)) {
-    let fileName = hash(log_url).toString();
+  if (isValidURL(logUrl)) {
+    let fileName = hash(logUrl).toString();
 
     myCache.get(fileName)
       .then(data => {
         console.log('got from cache: ' + fileName);
         res.send(data);
       })
-      .catch(err => {
+      .catch(_ => {
         console.log(fileName + ' is not in the cache');
 
-        let stream = needle.get(log_url);
+        let stream = needle.get(logUrl);
         let result = '';
 
         stream.on('readable', function() {
-          while (data = this.read()) {
+          for (var data = this.read(); data; data = this.read()) {
             result += data;
           }
         });
@@ -94,8 +93,8 @@ app.post('/api/log', function(req, res, next) {
           }
         });
       });
-  } else if (logs_dir) {
-    res.sendFile(path.resolve(logs_dir, log_url));
+  } else if (logsDir) {
+    res.sendFile(path.resolve(logsDir, logUrl));
   } else {
     console.log('Must provide the --logs argument to handle local files');
   }
