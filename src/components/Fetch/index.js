@@ -278,6 +278,7 @@ class Fetch extends React.Component {
         findResults.push(line.lineNumber);
       }
     }
+
     if (findResults.length > 0) {
       this.setState({find: findRegexp, findIdx: 0, findResults: findResults});
       this.setScroll(findResults[0]);
@@ -516,7 +517,6 @@ class Fetch extends React.Component {
 
   handleChangeFind(caseSensitive) {
     this.find(caseSensitive);
-    this.showFind();
   }
 
   render() {
