@@ -20,7 +20,7 @@
         }
       },
       "rules": {
-        "react/no-deprecated": "off",
+        "react/no-deprecated": "warn",
       }
     },
     {
