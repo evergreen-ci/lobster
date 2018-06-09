@@ -3,7 +3,7 @@ import StateMixin from 'reflux-state-mixin';
 import Actions from '../actions';
 import axios from 'axios';
 
-import { config } from '../config';
+import { LOGKEEPER_BASE } from '../config';
 
 const LobsterStore = Reflux.createStore({
   listenables: [Actions],
@@ -29,9 +29,9 @@ const LobsterStore = Reflux.createStore({
       return '';
     }
     if (!testParam) {
-      return config.logkeeperBase + '/build/' + buildParam + '/all?raw=1';
+      return LOGKEEPER_BASE + '/build/' + buildParam + '/all?raw=1';
     }
-    return config.logkeeperBase + '/build/' + buildParam + '/test/' + testParam + '?raw=1';
+    return LOGKEEPER_BASE + '/build/' + buildParam + '/test/' + testParam + '?raw=1';
   },
 
   loadData: function(build, test, server) {
