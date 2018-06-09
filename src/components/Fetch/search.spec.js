@@ -2,7 +2,6 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import Fetch from '../Fetch';
 import assert from 'assert';
-import FormControl from 'react-bootstrap/lib/FormControl';
 
 
 test('Fetch-Search', function() {
@@ -37,6 +36,7 @@ test('Fetch-Search', function() {
       }}
       colorMap={{}}
     />);
+  wrapper.update();
   assert.equal(wrapper.state('findIdx'), -1);
   assert.equal(wrapper.state('findResults').length, 0);
   assert.equal(wrapper.state('find'), '');
@@ -44,11 +44,7 @@ test('Fetch-Search', function() {
   assert.equal(wrapper.state('caseSensitive'), false);
   assert.equal(wrapper.state('detailsOpen'), false);
 
-  // wrapper.find(FormControl).first().prop('onChange')({ value: '4' });
   wrapper.find('#findInput').instance().value = '2018';
   wrapper.find('#findInput').at(0).simulate('change');
-  // wrapper.instance().find(false);
-  // wrapper.update();
-  // assert.equal(wrapper.state('findResults').length, 430);
   assert.equal(wrapper.state('findIdx'), 0);
 });

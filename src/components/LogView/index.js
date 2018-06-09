@@ -240,6 +240,7 @@ class LogView extends React.Component {
     }
 
     let findElements = document.getElementsByClassName('findResult' + this.props.findLine);
+
     if (findElements.length > 0) {
       let elem = findElements[0];
       let position = elem.getBoundingClientRect();
@@ -253,9 +254,10 @@ class LogView extends React.Component {
         scrollX = position.left - windowWidth / 3;
       }
       window.scrollTo(scrollX, scrollY);
+      this.setState(_state => ({dummyCounter: 0}));
     } else {
       // We probably just need to setState again.
-      this.setState({dummyCounter: this.state.dummyCounter + 1});
+      this.setState(state => ({dummyCounter: state.dummyCounter + 1}));
     }
   }
 
@@ -265,7 +267,7 @@ class LogView extends React.Component {
     }
 
     // If the find index changed, scroll to the right if necessary.
-    if (this.props.findLine !== prevProps.findLine || this.props.find !== prevProps.find || this.state.dummyCounter !== prevState.dummyCounter) {
+    if (this.props.findLine !== prevProps.findLine || this.props.find !== prevProps.find || (this.state.dummyCounter !== prevState.dummyCounter && this.state.dummyCounter < 5)) {
       this.scrollFindIntoView();
     }
   }
