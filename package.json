@@ -54,5 +54,10 @@
     "classNameTemplate": "{filename}",
     "titleTemplate": "{title}"
   },
-  "proxy": "https://logkeeper.mongodb.org/"
+  "proxy": {
+    "^/build": {
+      "target": "https://logkeeper.mongodb.org",
+      "changeOrigin": true
+    }
+  }
 }
