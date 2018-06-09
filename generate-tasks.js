@@ -20,11 +20,14 @@ const endsWithAnyOf = (ends, testVal) =>
 const isFileWithEnding = (endings, file) =>
   isFile(file) && endsWithAnyOf(endings, file);
 
+const testFileSpec = () => ['.spec.', '.test.']
+    .reduce((acc, val) => acc.concat(['js', 'jsx'].map(suf => val + suf)),[])
+
 // given a directory, return true if that directory has files ending in
 // .spec.js or .test.js
 const hasTests = dir =>
   readdirSync(dir)
-    .reduce((acc, val) => acc || isFileWithEnding(['.spec.js', '.test.js'], join(dir, val)), false);
+    .reduce((acc, val) => acc || isFileWithEnding(testFileSpec(), join(dir, val)), false);
 
 // return a function that given a directory, returns a task with the given
 // prefix, npm script, and bash file glob. The directory forms the suffix of
@@ -53,7 +56,7 @@ const dirs = scanDirs.reduce((acc, val) => acc.concat(getDirectories(val)), []).
 const testDirs = dirs.filter(hasTests);
 console.log('Will run tests in: ', testDirs);
 
-const testTasks = testDirs.map(makeTask('test', 'test-ci', '*.{spec,test}.js'));
+const testTasks = testDirs.map(makeTask('test', 'test-ci', '*.{spec,test}.js{,x}'));
 var gt = {
   'buildvariants': [
     {
