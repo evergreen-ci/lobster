@@ -240,7 +240,6 @@ class LogView extends React.Component {
     }
 
     let findElements = document.getElementsByClassName('findResult' + this.props.findLine);
-
     if (findElements.length > 0) {
       let elem = findElements[0];
       let position = elem.getBoundingClientRect();
