@@ -74,12 +74,12 @@ functions:
     command: shell.exec
     type: test
     params:
-      working_dir: lobster/build
+      working_dir: lobster
       shell: bash
       continue_on_err: true
       ignore_standard_error: true
       silent: true
-      script: rm *-junit.xml
+      script: rm build/*-junit.xml
 
 
 post:
@@ -90,15 +90,9 @@ post:
       continue_on_err: true
       ignore_standard_error: true
       silent: true
-      script: cat ./.node_cache/_logs/*.log
-  - command: shell.exec
-    params:
-      working_dir: lobster
-      shell: bash
-      continue_on_err: true
-      ignore_standard_error: true
-      silent: true
-      script: rm ./.node_cache/_logs/*.log
+      script: |
+        cat ./.node_cache/_logs/*log
+        rm ./.node_cache/_logs/*log
   - func: results-attach
   - func: results-clean
 
@@ -117,6 +111,13 @@ tasks:
       - func: npm
         vars:
           cmd: run-script eslint -- .
+
+  - name: flow
+    commands:
+      - func: preamble
+      - func: npm
+        vars:
+          cmd: run-script flow -- --temp-dir=.node_cache/_logs
 
   - name: generate-tasks
     commands:
@@ -141,3 +142,4 @@ buildvariants:
       - name: "dist"
       - name: "lint"
       - name: "generate-tasks"
+      - name: "flow"

@@ -30,6 +30,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test $JEST_REPORTER --env=jsdom",
     "test-ci": "JEST_REPORTER=--testResultsProcessor=jest-junit npm test",
+    "flow": "flow",
     "lint": "eslint -- .",
     "eslint": "eslint",
     "generate-tasks": "node generate-tasks.js"
@@ -44,6 +45,7 @@
     "eslint-plugin-babel": "^5.1.0",
     "eslint-plugin-jest": "^21.15.1",
     "eslint-plugin-react": "^7.8.2",
+    "flow-bin": "^0.74.0",
     "jest-junit": "^3.7.0",
     "react-test-renderer": "^15.6.2"
   },
