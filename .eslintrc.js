@@ -1,4 +1,4 @@
-const ENABLE_NO_DEBUGGER = process.env.CI === 'true' ? 'error' : 0;
+const ENABLE_NO_DEBUGGER = process.env.CI === 'true' ? 2 : 0;
 module.exports = {
   'parser': 'babel-eslint',
   'extends': ['eslint-config-mongodb-js', 'plugin:react/all'],
@@ -64,7 +64,6 @@ module.exports = {
     'react/jsx-one-expression-per-line': 0,
     'react/jsx-no-literals': 0,
     'react/jsx-closing-tag-location': 0,
-    'react/jsx-indent-props': 0,
     'react/jsx-boolean-value': 0,
     'react/jsx-sort-props': 0,
     'react/sort-prop-types': 0,
@@ -92,6 +91,7 @@ module.exports = {
     // no
     // --fix does weird things with this one
     'react/jsx-indent': 0,
+    'react/jsx-indent-props': 0,
     // more annoying than valuable
     'react/no-multi-comp': 0
   }
