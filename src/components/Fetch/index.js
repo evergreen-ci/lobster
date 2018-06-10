@@ -12,6 +12,7 @@ import Collapse from 'react-bootstrap/lib/Collapse';
 import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
 
+// eslint-disable-next-line react/no-deprecated
 class Fetch extends React.Component {
   static propTypes = {
     lines: PropTypes.array,

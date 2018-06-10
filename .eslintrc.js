@@ -20,9 +20,6 @@ module.exports = {
         'ecmaFeatures': {
           'jsx': true
         }
-      },
-      'rules': {
-        'react/no-deprecated': 1
       }
     },
     {
@@ -36,6 +33,9 @@ module.exports = {
         'ecmaFeatures': {
           'jsx': true
         }
+      },
+      'rules': {
+        'no-debugger': ENABLE_NO_DEBUGGER
       }
     },
     {
@@ -52,7 +52,6 @@ module.exports = {
     }
   ],
   'rules': {
-    'no-debugger': ENABLE_NO_DEBUGGER,
     'complexity': 'off',
     'no-console': 'off',
     'no-unused-vars': ['error', {'argsIgnorePattern': '^_'}],
