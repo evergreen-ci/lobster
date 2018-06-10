@@ -119,7 +119,7 @@ tasks:
         vars:
           cmd: run-script flow -- --temp-dir=.node_cache/_logs
 
-  - name: generate-tasks
+  - name: generate-tests
     commands:
       - func: preamble
       - func: npm
