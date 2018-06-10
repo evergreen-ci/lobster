@@ -253,7 +253,6 @@ class LogView extends React.Component {
         scrollX = position.left - windowWidth / 3;
       }
       window.scrollTo(scrollX, scrollY);
-      this.setState(_state => ({dummyCounter: 0}));
     } else {
       // We probably just need to setState again.
       this.setState(state => ({dummyCounter: state.dummyCounter + 1}));
@@ -266,7 +265,7 @@ class LogView extends React.Component {
     }
 
     // If the find index changed, scroll to the right if necessary.
-    if (this.props.findLine !== prevProps.findLine || this.props.find !== prevProps.find || (this.state.dummyCounter !== prevState.dummyCounter && this.state.dummyCounter < 5)) {
+    if (this.props.findLine !== prevProps.findLine || this.props.find !== prevProps.find || this.state.dummyCounter !== prevState.dummyCounter) {
       this.scrollFindIntoView();
     }
   }

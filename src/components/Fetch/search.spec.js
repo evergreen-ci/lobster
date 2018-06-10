@@ -35,8 +35,9 @@ test('Fetch-Search', function() {
         params: {build: '4191390ec6c7ee9bdea4e45f9cc94d31', test: '5af32dbbf84ae86d1e01e964'}
       }}
       colorMap={{}}
-    />);
-  wrapper.update();
+    />, {
+      attachTo: document.body
+    });
   assert.equal(wrapper.state('findIdx'), -1);
   assert.equal(wrapper.state('findResults').length, 0);
   assert.equal(wrapper.state('find'), '');
