@@ -16,8 +16,6 @@ hightlighted). This feature is available in a demo-mode with the POC evergreen b
 You can put ```https://logkeeper.mongodb.org/build/db6fa7c6a6d5fae2c959dd0996b71ead/test/59811f87c2ab68415701df6d?raw=1```
 in the Log field and click on the navy colored lines to get to the corresponding github line.
 
-# Dev Guide
-
 ## Running locally
 * `git clone https://github.com/evergreen-ci/lobster.git`
 * `cd lobster`
@@ -25,6 +23,13 @@ in the Log field and click on the navy colored lines to get to the corresponding
 * `node server`
 * You can now view lobster by going to `http://<Host>:<Port>/lobster?server=<Host>:<Port>/api/log`.
 The root directory for the local server is build`./build `, so you can place local log files in this directory to allow them to be resolved by the local server.
+
+
+# Dev Guide
+
+## Running locally
+For development use, after running `npm install`, simply run `npm start`. This
+will automatically recompile your code and refresh the browser
 
 ## Building
 `npm build` will place build artifacts inside the `build` directory
@@ -40,10 +45,4 @@ To run in local development:
 This will watch the lobster development directory for changes, and automatically retest your code
 
 ## Linting
-`npm run-scripts eslint`
-
-This will watch the lobster development directory for changes, and automatically relint your code
-
-## In CI
-The above two commands can be run as test-ci or eslint-ci, which will output a
-junit compatible xml file as either test-junit.xml or lint-junit.xml
+`npm run-scripts lint`

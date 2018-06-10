@@ -28,8 +28,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test $JEST_REPORTER --env=jsdom",
-    "test-ci": "JEST_REPORTER=--testResultsProcessor=jest-junit npm test",
+    "test": "react-scripts test --env=jsdom",
+    "test:ci": "react-scripts test --testResultsProcessor=jest-junit --env=jsdom",
     "flow": "flow",
     "lint": "eslint -- .",
     "lint:ci": "eslint -- -c .ci.eslintrc .",
