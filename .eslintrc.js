@@ -1,7 +1,7 @@
 const ENABLE_NO_DEBUGGER = process.env.CI === 'true' ? 2 : 1;
 module.exports = {
   'parser': 'babel-eslint',
-  'extends': ['eslint-config-mongodb-js',
+  'extends': ['eslint-config-mongodb-js', 'eslint-config-mongodb-js/rules/ecmascript-6',
     'plugin:react/all'],
   'root': true,
   'env': {
