@@ -110,7 +110,7 @@ tasks:
       - func: preamble
       - func: npm
         vars:
-          cmd: run-script lint:ci
+          cmd: run-script lint
 
   - name: flow
     commands:

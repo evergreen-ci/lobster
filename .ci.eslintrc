@@ -1,7 +1,0 @@
-// These lint settings override the default config in CI
-{
-  extends: ['./.eslintrc'],
-  "rules": {
-    "no-debugger": 2
-  },
-}
