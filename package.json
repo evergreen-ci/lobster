@@ -32,6 +32,7 @@
     "test-ci": "JEST_REPORTER=--testResultsProcessor=jest-junit npm test",
     "flow": "flow",
     "lint": "eslint -- .",
+    "lint:ci": "eslint -- -c .ci.eslintrc .",
     "eslint": "eslint",
     "generate-tasks": "node generate-tasks.js"
   },
