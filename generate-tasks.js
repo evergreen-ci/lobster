@@ -21,7 +21,7 @@ const isFileWithEnding = (endings, file) =>
   isFile(file) && endsWithAnyOf(endings, file);
 
 const testFileSpec = () => ['.spec.', '.test.']
-    .reduce((acc, val) => acc.concat(['js', 'jsx'].map(suf => val + suf)),[])
+  .reduce((acc, val) => acc.concat(['js', 'jsx'].map(suf => val + suf)), []);
 
 // given a directory, return true if that directory has files ending in
 // .spec.js or .test.js

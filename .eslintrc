@@ -44,7 +44,7 @@
       "env": {
         "node": true,
         "parserOptions": {
-            "sourceType": "scripts",
+          "sourceType": "scripts",
         },
       },
       "rules": {
