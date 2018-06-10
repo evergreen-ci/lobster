@@ -1,7 +1,8 @@
-const ENABLE_NO_DEBUGGER = process.env.CI === 'true' ? 2 : 0;
+const ENABLE_NO_DEBUGGER = process.env.CI === 'true' ? 2 : 1;
 module.exports = {
   'parser': 'babel-eslint',
-  'extends': ['eslint-config-mongodb-js', 'plugin:react/all'],
+  'extends': ['eslint-config-mongodb-js',
+    'plugin:react/all'],
   'root': true,
   'env': {
     'es6': true
@@ -9,7 +10,7 @@ module.exports = {
   'overrides': [
     {
       'files': ['src/**/*.js', 'src/**/*.jsx'],
-      'excludedFiles': ['src/**/*.spec.js', 'src/**/*.test.js', 'src/setupTests.js'],
+      'excludedFiles': ['src/**/*.spec.js*', 'src/**/*.test.js*', 'src/setupTests.js'],
       'env': {
         'browser': true
       },
@@ -25,7 +26,7 @@ module.exports = {
       }
     },
     {
-      'files': ['src/**/*.spec.js', 'src/**/*.test.js', 'src/setupTests.js'],
+      'files': ['src/**/*.spec.js*', 'src/**/*.test.js*', 'src/setupTests.js'],
       'env': {
         'browser': true
       },

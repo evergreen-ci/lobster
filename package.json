@@ -31,8 +31,8 @@
     "test": "react-scripts test --env=jsdom",
     "test:ci": "react-scripts test --testResultsProcessor=jest-junit --env=jsdom",
     "flow": "flow",
-    "lint": "eslint -- .",
-    "eslint": "eslint",
+    "lint": "eslint --ext .js,.jsx -- .",
+    "eslint": "eslint --ext .js,.jsx",
     "generate-tasks": "node generate-tasks.js"
   },
   "devDependencies": {
