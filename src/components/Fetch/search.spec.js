@@ -3,7 +3,6 @@ import Enzyme from 'enzyme';
 import Fetch from '../Fetch';
 import assert from 'assert';
 import Button from 'react-bootstrap/lib/Button';
-import Col from 'react-bootstrap/lib/Col';
 
 
 test('Fetch-Search', function() {
