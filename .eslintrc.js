@@ -60,6 +60,7 @@ module.exports = {
     'react/jsx-equals-spacing': 2,
     'react/jsx-wrap-multilines': 2,
     'react/jsx-closing-bracket-location': 2,
+    'react/jsx-tag-spacing': 2,
 
     // work towards enabling
     'react/destructuring-assignment': 0,
@@ -75,7 +76,6 @@ module.exports = {
     'react/self-closing-comp': 0,
     'react/require-optimization': 0,
     'react/forbid-component-props': 0,
-    'react/jsx-tag-spacing': 0,
     'react/jsx-first-prop-new-line': 0,
     'react/no-this-in-sfc': 0,
     'react/prefer-stateless-function': 0,

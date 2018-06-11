@@ -410,7 +410,7 @@ class Fetch extends React.Component {
     const filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
     const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
     if (!this.props.lines) {
-      return <div/>;
+      return <div />;
     }
     return (
       <LogView lines={this.props.lines}
