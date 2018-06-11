@@ -5,24 +5,6 @@ import axios from 'axios';
 
 import { LOGKEEPER_BASE } from '../config';
 
-function shuffle(array) {
-  let currentIndex = array.length, temporaryValue, randomIndex;
-
-  // While there remain elements to shuffle...
-  while (currentIndex !== 0) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
-}
-
 const LobsterStore = Reflux.createStore({
   listenables: [Actions],
   mixins: [StateMixin.store],
@@ -102,17 +84,7 @@ const LobsterStore = Reflux.createStore({
 
     const colorMap = {};
 
-    const colorList = shuffle([
-      '#c2a5cf',
-      '#74add1',
-      '#5aae61',
-      '#1b7837',
-      '#8c510a',
-      '#bf812d',
-      '#dfc27d',
-      '#80cdc1',
-      '#2166ac'
-    ]);
+    const colorList = ['#5aae61', '#c2a5cf', '#bf812d', '#dfc27d', '#2166ac', '#8c510a', '#1b7837', '#74add1', '#80cdc1'];
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
