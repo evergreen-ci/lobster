@@ -13,7 +13,7 @@ module.exports = function(base) {
 
   return {
     put: function(filename, data) {
-      var path = base + '/' + filename;
+      const path = base + '/' + filename;
       return new Promise(function(resolve, reject) {
         fs.writeFile(path, data, function(err) {
           if (err) {
@@ -26,7 +26,7 @@ module.exports = function(base) {
     },
 
     get: function(filename) {
-      var path = base + '/' + filename;
+      const path = base + '/' + filename;
       return new Promise(function(resolve, reject) {
         fs.readFile(path, function(err, data) {
           if (err) {

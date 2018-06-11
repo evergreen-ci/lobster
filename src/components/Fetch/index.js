@@ -33,9 +33,9 @@ class Fetch extends React.Component {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
-    let searchParams = new URLSearchParams(props.location.search);
-    let params = this.props.match.params;
-    let bookmarksList = searchParams.get('bookmarks');
+    const searchParams = new URLSearchParams(props.location.search);
+    const params = this.props.match.params;
+    const bookmarksList = searchParams.get('bookmarks');
     let bookmarksArr = [];
     if (bookmarksList) {
       bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n, 10)}));
@@ -85,8 +85,8 @@ class Fetch extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     console.log('componentWillReceiveProps');
-    let params = nextProps.match.params;
-    let searchParams = new URLSearchParams(nextProps.location.search);
+    const params = nextProps.match.params;
+    const searchParams = new URLSearchParams(nextProps.location.search);
     // don't reload, just update state
     if (params.build === this.state.build && params.test === this.state.test && !searchParams.get('server')) {
     // update the filter in the child component and return
@@ -134,8 +134,8 @@ class Fetch extends React.Component {
   }
 
   updateURL(bookmarks, filters) {
-    let parsedParams = this.getUrlParams();
-    var searchParams = new URLSearchParams();
+    const parsedParams = this.getUrlParams();
+    const searchParams = new URLSearchParams();
 
     // make url match this state
     let nextUrl = '';
@@ -201,8 +201,8 @@ class Fetch extends React.Component {
   }
 
   toggleBookmark(lineNum) {
-    let newBookmarks = this.state.bookmarks.slice();
-    var i = this.findBookmark(newBookmarks, lineNum);
+    const newBookmarks = this.state.bookmarks.slice();
+    const i = this.findBookmark(newBookmarks, lineNum);
     if (i === -1) {
       newBookmarks.push({lineNumber: lineNum});
     } else {
@@ -214,8 +214,8 @@ class Fetch extends React.Component {
   }
 
   ensureBookmark(lineNum, bookmarks) {
-    let newBookmarks = bookmarks.slice();
-    var i = this.findBookmark(newBookmarks, lineNum);
+    const newBookmarks = bookmarks.slice();
+    const i = this.findBookmark(newBookmarks, lineNum);
     if (i === -1) {
       newBookmarks.push({lineNumber: lineNum});
       newBookmarks.sort(this.bookmarkSort);
@@ -224,7 +224,7 @@ class Fetch extends React.Component {
   }
 
   showBookmarks() {
-    let self = this;
+    const self = this;
     return (
       <div>{self.state.bookmarks.map(function(bookmark) {
         return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)} key={bookmark.lineNumber}>{bookmark.lineNumber}</div>;
@@ -254,7 +254,7 @@ class Fetch extends React.Component {
     if (event) {
       event.preventDefault();
     }
-    let findRegexp = this.findInput.value;
+    const findRegexp = this.findInput.value;
 
     if (findRegexp === '') {
       this.clearFind();
@@ -268,13 +268,13 @@ class Fetch extends React.Component {
       return;
     }
 
-    let findResults = [];
-    let filter = this.mergeActiveFilters(this.state.filterList, caseSensitive);
-    let inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, caseSensitive);
-    let findRegexpFull = this.makeRegexp(findRegexp, caseSensitive);
+    const findResults = [];
+    const filter = this.mergeActiveFilters(this.state.filterList, caseSensitive);
+    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, caseSensitive);
+    const findRegexpFull = this.makeRegexp(findRegexp, caseSensitive);
 
     for (let i = 0; i < this.props.lines.length; i++) {
-      let line = this.props.lines[i];
+      const line = this.props.lines[i];
       if (line.text.match(findRegexpFull) && this.shouldPrintLine(this.state.bookmarks, line, filter, inverseFilter)) {
         findResults.push(line.lineNumber);
       }
@@ -323,7 +323,7 @@ class Fetch extends React.Component {
     if (this.findInput.value === '' || this.state.filterList.find((elem) => elem.text === this.findInput.value)) {
       return;
     }
-    let newFilters = this.state.filterList.slice();
+    const newFilters = this.state.filterList.slice();
     newFilters.push({text: this.findInput.value, on: true, inverse: false});
     this.setState({filterList: newFilters});
     this.updateURL(this.state.bookmarks, newFilters);
@@ -331,8 +331,8 @@ class Fetch extends React.Component {
   }
 
   toggleFilter(text) {
-    let newFilters = this.state.filterList.slice();
-    let filterIdx = newFilters.findIndex((elem) => text === elem.text);
+    const newFilters = this.state.filterList.slice();
+    const filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters[filterIdx].on = !newFilters[filterIdx].on;
 
     this.setState({filterList: newFilters});
@@ -341,8 +341,8 @@ class Fetch extends React.Component {
   }
 
   toggleFilterInverse(text) {
-    let newFilters = this.state.filterList.slice();
-    let filterIdx = newFilters.findIndex((elem) => text === elem.text);
+    const newFilters = this.state.filterList.slice();
+    const filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters[filterIdx].inverse = !newFilters[filterIdx].inverse;
 
     this.setState({filterList: newFilters});
@@ -351,8 +351,8 @@ class Fetch extends React.Component {
   }
 
   removeFilter(text) {
-    let newFilters = this.state.filterList.slice();
-    let filterIdx = newFilters.findIndex((elem) => text === elem.text);
+    const newFilters = this.state.filterList.slice();
+    const filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters.splice(filterIdx, 1);
 
     this.setState({filterList: newFilters});
@@ -360,7 +360,7 @@ class Fetch extends React.Component {
     this.clearFind();
   }
   showFilters() {
-    let self = this;
+    const self = this;
     return (
       <div className="filter-box">{self.state.filterList.map(function(filter) {
         return <div className="filter" key={filter.text}>
@@ -407,8 +407,8 @@ class Fetch extends React.Component {
   }
 
   showLines() {
-    let filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
-    let inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
+    const filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
+    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
     if (!this.props.lines) {
       return <div/>;
     }
@@ -446,7 +446,7 @@ class Fetch extends React.Component {
 
     let text = '{noformat}\n';
     for (let i = 0; i < this.state.bookmarks.length; i++) {
-      let curr = this.state.bookmarks[i].lineNumber;
+      const curr = this.state.bookmarks[i].lineNumber;
       if (curr >= this.props.lines.length) {
         text += '{noformat}';
         return text;
