@@ -61,7 +61,8 @@ module.exports = {
     'react/jsx-wrap-multilines': 2,
     'react/jsx-closing-bracket-location': 2,
     'react/jsx-tag-spacing': 2,
-    'react/jsx-closing-tag-location': 1,
+    'react/jsx-closing-tag-location': 2,
+    'react/prefer-stateless-function': [2, {'ignorePureComponents': true}],
 
     // work towards making these errors
     'react/jsx-no-bind': 0,
@@ -79,7 +80,6 @@ module.exports = {
     'react/forbid-component-props': 0,
     'react/jsx-first-prop-new-line': 0,
     'react/no-this-in-sfc': 0,
-    'react/prefer-stateless-function': 0,
 
     // might hurt development performance
     'react/forbid-prop-types': 0,
