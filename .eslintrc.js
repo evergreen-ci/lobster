@@ -2,7 +2,7 @@ const ENABLE_NO_DEBUGGER = process.env.CI === 'true' ? 2 : 1;
 module.exports = {
   'parser': 'babel-eslint',
   'extends': ['eslint-config-mongodb-js', 'eslint-config-mongodb-js/rules/ecmascript-6',
-    'plugin:react/all'],
+    'plugin:jest/recommended', 'plugin:react/all'],
   'root': true,
   'env': {
     'es6': true
@@ -35,7 +35,8 @@ module.exports = {
         }
       },
       'rules': {
-        'no-debugger': ENABLE_NO_DEBUGGER
+        'no-debugger': ENABLE_NO_DEBUGGER,
+        'react/jsx-key': 0
       }
     },
     {
@@ -75,7 +76,6 @@ module.exports = {
     'react/jsx-no-bind': 0,
     'react/self-closing-comp': 0,
     'react/require-optimization': 0,
-    'react/jsx-max-depth': 0,
     'react/jsx-curly-brace-presence': 0,
     'react/forbid-component-props': 0,
     'react/jsx-closing-bracket-location': 0,
@@ -93,6 +93,7 @@ module.exports = {
     'react/jsx-indent': 0,
     'react/jsx-indent-props': 0,
     // more annoying than valuable
-    'react/no-multi-comp': 0
+    'react/no-multi-comp': 0,
+    'react/jsx-max-depth': 0
   }
 };

@@ -255,7 +255,7 @@ class LogView extends React.Component {
       window.scrollTo(scrollX, scrollY);
     } else {
       // We probably just need to setState again.
-      this.setState({dummyCounter: this.state.dummyCounter + 1});
+      this.setState(state => ({dummyCounter: state.dummyCounter + 1}));
     }
   }
 
