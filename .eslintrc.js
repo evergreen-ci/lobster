@@ -61,8 +61,6 @@ module.exports = {
     'react/destructuring-assignment': 0,
     'react/no-set-state': 0,
     'react/no-access-state-in-setstate': 0,
-    'react/jsx-one-expression-per-line': 0,
-    'react/jsx-no-literals': 0,
     'react/jsx-closing-tag-location': 0,
     'react/jsx-boolean-value': 0,
     'react/jsx-sort-props': 0,
@@ -86,6 +84,8 @@ module.exports = {
 
     // might hurt development performance
     'react/forbid-prop-types': 0,
+    // not sure about this yet
+    'react/jsx-no-literals': 0,
 
     // no
     // --fix does weird things with this one
@@ -94,6 +94,7 @@ module.exports = {
     // more annoying than valuable
     'react/no-multi-comp': 0,
     'react/jsx-max-depth': 0,
+    'react/jsx-one-expression-per-line': 0,
     // Facebook discourages use of the .jsx extension, for better or for worse
     'react/jsx-filename-extension': [1, { 'extensions': ['.js']}]
   }
