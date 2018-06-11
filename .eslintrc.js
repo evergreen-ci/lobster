@@ -61,18 +61,19 @@ module.exports = {
     'react/jsx-wrap-multilines': 2,
     'react/jsx-closing-bracket-location': 2,
     'react/jsx-tag-spacing': 2,
+    'react/jsx-closing-tag-location': 1,
+
+    // work towards making these errors
+    'react/jsx-no-bind': 0,
 
     // work towards enabling
     'react/destructuring-assignment': 0,
     'react/no-set-state': 0,
     'react/no-access-state-in-setstate': 0,
-    'react/jsx-closing-tag-location': 0,
     'react/jsx-sort-props': 0,
     'react/sort-prop-types': 0,
     'react/sort-comp': 0,
     'react/require-default-props': 0,
-    'react/no-unused-state': 0,
-    'react/jsx-no-bind': 0,
     'react/self-closing-comp': 0,
     'react/require-optimization': 0,
     'react/forbid-component-props': 0,

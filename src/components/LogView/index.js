@@ -287,9 +287,10 @@ class LogView extends React.Component {
     }
     const output = self.genList(processed);
     if (output.length !== 0) {
-      return (<div>
-        {output}
-      </div>
+      return (
+        <div>
+          {output}
+        </div>
       );
     }
     return (<div>Failed!</div>);

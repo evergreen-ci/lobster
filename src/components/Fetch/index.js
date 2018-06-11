@@ -228,7 +228,8 @@ class Fetch extends React.Component {
     return (
       <div>{self.state.bookmarks.map(function(bookmark) {
         return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)} key={bookmark.lineNumber}>{bookmark.lineNumber}</div>;
-      })}</div>
+      })}
+      </div>
     );
   }
 
@@ -363,13 +364,16 @@ class Fetch extends React.Component {
     const self = this;
     return (
       <div className="filter-box">{self.state.filterList.map(function(filter) {
-        return (<div className="filter" key={filter.text}>
-          <Button className="filter-button" onClick={self.removeFilter.bind(self, filter.text)} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
-          <Button className="filter-button" onClick={self.toggleFilter.bind(self, filter.text)} bsStyle="warning" bsSize="xsmall">{filter.on ? '||' : '\u25B6'}</Button>
-          <Button className="filter-button-big" onClick={self.toggleFilterInverse.bind(self, filter.text)} bsStyle="success" bsSize="xsmall">{filter.inverse ? 'out' : 'in'}</Button>
-          <span className="filter-text">{filter.text}</span>
-        </div>);
-      })}</div>
+        return (
+          <div className="filter" key={filter.text}>
+            <Button className="filter-button" onClick={self.removeFilter.bind(self, filter.text)} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
+            <Button className="filter-button" onClick={self.toggleFilter.bind(self, filter.text)} bsStyle="warning" bsSize="xsmall">{filter.on ? '||' : '\u25B6'}</Button>
+            <Button className="filter-button-big" onClick={self.toggleFilterInverse.bind(self, filter.text)} bsStyle="success" bsSize="xsmall">{filter.inverse ? 'out' : 'in'}</Button>
+            <span className="filter-text">{filter.text}</span>
+          </div>
+        );
+      })}
+      </div>
     );
   }
 
@@ -432,9 +436,11 @@ class Fetch extends React.Component {
   showFind() {
     if (this.state.find !== '' ) {
       if (this.state.findResults.length > 0) {
-        return (<span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
-          <Button onClick={this.nextFind.bind(this)}>Next</Button>
-          <Button onClick={this.prevFind.bind(this)}>Prev</Button></span>);
+        return (
+          <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
+            <Button onClick={this.nextFind.bind(this)}>Next</Button>
+            <Button onClick={this.prevFind.bind(this)}>Prev</Button>
+          </span>);
       }
       return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
     }
