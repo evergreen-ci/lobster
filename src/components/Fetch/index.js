@@ -431,7 +431,6 @@ class Fetch extends React.Component {
     if (this.state.find !== '' ) {
       if (this.state.findResults.length > 0) {
         return <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
-
           <Button onClick={this.nextFind.bind(this)}>Next</Button>
           <Button onClick={this.prevFind.bind(this)}>Prev</Button></span>;
       }
@@ -515,7 +514,7 @@ class Fetch extends React.Component {
     event.preventDefault();
   }
 
-  handleChangeFind(caseSensitive) {
+  handleChangeFind(event, caseSensitive) {
     this.find(caseSensitive);
   }
 
