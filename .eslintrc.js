@@ -57,6 +57,7 @@ module.exports = {
     'no-console': 'off',
     'no-unused-vars': ['error', {'argsIgnorePattern': '^_'}],
 
+    // Enable a more strict set of react lints
     'react/jsx-equals-spacing': 2,
     'react/jsx-wrap-multilines': 2,
     'react/jsx-closing-bracket-location': 2,
@@ -65,26 +66,26 @@ module.exports = {
     'react/prefer-stateless-function': [2, {'ignorePureComponents': true}],
 
     // work towards making these errors
-    'react/jsx-no-bind': 0,
+    'react/jsx-no-bind': 1,
+    'react/no-access-state-in-setstate': 1,
 
     // work towards enabling
     'react/destructuring-assignment': 0,
-    'react/no-set-state': 0,
-    'react/no-access-state-in-setstate': 0,
-    'react/jsx-sort-props': 0,
-    'react/sort-prop-types': 0,
-    'react/sort-comp': 0,
-    'react/require-default-props': 0,
-    'react/self-closing-comp': 0,
-    'react/require-optimization': 0,
     'react/forbid-component-props': 0,
     'react/jsx-first-prop-new-line': 0,
+    'react/jsx-sort-props': 0,
+    'react/no-set-state': 0,
     'react/no-this-in-sfc': 0,
+    'react/require-default-props': 0,
+    'react/require-optimization': 0,
+    'react/sort-prop-types': 0,
+    'react/sort-comp': 0,
 
     // might hurt development performance
     'react/forbid-prop-types': 0,
     // not sure about this yet
     'react/jsx-no-literals': 0,
+    // 'react/self-closing-comp': 0,
 
     // no
     // --fix does weird things with this one
