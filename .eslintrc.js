@@ -2,7 +2,7 @@ const ENABLE_NO_DEBUGGER = process.env.CI === 'true' ? 2 : 1;
 module.exports = {
   'parser': 'babel-eslint',
   'extends': ['eslint-config-mongodb-js', 'eslint-config-mongodb-js/rules/ecmascript-6',
-    'plugin:jest/recommended', 'plugin:react/all'],
+    'plugin:jest/recommended', 'plugin:react/recommended'],
   'root': true,
   'env': {
     'es6': true
@@ -84,7 +84,7 @@ module.exports = {
     'react/no-this-in-sfc': 0,
     'react/prefer-stateless-function': 0,
 
-    // will hurt development performance
+    // might hurt development performance
     'react/forbid-prop-types': 0,
 
     // no
@@ -93,6 +93,8 @@ module.exports = {
     'react/jsx-indent-props': 0,
     // more annoying than valuable
     'react/no-multi-comp': 0,
-    'react/jsx-max-depth': 0
+    'react/jsx-max-depth': 0,
+    // Facebook discourages use of the .jsx extension, for better or for worse
+    'react/jsx-filename-extension': [1, { 'extensions': ['.js']}]
   }
 };
