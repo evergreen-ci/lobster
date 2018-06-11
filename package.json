@@ -47,7 +47,8 @@
     "eslint-plugin-jest": "^21.15.1",
     "eslint-plugin-react": "^7.8.2",
     "flow-bin": "^0.74.0",
-    "jest-junit": "^3.7.0"
+    "jest-junit": "^3.7.0",
+    "react-test-renderer": "^16.4.0"
   },
   "jest-junit": {
     "suiteName": "lobster jest tests",
