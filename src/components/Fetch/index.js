@@ -412,20 +412,21 @@ class Fetch extends React.Component {
     if (!this.props.lines) {
       return <div/>;
     }
-    return (<LogView lines={this.props.lines}
-      colorMap={this.props.colorMap}
-      filter={filter}
-      inverseFilter={inverseFilter}
-      scrollLine={this.state.scrollLine}
-      wrap={this.state.wrap}
-      caseSensitive={this.state.caseSensitive}
-      findBookmark={this.findBookmark}
-      toggleBookmark={this.toggleBookmark.bind(this)}
-      bookmarks={this.state.bookmarks}
-      find={this.state.find}
-      findLine={this.state.findIdx === -1 ? -1 : this.state.findResults[this.state.findIdx]}
-      shouldPrintLine={this.shouldPrintLine.bind(this)}
-    />);
+    return (
+      <LogView lines={this.props.lines}
+        colorMap={this.props.colorMap}
+        filter={filter}
+        inverseFilter={inverseFilter}
+        scrollLine={this.state.scrollLine}
+        wrap={this.state.wrap}
+        caseSensitive={this.state.caseSensitive}
+        findBookmark={this.findBookmark}
+        toggleBookmark={this.toggleBookmark.bind(this)}
+        bookmarks={this.state.bookmarks}
+        find={this.state.find}
+        findLine={this.state.findIdx === -1 ? -1 : this.state.findResults[this.state.findIdx]}
+        shouldPrintLine={this.shouldPrintLine.bind(this)}
+      />);
   }
 
   showFind() {
@@ -463,12 +464,18 @@ class Fetch extends React.Component {
 
   showLogBox() {
     if (this.state.server) {
-      return (<FormGroup controlId="urlInput">
-        <Col componentClass={ControlLabel} lg={1}>Log</Col>
-        <Col lg={6}><FormControl type="text" defaultValue={this.state.url}
-          placeholder="optional. custom file location iff used with local server" inputRef={ref => { this.urlInput = ref; }} /></Col>
-        <Col lg={1}> <Button type="submit"> Apply </Button> </Col>
-      </FormGroup>);
+      return (
+        <FormGroup controlId="urlInput">
+          <Col componentClass={ControlLabel} lg={1}>Log</Col>
+          <Col lg={6}>
+            <FormControl type="text" defaultValue={this.state.url}
+              placeholder="optional. custom file location iff used with local server"
+              inputRef={ref => {this.urlInput = ref;}}
+            />
+          </Col>
+          <Col lg={1}> <Button type="submit"> Apply </Button> </Col>
+        </FormGroup>
+      );
     }
   }
 
@@ -530,10 +537,13 @@ class Fetch extends React.Component {
             <div className="find-box">
               <Form horizontal>
                 <FormGroup controlId="findInput" className="filter-header">
-                  <Col lg={6} ><FormControl type="text"
-                    placeholder="optional. regexp to search for"
-                    inputRef={ref => { this.findInput = ref; }}
-                    onChange={this.handleChangeFind.bind(this, this.state.caseSensitive)}/></Col>
+                  <Col lg={6} >
+                    <FormControl type="text"
+                      placeholder="optional. regexp to search for"
+                      inputRef={ref => { this.findInput = ref; }}
+                      onChange={this.handleChangeFind.bind(this, this.state.caseSensitive)}
+                    />
+                  </Col>
                   <Button type="submit" onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
                   {this.showFind()}
                   <Button onClick={this.addFilter.bind(this)}>Add Filter</Button>

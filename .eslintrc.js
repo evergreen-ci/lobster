@@ -59,6 +59,7 @@ module.exports = {
 
     'react/jsx-equals-spacing': 2,
     'react/jsx-wrap-multilines': 2,
+    'react/jsx-closing-bracket-location': 2,
 
     // work towards enabling
     'react/destructuring-assignment': 0,
@@ -73,9 +74,7 @@ module.exports = {
     'react/jsx-no-bind': 0,
     'react/self-closing-comp': 0,
     'react/require-optimization': 0,
-    'react/jsx-curly-brace-presence': 0,
     'react/forbid-component-props': 0,
-    'react/jsx-closing-bracket-location': 0,
     'react/jsx-tag-spacing': 0,
     'react/jsx-first-prop-new-line': 0,
     'react/no-this-in-sfc': 0,
@@ -95,6 +94,8 @@ module.exports = {
     'react/jsx-max-depth': 0,
     'react/jsx-max-props-per-line': 0,
     'react/jsx-one-expression-per-line': 0,
+    // rule conflict
+    'react/jsx-curly-brace-presence': 0,
     // non-obvious terseness
     'react/jsx-boolean-value': 0,
     // Facebook discourages use of the .jsx extension, for better or for worse
