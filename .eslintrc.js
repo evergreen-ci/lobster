@@ -58,7 +58,6 @@ module.exports = {
     'no-unused-vars': ['error', {'argsIgnorePattern': '^_'}],
 
     // work towards enabling
-    'react/jsx-filename-extension': 1,
     'react/destructuring-assignment': 0,
     'react/no-set-state': 0,
     'react/no-access-state-in-setstate': 0,
