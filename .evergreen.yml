@@ -141,5 +141,5 @@ buildvariants:
     tasks:
       - name: "dist"
       - name: "lint"
-      - name: "generate-tasks"
+      - name: "generate-tests"
       - name: "flow"
