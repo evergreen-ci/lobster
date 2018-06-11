@@ -10,13 +10,13 @@ const app = express();
 console.log('Starting server to support lobster log viewer.\nOptions:\n  --cache   Cache files after download in the provided directory. Note! All directory content will be deleted on the server start up! [optional]\n  --logs  An absolute path to log files that will be available to server [optional]');
 
 function isValidURL(str) {
-  var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
-  var regex = new RegExp(expression);
+  const expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+  const regex = new RegExp(expression);
 
   return str.match(regex);
 }
 
-var myCache;
+let myCache;
 const cache = require('yargs').argv.cache;
 if (cache) {
   myCache = require('./local_cache')(cache);
@@ -49,8 +49,8 @@ app.get('*', (req, res) => {
 });
 
 app.post('/api/log', function(req, res, _next) {
-  let logUrl = req.body.url;
-  let filter = req.body.filter;
+  const logUrl = req.body.url;
+  const filter = req.body.filter;
   if (logUrl === undefined) {
     console.log('url is undefined' );
     res.status(500).send('url cannot be undefined');
@@ -64,7 +64,7 @@ app.post('/api/log', function(req, res, _next) {
   }
 
   if (isValidURL(logUrl)) {
-    let fileName = hash(logUrl).toString();
+    const fileName = hash(logUrl).toString();
 
     myCache.get(fileName)
       .then(data => {
@@ -74,11 +74,11 @@ app.post('/api/log', function(req, res, _next) {
       .catch(_ => {
         console.log(fileName + ' is not in the cache');
 
-        let stream = needle.get(logUrl);
+        const stream = needle.get(logUrl);
         let result = '';
 
         stream.on('readable', function() {
-          for (var data = this.read(); data; data = this.read()) {
+          for (let data = this.read(); data; data = this.read()) {
             result += data;
           }
         });

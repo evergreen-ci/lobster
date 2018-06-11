@@ -23,8 +23,8 @@ class LogLineText extends React.Component {
   }
 
   render() {
-    let style = {color: this.props.colorMap[this.props.port]};
-    let highlightStyle = {color: this.props.colorMap[this.props.port], 'backgroundImage': 'inherit', 'backgroundColor': 'pink'};
+    const style = {color: this.props.colorMap[this.props.port]};
+    const highlightStyle = {color: this.props.colorMap[this.props.port], 'backgroundImage': 'inherit', 'backgroundColor': 'pink'};
     return (
       <Highlighter
         highlightClassName={'findResult' + this.props.lineNumber}
@@ -55,7 +55,7 @@ class LineNumber extends React.Component {
   }
 
   render() {
-    let style = {width: '60px', display: 'inline-block'};
+    const style = {width: '60px', display: 'inline-block'};
     return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style} onDoubleClick={this.handleDoubleClick.bind(this)}></span>;
   }
 }
@@ -78,7 +78,7 @@ class LogOptions extends React.Component {
   }
 
   render() {
-    let style = {width: '30px', display: 'inline-block'};
+    const style = {width: '30px', display: 'inline-block'};
     if (this.props.gitRef) {
       return <span style={style} data-pseudo-content="&nbsp;&#128279;&nbsp;" onClick={this.handleClick.bind(this, this.props.gitRef)}></span>;
     }
@@ -163,9 +163,9 @@ class LogView extends React.Component {
   }
 
   genList(filteredLines) {
-    let list = (
+    const list = (
       <ReactList
-        ref = {this.setLogListRef}
+        ref={this.setLogListRef}
         itemRenderer={(index, _key) => (
           <FullLogLine
             key={index}
@@ -239,14 +239,14 @@ class LogView extends React.Component {
       return;
     }
 
-    let findElements = document.getElementsByClassName('findResult' + this.props.findLine);
+    const findElements = document.getElementsByClassName('findResult' + this.props.findLine);
     if (findElements.length > 0) {
-      let elem = findElements[0];
-      let position = elem.getBoundingClientRect();
-      let windowWidth = window.innerWidth;
+      const elem = findElements[0];
+      const position = elem.getBoundingClientRect();
+      const windowWidth = window.innerWidth;
 
       let scrollX = window.scrollX;
-      let scrollY = window.scrollY - 45; // Account for header
+      const scrollY = window.scrollY - 45; // Account for header
 
       if (position.right > windowWidth) {
         // Scroll so the leftmost part of the component is 2/3 of the way into the screen.
@@ -271,25 +271,26 @@ class LogView extends React.Component {
   }
 
   render() {
-    let self = this;
-    let processed = [];
-    let lines = self.props.lines;
+    const self = this;
+    const processed = [];
+    const lines = self.props.lines;
     let j = 0;
     this.indexMap = {};
 
     for (let i = 0; i < lines.length; i++) {
-      let line = lines[i];
+      const line = lines[i];
       if (!this.props.shouldPrintLine(this.props.bookmarks, line, this.props.filter, this.props.inverseFilter)) {
         continue;
       }
       this.indexMap[i] = j++;
       processed.push(line);
     }
-    let output = self.genList(processed);
+    const output = self.genList(processed);
     if (output.length !== 0) {
-      return (<div>
-        {output}
-      </div>
+      return (
+        <div>
+          {output}
+        </div>
       );
     }
     return (<div>Failed!</div>);

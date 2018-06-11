@@ -4,7 +4,7 @@ import Fetch from '../Fetch';
 import store from '../../stores';
 import actions from '../../actions';
 
-class ConnectedFetch extends React.Component {
+class ConnectedFetch extends React.PureComponent {
   static displayName = 'ConnectedFetch';
   render() {
     return (
