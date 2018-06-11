@@ -165,7 +165,7 @@ class LogView extends React.Component {
   genList(filteredLines) {
     const list = (
       <ReactList
-        ref = {this.setLogListRef}
+        ref={this.setLogListRef}
         itemRenderer={(index, _key) => (
           <FullLogLine
             key={index}
