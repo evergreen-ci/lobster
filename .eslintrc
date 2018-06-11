@@ -1,6 +1,6 @@
 {
   "parser": "babel-eslint",
-  "extends": ["eslint-config-mongodb-js", "plugin:react/recommended"],
+  "extends": ["eslint-config-mongodb-js", "plugin:react/recommended", 'plugin:jest/recommended'],
   "root": true,
   "env": {
     "es6": true
@@ -37,6 +37,7 @@
       },
       "rules": {
         "react/no-deprecated": "warn",
+        "react/jsx-key": 0
       }
     },
     {

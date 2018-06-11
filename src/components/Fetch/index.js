@@ -278,6 +278,7 @@ class Fetch extends React.Component {
         findResults.push(line.lineNumber);
       }
     }
+
     if (findResults.length > 0) {
       this.setState({find: findRegexp, findIdx: 0, findResults: findResults});
       this.setScroll(findResults[0]);
@@ -430,7 +431,6 @@ class Fetch extends React.Component {
     if (this.state.find !== '' ) {
       if (this.state.findResults.length > 0) {
         return <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
-
           <Button onClick={this.nextFind.bind(this)}>Next</Button>
           <Button onClick={this.prevFind.bind(this)}>Prev</Button></span>;
       }
@@ -514,6 +514,10 @@ class Fetch extends React.Component {
     event.preventDefault();
   }
 
+  handleChangeFind(event, caseSensitive) {
+    this.find(caseSensitive);
+  }
+
   render() {
     return (
       <div>
@@ -527,7 +531,8 @@ class Fetch extends React.Component {
                 <FormGroup controlId="findInput" className="filter-header">
                   <Col lg={6} ><FormControl type="text"
                     placeholder="optional. regexp to search for"
-                    inputRef={ref => { this.findInput = ref; }}/></Col>
+                    inputRef={ref => { this.findInput = ref; }}
+                    onChange={this.handleChangeFind.bind(this, this.state.caseSensitive)}/></Col>
                   <Button type="submit" onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
                   {this.showFind()}
                   <Button onClick={this.addFilter.bind(this)}>Add Filter</Button>
