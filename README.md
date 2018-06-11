@@ -36,7 +36,7 @@ will automatically recompile your code and refresh the browser
 
 ## Testing
 
-The testing framework is Jest, with Enzyme. See src/example.spec.js for a sample
+The testing framework is Jest, with Enzyme. See src/components/Fetch/search.spec.js for a sample
 of how to test with these tools
 
 To run in local development:
