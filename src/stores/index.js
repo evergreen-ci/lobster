@@ -5,6 +5,24 @@ import axios from 'axios';
 
 import { config } from '../config';
 
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex !== 0) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
 const LobsterStore = Reflux.createStore({
   listenables: [Actions],
   mixins: [StateMixin.store],
@@ -80,15 +98,21 @@ const LobsterStore = Reflux.createStore({
     const gitPrefixLen = gitPrefix.length + 2;
     let gitVersionStr = 'master';
     const portRegex = / [sdbc](\d{1,5})\|/;
-    const stateRegex = /:(initsync|primary|secondary\d*|node\d*)]/;
+    const stateRegex = /(:shard\d*|:configsvr)?:(initsync|primary|mongos|secondary\d*|node\d*)]/;
 
     let colorMap = {};
 
-    const colorList = ['seagreen', 'steelblue',
-      'mediumpurple', 'crimson', 'darkkhaki',
-      'darkgreen', 'rosybrown', 'chocolate',
-      'orangered', 'darkseagreen', 'royalblue',
-      'slategray'];
+    const colorList = shuffle([
+      '#c2a5cf',
+      '#74add1',
+      '#5aae61',
+      '#1b7837',
+      '#8c510a',
+      '#bf812d',
+      '#dfc27d',
+      '#80cdc1',
+      '#2166ac'
+    ]);
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
@@ -116,7 +140,7 @@ const LobsterStore = Reflux.createStore({
       }
 
       const portArray = portRegex.exec(line);
-      if (portArray && portArray[0]) {
+      if (portArray) {
         let port = portArray[1];
         lineObj.port = port;
 
@@ -125,8 +149,8 @@ const LobsterStore = Reflux.createStore({
         }
       } else {
         const stateArray = stateRegex.exec(line);
-        if (stateArray && stateArray[0]) {
-          let port = stateArray[1];
+        if (stateArray) {
+          let port = stateArray[0];
           lineObj.port = port;
 
           if (!colorMap[port]) {
@@ -134,6 +158,7 @@ const LobsterStore = Reflux.createStore({
           }
         }
       }
+
 
       if (lineObj.gitRef) {
         lineObj.gitRef = this.getFullGitRef(lineObj.gitRef, gitVersionStr);
