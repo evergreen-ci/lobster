@@ -3,7 +3,7 @@ import StateMixin from 'reflux-state-mixin';
 import Actions from '../actions';
 import axios from 'axios';
 
-import { config } from '../config';
+import { LOGKEEPER_BASE } from '../config';
 
 const LobsterStore = Reflux.createStore({
   listenables: [Actions],
@@ -29,16 +29,16 @@ const LobsterStore = Reflux.createStore({
       return '';
     }
     if (!testParam) {
-      return config.logkeeperBase + '/build/' + buildParam + '/all?raw=1';
+      return LOGKEEPER_BASE + '/build/' + buildParam + '/all?raw=1';
     }
-    return config.logkeeperBase + '/build/' + buildParam + '/test/' + testParam + '?raw=1';
+    return LOGKEEPER_BASE + '/build/' + buildParam + '/test/' + testParam + '?raw=1';
   },
 
   loadData: function(build, test, server) {
     if (!build) {
       return;
     }
-    let logkeeperUrl = this.generateLogkeeperUrl(build, test);
+    const logkeeperUrl = this.generateLogkeeperUrl(build, test);
     // default to requesting from the logkeeper url
     if (server) {
       console.log('server: ' + server );
@@ -56,7 +56,7 @@ const LobsterStore = Reflux.createStore({
 
   getGitVersion: function(line) {
     const gitVersionStr = 'git version: ';
-    let gitVersionPos = line.indexOf(gitVersionStr);
+    const gitVersionPos = line.indexOf(gitVersionStr);
     if (gitVersionPos !== -1) {
       return line.substr(gitVersionPos + gitVersionStr.length);
     }
@@ -73,16 +73,16 @@ const LobsterStore = Reflux.createStore({
 
   processServerResponse: function(response) {
     // set the url to the url we requested
-    let lines = response.data.split('\n');
+    const lines = response.data.split('\n');
 
-    let processed = [];
+    const processed = [];
     const gitPrefix = '{githash:';
     const gitPrefixLen = gitPrefix.length + 2;
     let gitVersionStr = 'master';
     const portRegex = / [sdbc](\d{1,5})\|/;
     const stateRegex = /:(initsync|primary|secondary\d*|node\d*)]/;
 
-    let colorMap = {};
+    const colorMap = {};
 
     const colorList = ['seagreen', 'steelblue',
       'mediumpurple', 'crimson', 'darkkhaki',
@@ -92,11 +92,11 @@ const LobsterStore = Reflux.createStore({
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      let lineObj = {lineNumber: i};
+      const lineObj = {lineNumber: i};
 
       // Only check the git version if we haven't seen it so far.
       if (gitVersionStr === 'master') {
-        let gitVersionParse = this.getGitVersion(line);
+        const gitVersionParse = this.getGitVersion(line);
         if (gitVersionParse) {
           gitVersionStr = gitVersionParse;
         }
@@ -117,7 +117,7 @@ const LobsterStore = Reflux.createStore({
 
       const portArray = portRegex.exec(line);
       if (portArray && portArray[0]) {
-        let port = portArray[1];
+        const port = portArray[1];
         lineObj.port = port;
 
         if (!colorMap[port]) {
@@ -126,7 +126,7 @@ const LobsterStore = Reflux.createStore({
       } else {
         const stateArray = stateRegex.exec(line);
         if (stateArray && stateArray[0]) {
-          let port = stateArray[1];
+          const port = stateArray[1];
           lineObj.port = port;
 
           if (!colorMap[port]) {

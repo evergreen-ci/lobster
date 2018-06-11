@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/lib/Button';
 
 
 test('Fetch-Search', function() {
-  let linesArr = [
+  const linesArr = [
     {lineNumber: 1, text: '[cpp_integration_test:connection_pool_asio_integration_test] 2018-05-09T17:20:31.322+0000 Starting C++ integration test build'},
     {lineNumber: 2, text: 'build/integration_tests/connection_pool_asio_integration_test --connectionString=rs/localhost:20250,localhost:20251'},
     {lineNumber: 3, text: '[cpp_integration_test:connection_pool_asio_integra…pool_asio_integration_test started with pid 9843.'},

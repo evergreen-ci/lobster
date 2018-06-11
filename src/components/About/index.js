@@ -15,10 +15,8 @@ const About = () => (
       <li>pause and play filters</li>
       <li>filter a regexp in or out</li>
       <li>cache the recently accessed files locally to improve load time. It can be set with the --cache</li>
-      <li>view the local log files generated with resmoke.py . the option --logs sets the absolute path that is available to the server for read
-  server command line argument</li>
-      <li>once it is supported by the mongod and mongos binaries it will link the log lines of the evergreen
-log viewer raw output to the corresponding lines of code that printed them. This feature is available in a demo-mode with the <a href="https://evergreen.mongodb.com/build/mongodb_mongo_master_linux_64_debug_patch_2318942c2ec98c0107a83d72f352d2878490ce09_598117962fbabe1e0f0d5c3c_17_08_02_00_08_20">POC evergreen build</a>.</li>
+      <li>view the local log files generated with resmoke.py . the option --logs sets the absolute path that is available to the server for read server command line argument</li>
+      <li>once it is supported by the mongod and mongos binaries it will link the log lines of the evergreen log viewer raw output to the corresponding lines of code that printed them. This feature is available in a demo-mode with the <a href="https://evergreen.mongodb.com/build/mongodb_mongo_master_linux_64_debug_patch_2318942c2ec98c0107a83d72f352d2878490ce09_598117962fbabe1e0f0d5c3c_17_08_02_00_08_20">POC evergreen build</a>.</li>
       <li>double click on a line number to bookmark (or unbookmark) that line and click on that number on the left-hand side to scroll to it.</li>
       <li>click on the &apos;wrap&apos; toggle to turn line wrapping on and off</li>
       <li>the JIRA text area displays text you can copy into a JIRA ticket to properly format all bookmarked lines</li>
