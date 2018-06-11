@@ -70,7 +70,6 @@ test('Fetch-Search', function() {
   // Testing change in search bar with no results
   wrapper.find('#findInput').instance().value = '2019';
   wrapper.find('#findInput').at(0).simulate('change');
-  wrapper.update();
   assert.equal(wrapper.state('findIdx'), -1);
   assert.equal(wrapper.state('findResults').length, 0);
   assert.equal(wrapper.state('find'), '2019');
@@ -82,4 +81,21 @@ test('Fetch-Search', function() {
     <Button>Prev</Button>
   ]), false);
   assert.equal(wrapper.find('.not-found').exists(), true);
+
+  wrapper.find('#findInput').instance().value = 'ASIO';
+  wrapper.find('#findInput').at(0).simulate('change');
+  wrapper.instance().state.caseSensitive = true;
+
+  // console.log(wrapper.state('caseSensitive'));
+  console.log(wrapper.state('findResults'));
+  assert.equal(wrapper.state('findIdx'), 0);
+  assert.equal(wrapper.state('findResults').length, 10);
+  assert.equal(wrapper.state('find'), 'ASIO');
+  assert.equal(wrapper.state('wrap'), false);
+  assert.equal(wrapper.state('caseSensitive'), true);
+  assert.equal(wrapper.state('detailsOpen'), false);
+  assert.equal(wrapper.containsAllMatchingElements([
+    <Button>Next</Button>,
+    <Button>Prev</Button>
+  ]), true);
 });
