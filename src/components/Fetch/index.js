@@ -513,13 +513,13 @@ class Fetch extends React.Component {
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyDown.bind(this));
+    document.addEventListener('keydown', this.handleKeyDown);
   }
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown.bind(this));
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  handleKeyDown(event) {
+  handleKeyDown = (event) => {
     switch ( event.keyCode ) {
       case 114: // F3
         this.focusOnFind(event);
@@ -527,6 +527,12 @@ class Fetch extends React.Component {
       case 70: // F
         if (event.ctrlKey || event.metaKey) {
           this.focusOnFind(event);
+        }
+        break;
+      case 13: // Enter
+        if (event.shiftKey) {
+          console.log(this.state.findIdx);
+          this.prevFind();
         }
         break;
       default:
@@ -560,6 +566,7 @@ class Fetch extends React.Component {
                       placeholder="optional. regexp to search for"
                       inputRef={ref => { this.findInput = ref; }}
                       onChange={this.handleChangeFindEvent}
+                      onKeyUp={this.handleKeyDown}
                     />
                   </Col>
                   <Button type="submit" onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
