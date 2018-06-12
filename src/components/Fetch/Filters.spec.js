@@ -1,5 +1,4 @@
 import assert from 'assert';
-import Button from 'react-bootstrap/lib/Button';
 import Enzyme from 'enzyme';
 import { Filters, Filter } from './Filters';
 import React from 'react';
@@ -70,13 +69,13 @@ test('Filter', function() {
     inverse: false
   };
 
-  const removeFilter = (text) => {
+  const removeFilter = () => {
     data = null;
   };
-  const toggleFilter = (text) => {
+  const toggleFilter = () => {
     data.on = !data.on;
   };
-  const toggleFilterInverse = (text) => {
+  const toggleFilterInverse = () => {
     data.inverse = !data.inverse;
   };
 
@@ -91,6 +90,7 @@ test('Filter', function() {
   assert.ok(wrapper.containsAllMatchingElements([
     <span>Hello</span>
   ]));
+
   const buttons = wrapper.find('Button');
   assert.equal(buttons.length, 3);
   buttons.map(function(e, index) {
