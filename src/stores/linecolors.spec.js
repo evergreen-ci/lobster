@@ -52,5 +52,5 @@ test('Store-Line-Colors', function() {
   });
 
   // Test if filtering out duplicates does not change testColorMap
-  assert.equal(filteredValues.length, Object.keys(testColorMap).length);
+  assert.equal(filteredValues.length, 6);
 });

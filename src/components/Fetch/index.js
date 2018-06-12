@@ -56,6 +56,7 @@ class Fetch extends React.Component {
       findResults: [],
       bookmarks: bookmarksArr
     };
+
     if (this.state.url) {
       Actions.loadDataUrl(this.state.url, this.state.server);
     } else if (this.state.build) { // this is direct route to a file

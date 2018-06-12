@@ -93,7 +93,6 @@ const LobsterStore = Reflux.createStore({
       '#8c510a',
       '#1b7837',
       '#74add1',
-      '#80cdc1',
       '#d6604d',
       '#762a83',
       '#de77ae'
@@ -143,7 +142,6 @@ const LobsterStore = Reflux.createStore({
           }
         }
       }
-
 
       if (lineObj.gitRef) {
         lineObj.gitRef = this.getFullGitRef(lineObj.gitRef, gitVersionStr);
