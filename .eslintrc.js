@@ -74,12 +74,14 @@ module.exports = {
 
     // work towards enabling
     'react/jsx-sort-props': 0,
-    'react/no-set-state': 0,
     'react/no-this-in-sfc': 0,
     'react/require-default-props': 0,
     'react/require-optimization': 0,
     'react/sort-prop-types': 0,
     'react/sort-comp': 0,
+
+    // Appropriate only if we migrate to redux
+    'react/no-set-state': 0,
 
     // might hurt development performance
     'react/forbid-prop-types': 0,
