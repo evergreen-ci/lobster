@@ -80,15 +80,23 @@ const LobsterStore = Reflux.createStore({
     const gitPrefixLen = gitPrefix.length + 2;
     let gitVersionStr = 'master';
     const portRegex = / [sdbc](\d{1,5})\|/;
-    const stateRegex = /:(initsync|primary|secondary\d*|node\d*)]/;
+    const stateRegex = /(:shard\d*|:configsvr)?:(initsync|primary|mongos|secondary\d*|node\d*)]/;
 
     const colorMap = {};
 
-    const colorList = ['seagreen', 'steelblue',
-      'mediumpurple', 'crimson', 'darkkhaki',
-      'darkgreen', 'rosybrown', 'chocolate',
-      'orangered', 'darkseagreen', 'royalblue',
-      'slategray'];
+    const colorList = [
+      '#5aae61',
+      '#c2a5cf',
+      '#bf812d',
+      '#dfc27d',
+      '#2166ac',
+      '#8c510a',
+      '#1b7837',
+      '#74add1',
+      '#d6604d',
+      '#762a83',
+      '#de77ae'
+    ];
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
@@ -116,7 +124,7 @@ const LobsterStore = Reflux.createStore({
       }
 
       const portArray = portRegex.exec(line);
-      if (portArray && portArray[0]) {
+      if (portArray) {
         const port = portArray[1];
         lineObj.port = port;
 
@@ -125,8 +133,8 @@ const LobsterStore = Reflux.createStore({
         }
       } else {
         const stateArray = stateRegex.exec(line);
-        if (stateArray && stateArray[0]) {
-          const port = stateArray[1];
+        if (stateArray) {
+          const port = stateArray[0];
           lineObj.port = port;
 
           if (!colorMap[port]) {
