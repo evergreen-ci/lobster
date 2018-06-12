@@ -31,7 +31,6 @@ class Fetch extends React.Component {
 
   constructor(props) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
     const searchParams = new URLSearchParams(props.location.search);
     const params = this.props.match.params;
@@ -169,7 +168,7 @@ class Fetch extends React.Component {
     });
   }
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     console.log('handleSubmit');
     event.preventDefault();
     // prepare do to the change
@@ -200,7 +199,8 @@ class Fetch extends React.Component {
     return b1.lineNumber - b2.lineNumber;
   }
 
-  toggleBookmark(lineNum) {
+  toggleBookmark = (lineNum) => {
+      console.log(lineNum);
     const newBookmarks = this.state.bookmarks.slice();
     const i = this.findBookmark(newBookmarks, lineNum);
     if (i === -1) {
@@ -233,7 +233,7 @@ class Fetch extends React.Component {
     );
   }
 
-  nextFind() {
+  nextFind = () => {
     let nextIdx = this.state.findIdx + 1;
     if (nextIdx === this.state.findResults.length) {
       nextIdx = 0;
@@ -242,7 +242,7 @@ class Fetch extends React.Component {
     this.setScroll(this.state.findResults[nextIdx]);
   }
 
-  prevFind() {
+  prevFind = () => {
     let nextIdx = this.state.findIdx - 1;
     if (nextIdx === -1) {
       nextIdx = this.state.findResults.length - 1;
@@ -251,7 +251,7 @@ class Fetch extends React.Component {
     this.setScroll(this.state.findResults[nextIdx]);
   }
 
-  find(caseSensitive, event) {
+  find = (caseSensitive, event) => {
     if (event) {
       event.preventDefault();
     }
@@ -293,7 +293,7 @@ class Fetch extends React.Component {
     this.setState({find: '', findIdx: -1, findResults: []});
   }
 
-  shouldPrintLine(bookmarks, line, filter, inverseFilter) {
+  shouldPrintLine = (bookmarks, line, filter, inverseFilter) => {
     if (this.findBookmark(bookmarks, line.lineNumber) !== -1) {
       return true;
     }
@@ -320,7 +320,7 @@ class Fetch extends React.Component {
     return false;
   }
 
-  addFilter() {
+  addFilter = () => {
     if (this.findInput.value === '' || this.state.filterList.find((elem) => elem.text === this.findInput.value)) {
       return;
     }
@@ -425,11 +425,11 @@ class Fetch extends React.Component {
         wrap={this.state.wrap}
         caseSensitive={this.state.caseSensitive}
         findBookmark={this.findBookmark}
-        toggleBookmark={this.toggleBookmark.bind(this)}
+        toggleBookmark={this.toggleBookmark}
         bookmarks={this.state.bookmarks}
         find={this.state.find}
         findLine={this.state.findIdx === -1 ? -1 : this.state.findResults[this.state.findIdx]}
-        shouldPrintLine={this.shouldPrintLine.bind(this)}
+        shouldPrintLine={this.shouldPrintLine}
       />);
   }
 
@@ -438,8 +438,8 @@ class Fetch extends React.Component {
       if (this.state.findResults.length > 0) {
         return (
           <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
-            <Button onClick={this.nextFind.bind(this)}>Next</Button>
-            <Button onClick={this.prevFind.bind(this)}>Prev</Button>
+            <Button onClick={this.nextFind}>Next</Button>
+            <Button onClick={this.prevFind}>Prev</Button>
           </span>);
       }
       return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
@@ -468,6 +468,8 @@ class Fetch extends React.Component {
     return text;
   }
 
+  setURLRef = (ref) => {this.urlInput = ref;}
+
   showLogBox() {
     if (this.state.server) {
       return (
@@ -476,7 +478,7 @@ class Fetch extends React.Component {
           <Col lg={6}>
             <FormControl type="text" defaultValue={this.state.url}
               placeholder="optional. custom file location iff used with local server"
-              inputRef={ref => {this.urlInput = ref;}}
+              inputRef={this.setURLRef}
             />
           </Col>
           <Col lg={1}> <Button type="submit"> Apply </Button> </Col>
@@ -491,23 +493,23 @@ class Fetch extends React.Component {
     }
   }
 
-  toggleCaseSensitive(value) {
+  toggleCaseSensitive = (value) => {
     this.setState({caseSensitive: !value});
     this.find(!value);
   }
 
-  toggleFilterIntersection(value) {
+  toggleFilterIntersection = (value) => {
     this.setState({filterIntersection: !value});
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyDown.bind(this));
+    document.addEventListener('keydown', this.handleKeyDown);
   }
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown.bind(this));
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  handleKeyDown(event) {
+  handleKeyDown = (event) => {
     switch ( event.keyCode ) {
       case 114: // F3
         this.focusOnFind(event);
@@ -528,9 +530,13 @@ class Fetch extends React.Component {
     event.preventDefault();
   }
 
-  handleChangeFind(event, caseSensitive) {
+  handleChangeFind = (event, caseSensitive) => {
     this.find(caseSensitive);
   }
+
+  toggleWrap = (value) => this.setState({wrap: !value});
+  togglePanel = () => this.setState((state) => ({detailsOpen: !state.detailsOpen}));
+  setFormRef = (ref) => {this.findInput = ref;}
 
   render() {
     return (
@@ -546,14 +552,14 @@ class Fetch extends React.Component {
                   <Col lg={6} >
                     <FormControl type="text"
                       placeholder="optional. regexp to search for"
-                      inputRef={ref => { this.findInput = ref; }}
-                      onChange={this.handleChangeFind.bind(this, this.state.caseSensitive)}
+                      inputRef={this.setFormRef}
+                      onChange={this.handleChangeFind}
                     />
                   </Col>
-                  <Button type="submit" onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
+                  <Button type="submit" onClick={this.find}>Find</Button>
                   {this.showFind()}
-                  <Button onClick={this.addFilter.bind(this)}>Add Filter</Button>
-                  <Button onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
+                  <Button onClick={this.addFilter}>Add Filter</Button>
+                  <Button onClick={this.togglePanel}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
                 </FormGroup>
               </Form>
               <Collapse className="collapse-menu" in={this.state.detailsOpen}>
@@ -562,11 +568,11 @@ class Fetch extends React.Component {
                     {this.showLogBox()}
                     <FormGroup controlId="wrap">
                       <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
-                      <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value});}} /></Col>
+                      <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={this.toggleWrap} /></Col>
                       <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
-                      <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
+                      <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive} /></Col>
                       <Col componentClass={ControlLabel} lg={2}>Filter Logic</Col>
-                      <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
+                      <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection} /></Col>
                       <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
                       <Col lg={2}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
                       {this.showJobLogs()}
