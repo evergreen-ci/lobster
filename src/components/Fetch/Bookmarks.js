@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 
 export class Bookmarks extends React.PureComponent {
   static propTypes = {
-    bookmarks: PropTypes.arrayOf(PropTypes.object).isRequired,
+    bookmarks: PropTypes.arrayOf(PropTypes.shape({
+      lineNumber: PropTypes.number.isRequired
+    })).isRequired,
     setScroll: PropTypes.func.isRequired
   }
 
