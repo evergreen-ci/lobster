@@ -11,6 +11,8 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Collapse from 'react-bootstrap/lib/Collapse';
 import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
+import { Bookmarks } from './Bookmarks'
+
 
 // eslint-disable-next-line react/no-deprecated
 class Fetch extends React.Component {
@@ -185,7 +187,7 @@ class Fetch extends React.Component {
     }
   }
 
-  setScroll(lineNum) {
+  setScroll = (lineNum) => {
     this.setState({scrollLine: lineNum});
   }
 
@@ -200,7 +202,6 @@ class Fetch extends React.Component {
   }
 
   toggleBookmark = (lineNum) => {
-      console.log(lineNum);
     const newBookmarks = this.state.bookmarks.slice();
     const i = this.findBookmark(newBookmarks, lineNum);
     if (i === -1) {
@@ -221,16 +222,6 @@ class Fetch extends React.Component {
       newBookmarks.sort(this.bookmarkSort);
     }
     return newBookmarks;
-  }
-
-  showBookmarks() {
-    const self = this;
-    return (
-      <div>{self.state.bookmarks.map(function(bookmark) {
-        return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)} key={bookmark.lineNumber}>{bookmark.lineNumber}</div>;
-      })}
-      </div>
-    );
   }
 
   nextFind = () => {
@@ -360,6 +351,7 @@ class Fetch extends React.Component {
     this.updateURL(this.state.bookmarks, newFilters);
     this.clearFind();
   }
+
   showFilters() {
     const self = this;
     return (
@@ -541,9 +533,7 @@ class Fetch extends React.Component {
   render() {
     return (
       <div>
-        <div className="bookmarks-bar monospace">
-          {this.showBookmarks()}
-        </div>
+        <Bookmarks bookmarks={this.state.bookmarks} setScroll={this.setScroll} />
         <div className="main">
           <Col lg={11} lgOffset={1}>
             <div className="find-box">
