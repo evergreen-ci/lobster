@@ -8,32 +8,50 @@ import './style.css';
 
 class LogLineText extends React.Component {
   static propTypes = {
-    colorMap: PropTypes.object,
-    port: PropTypes.string,
     caseSensitive: PropTypes.bool,
-    lineNumber: PropTypes.number,
+    colorMap: PropTypes.object,
     find: PropTypes.string,
+    lineNumber: PropTypes.number,
+    port: PropTypes.string,
+    lineRefCallback: PropTypes.func,
     text: PropTypes.string
   };
 
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = {};
+    this.lineRef = null;
+    this.setRef = element => {
+      this.lineRef = element;
     };
+  }
+
+  componentDidMount() {
+    if (this.lineRef) {
+      this.props.lineRefCallback(this.lineRef, this.props.lineNumber);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.lineRef) {
+      this.props.lineRefCallback(this.lineRef, this.props.lineNumber, true);
+    }
   }
 
   render() {
     const style = {color: this.props.colorMap[this.props.port]};
     const highlightStyle = {color: this.props.colorMap[this.props.port], 'backgroundImage': 'inherit', 'backgroundColor': 'pink'};
     return (
-      <Highlighter
-        highlightClassName={'findResult' + this.props.lineNumber}
-        caseSensitive={this.props.caseSensitive}
-        unhighlightStyle={style}
-        highlightStyle={highlightStyle}
-        textToHighlight={this.props.text}
-        searchWords={[this.props.find]}
-      />
+      <span ref={this.setRef}>
+        <Highlighter
+          highlightClassName={'findResult' + this.props.lineNumber}
+          caseSensitive={this.props.caseSensitive}
+          unhighlightStyle={style}
+          highlightStyle={highlightStyle}
+          textToHighlight={this.props.text}
+          searchWords={[this.props.find]}
+        />
+      </span>
     );
   }
 }
@@ -46,17 +64,15 @@ class LineNumber extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = {};
+    this.handleDoubleClick = () => {
+      this.props.toggleBookmark(this.props.lineNumber);
     };
-  }
-
-  handleDoubleClick() {
-    this.props.toggleBookmark(this.props.lineNumber);
   }
 
   render() {
     const style = {width: '60px', display: 'inline-block'};
-    return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style} onDoubleClick={this.handleDoubleClick.bind(this)}></span>;
+    return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style} onDoubleClick={this.handleDoubleClick}></span>;
   }
 }
 
@@ -67,8 +83,7 @@ class LogOptions extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
 
   handleClick(gitRef) {
@@ -89,24 +104,24 @@ class LogOptions extends React.Component {
 class FullLogLine extends React.Component {
   static propTypes = {
     bookmarked: PropTypes.bool,
-    wrap: PropTypes.bool,
+    caseSensitive: PropTypes.bool,
+    colorMap: PropTypes.object,
+    find: PropTypes.string,
     found: PropTypes.bool,
     line: PropTypes.shape({
       gitRef: PropTypes.any,
+      lineNumber: PropTypes.number,
       port: PropTypes.string,
-      text: PropTypes.string,
-      lineNumber: PropTypes.number
+      text: PropTypes.string
     }),
+    lineRefCallback: PropTypes.func,
     toggleBookmark: PropTypes.func,
-    caseSensitive: PropTypes.bool,
-    colorMap: PropTypes.object,
-    find: PropTypes.string
+    wrap: PropTypes.bool
   };
 
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
 
   render() {
@@ -127,7 +142,7 @@ class FullLogLine extends React.Component {
       <div className={className}>
         <LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} />
         <LogOptions gitRef={this.props.line.gitRef} />
-        <LogLineText text={this.props.line.text} lineNumber={this.props.line.lineNumber} port={this.props.line.port} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive} />
+        <LogLineText lineRefCallback={this.props.lineRefCallback} text={this.props.line.text} lineNumber={this.props.line.lineNumber} port={this.props.line.port} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive} />
       </div>
     );
   }
@@ -153,12 +168,19 @@ class LogView extends React.Component {
     super(props);
     this.state = {
       processed: '',
-      dummyCounter: 0
+      lineMap: new Map()
     };
     this.logListRef = null;
     this.indexMap = {};
     this.setLogListRef = element => {
       this.logListRef = element;
+    };
+    this.lineRefCallback = (element, line, isUnmount) => {
+      if (isUnmount === true) {
+        this.state.lineMap.delete(line);
+      } else {
+        this.state.lineMap[line] = element;
+      }
     };
   }
 
@@ -168,6 +190,7 @@ class LogView extends React.Component {
         ref={this.setLogListRef}
         itemRenderer={(index, _key) => (
           <FullLogLine
+            lineRefCallback={this.lineRefCallback}
             key={index}
             found={filteredLines[index].lineNumber === this.props.findLine}
             bookmarked={this.props.findBookmark(this.props.bookmarks, filteredLines[index].lineNumber) !== -1}
@@ -198,7 +221,7 @@ class LogView extends React.Component {
     window.scrollBy(0, -45);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps, _nextState) {
     if (nextProps.scrollLine !== null && nextProps.scrollLine >= 0) {
       this.scrollToLine(nextProps.scrollLine);
     }
@@ -227,19 +250,16 @@ class LogView extends React.Component {
     if (nextProps.caseSensitive !== this.props.caseSensitive) {
       return true;
     }
-    if (nextState.dummyCounter !== this.state.dummyCounter) {
-      return true;
-    }
 
     return false;
   }
 
   scrollFindIntoView() {
-    if (this.props.findLine < 0) {
+    if (this.props.findLine < 0 || !(this.props.findLine in this.state.lineMap)) {
       return;
     }
-
-    const findElements = document.getElementsByClassName('findResult' + this.props.findLine);
+    const findElements = this.state.lineMap[this.props.findLine]
+      .getElementsByClassName('findResult' + this.props.findLine);
     if (findElements.length > 0) {
       const elem = findElements[0];
       const position = elem.getBoundingClientRect();
@@ -253,19 +273,16 @@ class LogView extends React.Component {
         scrollX = position.left - windowWidth / 3;
       }
       window.scrollTo(scrollX, scrollY);
-    } else {
-      // We probably just need to setState again.
-      this.setState(state => ({dummyCounter: state.dummyCounter + 1}));
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, _prevState) {
     if (this.props.scrollLine !== null && this.props.scrollLine >= 0 && this.props.scrollLine !== prevProps.scrollLine) {
       this.scrollToLine(this.props.scrollLine);
     }
 
     // If the find index changed, scroll to the right if necessary.
-    if (this.props.findLine !== prevProps.findLine || this.props.find !== prevProps.find || this.state.dummyCounter !== prevState.dummyCounter) {
+    if (this.props.findLine !== prevProps.findLine || this.props.find !== prevProps.find) {
       this.scrollFindIntoView();
     }
   }
