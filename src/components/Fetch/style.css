@@ -80,4 +80,5 @@
 
 .unmoving {
     resize: none;
+    width: 75px;
 }
