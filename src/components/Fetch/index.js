@@ -11,7 +11,7 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Collapse from 'react-bootstrap/lib/Collapse';
 import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
-import { Bookmarks } from './Bookmarks'
+import { Bookmarks } from './Bookmarks';
 
 
 // eslint-disable-next-line react/no-deprecated

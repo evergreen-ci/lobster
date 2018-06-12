@@ -19,17 +19,17 @@ export class Bookmarks extends React.PureComponent {
     return (
       <div className="bookmarks-bar monospace">
         <div>
-          {this.props.bookmarks.map((bookmark) => Bookmark(bookmark.lineNumber, this.scroll))}
+          {this.props.bookmarks.map((bookmark) => bookmark(bookmark.lineNumber, this.scroll))}
         </div>
       </div>
     );
   }
 }
 
-export const Bookmark = (lineNumber, scrollFunc) => {
+export const bookmark = (lineNumber, scrollFunc) => {
   return (
     <div onClick={scrollFunc} key={lineNumber}>
       {lineNumber}
     </div>
   );
-}
+};

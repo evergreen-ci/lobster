@@ -36,7 +36,8 @@ module.exports = {
       },
       'rules': {
         'no-debugger': ENABLE_NO_DEBUGGER,
-        'react/jsx-key': 0
+        'react/jsx-key': 0,
+        'react/jsx-no-bind': 0
       }
     },
     {
@@ -64,9 +65,9 @@ module.exports = {
     'react/jsx-tag-spacing': 2,
     'react/jsx-closing-tag-location': 2,
     'react/prefer-stateless-function': [2, {'ignorePureComponents': true}],
+    'react/jsx-no-bind': 2,
 
     // work towards making these errors
-    'react/jsx-no-bind': 1,
     'react/no-access-state-in-setstate': 1,
 
     // work towards enabling
