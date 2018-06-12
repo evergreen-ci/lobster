@@ -26,7 +26,7 @@ Filters.propTypes = {
     text: PropTypes.string.isRequired,
     on: PropTypes.bool.isRequired,
     inverse: PropTypes.bool.isRequired
-  })),
+  })).isRequired,
   removeFilter: PropTypes.func.isRequired,
   toggleFilter: PropTypes.func.isRequired,
   toggleFilterInverse: PropTypes.func.isRequired
@@ -38,7 +38,7 @@ export class Filter extends React.PureComponent {
       text: PropTypes.string.isRequired,
       on: PropTypes.bool.isRequired,
       inverse: PropTypes.bool.isRequired
-    }),
+    }).isRequired,
     removeFilter: PropTypes.func.isRequired,
     toggleFilter: PropTypes.func.isRequired,
     toggleFilterInverse: PropTypes.func.isRequired
