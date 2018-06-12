@@ -11,7 +11,8 @@ test('Store-Line-Colors', function() {
     '[Cclluusstteerr:job0:shard0:primary]',
     '[TryToFixYou:job0:mongos]',
     '[ShardTooHard:job2:shard0:primary]',
-    '[AnotherOne:job1:shard0:secondary1]'
+    '[AnotherOne:job1:shard0:secondary1]',
+    ''
   ];
 
   const response = {

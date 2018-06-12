@@ -56,7 +56,6 @@ class Fetch extends React.Component {
       findResults: [],
       bookmarks: bookmarksArr
     };
-
     if (this.state.url) {
       Actions.loadDataUrl(this.state.url, this.state.server);
     } else if (this.state.build) { // this is direct route to a file
@@ -528,8 +527,8 @@ class Fetch extends React.Component {
     event.preventDefault();
   }
 
-  handleChangeFind(event, caseSensitive) {
-    this.find(caseSensitive);
+  handleChangeFindEvent = () => {
+    this.find(this.state.caseSensitive);
   }
 
   render() {
@@ -547,7 +546,7 @@ class Fetch extends React.Component {
                     <FormControl type="text"
                       placeholder="optional. regexp to search for"
                       inputRef={ref => { this.findInput = ref; }}
-                      onChange={this.handleChangeFind.bind(this, this.state.caseSensitive)}
+                      onChange={this.handleChangeFindEvent}
                     />
                   </Col>
                   <Button type="submit" onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
