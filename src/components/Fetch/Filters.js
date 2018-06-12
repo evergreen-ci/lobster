@@ -24,7 +24,8 @@ export const Filters = (props) => {
 Filters.propTypes = {
   filters: PropTypes.arrayOf(PropTypes.shape({
     text: PropTypes.string.isRequired,
-    on: PropTypes.bool
+    on: PropTypes.bool.isRequired,
+    inverse: PropTypes.bool.isRequired
   })),
   removeFilter: PropTypes.func.isRequired,
   toggleFilter: PropTypes.func.isRequired,
