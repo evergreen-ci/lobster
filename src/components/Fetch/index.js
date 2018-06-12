@@ -12,6 +12,7 @@ import Collapse from 'react-bootstrap/lib/Collapse';
 import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
+import { Filters } from './Filters';
 
 
 // eslint-disable-next-line react/no-deprecated
@@ -322,7 +323,7 @@ class Fetch extends React.Component {
     this.clearFind();
   }
 
-  toggleFilter(text) {
+  toggleFilter = (text) => {
     const newFilters = this.state.filterList.slice();
     const filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters[filterIdx].on = !newFilters[filterIdx].on;
@@ -332,7 +333,7 @@ class Fetch extends React.Component {
     this.clearFind();
   }
 
-  toggleFilterInverse(text) {
+  toggleFilterInverse = (text) => {
     const newFilters = this.state.filterList.slice();
     const filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters[filterIdx].inverse = !newFilters[filterIdx].inverse;
@@ -342,7 +343,7 @@ class Fetch extends React.Component {
     this.clearFind();
   }
 
-  removeFilter(text) {
+  removeFilter = (text) => {
     const newFilters = this.state.filterList.slice();
     const filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters.splice(filterIdx, 1);
@@ -350,23 +351,6 @@ class Fetch extends React.Component {
     this.setState({filterList: newFilters});
     this.updateURL(this.state.bookmarks, newFilters);
     this.clearFind();
-  }
-
-  showFilters() {
-    const self = this;
-    return (
-      <div className="filter-box">{self.state.filterList.map(function(filter) {
-        return (
-          <div className="filter" key={filter.text}>
-            <Button className="filter-button" onClick={self.removeFilter.bind(self, filter.text)} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
-            <Button className="filter-button" onClick={self.toggleFilter.bind(self, filter.text)} bsStyle="warning" bsSize="xsmall">{filter.on ? '||' : '\u25B6'}</Button>
-            <Button className="filter-button-big" onClick={self.toggleFilterInverse.bind(self, filter.text)} bsStyle="success" bsSize="xsmall">{filter.inverse ? 'out' : 'in'}</Button>
-            <span className="filter-text">{filter.text}</span>
-          </div>
-        );
-      })}
-      </div>
-    );
   }
 
   makeRegexp(regexp, caseSensitive) {
@@ -572,9 +556,12 @@ class Fetch extends React.Component {
                       {this.showJobLogs()}
                     </FormGroup>
                   </Form>
-                  <div className="filterBox">
-                    {this.showFilters()}
-                  </div>
+                  <Filters
+                    filters={this.state.filterList}
+                    removeFilter={this.removeFilter}
+                    toggleFilter={this.toggleFilter}
+                    toggleFilterInverse={this.toggleFilterInverse}
+                  />
                 </div>
               </Collapse>
             </div>
