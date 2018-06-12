@@ -84,7 +84,20 @@ const LobsterStore = Reflux.createStore({
 
     const colorMap = {};
 
-    const colorList = ['#5aae61', '#c2a5cf', '#bf812d', '#dfc27d', '#2166ac', '#8c510a', '#1b7837', '#74add1', '#80cdc1'];
+    const colorList = [
+      '#5aae61',
+      '#c2a5cf',
+      '#bf812d',
+      '#dfc27d',
+      '#2166ac',
+      '#8c510a',
+      '#1b7837',
+      '#74add1',
+      '#80cdc1',
+      '#d6604d',
+      '#762a83',
+      '#de77ae'
+    ];
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];

@@ -36,7 +36,9 @@ test('Fetch-Search', function() {
         params: {build: '4191390ec6c7ee9bdea4e45f9cc94d31', test: '5af32dbbf84ae86d1e01e964'}
       }}
       colorMap={{}}
-    />);
+    />, {
+      attachTo: document.body
+    });
 
   // Testing default state, no entry for searchbar
   assert.equal(wrapper.state('findIdx'), -1);
@@ -68,7 +70,6 @@ test('Fetch-Search', function() {
   // Testing change in search bar with no results
   wrapper.find('#findInput').instance().value = '2019';
   wrapper.find('#findInput').at(0).simulate('change');
-  wrapper.update();
   assert.equal(wrapper.state('findIdx'), -1);
   assert.equal(wrapper.state('findResults').length, 0);
   assert.equal(wrapper.state('find'), '2019');
@@ -80,4 +81,21 @@ test('Fetch-Search', function() {
     <Button>Prev</Button>
   ]), false);
   assert.equal(wrapper.find('.not-found').exists(), true);
+
+  wrapper.find('#findInput').instance().value = 'ASIO';
+  wrapper.find('#findInput').at(0).simulate('change');
+  wrapper.instance().state.caseSensitive = true;
+
+  // console.log(wrapper.state('caseSensitive'));
+  console.log(wrapper.state('findResults'));
+  assert.equal(wrapper.state('findIdx'), 0);
+  assert.equal(wrapper.state('findResults').length, 10);
+  assert.equal(wrapper.state('find'), 'ASIO');
+  assert.equal(wrapper.state('wrap'), false);
+  assert.equal(wrapper.state('caseSensitive'),a true);
+  assert.equal(wrapper.state('detailsOpen'), false);
+  assert.equal(wrapper.containsAllMatchingElements([
+    <Button>Next</Button>,
+    <Button>Prev</Button>
+  ]), true);
 });
