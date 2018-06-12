@@ -580,7 +580,7 @@ class Fetch extends React.Component {
                       <Col componentClass={ControlLabel} lg={1}>Filter Logic</Col>
                       <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
                       <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
-                      <Col lg={2}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
+                      <Col lg={1}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
                       {this.showJobLogs()}
                       {this.showRaw()}
                       {this.showHTML()}
