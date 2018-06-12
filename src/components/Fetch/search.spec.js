@@ -36,9 +36,7 @@ test('Fetch-Search', function() {
         params: {build: '4191390ec6c7ee9bdea4e45f9cc94d31', test: '5af32dbbf84ae86d1e01e964'}
       }}
       colorMap={{}}
-    />, {
-      attachTo: document.body
-    });
+    />);
 
   // Testing default state, no entry for searchbar
   assert.equal(wrapper.state('findIdx'), -1);
