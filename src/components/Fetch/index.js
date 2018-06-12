@@ -477,6 +477,18 @@ class Fetch extends React.Component {
     this.find(!value);
   }
 
+  showRaw() {
+    if (!this.state.server) {
+      return (<Col lg={1}><Button href={'/build/' + this.state.build + '/all?raw=1'}>Raw</Button></Col>);
+    }
+  }
+
+  showHTML() {
+    if (!this.state.server) {
+      return (<Col lg={1}><Button href={'/build/' + this.state.build + '/all?html=1'}>HTML</Button></Col>);
+    }
+  }
+
   toggleFilterIntersection = (value) => {
     this.setState({filterIntersection: !value});
   }
@@ -484,6 +496,7 @@ class Fetch extends React.Component {
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
   }
+
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
   }
@@ -509,8 +522,8 @@ class Fetch extends React.Component {
     event.preventDefault();
   }
 
-  handleChangeFind = (event, caseSensitive) => {
-    this.find(caseSensitive);
+  handleChangeFindEvent = () => {
+    this.find(this.state.caseSensitive);
   }
 
   toggleWrap = (value) => this.setState({wrap: !value});
@@ -531,7 +544,7 @@ class Fetch extends React.Component {
                       type="text"
                       placeholder="optional. regexp to search for"
                       inputRef={this.setFormRef}
-                      onChange={this.handleChangeFind}
+                      onChange={this.handleChangeFindEvent}
                     />
                   </Col>
                   <Button type="submit" onClick={this.find}>Find</Button>
@@ -547,13 +560,15 @@ class Fetch extends React.Component {
                     <FormGroup controlId="wrap">
                       <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
                       <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={this.toggleWrap} /></Col>
-                      <Col componentClass={ControlLabel} lg={2}>Case Sensitive</Col>
+                      <Col componentClass={ControlLabel} lg={1}>Case Sensitive</Col>
                       <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive} /></Col>
-                      <Col componentClass={ControlLabel} lg={2}>Filter Logic</Col>
+                      <Col componentClass={ControlLabel} lg={1}>Filter Logic</Col>
                       <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection} /></Col>
                       <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
                       <Col lg={2}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
                       {this.showJobLogs()}
+                      {this.showRaw()}
+                      {this.showHTML()}
                     </FormGroup>
                   </Form>
                   <Filters

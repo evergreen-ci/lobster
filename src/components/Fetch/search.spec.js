@@ -36,7 +36,8 @@ test('Fetch-Search', function() {
         params: {build: '4191390ec6c7ee9bdea4e45f9cc94d31', test: '5af32dbbf84ae86d1e01e964'}
       }}
       colorMap={{}}
-    />);
+    />
+  );
 
   // Testing default state, no entry for searchbar
   assert.equal(wrapper.state('findIdx'), -1);
@@ -46,38 +47,60 @@ test('Fetch-Search', function() {
   assert.equal(wrapper.state('caseSensitive'), false);
   assert.equal(wrapper.state('detailsOpen'), false);
   // console.log(wrapper.render());
-  assert.equal(wrapper.containsAllMatchingElements([
+  assert.ok(!wrapper.containsAllMatchingElements([
     <Button>Next</Button>,
     <Button>Prev</Button>
-  ]), false);
+  ]));
+
+  // Check for existence of raw and HTML buttons
+  const rawUrl = '/build/' + wrapper.state('build') + '/all?raw=1';
+  const HTMLUrl = '/build/' + wrapper.state('build') + '/all?html=1';
+  assert.ok(wrapper.containsAllMatchingElements([
+    <Button href={rawUrl}>Raw</Button>,
+    <Button href={HTMLUrl}>HTML</Button>
+  ]));
 
   // Testing change in search bar with results
   wrapper.find('#findInput').instance().value = '2018';
-  wrapper.find('#findInput').at(0).simulate('change');
+  wrapper.find('#findInput').simulate('change', {});
   assert.equal(wrapper.state('findIdx'), 0);
   assert.equal(wrapper.state('findResults').length, 1);
   assert.equal(wrapper.state('find'), '2018');
   assert.equal(wrapper.state('wrap'), false);
   assert.equal(wrapper.state('caseSensitive'), false);
   assert.equal(wrapper.state('detailsOpen'), false);
-  assert.equal(wrapper.containsAllMatchingElements([
+  assert.ok(wrapper.containsAllMatchingElements([
     <Button>Next</Button>,
     <Button>Prev</Button>
-  ]), true);
+  ]));
 
   // Testing change in search bar with no results
   wrapper.find('#findInput').instance().value = '2019';
-  wrapper.find('#findInput').at(0).simulate('change');
-  wrapper.update();
+  wrapper.find('#findInput').at(0).simulate('change', {});
   assert.equal(wrapper.state('findIdx'), -1);
   assert.equal(wrapper.state('findResults').length, 0);
   assert.equal(wrapper.state('find'), '2019');
   assert.equal(wrapper.state('wrap'), false);
   assert.equal(wrapper.state('caseSensitive'), false);
   assert.equal(wrapper.state('detailsOpen'), false);
-  assert.equal(wrapper.containsAllMatchingElements([
+  assert.ok(!wrapper.containsAllMatchingElements([
     <Button>Next</Button>,
     <Button>Prev</Button>
-  ]), false);
+  ]));
   assert.equal(wrapper.find('.not-found').exists(), true);
+
+  wrapper.find('#findInput').instance().value = 'ASIO';
+  wrapper.find('#findInput').at(0).simulate('change', {});
+  wrapper.instance().state.caseSensitive = true;
+
+  assert.equal(wrapper.state('findIdx'), 0);
+  assert.equal(wrapper.state('findResults').length, 10);
+  assert.equal(wrapper.state('find'), 'ASIO');
+  assert.equal(wrapper.state('wrap'), false);
+  assert.equal(wrapper.state('caseSensitive'), true);
+  assert.equal(wrapper.state('detailsOpen'), false);
+  assert.ok(wrapper.containsAllMatchingElements([
+    <Button>Next</Button>,
+    <Button>Prev</Button>
+  ]));
 });
