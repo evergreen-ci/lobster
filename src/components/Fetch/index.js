@@ -243,7 +243,7 @@ class Fetch extends React.Component {
     this.setScroll(this.state.findResults[nextIdx]);
   }
 
-  find = (caseSensitive, event) => {
+  find = ( event) => {
     if (event) {
       event.preventDefault();
     }
@@ -254,7 +254,7 @@ class Fetch extends React.Component {
       return;
     }
 
-    if (findRegexp === this.state.find && caseSensitive === this.state.caseSensitive) {
+    if (findRegexp === this.state.find) {
       if (this.state.findResults.length > 0) {
         return this.nextFind();
       }
@@ -262,9 +262,9 @@ class Fetch extends React.Component {
     }
 
     const findResults = [];
-    const filter = this.mergeActiveFilters(this.state.filterList, caseSensitive);
-    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, caseSensitive);
-    const findRegexpFull = this.makeRegexp(findRegexp, caseSensitive);
+    const filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
+    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
+    const findRegexpFull = this.makeRegexp(findRegexp, this.state.caseSensitive);
 
     for (let i = 0; i < this.props.lines.length; i++) {
       const line = this.props.lines[i];
