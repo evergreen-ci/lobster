@@ -143,6 +143,7 @@ const LobsterStore = Reflux.createStore({
         }
       }
 
+
       if (lineObj.gitRef) {
         lineObj.gitRef = this.getFullGitRef(lineObj.gitRef, gitVersionStr);
       }
