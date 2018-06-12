@@ -52,6 +52,14 @@ test('Fetch-Search', function() {
     <Button>Prev</Button>
   ]));
 
+  // Check for existence of raw and HTML buttons
+  const rawUrl = '/build/' + wrapper.state('build') + '/all?raw=1';
+  const HTMLUrl = '/build/' + wrapper.state('build') + '/all?html=1';
+  assert.ok(wrapper.containsAllMatchingElements([
+    <Button href={rawUrl}>Raw</Button>,
+    <Button href={HTMLUrl}>HTML</Button>
+  ]));
+
   // Testing change in search bar with results
   wrapper.find('#findInput').instance().value = '2018';
   wrapper.find('#findInput').simulate('change', {});
