@@ -409,7 +409,8 @@ class Fetch extends React.Component {
       return <div />;
     }
     return (
-      <LogView lines={this.props.lines}
+      <LogView
+        lines={this.props.lines}
         colorMap={this.props.colorMap}
         filter={filter}
         inverseFilter={inverseFilter}
@@ -468,7 +469,9 @@ class Fetch extends React.Component {
         <FormGroup controlId="urlInput">
           <Col componentClass={ControlLabel} lg={1}>Log</Col>
           <Col lg={6}>
-            <FormControl type="text" defaultValue={this.state.url}
+            <FormControl
+              type="text"
+              defaultValue={this.state.url}
               placeholder="optional. custom file location iff used with local server"
               inputRef={this.setURLRef}
             />
@@ -540,7 +543,8 @@ class Fetch extends React.Component {
               <Form horizontal>
                 <FormGroup controlId="findInput" className="filter-header">
                   <Col lg={6} >
-                    <FormControl type="text"
+                    <FormControl
+                      type="text"
                       placeholder="optional. regexp to search for"
                       inputRef={this.setFormRef}
                       onChange={this.handleChangeFind}
