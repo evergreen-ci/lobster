@@ -56,7 +56,7 @@ module.exports = {
   'rules': {
     'complexity': 'off',
     'no-console': 'off',
-    'no-unused-vars': ['error', {'argsIgnorePattern': '^_'}],
+    'no-unused-vars': ['error', {'vars': 'all', 'args': 'after-used', 'argsIgnorePattern': '^_'}],
 
     // Enable a more strict set of react lints
     'react/jsx-closing-bracket-location': 2,
@@ -66,15 +66,15 @@ module.exports = {
     'react/jsx-tag-spacing': 2,
     'react/jsx-wrap-multilines': 2,
     'react/prefer-stateless-function': [2, {'ignorePureComponents': true}],
-    'react/self-closing-comp': [2, {html: false, component: true}],
+    'react/self-closing-comp': [2, {'html': false, 'component': true}],
     'react/jsx-first-prop-new-line': [2, 'multiline'],
+    'react/no-this-in-sfc': 2,
 
     // work towards making these errors
     'react/no-access-state-in-setstate': 1,
 
     // work towards enabling
     'react/jsx-sort-props': 0,
-    'react/no-this-in-sfc': 0,
     'react/require-default-props': 0,
     'react/require-optimization': 0,
     'react/sort-prop-types': 0,
@@ -85,12 +85,12 @@ module.exports = {
 
     // might hurt development performance
     'react/forbid-prop-types': 0,
-    // not sure about this yet
+    // not sure about these yet
     'react/jsx-no-literals': 0,
     'react/destructuring-assignment': 0,
 
     // The No List
-    // --fix does weird things with this one
+    // --fix does weird things with these two
     'react/jsx-indent': 0,
     'react/jsx-indent-props': 0,
     // Not Always Valuable
