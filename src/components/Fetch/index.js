@@ -528,7 +528,7 @@ class Fetch extends React.Component {
     event.preventDefault();
   }
 
-  handleChangeFind(event) {
+  handleChangeFindEvent = () => {
     this.find(this.state.caseSensitive);
   }
 
@@ -547,7 +547,7 @@ class Fetch extends React.Component {
                     <FormControl type="text"
                       placeholder="optional. regexp to search for"
                       inputRef={ref => { this.findInput = ref; }}
-                      onChange={this.handleChangeFind.bind(this)}
+                      onChange={this.handleChangeFindEvent}
                     />
                   </Col>
                   <Button type="submit" onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
