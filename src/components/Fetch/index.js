@@ -54,7 +54,8 @@ class Fetch extends React.Component {
       find: '',
       findIdx: -1,
       findResults: [],
-      bookmarks: bookmarksArr
+      bookmarks: bookmarksArr,
+      reverseSearch: false
     };
 
     if (this.state.url) {
@@ -251,9 +252,12 @@ class Fetch extends React.Component {
     this.setScroll(this.state.findResults[nextIdx]);
   }
 
-  find(caseSensitive, event) {
+  find(event) {
     if (event) {
       event.preventDefault();
+    }
+    if (event.keyCode === 13 && event.shiftKey) {
+      return;
     }
     const findRegexp = this.findInput.value;
 
@@ -262,7 +266,7 @@ class Fetch extends React.Component {
       return;
     }
 
-    if (findRegexp === this.state.find && caseSensitive === this.state.caseSensitive) {
+    if (findRegexp === this.state.find) {
       if (this.state.findResults.length > 0) {
         return this.nextFind();
       }
@@ -270,9 +274,9 @@ class Fetch extends React.Component {
     }
 
     const findResults = [];
-    const filter = this.mergeActiveFilters(this.state.filterList, caseSensitive);
-    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, caseSensitive);
-    const findRegexpFull = this.makeRegexp(findRegexp, caseSensitive);
+    const filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
+    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
+    const findRegexpFull = this.makeRegexp(findRegexp, this.state.caseSensitive);
 
     for (let i = 0; i < this.props.lines.length; i++) {
       const line = this.props.lines[i];
@@ -514,9 +518,11 @@ class Fetch extends React.Component {
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
+    // document.addEventListener('keyup', this.handleShiftEnter);
   }
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
+    // document.removeEventListener('keyup', this.handleShiftEnter);
   }
 
   handleKeyDown = (event) => {
@@ -529,9 +535,8 @@ class Fetch extends React.Component {
           this.focusOnFind(event);
         }
         break;
-      case 13: // Enter
+      case 13:
         if (event.shiftKey) {
-          console.log(this.state.findIdx);
           this.prevFind();
         }
         break;
@@ -566,10 +571,9 @@ class Fetch extends React.Component {
                       placeholder="optional. regexp to search for"
                       inputRef={ref => { this.findInput = ref; }}
                       onChange={this.handleChangeFindEvent}
-                      onKeyUp={this.handleKeyDown}
                     />
                   </Col>
-                  <Button type="submit" onClick={this.find.bind(this, this.state.caseSensitive)}>Find</Button>
+                  <Button type="submit" onClick={this.find.bind(this)}>Find</Button>
                   {this.showFind()}
                   <Button onClick={this.addFilter.bind(this)}>Add Filter</Button>
                   <Button onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
