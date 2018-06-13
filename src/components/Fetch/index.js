@@ -11,6 +11,9 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Collapse from 'react-bootstrap/lib/Collapse';
 import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
+import { Bookmarks } from './Bookmarks';
+import { Filters } from './Filters';
+
 
 // eslint-disable-next-line react/no-deprecated
 class Fetch extends React.Component {
@@ -31,7 +34,6 @@ class Fetch extends React.Component {
 
   constructor(props) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
     const searchParams = new URLSearchParams(props.location.search);
     const params = this.props.match.params;
@@ -170,7 +172,7 @@ class Fetch extends React.Component {
     });
   }
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     console.log('handleSubmit');
     event.preventDefault();
     // prepare do to the change
@@ -187,7 +189,7 @@ class Fetch extends React.Component {
     }
   }
 
-  setScroll(lineNum) {
+  setScroll = (lineNum) => {
     this.setState({scrollLine: lineNum});
   }
 
@@ -201,7 +203,7 @@ class Fetch extends React.Component {
     return b1.lineNumber - b2.lineNumber;
   }
 
-  toggleBookmark(lineNum) {
+  toggleBookmark = (lineNum) => {
     const newBookmarks = this.state.bookmarks.slice();
     const i = this.findBookmark(newBookmarks, lineNum);
     if (i === -1) {
@@ -224,17 +226,7 @@ class Fetch extends React.Component {
     return newBookmarks;
   }
 
-  showBookmarks() {
-    const self = this;
-    return (
-      <div>{self.state.bookmarks.map(function(bookmark) {
-        return <div onClick={self.setScroll.bind(self, bookmark.lineNumber)} key={bookmark.lineNumber}>{bookmark.lineNumber}</div>;
-      })}
-      </div>
-    );
-  }
-
-  nextFind() {
+  nextFind = () => {
     let nextIdx = this.state.findIdx + 1;
     if (nextIdx === this.state.findResults.length) {
       nextIdx = 0;
@@ -243,7 +235,7 @@ class Fetch extends React.Component {
     this.setScroll(this.state.findResults[nextIdx]);
   }
 
-  prevFind() {
+  prevFind = () => {
     let nextIdx = this.state.findIdx - 1;
     if (nextIdx === -1) {
       nextIdx = this.state.findResults.length - 1;
@@ -252,7 +244,7 @@ class Fetch extends React.Component {
     this.setScroll(this.state.findResults[nextIdx]);
   }
 
-  find(event) {
+  find = ( event) => {
     if (event) {
       event.preventDefault();
     }
@@ -297,7 +289,7 @@ class Fetch extends React.Component {
     this.setState({find: '', findIdx: -1, findResults: []});
   }
 
-  shouldPrintLine(bookmarks, line, filter, inverseFilter) {
+  shouldPrintLine = (bookmarks, line, filter, inverseFilter) => {
     if (this.findBookmark(bookmarks, line.lineNumber) !== -1) {
       return true;
     }
@@ -324,7 +316,7 @@ class Fetch extends React.Component {
     return false;
   }
 
-  addFilter() {
+  addFilter = () => {
     if (this.findInput.value === '' || this.state.filterList.find((elem) => elem.text === this.findInput.value)) {
       return;
     }
@@ -335,7 +327,7 @@ class Fetch extends React.Component {
     this.clearFind();
   }
 
-  toggleFilter(text) {
+  toggleFilter = (text) => {
     const newFilters = this.state.filterList.slice();
     const filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters[filterIdx].on = !newFilters[filterIdx].on;
@@ -345,7 +337,7 @@ class Fetch extends React.Component {
     this.clearFind();
   }
 
-  toggleFilterInverse(text) {
+  toggleFilterInverse = (text) => {
     const newFilters = this.state.filterList.slice();
     const filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters[filterIdx].inverse = !newFilters[filterIdx].inverse;
@@ -355,7 +347,7 @@ class Fetch extends React.Component {
     this.clearFind();
   }
 
-  removeFilter(text) {
+  removeFilter = (text) => {
     const newFilters = this.state.filterList.slice();
     const filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters.splice(filterIdx, 1);
@@ -363,22 +355,6 @@ class Fetch extends React.Component {
     this.setState({filterList: newFilters});
     this.updateURL(this.state.bookmarks, newFilters);
     this.clearFind();
-  }
-  showFilters() {
-    const self = this;
-    return (
-      <div className="filter-box">{self.state.filterList.map(function(filter) {
-        return (
-          <div className="filter" key={filter.text}>
-            <Button className="filter-button" onClick={self.removeFilter.bind(self, filter.text)} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
-            <Button className="filter-button" onClick={self.toggleFilter.bind(self, filter.text)} bsStyle="warning" bsSize="xsmall">{filter.on ? '||' : '\u25B6'}</Button>
-            <Button className="filter-button-big" onClick={self.toggleFilterInverse.bind(self, filter.text)} bsStyle="success" bsSize="xsmall">{filter.inverse ? 'out' : 'in'}</Button>
-            <span className="filter-text">{filter.text}</span>
-          </div>
-        );
-      })}
-      </div>
-    );
   }
 
   makeRegexp(regexp, caseSensitive) {
@@ -421,7 +397,8 @@ class Fetch extends React.Component {
       return <div />;
     }
     return (
-      <LogView lines={this.props.lines}
+      <LogView
+        lines={this.props.lines}
         colorMap={this.props.colorMap}
         filter={filter}
         inverseFilter={inverseFilter}
@@ -429,11 +406,11 @@ class Fetch extends React.Component {
         wrap={this.state.wrap}
         caseSensitive={this.state.caseSensitive}
         findBookmark={this.findBookmark}
-        toggleBookmark={this.toggleBookmark.bind(this)}
+        toggleBookmark={this.toggleBookmark}
         bookmarks={this.state.bookmarks}
         find={this.state.find}
         findLine={this.state.findIdx === -1 ? -1 : this.state.findResults[this.state.findIdx]}
-        shouldPrintLine={this.shouldPrintLine.bind(this)}
+        shouldPrintLine={this.shouldPrintLine}
       />);
   }
 
@@ -442,8 +419,8 @@ class Fetch extends React.Component {
       if (this.state.findResults.length > 0) {
         return (
           <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
-            <Button onClick={this.nextFind.bind(this)}>Next</Button>
-            <Button onClick={this.prevFind.bind(this)}>Prev</Button>
+            <Button onClick={this.nextFind}>Next</Button>
+            <Button onClick={this.prevFind}>Prev</Button>
           </span>);
       }
       return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
@@ -472,15 +449,19 @@ class Fetch extends React.Component {
     return text;
   }
 
+  setURLRef = (ref) => {this.urlInput = ref;}
+
   showLogBox() {
     if (this.state.server) {
       return (
         <FormGroup controlId="urlInput">
           <Col componentClass={ControlLabel} lg={1}>Log</Col>
           <Col lg={6}>
-            <FormControl type="text" defaultValue={this.state.url}
+            <FormControl
+              type="text"
+              defaultValue={this.state.url}
               placeholder="optional. custom file location iff used with local server"
-              inputRef={ref => {this.urlInput = ref;}}
+              inputRef={this.setURLRef}
             />
           </Col>
           <Col lg={1}> <Button type="submit"> Apply </Button> </Col>
@@ -495,6 +476,11 @@ class Fetch extends React.Component {
     }
   }
 
+  toggleCaseSensitive = (value) => {
+    this.setState({caseSensitive: !value});
+    this.find(!value);
+  }
+
   showRaw() {
     if (!this.state.server) {
       return (<Col lg={1}><Button href={'/build/' + this.state.build + '/all?raw=1'}>Raw</Button></Col>);
@@ -507,22 +493,16 @@ class Fetch extends React.Component {
     }
   }
 
-  toggleCaseSensitive(value) {
-    this.setState({caseSensitive: !value});
-    this.find(!value);
-  }
-
-  toggleFilterIntersection(value) {
+  toggleFilterIntersection = (value) => {
     this.setState({filterIntersection: !value});
   }
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
-    // document.addEventListener('keyup', this.handleShiftEnter);
   }
+
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
-    // document.removeEventListener('keyup', this.handleShiftEnter);
   }
 
   handleKeyDown = (event) => {
@@ -555,28 +535,31 @@ class Fetch extends React.Component {
     this.find(this.state.caseSensitive);
   }
 
+  toggleWrap = (value) => this.setState({wrap: !value});
+  togglePanel = () => this.setState((state) => ({detailsOpen: !state.detailsOpen}));
+  setFormRef = (ref) => {this.findInput = ref;}
+
   render() {
     return (
       <div>
-        <div className="bookmarks-bar monospace">
-          {this.showBookmarks()}
-        </div>
+        <Bookmarks bookmarks={this.state.bookmarks} setScroll={this.setScroll} />
         <div className="main">
           <Col lg={11} lgOffset={1}>
             <div className="find-box">
               <Form horizontal>
                 <FormGroup controlId="findInput" className="filter-header">
                   <Col lg={6} >
-                    <FormControl type="text"
+                    <FormControl
+                      type="text"
                       placeholder="optional. regexp to search for"
-                      inputRef={ref => { this.findInput = ref; }}
+                      inputRef={this.setFormRef}
                       onChange={this.handleChangeFindEvent}
                     />
                   </Col>
-                  <Button type="submit" onClick={this.find.bind(this)}>Find</Button>
+                  <Button type="submit" onClick={this.find}>Find</Button>
                   {this.showFind()}
-                  <Button onClick={this.addFilter.bind(this)}>Add Filter</Button>
-                  <Button onClick={() => this.setState({ detailsOpen: !this.state.detailsOpen })}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
+                  <Button onClick={this.addFilter}>Add Filter</Button>
+                  <Button onClick={this.togglePanel}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
                 </FormGroup>
               </Form>
               <Collapse className="collapse-menu" in={this.state.detailsOpen}>
@@ -585,11 +568,11 @@ class Fetch extends React.Component {
                     {this.showLogBox()}
                     <FormGroup controlId="wrap">
                       <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
-                      <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={(value) => {this.setState({wrap: !value});}} /></Col>
+                      <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={this.toggleWrap} /></Col>
                       <Col componentClass={ControlLabel} lg={1}>Case Sensitive</Col>
-                      <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive.bind(this)} /></Col>
+                      <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive} /></Col>
                       <Col componentClass={ControlLabel} lg={1}>Filter Logic</Col>
-                      <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection.bind(this)} /></Col>
+                      <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection} /></Col>
                       <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
                       <Col lg={1}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
                       {this.showJobLogs()}
@@ -597,9 +580,12 @@ class Fetch extends React.Component {
                       {this.showHTML()}
                     </FormGroup>
                   </Form>
-                  <div className="filterBox">
-                    {this.showFilters()}
-                  </div>
+                  <Filters
+                    filters={this.state.filterList}
+                    removeFilter={this.removeFilter}
+                    toggleFilter={this.toggleFilter}
+                    toggleFilterInverse={this.toggleFilterInverse}
+                  />
                 </div>
               </Collapse>
             </div>
