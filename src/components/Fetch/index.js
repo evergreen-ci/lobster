@@ -499,10 +499,12 @@ class Fetch extends React.Component {
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
+    this.findInput.addEventListener('keydown', this.handleShiftEnter);
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
+    this.findInput.removeEventListener('keydown', this.handleShiftEnter);
   }
 
   handleKeyDown = (event) => {
@@ -513,11 +515,6 @@ class Fetch extends React.Component {
       case 70: // F
         if (event.ctrlKey || event.metaKey) {
           this.focusOnFind(event);
-        }
-        break;
-      case 13:
-        if (event.shiftKey) {
-          this.prevFind();
         }
         break;
       default:
@@ -533,6 +530,13 @@ class Fetch extends React.Component {
 
   handleChangeFindEvent = () => {
     this.find(this.state.caseSensitive);
+  }
+
+  handleShiftEnter = (event) => {
+    if (event.keyCode === 13 && event.shiftKey) {
+      event.preventDefault();
+      this.prevFind();
+    }
   }
 
   toggleWrap = (value) => this.setState({wrap: !value});
