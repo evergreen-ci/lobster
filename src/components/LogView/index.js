@@ -19,7 +19,10 @@ class LogLineText extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      startSelect: false,
+      endSelect: false
+    };
     this.lineRef = null;
     this.setRef = element => {
       this.lineRef = element;
@@ -119,7 +122,9 @@ class FullLogLine extends React.Component {
     }),
     lineRefCallback: PropTypes.func,
     toggleBookmark: PropTypes.func,
-    wrap: PropTypes.bool
+    wrap: PropTypes.bool,
+    updateSelectStartIndex: PropTypes.func,
+    updateSelectEndIndex: PropTypes.func
   };
 
   constructor(props) {
@@ -130,16 +135,18 @@ class FullLogLine extends React.Component {
   handleMouseUp = () => {
     if (window.getSelection().toString() !== '') {
       const arrayText = window.getSelection().toString().split('\n');
+      let endIndex = -1;
       if (arrayText[arrayText.length - 1] === '') {
-        console.log(this.props.line.lineNumber - 1);
+        endIndex = this.props.line.lineNumber - 1;
       } else {
-        console.log(this.props.line.lineNumber);
+        endIndex = this.props.line.lineNumber;
       }
+      this.props.updateSelectEndIndex(endIndex);
     }
   }
 
   handleMouseDown = () => {
-    console.log(this.props.line.lineNumber);
+    this.props.updateSelectStartIndex(this.props.line.lineNumber);
   }
 
   render() {
@@ -186,7 +193,9 @@ class LogView extends React.Component {
     super(props);
     this.state = {
       processed: '',
-      lineMap: new Map()
+      lineMap: new Map(),
+      selectStartIndex: null,
+      selectEndIndex: null
     };
     this.logListRef = null;
     this.indexMap = {};
@@ -203,6 +212,22 @@ class LogView extends React.Component {
     this.filteredLines = [];
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    console.log(this.state.selectStartIndex);
+    console.log(this.state.selectEndIndex);
+  }
+
+  updateSelectStartIndex = (index) => {
+    this.setState({selectStartIndex: index});
+  }
+
+  updateSelectEndIndex = (index) => {
+    this.setState({selectEndIndex: index});
+  }
+
+  handleDoubleClick = () => {
+  }
+
   genList = (index, key) => {
     return (
       <FullLogLine
@@ -216,6 +241,8 @@ class LogView extends React.Component {
         colorMap={this.props.colorMap}
         find={this.props.find}
         caseSensitive={this.props.caseSensitive}
+        updateSelectStartIndex={this.updateSelectStartIndex}
+        updateSelectEndIndex={this.updateSelectEndIndex}
       />
     );
   }
@@ -309,7 +336,7 @@ class LogView extends React.Component {
     });
     if (this.filteredLines.length !== 0) {
       return (
-        <div>
+        <div onDoubleClick={this.handleDoubleClick}>
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
