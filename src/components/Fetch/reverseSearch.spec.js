@@ -50,7 +50,7 @@ test('Reverse Search', function() {
     <Button>Prev</Button>
   ]));
 
-  // Testing and simulating shift-enter command
+  // TODO: add tests for search bar, ticket EVG-3516
   /*
   wrapper.find('#findInput').instance().value = 'asio';
   wrapper.find('#findInput').at(0).prop('click', {});
