@@ -202,10 +202,11 @@ class Fetch extends React.Component {
     return b1.lineNumber - b2.lineNumber;
   }
 
-  toggleBookmark = (lineNum) => {
-    if (Array.isArray(lineNum)) {
-      this.toggleMultipleBookmarks(lineNum);
+  toggleBookmark = (lineNumInput) => {
+    if (lineNumInput.length > 1) {
+      this.toggleMultipleBookmarks(lineNumInput);
     } else {
+      const lineNum = lineNumInput[0];
       const newBookmarks = this.state.bookmarks.slice();
       const i = this.findBookmark(newBookmarks, lineNum);
       if (i === -1) {

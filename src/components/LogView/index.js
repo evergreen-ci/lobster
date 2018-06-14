@@ -212,11 +212,6 @@ class LogView extends React.Component {
     this.filteredLines = [];
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    console.log(this.state.selectStartIndex);
-    console.log(this.state.selectEndIndex);
-  }
-
   updateSelectStartIndex = (index) => {
     this.setState({selectStartIndex: index});
   }
@@ -226,6 +221,9 @@ class LogView extends React.Component {
   }
 
   handleDoubleClick = () => {
+    // Call togglebookmark
+    const indexArray = Array(this.state.selectEndIndex - this.state.selectStartIndex + 1).fill().map((item, index) => this.state.selectStartIndex + index);
+    this.props.toggleBookmark(indexArray);
   }
 
   genList = (index, key) => {
@@ -257,7 +255,7 @@ class LogView extends React.Component {
     window.scrollBy(0, -45);
   }
 
-  shouldComponentUpdate(nextProps, _nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.scrollLine !== null && nextProps.scrollLine >= 0) {
       this.scrollToLine(nextProps.scrollLine);
     }
@@ -284,6 +282,9 @@ class LogView extends React.Component {
       return true;
     }
     if (nextProps.caseSensitive !== this.props.caseSensitive) {
+      return true;
+    }
+    if (nextState.selectEndIndex !== this.state.selectEndIndex) {
       return true;
     }
 
