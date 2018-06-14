@@ -56,8 +56,7 @@ class Fetch extends React.Component {
       find: '',
       findIdx: -1,
       findResults: [],
-      bookmarks: bookmarksArr,
-      reverseSearch: false
+      bookmarks: bookmarksArr
     };
 
     if (this.state.url) {

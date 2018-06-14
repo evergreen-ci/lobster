@@ -106,8 +106,8 @@ class FullLogLine extends React.Component {
     bookmarked: PropTypes.bool,
     caseSensitive: PropTypes.bool,
     colorMap: PropTypes.object,
-    find: PropTypes.string,
-    found: PropTypes.bool,
+    find: PropTypes.string.isRequired,
+    found: PropTypes.bool.isRequired,
     line: PropTypes.shape({
       gitRef: PropTypes.string,
       lineNumber: PropTypes.number,

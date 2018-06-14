@@ -37,12 +37,6 @@ export function makeWrapper() {
       colorMap={{}}
     />
   );
-  return wrapper;
-}
-
-test('Fetch-Search', function() {
-  const wrapper = makeWrapper();
-  // Testing default state, no entry for searchbar
   assert.equal(wrapper.state('findIdx'), -1);
   assert.equal(wrapper.state('findResults').length, 0);
   assert.equal(wrapper.state('find'), '');
@@ -54,6 +48,11 @@ test('Fetch-Search', function() {
     <Button>Next</Button>,
     <Button>Prev</Button>
   ]));
+  return wrapper;
+}
+
+test('Fetch-Search', function() {
+  const wrapper = makeWrapper();
 
   // Check for existence of raw and HTML buttons
   const rawUrl = '/build/' + wrapper.state('build') + '/all?raw=1';
