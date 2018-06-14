@@ -65,14 +65,17 @@ class LineNumber extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    /*
     this.handleDoubleClick = () => {
       this.props.toggleBookmark(this.props.lineNumber);
     };
+    */
   }
 
   render() {
     const style = {width: '60px', display: 'inline-block'};
-    return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style} onDoubleClick={this.handleDoubleClick}></span>;
+    // return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style} onDoubleClick={this.handleDoubleClick}></span>;
+    return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style}></span>;
   }
 }
 
@@ -124,6 +127,21 @@ class FullLogLine extends React.Component {
     this.state = {};
   }
 
+  handleMouseUp = () => {
+    if (window.getSelection().toString() !== '') {
+      const arrayText = window.getSelection().toString().split('\n');
+      if (arrayText[arrayText.length - 1] === '') {
+        console.log(this.props.line.lineNumber - 1);
+      } else {
+        console.log(this.props.line.lineNumber);
+      }
+    }
+  }
+
+  handleMouseDown = () => {
+    console.log(this.props.line.lineNumber);
+  }
+
   render() {
     let className = 'monospace hover-highlight inline';
     if (this.props.bookmarked) {
@@ -139,7 +157,7 @@ class FullLogLine extends React.Component {
     }
 
     return (
-      <div className={className}>
+      <div className={className} onMouseUp={this.handleMouseUp} onMouseDown={this.handleMouseDown}>
         <LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} />
         <LogOptions gitRef={this.props.line.gitRef} />
         <LogLineText lineRefCallback={this.props.lineRefCallback} text={this.props.line.text} lineNumber={this.props.line.lineNumber} port={this.props.line.port} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive} />
