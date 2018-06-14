@@ -247,6 +247,9 @@ class Fetch extends React.Component {
   find = ( event) => {
     if (event) {
       event.preventDefault();
+      if (event.keyCode === 13 && event.shiftKey) {
+        return;
+      }
     }
     const findRegexp = this.findInput.value;
 
@@ -530,10 +533,11 @@ class Fetch extends React.Component {
   }
 
   handleShiftEnter = (event) => {
-    console.log('hello world');
-    if (event.keyCode === 13 && event.shiftKey) {
-      event.preventDefault();
-      this.prevFind();
+    if (this.state.findResults.length !== 0) {
+      if (event.keyCode === 13 && event.shiftKey) {
+        event.preventDefault();
+        this.prevFind();
+      }
     }
   }
 
@@ -558,7 +562,7 @@ class Fetch extends React.Component {
                       onChange={this.handleChangeFindEvent}
                     />
                   </Col>
-                  <Button type="submit" onClick={this.find}>Find</Button>
+                  <Button id="formSubmit" type="submit" onClick={this.find}>Find</Button>
                   {this.showFind()}
                   <Button onClick={this.addFilter}>Add Filter</Button>
                   <Button onClick={this.togglePanel}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
