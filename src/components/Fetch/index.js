@@ -248,9 +248,6 @@ class Fetch extends React.Component {
     if (event) {
       event.preventDefault();
     }
-    if (event.keyCode === 13 && event.shiftKey) {
-      return;
-    }
     const findRegexp = this.findInput.value;
 
     if (findRegexp === '') {
@@ -533,6 +530,7 @@ class Fetch extends React.Component {
   }
 
   handleShiftEnter = (event) => {
+    console.log('hello world');
     if (event.keyCode === 13 && event.shiftKey) {
       event.preventDefault();
       this.prevFind();
