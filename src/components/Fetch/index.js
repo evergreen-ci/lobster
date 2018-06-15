@@ -202,25 +202,7 @@ class Fetch extends React.Component {
     return b1.lineNumber - b2.lineNumber;
   }
 
-  toggleBookmark = (lineNumInput) => {
-    if (lineNumInput.length > 1) {
-      this.toggleMultipleBookmarks(lineNumInput);
-    } else {
-      const lineNum = lineNumInput[0];
-      const newBookmarks = this.state.bookmarks.slice();
-      const i = this.findBookmark(newBookmarks, lineNum);
-      if (i === -1) {
-        newBookmarks.push({lineNumber: lineNum});
-      } else {
-        newBookmarks.splice(i, 1);
-      }
-      newBookmarks.sort(this.bookmarkSort);
-      this.setState({bookmarks: newBookmarks});
-      this.updateURL(newBookmarks, this.state.filterList);
-    }
-  }
-
-  toggleMultipleBookmarks = (lineNumArray) => {
+  toggleBookmark = (lineNumArray) => {
     const newBookmarks = this.state.bookmarks.slice();
     for (let i = 0; i < lineNumArray.length; i++) {
       const index = this.findBookmark(newBookmarks, lineNumArray[i]);
@@ -229,10 +211,10 @@ class Fetch extends React.Component {
       } else {
         newBookmarks.splice(index, 1);
       }
-      newBookmarks.sort(this.bookmarkSort);
-      this.setState({bookmarks: newBookmarks});
-      this.updateURL(newBookmarks, this.state.filterList);
     }
+    newBookmarks.sort(this.bookmarkSort);
+    this.setState({bookmarks: newBookmarks});
+    this.updateURL(newBookmarks, this.state.filterList);
   }
 
   ensureBookmark(lineNum, bookmarks) {
