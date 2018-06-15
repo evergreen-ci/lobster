@@ -221,8 +221,17 @@ class Fetch extends React.Component {
   }
 
   toggleMultipleBookmarks = (lineNumArray) => {
+    const newBookmarks = this.state.bookmarks.slice();
     for (let i = 0; i < lineNumArray.length; i++) {
-      this.toggleBookmark(lineNumArray(i));
+      const index = this.findBookmark(newBookmarks, lineNumArray[i]);
+      if (index === -1) {
+        newBookmarks.push({lineNumber: lineNumArray[i]});
+      } else {
+        newBookmarks.splice(i, 1);
+      }
+      newBookmarks.sort(this.bookmarkSort);
+      this.setState({bookmarks: newBookmarks});
+      this.updateURL(newBookmarks, this.state.filterList);
     }
   }
 

@@ -124,7 +124,8 @@ class FullLogLine extends React.Component {
     toggleBookmark: PropTypes.func,
     wrap: PropTypes.bool,
     updateSelectStartIndex: PropTypes.func,
-    updateSelectEndIndex: PropTypes.func
+    updateSelectEndIndex: PropTypes.func,
+    selected: PropTypes.bool
   };
 
   constructor(props) {
@@ -133,7 +134,8 @@ class FullLogLine extends React.Component {
   }
 
   handleMouseUp = () => {
-    if (window.getSelection().toString() !== '') {
+    console.log(this.props.selected);
+    if (!this.props.selected && window.getSelection().toString() !== '') {
       const arrayText = window.getSelection().toString().split('\n');
       let endIndex = -1;
       if (arrayText[arrayText.length - 1] === '') {
@@ -146,7 +148,10 @@ class FullLogLine extends React.Component {
   }
 
   handleMouseDown = () => {
-    this.props.updateSelectStartIndex(this.props.line.lineNumber);
+    console.log(this.props.selected);
+    if (!this.props.selected) {
+      this.props.updateSelectStartIndex(this.props.line.lineNumber);
+    }
   }
 
   render() {
@@ -195,7 +200,8 @@ class LogView extends React.Component {
       processed: '',
       lineMap: new Map(),
       selectStartIndex: null,
-      selectEndIndex: null
+      selectEndIndex: null,
+      selected: false
     };
     this.logListRef = null;
     this.indexMap = {};
@@ -218,12 +224,14 @@ class LogView extends React.Component {
 
   updateSelectEndIndex = (index) => {
     this.setState({selectEndIndex: index});
+    this.setState({selected: true});
   }
 
   handleDoubleClick = () => {
-    // Call togglebookmark
+    // Call toggle bookmark
     const indexArray = Array(this.state.selectEndIndex - this.state.selectStartIndex + 1).fill().map((item, index) => this.state.selectStartIndex + index);
     this.props.toggleBookmark(indexArray);
+    this.setState({selected: false});
   }
 
   genList = (index, key) => {
@@ -241,6 +249,7 @@ class LogView extends React.Component {
         caseSensitive={this.props.caseSensitive}
         updateSelectStartIndex={this.updateSelectStartIndex}
         updateSelectEndIndex={this.updateSelectEndIndex}
+        selected={this.state.selected}
       />
     );
   }
