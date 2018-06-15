@@ -204,15 +204,12 @@ class Fetch extends React.Component {
 
   toggleBookmark = (lineNumArray) => {
     let remove = true;
-    const removeList = [];
     const newBookmarks = this.state.bookmarks.slice();
     for (let i = 0; i < lineNumArray.length; i++) {
       const index = this.findBookmark(newBookmarks, lineNumArray[i]);
       if (index === -1) {
         newBookmarks.push({lineNumber: lineNumArray[i]});
         remove = false;
-      } else {
-        removeList.push(index);
       }
     }
     if (remove) {
