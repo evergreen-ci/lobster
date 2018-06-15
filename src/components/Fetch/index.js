@@ -227,7 +227,7 @@ class Fetch extends React.Component {
       if (index === -1) {
         newBookmarks.push({lineNumber: lineNumArray[i]});
       } else {
-        newBookmarks.splice(i, 1);
+        newBookmarks.splice(index, 1);
       }
       newBookmarks.sort(this.bookmarkSort);
       this.setState({bookmarks: newBookmarks});
