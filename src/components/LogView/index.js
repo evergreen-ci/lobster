@@ -84,7 +84,7 @@ class LineNumber extends React.Component {
 
 class LogOptions extends React.Component {
   static propTypes = {
-    gitRef: PropTypes.any
+    gitRef: PropTypes.string
   };
 
   constructor(props) {
@@ -112,10 +112,10 @@ class FullLogLine extends React.Component {
     bookmarked: PropTypes.bool,
     caseSensitive: PropTypes.bool,
     colorMap: PropTypes.object,
-    find: PropTypes.string,
-    found: PropTypes.bool,
+    find: PropTypes.string.isRequired,
+    found: PropTypes.bool.isRequired,
     line: PropTypes.shape({
-      gitRef: PropTypes.any,
+      gitRef: PropTypes.string,
       lineNumber: PropTypes.number,
       port: PropTypes.string,
       text: PropTypes.string

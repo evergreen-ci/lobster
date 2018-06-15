@@ -254,6 +254,9 @@ class Fetch extends React.Component {
   find = ( event) => {
     if (event) {
       event.preventDefault();
+      if (event.keyCode === 13 && event.shiftKey) {
+        return;
+      }
     }
     const findRegexp = this.findInput.value;
 
@@ -503,10 +506,12 @@ class Fetch extends React.Component {
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
+    this.findInput.addEventListener('keydown', this.handleShiftEnter);
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
+    this.findInput.removeEventListener('keydown', this.handleShiftEnter);
   }
 
   handleKeyDown = (event) => {
@@ -534,6 +539,15 @@ class Fetch extends React.Component {
     this.find(this.state.caseSensitive);
   }
 
+  handleShiftEnter = (event) => {
+    if (this.state.findResults.length !== 0) {
+      if (event.keyCode === 13 && event.shiftKey) {
+        event.preventDefault();
+        this.prevFind();
+      }
+    }
+  }
+
   toggleWrap = (value) => this.setState({wrap: !value});
   togglePanel = () => this.setState((state) => ({detailsOpen: !state.detailsOpen}));
   setFormRef = (ref) => {this.findInput = ref;}
@@ -555,7 +569,7 @@ class Fetch extends React.Component {
                       onChange={this.handleChangeFindEvent}
                     />
                   </Col>
-                  <Button type="submit" onClick={this.find}>Find</Button>
+                  <Button id="formSubmit" type="submit" onClick={this.find}>Find</Button>
                   {this.showFind()}
                   <Button onClick={this.addFilter}>Add Filter</Button>
                   <Button onClick={this.togglePanel}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
