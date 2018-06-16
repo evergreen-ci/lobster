@@ -1,3 +1,4 @@
+// @flow strict
 /* global process:{} */
 
-export const LOGKEEPER_BASE = process.env.REACT_APP_LOGKEEPER_BASE || '';
+export const LOGKEEPER_BASE: string = process.env.REACT_APP_LOGKEEPER_BASE || '';

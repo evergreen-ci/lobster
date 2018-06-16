@@ -1,3 +1,5 @@
+// @flow strict
+// $FlowFixMe
 import Reflux from 'reflux';
 
 const Actions = Reflux.createActions([
