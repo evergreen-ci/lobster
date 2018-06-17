@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import './style.css';
 import About from '../About/index.js';
 import ConnectedFetch from '../ConnectedFetch/index.js';
@@ -38,9 +38,12 @@ const Header = () => (
   </Grid>
  */
 const App = () => (
-  <div>
-    <Header />
-    <Main />
-  </div>
+  <BrowserRouter>
+    <div>
+      <Header />
+      <Main />
+    </div>
+  </BrowserRouter>
 );
+
 export default App;
