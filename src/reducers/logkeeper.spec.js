@@ -1,6 +1,5 @@
 // @flow
 import assert from 'assert';
-import { LobsterStore } from '../stores';
 import { logkeeperDataResponse } from './logkeeper';
 import { logkeeperDataSuccess } from '../actions';
 

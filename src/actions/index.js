@@ -50,7 +50,7 @@ export function lobsterLoadData(server: string, url: string): LobsterLoadData {
     type: LOBSTER_LOAD_DATA,
     url: url,
     server: server
-  }
+  };
 }
 
 export function logkeeperDataSuccess(data: string): LogkeeperDataResponse {
@@ -67,4 +67,4 @@ export function logkeeperDataError(data: string): LogkeeperDataResponse {
     status: 'error',
     data: data
   };
-};
+}

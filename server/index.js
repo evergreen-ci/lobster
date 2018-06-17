@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 9000;
 
 const distPath = path.resolve(__dirname, '..', 'build', 'index.html');
 if (!fs.existsSync(distPath)) {
-  console.error("\nERROR: Expected " + distPath + ' to exist, but it does not. Have you run `npm run build`?');
+  console.error('\nERROR: Expected ' + distPath + ' to exist, but it does not. Have you run `npm run build`?');
   process.exit();
 }
 
