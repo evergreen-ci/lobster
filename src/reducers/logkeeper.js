@@ -20,9 +20,9 @@ function getFullGitRef(fileLine: ?string, gitVersion: string): ?string {
   return gitPrefix + gitVersion + '/' + fileLine;
 }
 
-function processServerResponse(response: { +data: string }): Log {
+function processServerResponse(response: string): Log {
   // set the url to the url we requested
-  const lines = response.data.split('\n');
+  const lines = response.split('\n');
 
   const processed = [];
   const gitPrefix = '{githash:';
@@ -112,7 +112,7 @@ export function logkeeperDataResponse(state: Log = initialState, action: Action)
   }
 
   if (action.status === 'success') {
-    return processServerResponse({data: action.data});
+    return processServerResponse(action.data);
   }
 
   return state;

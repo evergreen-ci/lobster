@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 
 
 // eslint-disable-next-line react/no-deprecated
-class Fetch extends React.Component {
+export class Fetch extends React.Component {
   static propTypes = {
     lines: PropTypes.array,
     location: PropTypes.shape({
@@ -31,6 +31,7 @@ class Fetch extends React.Component {
       })
     }),
     history: PropTypes.object,
+
     colorMap: PropTypes.object,
     dispatch: PropTypes.func.isRequired
   };

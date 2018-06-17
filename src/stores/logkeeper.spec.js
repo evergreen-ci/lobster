@@ -1,4 +1,4 @@
-// @tlow
+// @flow
 import assert from 'assert';
 import { LobsterStore } from '../stores';
 
