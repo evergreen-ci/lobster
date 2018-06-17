@@ -20,6 +20,7 @@
     "react-scripts": "1.1.4",
     "react-toggle-button": "^2.2.0",
     "redux": "^4.0.0",
+    "redux-saga": "^0.16.0",
     "reflux": "^0.4.1",
     "reflux-state-mixin": "^0.8.0",
     "rmdir": "^1.2.0",
