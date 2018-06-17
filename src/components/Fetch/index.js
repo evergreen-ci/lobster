@@ -1,5 +1,4 @@
 import React from 'react';
-import Actions from '../../actions';
 import { loadData, lobsterLoadData } from '../../actions';
 import './style.css';
 import ToggleButton from 'react-toggle-button';
@@ -193,7 +192,7 @@ export class Fetch extends React.Component {
 
     if (this.urlInput.value !== this.state.url) {
       this.setState({url: this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
-      Actions.loadDataUrl(this.urlInput.value, this.state.server);
+      this.props.dispatch(lobsterLoadData(this.state.server, this.state.url));
     }
   }
 
