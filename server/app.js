@@ -52,7 +52,7 @@ app.post('/api/log', function(req, res, _next) {
   const logUrl = req.body.url;
   const filter = req.body.filter;
   if (logUrl === undefined) {
-    console.log('url is undefined' );
+    console.log('url is undefined');
     res.status(403).send('url cannot be undefined');
     return;
   }
@@ -88,7 +88,7 @@ app.post('/api/log', function(req, res, _next) {
           if (!err) {
             console.log('done');
             myCache.put(fileName, result)
-              .then( data => res.send(data) );
+              .then(data => res.send(data));
           } else {
             console.log('Error: ' + err);
           }

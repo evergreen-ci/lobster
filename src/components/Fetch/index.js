@@ -252,7 +252,7 @@ export class Fetch extends React.Component {
     this.setScroll(this.state.findResults[nextIdx]);
   }
 
-  find = ( event) => {
+  find = (event) => {
     if (event) {
       event.preventDefault();
       if (event.keyCode === 13 && event.shiftKey) {
@@ -423,7 +423,7 @@ export class Fetch extends React.Component {
   }
 
   showFind() {
-    if (this.state.find !== '' ) {
+    if (this.state.find !== '') {
       if (this.state.findResults.length > 0) {
         return (
           <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
@@ -516,7 +516,7 @@ export class Fetch extends React.Component {
   }
 
   handleKeyDown = (event) => {
-    switch ( event.keyCode ) {
+    switch (event.keyCode) {
       case 114: // F3
         this.focusOnFind(event);
         break;

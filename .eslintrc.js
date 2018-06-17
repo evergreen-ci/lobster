@@ -65,7 +65,7 @@ module.exports = {
     'no-unused-vars': ['error', {'vars': 'all', 'argsIgnorePattern': '^_'}],
     'eqeqeq': [2, 'allow-null'],
     // 'object-curly-spacing': ["error", "always"]
-    // 'space-in-parens': ["error", "never"]
+    'space-in-parens': ['error', 'never'],
 
     // Enable a more strict set of react lints
     'react/jsx-closing-bracket-location': 2,
