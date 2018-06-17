@@ -20,7 +20,7 @@ export type LogkeeperLoadData = {
 
 export type LogkeeperDataResponse = {
   +type: 'logkeeper:response',
-  +status:  'success' | 'error',
+  +status: 'success' | 'error',
   +data: string
 }
 
@@ -32,7 +32,7 @@ export function loadData(build: string, test: ?string): LogkeeperLoadData {
     type: LOGKEEPER_LOAD_DATA,
     build: build,
     test: test
-  }
+  };
 }
 
 export function logkeeperDataSuccess(data: string): LogkeeperDataResponse {
@@ -40,7 +40,7 @@ export function logkeeperDataSuccess(data: string): LogkeeperDataResponse {
     type: LOGKEEPER_LOAD_RESPONSE,
     status: 'success',
     data: data
-  }
+  };
 }
 
 export function logkeeperDataError(data: string): LogkeeperDataResponse {
@@ -48,5 +48,5 @@ export function logkeeperDataError(data: string): LogkeeperDataResponse {
     type: LOGKEEPER_LOAD_RESPONSE,
     status: 'error',
     data: data
-  }
+  };
 }

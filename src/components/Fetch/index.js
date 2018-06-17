@@ -1,6 +1,6 @@
 import React from 'react';
 import Actions from '../../actions';
-import { loadData }from '../../actions';
+import { loadData } from '../../actions';
 import './style.css';
 import ToggleButton from 'react-toggle-button';
 import Button from 'react-bootstrap/lib/Button';
@@ -618,4 +618,4 @@ function mapStateToProps(state, ownProps) {
   return {...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap};
 }
 
-export default connect(mapStateToProps)(Fetch)
+export default connect(mapStateToProps)(Fetch);

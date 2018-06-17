@@ -82,7 +82,7 @@ const LobsterStore = Reflux.createStore({
     }
   },
 
-  getGitVersion: function(line: string): string | bool {
+  getGitVersion: function(line: string): string | boolean {
     const gitVersionStr = 'git version: ';
     const gitVersionPos = line.indexOf(gitVersionStr);
     if (gitVersionPos !== -1) {

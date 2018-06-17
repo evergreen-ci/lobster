@@ -12,7 +12,7 @@ import './index.css';
 
 import App from './components/App';
 
-const saga = createSagaMiddleware()
+const saga = createSagaMiddleware();
 const store = createStore(lobster, applyMiddleware(saga));
 saga.run(rootSaga);
 

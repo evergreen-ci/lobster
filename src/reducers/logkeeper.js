@@ -24,7 +24,7 @@ function processServerResponse(response: { +data: string }): Log {
   // set the url to the url we requested
   const lines = response.data.split('\n');
 
-  const processed  = [];
+  const processed = [];
   const gitPrefix = '{githash:';
   const gitPrefixLen = gitPrefix.length + 2;
   let gitVersionStr: string = 'master';
@@ -97,7 +97,7 @@ function processServerResponse(response: { +data: string }): Log {
 
   return {
     lines: processed,
-    colorMap: colorMap,
+    colorMap: colorMap
   };
 }
 

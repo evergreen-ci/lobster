@@ -36,7 +36,7 @@ const Header = () => (
     </Row>
   </Grid>
  */
-const App = (store) => (
+const App = () => (
   <BrowserRouter>
     <div>
       <Header />
