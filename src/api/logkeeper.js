@@ -16,3 +16,7 @@ function generateLogkeeperUrl(buildParam: string, testParam: ?string): string {
 export function fetchLogkeeper(build: string, test: ?string) {
   return axios.get(generateLogkeeperUrl(build, test));
 }
+
+export function fetchLobster(server: string, url: string) {
+  return axios.post('http://' + server, {url: url });
+}

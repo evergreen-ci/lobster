@@ -11,5 +11,5 @@ if (!fs.existsSync(distPath)) {
 }
 
 app.listen(PORT, '127.0.0.1', () => {
-  console.log(`App listening on 127.0.0.1:${PORT}!`);
+  console.log('App listening on 127.0.0.1:${PORT}!');
 });

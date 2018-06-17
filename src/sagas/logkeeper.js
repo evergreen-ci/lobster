@@ -15,3 +15,13 @@ export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void
   }
 }
 
+export function* lobsterLoadData(action: actions.LobsterLoadData): Saga<void> {
+  console.log('fetch', action.server, action.url);
+  try {
+    const data = yield call(api.fetchLobster, action.server, action.url);
+    yield put(actions.logkeeperDataSuccess(data.data));
+  } catch (error) {
+    yield put(actions.logkeeperDataError(error));
+  }
+}
+

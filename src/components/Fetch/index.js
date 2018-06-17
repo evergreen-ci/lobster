@@ -1,6 +1,6 @@
 import React from 'react';
 import Actions from '../../actions';
-import { loadData } from '../../actions';
+import { loadData, lobsterLoadData } from '../../actions';
 import './style.css';
 import ToggleButton from 'react-toggle-button';
 import Button from 'react-bootstrap/lib/Button';
@@ -68,8 +68,8 @@ class Fetch extends React.Component {
     };
 
     if (this.state.url) {
-      Actions.loadDataUrl(this.state.url, this.state.server);
-    } else if (this.state.build) { // this is direct route to a file
+      this.props.dispatch(lobsterLoadData(this.state.server, this.state.url));
+    } else if (this.state.build) {
       this.props.dispatch(loadData(this.state.build, this.state.test));
     }
   }

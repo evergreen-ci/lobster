@@ -38,6 +38,7 @@ const LobsterStore = Reflux.createStore({
   mixins: [StateMixin.store],
   // Loads content from server
   loadDataUrl: function(url: string, server: string): void {
+    console.log(url, server);
     if (server && url !== '') {
       console.log('server: ' + server);
       console.log('url: ' + url);
