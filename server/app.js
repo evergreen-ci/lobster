@@ -33,7 +33,7 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 // Serve static assets
-app.use(express.static(path.resolve(__dirname, '..', 'build/lobster')));
+app.use(express.static(path.resolve(__dirname, '..', 'build')));
 
 app.use(function(err, req, res, next) {
   if (res.headersSent) {
@@ -45,7 +45,7 @@ app.use(function(err, req, res, next) {
 
 // Always return the main index.html, so react-router render the route in the client
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '..', 'build', 'lobster/index.html'));
+  res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
 });
 
 app.post('/api/log', function(req, res, _next) {
@@ -53,7 +53,8 @@ app.post('/api/log', function(req, res, _next) {
   const filter = req.body.filter;
   if (logUrl === undefined) {
     console.log('url is undefined' );
-    res.status(500).send('url cannot be undefined');
+    res.status(403).send('url cannot be undefined');
+    return;
   }
   console.log('url = ' + logUrl);
 
@@ -94,7 +95,15 @@ app.post('/api/log', function(req, res, _next) {
         });
       });
   } else if (logsDir) {
-    res.sendFile(path.resolve(logsDir, logUrl));
+    // validate that the file is in logsDir
+    const reqPath = path.resolve(logsDir, logUrl);
+    if (!reqPath.startsWith(logsDir)) {
+      // since it's a security issue, we pretend it's not there
+      res.status(404).send('log not found');
+      return;
+    }
+
+    res.sendFile(reqPath);
   } else {
     console.log('Must provide the --logs argument to handle local files');
   }
