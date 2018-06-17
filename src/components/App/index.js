@@ -1,19 +1,18 @@
 import React from 'react';
 import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import './style.css';
-import About from '../About/index.js';
-import ConnectedFetch from '../ConnectedFetch/index.js';
-import NotFound from '../NotFound/index.js';
-import Nav from 'react-bootstrap/lib/Nav';
-import NavItem from 'react-bootstrap/lib/NavItem';
+import About from '../About';
+import NotFound from '../NotFound';
+import Fetch from '../Fetch';
+import { Nav, NavItem } from 'react-bootstrap';
 
 const Main = () => (
   <main>
     <Switch>
       <Route exact path="/lobster/about" component={About} />
-      <Route path="/lobster/build/:build/test/:test" component={ConnectedFetch} />
-      <Route path="/lobster/build/:build/all" component={ConnectedFetch} />
-      <Route exact path="/lobster/" component={ConnectedFetch} />
+      <Route path="/lobster/build/:build/test/:test" component={Fetch} />
+      <Route path="/lobster/build/:build/all" component={Fetch} />
+      <Route exact path="/lobster/" component={Fetch} />
       <Route path="*" component={NotFound} />
     </Switch>
   </main>
@@ -37,7 +36,7 @@ const Header = () => (
     </Row>
   </Grid>
  */
-const App = () => (
+const App = (store) => (
   <BrowserRouter>
     <div>
       <Header />

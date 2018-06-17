@@ -1,5 +1,6 @@
 import React from 'react';
 import Actions from '../../actions';
+import { loadData }from '../../actions';
 import './style.css';
 import ToggleButton from 'react-toggle-button';
 import Button from 'react-bootstrap/lib/Button';
@@ -13,6 +14,7 @@ import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
 import { Filters } from './Filters';
+import { connect } from 'react-redux';
 
 
 // eslint-disable-next-line react/no-deprecated
@@ -29,8 +31,14 @@ class Fetch extends React.Component {
       })
     }),
     history: PropTypes.object,
-    colorMap: PropTypes.object
+    colorMap: PropTypes.object,
+    dispatch: PropTypes.func.isRequired
   };
+
+  static defaultProps = {
+    lines: [],
+    bookmarks: []
+  }
 
   constructor(props) {
     super(props);
@@ -62,7 +70,7 @@ class Fetch extends React.Component {
     if (this.state.url) {
       Actions.loadDataUrl(this.state.url, this.state.server);
     } else if (this.state.build) { // this is direct route to a file
-      Actions.loadData(this.state.build, this.state.test, this.state.server);
+      this.props.dispatch(loadData(this.state.build, this.state.test));
     }
   }
 
@@ -477,7 +485,7 @@ class Fetch extends React.Component {
 
   toggleCaseSensitive = (value) => {
     this.setState({caseSensitive: !value});
-    this.find(!value);
+    this.find();
   }
 
   showRaw() {
@@ -603,4 +611,11 @@ class Fetch extends React.Component {
     );
   }
 }
-export default Fetch;
+
+// This is not the ideal way to do this, but it allows for better compatibility
+// as we migrate towards the react-redux model
+function mapStateToProps(state, ownProps) {
+  return {...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap};
+}
+
+export default connect(mapStateToProps)(Fetch)
