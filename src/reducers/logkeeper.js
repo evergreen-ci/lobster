@@ -1,6 +1,5 @@
 // @flow strict
-import type { Log } from '../stores';
-import type { Action } from '../actions';
+import type { Action, Log } from '../actions';
 import { LOGKEEPER_LOAD_RESPONSE } from '../actions';
 
 function getGitVersion(line: string): string {

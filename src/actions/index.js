@@ -1,17 +1,32 @@
 // @flow strict
-// $FlowFixMe
-import Reflux from 'reflux';
-
-const Actions = Reflux.createActions([
-  'loadDataUrl',
-  'loadData'
-]);
-
-export default Actions;
 
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
+
+export type Filter = {
+  text: string,
+  on: boolean,
+  inverse: boolean
+}
+
+export type Bookmark = {
+  lineNumber: number,
+}
+
+export type Line = {
+  +lineNumber: number,
+  +text: string,
+  +port: ?string,
+  +gitRef: ?string,
+}
+
+export type ColorMap = { [string]: string }
+
+export type Log = {
+  +lines: Line[],
+  +colorMap: ColorMap
+}
 
 export type LogkeeperLoadData = {|
   +type: 'logkeeper:load-data',
