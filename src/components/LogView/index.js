@@ -68,16 +68,10 @@ class LineNumber extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    /*
-    this.handleDoubleClick = () => {
-      this.props.toggleBookmark(this.props.lineNumber);
-    };
-    */
   }
 
   render() {
     const style = {width: '60px', display: 'inline-block'};
-    // return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style} onDoubleClick={this.handleDoubleClick}></span>;
     return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style}></span>;
   }
 }
@@ -137,7 +131,6 @@ class FullLogLine extends React.Component {
     const selection = window.getSelection();
     if (selection.type === 'Range') {
       const selectionString = selection.toString();
-      console.log(selection);
       if (selectionString !== '') {
         const lastTwo = selectionString.substr(-1);
         if (lastTwo === '\n') {
@@ -217,12 +210,10 @@ class LogView extends React.Component {
   }
 
   updateSelectStartIndex = (index) => {
-    console.log('start: ' + index);
     this.setState({selectStartIndex: index});
   }
 
   updateSelectEndIndex = (index) => {
-    console.log('end: ' + index);
     this.setState({selectEndIndex: index});
     const newClicks = this.state.clicks.slice();
     const clickElem = [this.state.selectStartIndex, index];
