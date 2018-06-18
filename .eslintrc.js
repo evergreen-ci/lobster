@@ -66,6 +66,21 @@ module.exports = {
     'eqeqeq': [2, 'allow-null'],
     // 'object-curly-spacing': ["error", "always"]
     'space-in-parens': ['error', 'never'],
+    'no-param-reassign': 2,
+
+    'flowtype/newline-after-flow-annotation': 2,
+    'flowtype/array-style-complex-type': [2, 'verbose'],
+    'flowtype/array-style-simple-type': [2, 'shorthand'],
+    'flowtype/no-dupe-keys': 2,
+    'flowtype/no-flow-fix-me-comments': 1,
+    'flowtype/no-unused-expressions': 2,
+    'flowtype/no-weak-types': 1,
+    'flowtype/object-type-delimiter': [2, 'comma'],
+    // 'flowtype/require-return-type': 2,
+    // 'flowtype/require-parameter-type': [2, {'excludeArrowFunctions': 'expressionsOnly'}],
+    // 'flowtype/require-return-type': [2, {'excludeArrowFunctions': 'expressionsOnly'}],
+    // Maybe one day this can be always
+    'flowtype/require-valid-file-annotation': [2, 'never', {'annotationStyle': 'line'}],
 
     // Enable a more strict set of react lints
     'react/jsx-closing-bracket-location': 2,
@@ -119,7 +134,7 @@ module.exports = {
   },
   'settings': {
     'flowtype': {
-      'onlyFilesWithFlowAnnotation': false
+      'onlyFilesWithFlowAnnotation': true
     }
   }
 };
