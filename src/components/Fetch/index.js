@@ -32,7 +32,9 @@ export class Fetch extends React.Component {
     history: PropTypes.object,
 
     colorMap: PropTypes.object,
-    dispatch: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired,
+    lobsterLoadData: PropTypes.func.isRequired,
+    loadData: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -68,9 +70,9 @@ export class Fetch extends React.Component {
     };
 
     if (this.state.url) {
-      this.props.dispatch(lobsterLoadData(this.state.server, this.state.url));
+      this.props.lobsterLoadData(this.state.server, this.state.url);
     } else if (this.state.build) {
-      this.props.dispatch(loadData(this.state.build, this.state.test));
+      this.props.loadData(this.state.build, this.state.test);
     }
   }
 
@@ -618,4 +620,12 @@ function mapStateToProps(state, ownProps) {
   return {...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap};
 }
 
-export default connect(mapStateToProps)(Fetch);
+function mapDispatchToProps(dispatch, ownProps) {
+  return {
+    lobsterLoadData: (server, url) => dispatch(lobsterLoadData(server, url)),
+    loadData: (build, test) => dispatch(loadData(build, test)),
+    ...ownProps
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Fetch);
