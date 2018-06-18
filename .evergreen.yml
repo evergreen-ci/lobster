@@ -117,7 +117,7 @@ tasks:
       - func: preamble
       - func: npm
         vars:
-          cmd: run-script flow -- --temp-dir=.node_cache/_logs check
+          cmd: run-script flow -- check --temp-dir=.node_cache/_logs
 
   - name: generate-tests
     commands:
