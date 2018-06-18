@@ -134,10 +134,15 @@ class FullLogLine extends React.Component {
 
   handleMouseUp = () => {
     let endIndex = this.props.line.lineNumber;
-    if (window.getSelection().toString() !== '') {
-      const arrayText = window.getSelection().toString().split('\n');
-      if (arrayText[arrayText.length - 1] === '') {
-        endIndex = this.props.line.lineNumber - 1;
+    const selection = window.getSelection();
+    if (selection.type === 'Range') {
+      const selectionString = selection.toString();
+      console.log(selection);
+      if (selectionString !== '') {
+        const lastTwo = selectionString.substr(-1);
+        if (lastTwo === '\n') {
+          endIndex = this.props.line.lineNumber - 1;
+        }
       }
     }
     this.props.updateSelectEndIndex(endIndex);
@@ -232,12 +237,13 @@ class LogView extends React.Component {
     // Check if trying to toggle one line
     if (lastClick[0] === secondToLastClick[0] && lastClick[1] === secondToLastClick[1]) {
       indexArray.push(lastClick[0]);
-    } else if (this.state.clicks.length > 2) {
+    } if (this.state.clicks.length > 2) {
       const selectClick = this.state.clicks[this.state.clicks.length - 3];
-      indexArray = Array(selectClick[1] - selectClick[0] + 1).fill().map((item, index) => selectClick[0] + index);
+      if (lastClick[0] >= selectClick[0] && lastClick[1] <= selectClick[1]) {
+        indexArray = Array(selectClick[1] - selectClick[0] + 1).fill().map((item, index) => selectClick[0] + index);
+      }
     }
     // Call toggle bookmark
-    console.log(indexArray);
     this.props.toggleBookmark(indexArray);
     this.setState({clicks: []});
   }
