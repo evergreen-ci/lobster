@@ -1,4 +1,5 @@
 // @flow
+
 import assert from 'assert';
 import { logkeeperDataResponse } from './logkeeper';
 import { logkeeperDataSuccess } from '../actions';

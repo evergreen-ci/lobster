@@ -1,4 +1,5 @@
 // @flow strict
+
 import type { Action, Log } from '../actions';
 import { LOGKEEPER_LOAD_RESPONSE } from '../actions';
 
