@@ -5,17 +5,6 @@ import Button from 'react-bootstrap/lib/Button';
 
 test('Reverse Search', function() {
   const wrapper = makeWrapper();
-  // Testing default state
-  assert.equal(wrapper.state('findIdx'), -1);
-  assert.equal(wrapper.state('findResults').length, 0);
-  assert.equal(wrapper.state('find'), '');
-  assert.equal(wrapper.state('wrap'), false);
-  assert.equal(wrapper.state('caseSensitive'), false);
-  assert.equal(wrapper.state('detailsOpen'), false);
-  assert.ok(!wrapper.containsAllMatchingElements([
-    <Button>Next</Button>,
-    <Button>Prev</Button>
-  ]));
 
   // Testing basic shift+enter search
   wrapper.find('#findInput').instance().value = 'asio';

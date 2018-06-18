@@ -202,13 +202,21 @@ class Fetch extends React.Component {
     return b1.lineNumber - b2.lineNumber;
   }
 
-  toggleBookmark = (lineNum) => {
+  toggleBookmark = (lineNumArray) => {
+    let remove = true;
     const newBookmarks = this.state.bookmarks.slice();
-    const i = this.findBookmark(newBookmarks, lineNum);
-    if (i === -1) {
-      newBookmarks.push({lineNumber: lineNum});
-    } else {
-      newBookmarks.splice(i, 1);
+    lineNumArray.forEach((element) => {
+      const index = this.findBookmark(newBookmarks, element);
+      if (index === -1) {
+        newBookmarks.push({lineNumber: element});
+        remove = false;
+      }
+    });
+    if (remove) {
+      lineNumArray.forEach((element) => {
+        const removeIndex = this.findBookmark(newBookmarks, element);
+        newBookmarks.splice(removeIndex, 1);
+      });
     }
     newBookmarks.sort(this.bookmarkSort);
     this.setState({bookmarks: newBookmarks});
