@@ -70,6 +70,9 @@ export class Fetch extends React.Component {
       findResults: [],
       bookmarks: bookmarksArr
     };
+    if (locationSearch !== '') {
+      this.updateURL(this.state.bookmarks, this.state.filterList);
+    }
     if (this.state.url) {
       this.props.lobsterLoadData(this.state.server, this.state.url);
     } else if (this.state.build) {
