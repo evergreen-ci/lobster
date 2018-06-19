@@ -71,6 +71,7 @@ export class Fetch extends React.Component {
       bookmarks: bookmarksArr
     };
     if (locationSearch !== '') {
+      global.window.location.search = '';
       this.updateURL(this.state.bookmarks, this.state.filterList);
     }
     if (this.state.url) {
@@ -175,9 +176,6 @@ export class Fetch extends React.Component {
     }
     /* global global:{} */
     global.window.location.hash = queryString.stringify(parsed);
-    if (locationSearch !== '') {
-      global.window.location.search = '';
-    }
   }
 
   handleSubmit = (event) => {
