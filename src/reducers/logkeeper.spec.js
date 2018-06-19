@@ -21,17 +21,26 @@ test('store-line-gitref', function() {
     '[js_test:apply_batch_only_goes_forward:node8] blah blah blah',
     '[js_test:apply_batch_only_goes_forward:node9] blah blah blah',
     '[js_test:apply_batch_only_goes_forward:node10] blah blah blah',
+    '[js_test:apply_batch_only_goes_forward:node11] blah blah blah',
+    '[js_test:apply_batch_only_goes_forward:node12] blah blah blah',
+    '[js_test:apply_batch_only_goes_forward:node13] blah blah blah',
+    '[js_test:apply_batch_only_goes_forward:node14] blah blah blah',
+    '[js_test:apply_batch_only_goes_forward:node15] blah blah blah',
+    '[js_test:apply_batch_only_goes_forward:node16] blah blah blah',
+    '[js_test:apply_batch_only_goes_forward:node17] blah blah blah',
+    '[js_test:apply_batch_only_goes_forward:node18] blah blah blah',
+    '[js_test:apply_batch_only_goes_forward:node19] blah blah blah',
     '' // Lobster log files are interpreted to have an extra newline
   ];
 
   const state = logkeeperDataResponse(undefined, logkeeperDataSuccess(data.join('\n')));
 
-  assert.deepEqual(state.lines.length, 16);
+  assert.deepEqual(state.lines.length, 25);
   assert.deepEqual(state.lines[0].gitRef, null);
   assert.deepEqual(state.lines[1].gitRef, null);
   assert.deepEqual(state.lines[2].lineNumber, 2);
   assert.deepEqual('https://github.com/mongodb/mongo/blob/master/src/mongo/shell/shell_utils_launcher.cpp#L447',
     state.lines[2].gitRef);
   assert.deepEqual(state.colorMap[':primary]'], '#5aae61');
-  assert.notEqual(state.colorMap[':node10]'], undefined);
+  Object.keys(state.colorMap).forEach((value) => assert.notEqual(value, undefined));
 });
