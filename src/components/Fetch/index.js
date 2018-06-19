@@ -146,20 +146,15 @@ export class Fetch extends React.Component {
 
   updateURL(bookmarks, filters) {
     const parsedParams = this.getUrlParams();
-    const searchParams = new URLSearchParams();
 
-    // make url match this state
-    let nextUrl = '';
-    if (!this.urlInput || !this.urlInput.value) {
-      nextUrl = '/lobster/build/' + parsedParams.build + '/test/' + parsedParams.test;
-    } else {
-      searchParams.append('url', this.urlInput.value);
-    }
+    const queryString = require('query-string');
+    const parsed = queryString.parse(this.props.location.search);
+
     for (let i = 0; i < filters.length; i++) {
-      searchParams.append('f', this.makeFilterURLString(filters[i]));
+      parsed.f = this.makeFilterURLString(filters[i]);
     }
     if (parsedParams.scrollLine) {
-      searchParams.append('scroll', parsedParams.scrollLine);
+      parsed.scroll = parsedParams.scrollLine;
     }
     if (bookmarks.length > 0) {
       let bookmarkStr = '';
@@ -169,15 +164,13 @@ export class Fetch extends React.Component {
           bookmarkStr += ',';
         }
       }
-      searchParams.append('bookmarks', bookmarkStr);
+      parsed.bookmarks = bookmarkStr;
     }
     if (this.state.server) {
-      searchParams.append('server', this.state.server);
+      parsed.server = this.state.server;
     }
-    this.props.history.push({
-      pathname: nextUrl,
-      search: searchParams.toString()
-    });
+    /* global global:{} */
+    global.window.location.hash = queryString.stringify(parsed);
   }
 
   handleSubmit = (event) => {
