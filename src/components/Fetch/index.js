@@ -48,7 +48,7 @@ export class Fetch extends React.Component {
     const parsed = queryString.parse(props.location.search);
     const searchParams = new URLSearchParams(props.location.search);
     const params = this.props.match.params;
-    const bookmarksList = params.bookmarks;
+    const bookmarksList = parsed.bookmarks;
     let bookmarksArr = [];
     if (bookmarksList) {
       bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n, 10)}));
