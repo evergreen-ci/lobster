@@ -80,7 +80,7 @@ function processServerResponse(response: string): Log {
       }
     }
     if (port && !colorMap[port]) {
-      colorMap[port] = colorList[Object.keys(colorMap).length];
+      colorMap[port] = colorList[Object.keys(colorMap).length % colorList.length];
     }
 
     if (gitRef) {
