@@ -4,7 +4,7 @@ module.exports = {
   'extends': [
     'eslint-config-mongodb-js',
     'eslint-config-mongodb-js/rules/ecmascript-6',
-    './node_modules/eslint-plugin-flowtype/dist/configs/recommended.json',
+    'plugin:flowtype/recommended',
     'plugin:react/recommended',
     'plugin:jest/recommended'
   ],
