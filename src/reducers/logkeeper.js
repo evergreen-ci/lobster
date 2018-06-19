@@ -35,15 +35,15 @@ function processServerResponse(response: string): Log {
 
   const colorList = [
     '#5aae61',
-    '#c2a5cf',
+    '#9970ab',
     '#bf812d',
-    '#dfc27d',
     '#2166ac',
     '#8c510a',
     '#1b7837',
     '#74add1',
     '#d6604d',
     '#762a83',
+    '#35978f',
     '#de77ae'
   ];
 
