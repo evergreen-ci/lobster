@@ -47,7 +47,6 @@ export class Fetch extends React.Component {
     super(props);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
     const parsed = queryString.parse(props.location.search === '' ? props.location.hash : props.location.search);
-    const searchParams = new URLSearchParams(props.location.search);
     const params = this.props.match.params;
     const bookmarksList = parsed.bookmarks;
     let bookmarksArr = [];
@@ -57,7 +56,7 @@ export class Fetch extends React.Component {
     this.state = {
       build: params.build,
       test: params.test,
-      scrollLine: parseInt(searchParams.get('scroll'), 10),
+      scrollLine: parseInt(parsed.scroll, 10),
       server: parsed.server || null,
       url: parsed.url || null,
       wrap: false,
