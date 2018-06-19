@@ -32,7 +32,6 @@ export class Fetch extends React.Component {
     history: PropTypes.object,
 
     colorMap: PropTypes.object,
-    dispatch: PropTypes.func.isRequired,
     lobsterLoadData: PropTypes.func.isRequired,
     loadData: PropTypes.func.isRequired
   };

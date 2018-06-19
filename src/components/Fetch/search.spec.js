@@ -36,6 +36,8 @@ export function makeWrapper() {
         params: {build: '4191390ec6c7ee9bdea4e45f9cc94d31', test: '5af32dbbf84ae86d1e01e964'}
       }}
       colorMap={{}}
+      loadData={() => undefined}
+      lobsterLoadData={() => undefined}
     />
   );
   assert.equal(wrapper.state('findIdx'), -1);
