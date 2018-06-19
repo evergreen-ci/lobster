@@ -193,7 +193,7 @@ export class Fetch extends React.Component {
 
     if (this.urlInput.value !== this.state.url) {
       this.setState({url: this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
-      this.props.dispatch(lobsterLoadData(this.state.server, this.state.url));
+      this.props.lobsterLoadData(this.state.server, this.state.url);
     }
   }
 
