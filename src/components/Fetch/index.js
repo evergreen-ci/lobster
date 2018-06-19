@@ -46,7 +46,8 @@ export class Fetch extends React.Component {
   constructor(props) {
     super(props);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
-    const parsed = queryString.parse(props.location.search === '' ? props.location.hash : props.location.search);
+    const locationSearch = props.location.search;
+    const parsed = queryString.parse(locationSearch === '' ? props.location.hash : locationSearch);
     const params = this.props.match.params;
     const bookmarksList = parsed.bookmarks;
     let bookmarksArr = [];
@@ -147,9 +148,8 @@ export class Fetch extends React.Component {
 
   updateURL(bookmarks, filters) {
     const parsedParams = this.getUrlParams();
-
-    const queryString = require('query-string');
-    const parsed = queryString.parse(this.props.location.search);
+    const locationSearch = this.props.location.search;
+    const parsed = queryString.parse(locationSearch === '' ? this.props.location.hash : locationSearch);
 
     for (let i = 0; i < filters.length; i++) {
       parsed.f = this.makeFilterURLString(filters[i]);
@@ -172,6 +172,9 @@ export class Fetch extends React.Component {
     }
     /* global global:{} */
     global.window.location.hash = queryString.stringify(parsed);
+    if (locationSearch !== '') {
+      global.window.location.search = '';
+    }
   }
 
   handleSubmit = (event) => {
