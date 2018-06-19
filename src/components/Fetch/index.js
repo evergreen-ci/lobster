@@ -22,7 +22,8 @@ export class Fetch extends React.Component {
   static propTypes = {
     lines: PropTypes.array,
     location: PropTypes.shape({
-      search: PropTypes.string
+      search: PropTypes.string,
+      hash: PropTypes.string
     }),
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -45,7 +46,7 @@ export class Fetch extends React.Component {
   constructor(props) {
     super(props);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
-    const parsed = queryString.parse(props.location.search);
+    const parsed = queryString.parse(props.location.search === '' ? props.location.hash : props.location.search);
     const searchParams = new URLSearchParams(props.location.search);
     const params = this.props.match.params;
     const bookmarksList = parsed.bookmarks;
