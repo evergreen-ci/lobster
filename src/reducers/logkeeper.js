@@ -52,10 +52,7 @@ function processServerResponse(response: string): Log {
 
     // Only check the git version if we haven't seen it so far.
     if (gitVersionStr === 'master') {
-      const gitVersionParse = getGitVersion(line);
-      if (gitVersionParse != null) {
-        gitVersionStr = gitVersionParse;
-      }
+      gitVersionStr = getGitVersion(line);
     }
 
     let lineText = line;
