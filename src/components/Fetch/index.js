@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
 import { Filters } from './Filters';
 import { connect } from 'react-redux';
+import queryString from 'query-string';
 
 
 // eslint-disable-next-line react/no-deprecated
@@ -44,9 +45,10 @@ export class Fetch extends React.Component {
   constructor(props) {
     super(props);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
+    const parsed = queryString.parse(props.location.search);
     const searchParams = new URLSearchParams(props.location.search);
     const params = this.props.match.params;
-    const bookmarksList = searchParams.get('bookmarks');
+    const bookmarksList = params.bookmarks;
     let bookmarksArr = [];
     if (bookmarksList) {
       bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n, 10)}));
@@ -55,19 +57,18 @@ export class Fetch extends React.Component {
       build: params.build,
       test: params.test,
       scrollLine: parseInt(searchParams.get('scroll'), 10),
-      server: searchParams.get('server'),
-      url: searchParams.get('url'),
+      server: parsed.server || null,
+      url: parsed.url || null,
       wrap: false,
       caseSensitive: false,
       filterIntersection: false,
       detailsOpen: false,
-      filterList: searchParams.getAll('f').map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
+      filterList: (params.f || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
       find: '',
       findIdx: -1,
       findResults: [],
       bookmarks: bookmarksArr
     };
-
     if (this.state.url) {
       this.props.lobsterLoadData(this.state.server, this.state.url);
     } else if (this.state.build) {
