@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import Fetch from '../Fetch';
+import { Fetch } from '../Fetch';
 import assert from 'assert';
 import Button from 'react-bootstrap/lib/Button';
 
@@ -20,6 +20,7 @@ const linesArr = [
 export function makeWrapper() {
   const wrapper = Enzyme.mount(
     <Fetch
+      dispatch={() => undefined}
       lines={linesArr}
       location={{
         pathname: '/lobster/build/4191390ec6c7ee9bdea4e45f9cc94d31/test/5af32dbbf84ae86d1e01e964',
@@ -35,6 +36,8 @@ export function makeWrapper() {
         params: {build: '4191390ec6c7ee9bdea4e45f9cc94d31', test: '5af32dbbf84ae86d1e01e964'}
       }}
       colorMap={{}}
+      loadData={() => undefined}
+      lobsterLoadData={() => undefined}
     />
   );
   assert.equal(wrapper.state('findIdx'), -1);

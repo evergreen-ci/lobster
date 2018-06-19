@@ -1,12 +1,18 @@
 const ENABLE_NO_DEBUGGER = process.env.CI === 'true' ? 2 : 1;
 module.exports = {
   'parser': 'babel-eslint',
-  'extends': ['eslint-config-mongodb-js', 'eslint-config-mongodb-js/rules/ecmascript-6',
-    'plugin:jest/recommended', 'plugin:react/recommended'],
+  'extends': [
+    'eslint-config-mongodb-js',
+    'eslint-config-mongodb-js/rules/ecmascript-6',
+    'plugin:flowtype/recommended',
+    'plugin:react/recommended',
+    'plugin:jest/recommended'
+  ],
   'root': true,
   'env': {
     'es6': true
   },
+  'plugins': ['flowtype'],
   'overrides': [
     {
       'files': ['src/**/*.js', 'src/**/*.jsx'],
@@ -14,7 +20,7 @@ module.exports = {
       'env': {
         'browser': true
       },
-      'plugins': ['react', 'babel'],
+      'plugins': ['babel', 'react'],
       'parserOptions': {
         'sourceType': 'module',
         'ecmaFeatures': {
@@ -27,7 +33,7 @@ module.exports = {
       'env': {
         'browser': true
       },
-      'plugins': ['react', 'jest', 'babel'],
+      'plugins': ['babel', 'react', 'jest'],
       'parserOptions': {
         'sourceType': 'module',
         'ecmaFeatures': {
@@ -57,6 +63,24 @@ module.exports = {
     'complexity': 'off',
     'no-console': 'off',
     'no-unused-vars': ['error', {'vars': 'all', 'argsIgnorePattern': '^_'}],
+    'eqeqeq': [2, 'allow-null'],
+    // 'object-curly-spacing': ["error", "always"]
+    'space-in-parens': ['error', 'never'],
+    'no-param-reassign': 2,
+
+    'flowtype/newline-after-flow-annotation': 2,
+    'flowtype/array-style-complex-type': [2, 'verbose'],
+    'flowtype/array-style-simple-type': [2, 'shorthand'],
+    'flowtype/no-dupe-keys': 2,
+    'flowtype/no-flow-fix-me-comments': 1,
+    'flowtype/no-unused-expressions': 2,
+    'flowtype/no-weak-types': 1,
+    'flowtype/object-type-delimiter': [2, 'comma'],
+    // 'flowtype/require-return-type': 2,
+    // 'flowtype/require-parameter-type': [2, {'excludeArrowFunctions': 'expressionsOnly'}],
+    // 'flowtype/require-return-type': [2, {'excludeArrowFunctions': 'expressionsOnly'}],
+    // Maybe one day this can be always
+    'flowtype/require-valid-file-annotation': [2, 'never', {'annotationStyle': 'line'}],
 
     // Enable a more strict set of react lints
     'react/jsx-closing-bracket-location': 2,
@@ -107,5 +131,10 @@ module.exports = {
     'react/jsx-filename-extension': [2, { 'extensions': ['.js']}],
     // Prevents us from setting classes on buttons
     'react/forbid-component-props': 0
+  },
+  'settings': {
+    'flowtype': {
+      'onlyFilesWithFlowAnnotation': true
+    }
   }
 };

@@ -1,20 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-import { StoreConnector } from 'hadron-react-components';
-import {LobsterStore} from './stores';
-import Actions from './actions';
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import { Provider } from 'react-redux';
+import { lobster } from './reducers';
 import 'babel-polyfill';
 import 'url-search-params-polyfill';
+import rootSaga from './sagas';
 
 import './index.css';
 
 import App from './components/App';
 
+const saga = createSagaMiddleware();
+const store = createStore(lobster, applyMiddleware(saga));
+saga.run(rootSaga);
+
 ReactDOM.render((
-  <BrowserRouter>
-    <StoreConnector store={LobsterStore}>
-      <App Actions={Actions} {...this.props} />
-    </StoreConnector>
-  </BrowserRouter>
+  <Provider store={store}>
+    <App />
+  </Provider>
 ), document.getElementById('root'));

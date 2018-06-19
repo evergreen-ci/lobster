@@ -1,5 +1,5 @@
 import React from 'react';
-import Actions from '../../actions';
+import { loadData, lobsterLoadData } from '../../actions';
 import './style.css';
 import ToggleButton from 'react-toggle-button';
 import Button from 'react-bootstrap/lib/Button';
@@ -13,10 +13,11 @@ import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
 import { Filters } from './Filters';
+import { connect } from 'react-redux';
 
 
 // eslint-disable-next-line react/no-deprecated
-class Fetch extends React.Component {
+export class Fetch extends React.Component {
   static propTypes = {
     lines: PropTypes.array,
     location: PropTypes.shape({
@@ -29,8 +30,16 @@ class Fetch extends React.Component {
       })
     }),
     history: PropTypes.object,
-    colorMap: PropTypes.object
+
+    colorMap: PropTypes.object,
+    lobsterLoadData: PropTypes.func.isRequired,
+    loadData: PropTypes.func.isRequired
   };
+
+  static defaultProps = {
+    lines: [],
+    bookmarks: []
+  }
 
   constructor(props) {
     super(props);
@@ -60,9 +69,9 @@ class Fetch extends React.Component {
     };
 
     if (this.state.url) {
-      Actions.loadDataUrl(this.state.url, this.state.server);
-    } else if (this.state.build) { // this is direct route to a file
-      Actions.loadData(this.state.build, this.state.test, this.state.server);
+      this.props.lobsterLoadData(this.state.server, this.state.url);
+    } else if (this.state.build) {
+      this.props.loadData(this.state.build, this.state.test);
     }
   }
 
@@ -184,7 +193,7 @@ class Fetch extends React.Component {
 
     if (this.urlInput.value !== this.state.url) {
       this.setState({url: this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
-      Actions.loadDataUrl(this.urlInput.value, this.state.server);
+      this.props.lobsterLoadData(this.state.server, this.state.url);
     }
   }
 
@@ -251,7 +260,7 @@ class Fetch extends React.Component {
     this.setScroll(this.state.findResults[nextIdx]);
   }
 
-  find = ( event) => {
+  find = (event) => {
     if (event) {
       event.preventDefault();
       if (event.keyCode === 13 && event.shiftKey) {
@@ -422,7 +431,7 @@ class Fetch extends React.Component {
   }
 
   showFind() {
-    if (this.state.find !== '' ) {
+    if (this.state.find !== '') {
       if (this.state.findResults.length > 0) {
         return (
           <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
@@ -485,7 +494,7 @@ class Fetch extends React.Component {
 
   toggleCaseSensitive = (value) => {
     this.setState({caseSensitive: !value});
-    this.find(!value);
+    this.find();
   }
 
   showRaw() {
@@ -515,7 +524,7 @@ class Fetch extends React.Component {
   }
 
   handleKeyDown = (event) => {
-    switch ( event.keyCode ) {
+    switch (event.keyCode) {
       case 114: // F3
         this.focusOnFind(event);
         break;
@@ -611,4 +620,19 @@ class Fetch extends React.Component {
     );
   }
 }
-export default Fetch;
+
+// This is not the ideal way to do this, but it allows for better compatibility
+// as we migrate towards the react-redux model
+function mapStateToProps(state, ownProps) {
+  return {...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap};
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+  return {
+    lobsterLoadData: (server, url) => dispatch(lobsterLoadData(server, url)),
+    loadData: (build, test) => dispatch(loadData(build, test)),
+    ...ownProps
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Fetch);

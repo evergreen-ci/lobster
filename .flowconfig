@@ -1,11 +1,22 @@
 [ignore]
+<PROJECT_ROOT>/build/.*
 
 [include]
 
 [libs]
 
 [lints]
+sketchy-null=error
+sketchy-null-string=off
 
 [options]
+esproposal.optional_chaining=enable
 
 [strict]
+# recommended set per: https://flow.org/en/docs/strict/
+nonstrict-import
+unclear-type
+unnecessary-optional-chain
+unsafe-getters-setters
+untyped-import
+untyped-type-import
