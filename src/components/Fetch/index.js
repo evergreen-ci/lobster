@@ -67,7 +67,6 @@ export class Fetch extends React.Component {
       findResults: [],
       bookmarks: bookmarksArr
     };
-
     if (this.state.url) {
       this.props.lobsterLoadData(this.state.server, this.state.url);
     } else if (this.state.build) {
@@ -332,6 +331,13 @@ export class Fetch extends React.Component {
     return false;
   }
 
+  shouldHighlightLine = (line, highlightFilter) => {
+    if (this.matchFilters(highlightFilter, line.text, false)) {
+      return true;
+    }
+    return false;
+  }
+
   addFilter = () => {
     if (this.findInput.value === '' || this.state.filterList.find((elem) => elem.text === this.findInput.value)) {
       return;
@@ -357,6 +363,16 @@ export class Fetch extends React.Component {
     const newFilters = this.state.filterList.slice();
     const filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters[filterIdx].inverse = !newFilters[filterIdx].inverse;
+
+    this.setState({filterList: newFilters});
+    this.updateURL(this.state.bookmarks, newFilters);
+    this.clearFind();
+  }
+
+  toggleFilterHighlight = (text) => {
+    const newFilters = this.state.filterList.slice();
+    const filterIdx = newFilters.findIndex((elem) => text === elem.text);
+    newFilters[filterIdx].highlight = !newFilters[filterIdx].highlight;
 
     this.setState({filterList: newFilters});
     this.updateURL(this.state.bookmarks, newFilters);
@@ -396,6 +412,12 @@ export class Fetch extends React.Component {
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
+  mergeActiveHighlightFilters(filterList, caseSensitive) {
+    return filterList
+      .filter((elem) => elem.highlight)
+      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
+  }
+
   // Checks a given string against a list of regular expression filters
   // If isIntersection === false, will return true if the string matches at least one regex
   // Otherwise, will return true if the string matches all regexes
@@ -409,6 +431,7 @@ export class Fetch extends React.Component {
   showLines() {
     const filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
     const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
+    const highlightFilter = this.mergeActiveHighlightFilters(this.state.filterList, this.state.caseSensitive);
     if (!this.props.lines) {
       return <div />;
     }
@@ -418,6 +441,7 @@ export class Fetch extends React.Component {
         colorMap={this.props.colorMap}
         filter={filter}
         inverseFilter={inverseFilter}
+        highlightFilter={highlightFilter}
         scrollLine={this.state.scrollLine}
         wrap={this.state.wrap}
         caseSensitive={this.state.caseSensitive}
@@ -427,6 +451,7 @@ export class Fetch extends React.Component {
         find={this.state.find}
         findLine={this.state.findIdx === -1 ? -1 : this.state.findResults[this.state.findIdx]}
         shouldPrintLine={this.shouldPrintLine}
+        shouldHighlightLine={this.shouldHighlightLine}
       />);
   }
 
@@ -607,6 +632,7 @@ export class Fetch extends React.Component {
                     removeFilter={this.removeFilter}
                     toggleFilter={this.toggleFilter}
                     toggleFilterInverse={this.toggleFilterInverse}
+                    toggleFilterHighlight={this.toggleFilterHighlight}
                   />
                 </div>
               </Collapse>
