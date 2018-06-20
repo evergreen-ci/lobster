@@ -161,7 +161,7 @@ export class Fetch extends React.Component {
     if (parsedParams.scrollLine) {
       parsed.scroll = parsedParams.scrollLine;
     }
-    if (bookmarks.length > 2) {
+    if (bookmarks.length > 0) {
       let bookmarkStr = '';
       for (let i = 0; i < bookmarks.length; i++) {
         bookmarkStr += bookmarks[i].lineNumber;
@@ -174,10 +174,7 @@ export class Fetch extends React.Component {
     if (this.state.server) {
       parsed.server = this.state.server;
     }
-    console.log(this.props.history);
-    this.props.history.replace({
-      hash: queryString.stringify(parsed)
-    });
+    window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));
   }
 
   handleSubmit = (event) => {
