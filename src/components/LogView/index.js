@@ -188,6 +188,7 @@ class LogView extends React.Component {
     filter: PropTypes.array,
     inverseFilter: PropTypes.array,
     highlightFilter: PropTypes.array,
+    highlightInverseFilter: PropTypes.array,
     shouldPrintLine: PropTypes.func,
     shouldHighlightLine: PropTypes.func
   };
@@ -356,7 +357,7 @@ class LogView extends React.Component {
       return true;
     });
     this.highlightLines = this.filteredLines.filter((line) => {
-      if (!this.props.shouldHighlightLine(line, this.props.highlightFilter)) {
+      if (!this.props.shouldHighlightLine(line, this.props.highlightFilter, this.props.highlightInverseFilter)) {
         return false;
       }
       return true;

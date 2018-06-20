@@ -331,11 +331,20 @@ export class Fetch extends React.Component {
     return false;
   }
 
-  shouldHighlightLine = (line, highlightFilter) => {
-    if (this.matchFilters(highlightFilter, line.text, false)) {
+  shouldHighlightLine = (line, highlightFilter, highlightInverseFilter) => {
+    if (highlightFilter.length === 0 && highlightInverseFilter.length === 0) {
+      return false;
+    } else if (!highlightFilter || highlightFilter.length === 0) {
+      if (this.matchFilters(highlightInverseFilter, line.text)) {
+        return false;
+      }
       return true;
+    } else if (!highlightInverseFilter || highlightInverseFilter.length === 0) {
+      if (this.matchFilters(highlightFilter, line.text, this.state.filterIntersection)) {
+        return true;
+      }
+      return false;
     }
-    return false;
   }
 
   addFilter = () => {
@@ -414,7 +423,13 @@ export class Fetch extends React.Component {
 
   mergeActiveHighlightFilters(filterList, caseSensitive) {
     return filterList
-      .filter((elem) => elem.highlight)
+      .filter((elem) => !elem.inverse && elem.highlight)
+      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
+  }
+
+  mergeActiveHighlightInverseFilters(filterList, caseSensitive) {
+    return filterList
+      .filter((elem) => elem.inverse && elem.highlight)
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
@@ -432,6 +447,7 @@ export class Fetch extends React.Component {
     const filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
     const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
     const highlightFilter = this.mergeActiveHighlightFilters(this.state.filterList, this.state.caseSensitive);
+    const highlightInverseFilter = this.mergeActiveHighlightInverseFilters(this.state.filterList, this.state.caseSensitive);
     if (!this.props.lines) {
       return <div />;
     }
@@ -442,6 +458,7 @@ export class Fetch extends React.Component {
         filter={filter}
         inverseFilter={inverseFilter}
         highlightFilter={highlightFilter}
+        highlightInverseFilter={highlightInverseFilter}
         scrollLine={this.state.scrollLine}
         wrap={this.state.wrap}
         caseSensitive={this.state.caseSensitive}

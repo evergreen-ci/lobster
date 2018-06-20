@@ -58,9 +58,9 @@ export class Filter extends React.PureComponent {
     return (
       <div className="filter">
         <Button className="filter-button" onClick={this.removeFilter} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
-        <Button className="filter-button" onClick={this.toggleFilter} bsStyle="warning" bsSize="xsmall">{this.props.filter.on ? '||' : '\u25B6'}</Button>
-        <Button className="filter-button-big" onClick={this.toggleFilterInverse} bsStyle="success" bsSize="xsmall">{this.props.filter.inverse ? 'out' : 'in'}</Button>
-        <Button className="filter-button-big" onClick={this.toggleFilterHighlight} bsStyle="success" bsSize="xsmall">{this.props.filter.highlight ? 'on' : 'off'}</Button>
+        <Button className="filter-button-big" onClick={this.toggleFilter} bsStyle="warning" bsSize="xsmall">{this.props.filter.on ? 'filter off' : 'filter on'}</Button>
+        <Button className="filter-button-xbig" onClick={this.toggleFilterHighlight} bsStyle="info" bsSize="xsmall">{this.props.filter.highlight ? 'highlight on' : 'highlight off'}</Button>
+        <Button className="filter-button-big" onClick={this.toggleFilterInverse} bsStyle="success" bsSize="xsmall">{this.props.filter.inverse ? 'match' : 'inverse'}</Button>
         <span className="filter-text">{this.props.filter.text}</span>
       </div>
     );

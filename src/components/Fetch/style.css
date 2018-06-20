@@ -49,12 +49,22 @@
 
 .filter-button {
     width: 22px;
+    margin-left: 10px;
+}
+
+.filter-button-medium {
+    width: 30px;
     margin-left: 5px;
 }
 
 .filter-button-big {
-    width: 30px;
-    margin-left: 5px;
+  width: 50px;
+  margin-left: 5px;
+}
+
+.filter-button-xbig {
+  width: 75px;
+  margin-left: 5px
 }
 
 .filter-text {
