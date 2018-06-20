@@ -71,7 +71,7 @@ export class Fetch extends React.Component {
       bookmarks: bookmarksArr
     };
     if (locationSearch !== '') {
-      global.window.location.search = '';
+      window.location.search = null;
       this.updateURL(this.state.bookmarks, this.state.filterList);
     }
     if (this.state.url) {
@@ -161,7 +161,7 @@ export class Fetch extends React.Component {
     if (parsedParams.scrollLine) {
       parsed.scroll = parsedParams.scrollLine;
     }
-    if (bookmarks.length > 0) {
+    if (bookmarks.length > 2) {
       let bookmarkStr = '';
       for (let i = 0; i < bookmarks.length; i++) {
         bookmarkStr += bookmarks[i].lineNumber;
@@ -174,8 +174,10 @@ export class Fetch extends React.Component {
     if (this.state.server) {
       parsed.server = this.state.server;
     }
-    /* global global:{} */
-    global.window.location.hash = queryString.stringify(parsed);
+    console.log(this.props.history);
+    this.props.history.replace({
+      hash: queryString.stringify(parsed)
+    });
   }
 
   handleSubmit = (event) => {
