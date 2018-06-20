@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
 import { Filters } from './Filters';
 import { connect } from 'react-redux';
-import queryString from 'query-string';
+import queryString from '../../thirdparty/query-string';
 
 
 // eslint-disable-next-line react/no-deprecated

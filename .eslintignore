@@ -1,3 +1,5 @@
 build/
 !.eslintrc.js
 flow-typed
+src/thirdparty/**/*
+src/thirdparty/**/.*
