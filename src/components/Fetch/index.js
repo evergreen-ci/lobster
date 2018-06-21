@@ -61,7 +61,7 @@ export class Fetch extends React.Component {
       caseSensitive: false,
       filterIntersection: false,
       detailsOpen: false,
-      filterList: searchParams.getAll('f').map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
+      filterList: searchParams.getAll('f').map((f) => ({text: f.substring(3), on: (f.charAt(0) === '1'), highlight: (f.charAt(1) === '1'), inverse: (f.charAt(2) === '1')})),
       find: '',
       findIdx: -1,
       findResults: [],
@@ -138,6 +138,7 @@ export class Fetch extends React.Component {
   makeFilterURLString(filter) {
     let res = '';
     res += (filter.on ? '1' : '0');
+    res += (filter.highlight ? '1' : '0');
     res += (filter.inverse ? '1' : '0');
     res += filter.text;
     return res;

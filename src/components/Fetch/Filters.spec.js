@@ -29,6 +29,10 @@ test('Filters', function() {
     const d = data.find(elem => text === elem.text);
     d.inverse = !d.inverse;
   };
+  const toggleFilterHighlight = (text) => {
+    const d = data.find(elem => text === elem.text);
+    d.highlight = !d.highlight;
+  };
 
   const wrapper = Enzyme.mount(
     <Filters
@@ -36,6 +40,7 @@ test('Filters', function() {
       removeFilter={removeFilter}
       toggleFilter={toggleFilter}
       toggleFilterInverse={toggleFilterInverse}
+      toggleFilterHighlight={toggleFilterHighlight}
     />);
 
   assert.ok(wrapper.containsAllMatchingElements([
@@ -44,22 +49,24 @@ test('Filters', function() {
       removeFilter={removeFilter}
       toggleFilter={toggleFilter}
       toggleFilterInverse={toggleFilterInverse}
+      toggleFilterHighlight={toggleFilterHighlight}
     />,
     <Filter
       filter={data[1]}
       removeFilter={removeFilter}
       toggleFilter={toggleFilter}
       toggleFilterInverse={toggleFilterInverse}
+      toggleFilterHighlight={toggleFilterHighlight}
     />
   ]
   ));
 
   const buttons = wrapper.find('Button');
-  assert.equal(buttons.length, 6);
+  assert.equal(buttons.length, 8);
   buttons.at(0).simulate('click', {});
   assert.equal(data.length, 1);
   wrapper.setProps({filters: data});
-  assert.equal(wrapper.find('Button').length, 3);
+  assert.equal(wrapper.find('Button').length, 4);
 });
 
 test('Filter', function() {
@@ -78,6 +85,9 @@ test('Filter', function() {
   const toggleFilterInverse = () => {
     data.inverse = !data.inverse;
   };
+  const toggleFilterHighlight = () => {
+    data.highlight = !data.highlight;
+  };
 
   const wrapper = Enzyme.mount(
     <Filter
@@ -85,6 +95,7 @@ test('Filter', function() {
       removeFilter={removeFilter}
       toggleFilter={toggleFilter}
       toggleFilterInverse={toggleFilterInverse}
+      toggleFilterHighlight={toggleFilterHighlight}
     />);
 
   assert.ok(wrapper.containsAllMatchingElements([
@@ -92,7 +103,7 @@ test('Filter', function() {
   ]));
 
   const buttons = wrapper.find('Button');
-  assert.equal(buttons.length, 3);
+  assert.equal(buttons.length, 4);
   buttons.map(function(e, index) {
     data = {
       text: 'Hello',
@@ -108,6 +119,10 @@ test('Filter', function() {
       e.simulate('click', {});
       assert.ok(data.on === true);
     } else if (index === 2) {
+      assert.ok(data.highlight === true);
+      e.simulate('click', {});
+      assert.ok(data.highlight === false);
+    } else if (index === 3) {
       assert.ok(data.inverse === true);
       e.simulate('click', {});
       assert.ok(data.inverse === false);
