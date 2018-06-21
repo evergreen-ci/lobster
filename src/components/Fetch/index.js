@@ -353,7 +353,7 @@ export class Fetch extends React.Component {
       return;
     }
     const newFilters = this.state.filterList.slice();
-    newFilters.push({text: this.findInput.value, on: true, inverse: false});
+    newFilters.push({text: this.findInput.value, on: true, highlight: false, inverse: false});
     this.setState({filterList: newFilters});
     this.updateURL(this.state.bookmarks, newFilters);
     this.clearFind();

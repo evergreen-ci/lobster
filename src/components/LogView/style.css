@@ -1,6 +1,6 @@
 .bookmark-line { background-color: #ffffb3; }
 .highlighted { background-color: #fff0f2; }
-.filtered { background-color: #C5EAE7; }
+.filtered { background-color: #c5eae7; }
 .monospace { font-family: monospace;}
 .hover-highlight:hover {
   background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);

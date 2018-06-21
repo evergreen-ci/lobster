@@ -26,8 +26,8 @@ Filters.propTypes = {
   filters: PropTypes.arrayOf(PropTypes.shape({
     text: PropTypes.string.isRequired,
     on: PropTypes.bool.isRequired,
-    inverse: PropTypes.bool.isRequired,
-    highlight: PropTypes.bool.isRequired
+    highlight: PropTypes.bool.isRequired,
+    inverse: PropTypes.bool.isRequired
   })).isRequired,
   removeFilter: PropTypes.func.isRequired,
   toggleFilter: PropTypes.func.isRequired,
@@ -40,8 +40,8 @@ export class Filter extends React.PureComponent {
     filter: PropTypes.shape({
       text: PropTypes.string.isRequired,
       on: PropTypes.bool.isRequired,
-      inverse: PropTypes.bool.isRequired,
-      highlight: PropTypes.bool.isRequired
+      highlight: PropTypes.bool.isRequired,
+      inverse: PropTypes.bool.isRequired
     }).isRequired,
     removeFilter: PropTypes.func.isRequired,
     toggleFilter: PropTypes.func.isRequired,
