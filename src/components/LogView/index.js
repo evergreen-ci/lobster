@@ -14,7 +14,8 @@ class LogLineText extends React.Component {
     lineNumber: PropTypes.number,
     lineRefCallback: PropTypes.func,
     port: PropTypes.string,
-    text: PropTypes.string
+    text: PropTypes.string,
+    highlight: PropTypes.array
   };
 
   constructor(props) {
@@ -41,18 +42,25 @@ class LogLineText extends React.Component {
     }
   }
 
+  updateHighlightAndFind() {
+    const newHighlight = this.props.highlight.slice();
+    newHighlight.push(this.props.find);
+    return newHighlight;
+  }
+
   render() {
     const style = {color: this.props.colorMap[this.props.port]};
+    const highlightAndFind = this.updateHighlightAndFind();
     const highlightStyle = {color: this.props.colorMap[this.props.port], 'backgroundImage': 'inherit', 'backgroundColor': 'pink'};
     return (
       <span ref={this.setRef}>
         <Highlighter
-          highlightClassName={'findResult' + this.props.lineNumber}
+          highlightClassName={'findResult and highlight' + this.props.lineNumber}
           caseSensitive={this.props.caseSensitive}
           unhighlightStyle={style}
           highlightStyle={highlightStyle}
           textToHighlight={this.props.text}
-          searchWords={[this.props.find]}
+          searchWords={this.props.highlight.length === 0 ? [this.props.find] : highlightAndFind}
         />
       </span>
     );
@@ -119,7 +127,8 @@ class FullLogLine extends React.Component {
     toggleBookmark: PropTypes.func,
     wrap: PropTypes.bool,
     updateSelectStartIndex: PropTypes.func,
-    updateSelectEndIndex: PropTypes.func
+    updateSelectEndIndex: PropTypes.func,
+    highlight: PropTypes.array.isRequired
   };
 
   constructor(props) {
@@ -162,12 +171,20 @@ class FullLogLine extends React.Component {
     if (this.props.highlighted) {
       className += ' filtered';
     }
-
     return (
       <div className={className} onMouseUp={this.handleMouseUp} onMouseDown={this.handleMouseDown}>
         <LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} />
         <LogOptions gitRef={this.props.line.gitRef} />
-        <LogLineText lineRefCallback={this.props.lineRefCallback} text={this.props.line.text} lineNumber={this.props.line.lineNumber} port={this.props.line.port} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive} />
+        <LogLineText
+          lineRefCallback={this.props.lineRefCallback}
+          text={this.props.line.text}
+          lineNumber={this.props.line.lineNumber}
+          port={this.props.line.port}
+          colorMap={this.props.colorMap}
+          find={this.props.find}
+          caseSensitive={this.props.caseSensitive}
+          highlight={this.props.highlight}
+        />
       </div>
     );
   }
@@ -182,6 +199,7 @@ class LogView extends React.Component {
     toggleBookmark: PropTypes.func,
     colorMap: PropTypes.object,
     find: PropTypes.string,
+    highlight: PropTypes.array,
     caseSensitive: PropTypes.bool,
     scrollLine: PropTypes.number,
     lines: PropTypes.array,
@@ -189,6 +207,7 @@ class LogView extends React.Component {
     inverseFilter: PropTypes.array,
     highlightFilter: PropTypes.array,
     highlightInverseFilter: PropTypes.array,
+    highlightLine: PropTypes.array,
     shouldPrintLine: PropTypes.func,
     shouldHighlightLine: PropTypes.func
   };
@@ -260,6 +279,7 @@ class LogView extends React.Component {
         toggleBookmark={this.props.toggleBookmark}
         colorMap={this.props.colorMap}
         find={this.props.find}
+        highlight={this.props.highlight}
         caseSensitive={this.props.caseSensitive}
         updateSelectStartIndex={this.updateSelectStartIndex}
         updateSelectEndIndex={this.updateSelectEndIndex}
@@ -307,6 +327,12 @@ class LogView extends React.Component {
       return true;
     }
     if (nextState.clicks !== this.state.clicks) {
+      return true;
+    }
+    if (nextProps.highlight !== this.props.highlight) {
+      return true;
+    }
+    if (nextProps.highlightFilter !== this.props.highlightFilter) {
       return true;
     }
 
@@ -357,7 +383,7 @@ class LogView extends React.Component {
       return true;
     });
     this.highlightLines = this.filteredLines.filter((line) => {
-      if (!this.props.shouldHighlightLine(line, this.props.highlightFilter, this.props.highlightInverseFilter)) {
+      if (!this.props.shouldHighlightLine(this.props.highlightLine, line, this.props.highlightFilter, this.props.highlightInverseFilter)) {
         return false;
       }
       return true;

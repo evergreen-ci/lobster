@@ -61,7 +61,13 @@ export class Fetch extends React.Component {
       caseSensitive: false,
       filterIntersection: false,
       detailsOpen: false,
-      filterList: searchParams.getAll('f').map((f) => ({text: f.substring(3), on: (f.charAt(0) === '1'), highlight: (f.charAt(1) === '1'), inverse: (f.charAt(2) === '1')})),
+      filterList: searchParams.getAll('f').map((f) => ({
+        text: f.substring(4),
+        on: (f.charAt(0) === '1'),
+        highlight: (f.charAt(1) === '1'),
+        highlightLine: (f.charAt(2) === '1'),
+        inverse: (f.charAt(3) === '1')
+      })),
       find: '',
       findIdx: -1,
       findResults: [],
@@ -139,6 +145,7 @@ export class Fetch extends React.Component {
     let res = '';
     res += (filter.on ? '1' : '0');
     res += (filter.highlight ? '1' : '0');
+    res += (filter.highlightLine ? '1' : '0');
     res += (filter.inverse ? '1' : '0');
     res += filter.text;
     return res;
@@ -332,20 +339,23 @@ export class Fetch extends React.Component {
     return false;
   }
 
-  shouldHighlightLine = (line, highlightFilter, highlightInverseFilter) => {
+  shouldHighlightLine = (highlightLine, line, highlightFilter, highlightInverseFilter) => {
     if (highlightFilter.length === 0 && highlightInverseFilter.length === 0) {
       return false;
     } else if (!highlightFilter || highlightFilter.length === 0) {
       if (this.matchFilters(highlightInverseFilter, line.text)) {
         return false;
       }
-      return true;
+      if (this.matchFilters(highlightLine, line.text)) {
+        return true;
+      }
     } else if (!highlightInverseFilter || highlightInverseFilter.length === 0) {
-      if (this.matchFilters(highlightFilter, line.text, this.state.filterIntersection)) {
+      if (this.matchFilters(highlightFilter, line.text, this.state.filterIntersection) && this.matchFilters(highlightLine, line.text)) {
         return true;
       }
       return false;
     }
+    return false;
   }
 
   addFilter = () => {
@@ -353,7 +363,7 @@ export class Fetch extends React.Component {
       return;
     }
     const newFilters = this.state.filterList.slice();
-    newFilters.push({text: this.findInput.value, on: true, highlight: false, inverse: false});
+    newFilters.push({text: this.findInput.value, on: true, highlight: false, highlightLine: false, inverse: false});
     this.setState({filterList: newFilters});
     this.updateURL(this.state.bookmarks, newFilters);
     this.clearFind();
@@ -383,6 +393,18 @@ export class Fetch extends React.Component {
     const newFilters = this.state.filterList.slice();
     const filterIdx = newFilters.findIndex((elem) => text === elem.text);
     newFilters[filterIdx].highlight = !newFilters[filterIdx].highlight;
+
+    this.setState({filterList: newFilters});
+    this.updateURL(this.state.bookmarks, newFilters);
+    this.clearFind();
+  }
+
+  toggleHighlightLine = (text) => {
+    const newFilters = this.state.filterList.slice();
+    const filterIdx = newFilters.findIndex((elem) => text === elem.text);
+    if (newFilters[filterIdx].inverse === false) {
+      newFilters[filterIdx].highlightLine = !newFilters[filterIdx].highlightLine;
+    }
 
     this.setState({filterList: newFilters});
     this.updateURL(this.state.bookmarks, newFilters);
@@ -434,6 +456,22 @@ export class Fetch extends React.Component {
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
+  mergeActiveHighlightLines(filterList, caseSensitive) {
+    return filterList
+      .filter((elem) => elem.highlight && elem.highlightLine)
+      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
+  }
+
+  getHighlightText(filterList) {
+    const highlight = [];
+    filterList.forEach((element) => {
+      if (element.highlight && !element.inverse && !element.highlightLine) {
+        highlight.push(element.text);
+      }
+    });
+    return highlight;
+  }
+
   // Checks a given string against a list of regular expression filters
   // If isIntersection === false, will return true if the string matches at least one regex
   // Otherwise, will return true if the string matches all regexes
@@ -449,6 +487,8 @@ export class Fetch extends React.Component {
     const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
     const highlightFilter = this.mergeActiveHighlightFilters(this.state.filterList, this.state.caseSensitive);
     const highlightInverseFilter = this.mergeActiveHighlightInverseFilters(this.state.filterList, this.state.caseSensitive);
+    const highlight = this.getHighlightText(this.state.filterList);
+    const highlightLine = this.mergeActiveHighlightLines(this.state.filterList, this.state.caseSensitive);
     if (!this.props.lines) {
       return <div />;
     }
@@ -460,6 +500,7 @@ export class Fetch extends React.Component {
         inverseFilter={inverseFilter}
         highlightFilter={highlightFilter}
         highlightInverseFilter={highlightInverseFilter}
+        highlightLine={highlightLine}
         scrollLine={this.state.scrollLine}
         wrap={this.state.wrap}
         caseSensitive={this.state.caseSensitive}
@@ -467,6 +508,7 @@ export class Fetch extends React.Component {
         toggleBookmark={this.toggleBookmark}
         bookmarks={this.state.bookmarks}
         find={this.state.find}
+        highlight={highlight}
         findLine={this.state.findIdx === -1 ? -1 : this.state.findResults[this.state.findIdx]}
         shouldPrintLine={this.shouldPrintLine}
         shouldHighlightLine={this.shouldHighlightLine}
@@ -651,6 +693,7 @@ export class Fetch extends React.Component {
                     toggleFilter={this.toggleFilter}
                     toggleFilterInverse={this.toggleFilterInverse}
                     toggleFilterHighlight={this.toggleFilterHighlight}
+                    toggleHighlightLine={this.toggleHighlightLine}
                   />
                 </div>
               </Collapse>
