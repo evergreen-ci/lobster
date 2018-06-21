@@ -8,12 +8,14 @@ test('Filters', function() {
     {
       text: 'Hello',
       on: true,
-      inverse: false
+      inverse: false,
+      highlight: false
     },
     {
       text: 'Goodbye',
       on: true,
-      inverse: false
+      inverse: false,
+      highlight: false
     }
   ];
 
@@ -73,7 +75,8 @@ test('Filter', function() {
   let data = {
     text: 'Hello',
     on: true,
-    inverse: false
+    inverse: false,
+    highlight: false
   };
 
   const removeFilter = () => {
@@ -108,7 +111,8 @@ test('Filter', function() {
     data = {
       text: 'Hello',
       on: true,
-      inverse: false
+      inverse: false,
+      highlight: false
     };
     e.simulate('click', {});
 
