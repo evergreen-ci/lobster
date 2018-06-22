@@ -3,6 +3,7 @@ import { loadData, lobsterLoadData } from '../../actions';
 import './style.css';
 import ToggleButton from 'react-toggle-button';
 import Button from 'react-bootstrap/lib/Button';
+import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
 import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
@@ -683,11 +684,13 @@ export class Fetch extends React.Component {
                       onChange={this.handleChangeFindEvent}
                     />
                   </Col>
-                  <Button id="formSubmit" type="submit" onClick={this.find}>Find</Button>
-                  {this.showFind()}
-                  <Button onClick={this.addFilter}>Add Filter</Button>
-                  <Button onClick={this.addHighlight}>Add Highlight</Button>
-                  <Button onClick={this.togglePanel}>{this.state.detailsOpen ? 'Hide Details \u25B4' : 'Show Details \u25BE'}</Button>
+                  <ButtonToolbar>
+                    <Button id="formSubmit" type="submit" onClick={this.find}>Find</Button>
+                    {this.showFind()}
+                    <Button onClick={this.addFilter}>Add Filter</Button>
+                    <Button onClick={this.addHighlight}>Add Highlight</Button>
+                    <Button onClick={this.togglePanel}>{this.state.detailsOpen ? 'Hide Details \u25B4' : 'Show Details \u25BE'}</Button>
+                  </ButtonToolbar>
                 </FormGroup>
               </Form>
               <Collapse className="collapse-menu" in={this.state.detailsOpen}>
