@@ -70,8 +70,7 @@ export class Filter extends React.PureComponent {
       <Button className="filter-button-big" onClick={this.toggleHighlightLine} bsStyle="primary" bsSize="xsmall">{this.props.filter.highlightLine ? 'words' : 'lines'}</Button>
       <Button className="filter-button-big" onClick={this.toggleFilterInverse} bsStyle="success" bsSize="xsmall">{this.props.filter.inverse ? 'match' : 'inverse'}</Button>
     */
-    const buttonStyles = { marginLeft: '15px' };
-    const labelStyles = { fontSize: '13px' };
+    const buttonStyles = { marginLeft: '12px'};
     return (
       <div>
         <Button className="filter-button" onClick={this.removeFilter} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
@@ -82,12 +81,11 @@ export class Filter extends React.PureComponent {
           value={this.props.filter.on}
           onChange={this.toggleFilter}
         >
-          <div style={labelStyles}>Filter</div>
-          <ToggleButton value={true} bsSize="xsmall" bsStyle="warning">
-            on
+          <ToggleButton value={true} bsSize="small" bsStyle="warning">
+            filter on
           </ToggleButton>
-          <ToggleButton value={false} bsSize="xsmall" bsStyle="warning">
-            off
+          <ToggleButton value={false} bsSize="small" bsStyle="warning">
+            filter off
           </ToggleButton>
         </ToggleButtonGroup>
         <ToggleButtonGroup
@@ -97,12 +95,11 @@ export class Filter extends React.PureComponent {
           value={this.props.filter.highlight}
           onChange={this.toggleFilterHighlight}
         >
-          <div style={labelStyles}>Highlight</div>
-          <ToggleButton value={true} bsSize="xsmall" bsStyle="info">
-            on
+          <ToggleButton value={true} bsSize="small" bsStyle="info">
+            highlight on
           </ToggleButton>
-          <ToggleButton value={false} bsSize="xsmall" bsStyle="info">
-            off
+          <ToggleButton value={false} bsSize="small" bsStyle="info">
+            highlight off
           </ToggleButton>
         </ToggleButtonGroup>
         <ToggleButtonGroup
@@ -112,10 +109,10 @@ export class Filter extends React.PureComponent {
           value={this.props.filter.highlightLine}
           onChange={this.toggleHighlightLine}
         >
-          <ToggleButton value={true} bsSize="xsmall" bsStyle="primary">
+          <ToggleButton value={true} bsSize="small" bsStyle="primary">
             line
           </ToggleButton>
-          <ToggleButton value={false} bsSize="xsmall" bsStyle="primary">
+          <ToggleButton value={false} bsSize="small" bsStyle="primary">
             word
           </ToggleButton>
         </ToggleButtonGroup>
@@ -126,10 +123,10 @@ export class Filter extends React.PureComponent {
           value={this.props.filter.inverse}
           onChange={this.toggleFilterInverse}
         >
-          <ToggleButton value={true} bsSize="xsmall" bsStyle="success">
+          <ToggleButton value={true} bsSize="small" bsStyle="success">
             inverse
           </ToggleButton>
-          <ToggleButton value={false} bsSize="xsmall" bsStyle="success">
+          <ToggleButton value={false} bsSize="small" bsStyle="success">
             match
           </ToggleButton>
         </ToggleButtonGroup>
