@@ -61,6 +61,36 @@ export class Filter extends React.PureComponent {
   toggleFilterHighlight = () => this.props.toggleFilterHighlight(this.props.filter.text);
   toggleHighlightLine = () => this.props.toggleHighlightLine(this.props.filter.text);
 
+  checkWordDisable = () => {
+    if (this.props.filter.inverse) {
+      return (
+        <ToggleButton value={false} bsSize="small" bsStyle="primary" disabled>
+          word
+        </ToggleButton>
+      );
+    }
+    return (
+      <ToggleButton value={false} bsSize="small" bsStyle="primary">
+        word
+      </ToggleButton>
+    );
+  }
+
+  checkInverseDisable = () => {
+    if (this.props.filter.highlightLine) {
+      return (
+        <ToggleButton value={true} bsSize="small" bsStyle="success">
+          inverse
+        </ToggleButton>
+      );
+    }
+    return (
+      <ToggleButton value={true} bsSize="small" bsStyle="success" disabled>
+        inverse
+      </ToggleButton>
+    );
+  }
+
   render() {
     // old buttons
     /*
@@ -113,9 +143,7 @@ export class Filter extends React.PureComponent {
           <ToggleButton value={true} bsSize="small" bsStyle="primary">
             line
           </ToggleButton>
-          <ToggleButton value={false} bsSize="small" bsStyle="primary">
-            word
-          </ToggleButton>
+          {this.checkWordDisable()}
         </ToggleButtonGroup>
         <ToggleButtonGroup
           style={buttonStyles}
@@ -124,9 +152,7 @@ export class Filter extends React.PureComponent {
           value={this.props.filter.inverse}
           onChange={this.toggleFilterInverse}
         >
-          <ToggleButton value={true} bsSize="small" bsStyle="success">
-            inverse
-          </ToggleButton>
+          {this.checkInverseDisable()}
           <ToggleButton value={false} bsSize="small" bsStyle="success">
             match
           </ToggleButton>
