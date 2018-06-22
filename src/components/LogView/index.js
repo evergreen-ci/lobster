@@ -15,7 +15,7 @@ class LogLineText extends React.Component {
     lineRefCallback: PropTypes.func,
     port: PropTypes.string,
     text: PropTypes.string,
-    highlight: PropTypes.array
+    highlightText: PropTypes.array
   };
 
   constructor(props) {
@@ -43,7 +43,7 @@ class LogLineText extends React.Component {
   }
 
   updateHighlightAndFind() {
-    const newHighlight = this.props.highlight.slice();
+    const newHighlight = this.props.highlightText.slice();
     newHighlight.push(this.props.find);
     return newHighlight;
   }
@@ -60,7 +60,7 @@ class LogLineText extends React.Component {
           unhighlightStyle={style}
           highlightStyle={highlightStyle}
           textToHighlight={this.props.text}
-          searchWords={this.props.highlight.length === 0 ? [this.props.find] : highlightAndFind}
+          searchWords={this.props.highlightText.length === 0 ? [this.props.find] : highlightAndFind}
         />
       </span>
     );
@@ -116,7 +116,7 @@ class FullLogLine extends React.Component {
     colorMap: PropTypes.object,
     find: PropTypes.string.isRequired,
     found: PropTypes.bool.isRequired,
-    highlighted: PropTypes.bool.isRequired,
+    highlight: PropTypes.bool.isRequired,
     line: PropTypes.shape({
       gitRef: PropTypes.string,
       lineNumber: PropTypes.number,
@@ -128,7 +128,7 @@ class FullLogLine extends React.Component {
     wrap: PropTypes.bool,
     updateSelectStartIndex: PropTypes.func,
     updateSelectEndIndex: PropTypes.func,
-    highlight: PropTypes.array.isRequired
+    highlightText: PropTypes.array.isRequired
   };
 
   constructor(props) {
@@ -168,7 +168,7 @@ class FullLogLine extends React.Component {
     if (this.props.found) {
       className += ' highlighted';
     }
-    if (this.props.highlighted) {
+    if (this.props.highlight) {
       className += ' filtered';
     }
     return (
@@ -183,7 +183,7 @@ class FullLogLine extends React.Component {
           colorMap={this.props.colorMap}
           find={this.props.find}
           caseSensitive={this.props.caseSensitive}
-          highlight={this.props.highlight}
+          highlightText={this.props.highlightText}
         />
       </div>
     );
@@ -199,14 +199,13 @@ class LogView extends React.Component {
     toggleBookmark: PropTypes.func,
     colorMap: PropTypes.object,
     find: PropTypes.string,
-    highlight: PropTypes.array,
     caseSensitive: PropTypes.bool,
     scrollLine: PropTypes.number,
     lines: PropTypes.array,
     filter: PropTypes.array,
     inverseFilter: PropTypes.array,
-    highlightFilter: PropTypes.array,
-    highlightInverseFilter: PropTypes.array,
+    highlight: PropTypes.array,
+    highlightText: PropTypes.array,
     highlightLine: PropTypes.array,
     shouldPrintLine: PropTypes.func,
     shouldHighlightLine: PropTypes.func
@@ -273,13 +272,13 @@ class LogView extends React.Component {
         key={key}
         found={this.filteredLines[index].lineNumber === this.props.findLine}
         bookmarked={this.props.findBookmark(this.props.bookmarks, this.filteredLines[index].lineNumber) !== -1}
-        highlighted={this.highlightLines.includes(this.filteredLines[index])}
+        highlight={this.highlightLines.includes(this.filteredLines[index])}
         wrap={this.props.wrap}
         line={this.filteredLines[index]}
         toggleBookmark={this.props.toggleBookmark}
         colorMap={this.props.colorMap}
         find={this.props.find}
-        highlight={this.props.highlight}
+        highlightText={this.props.highlightText}
         caseSensitive={this.props.caseSensitive}
         updateSelectStartIndex={this.updateSelectStartIndex}
         updateSelectEndIndex={this.updateSelectEndIndex}
@@ -332,9 +331,6 @@ class LogView extends React.Component {
     if (nextProps.highlight !== this.props.highlight) {
       return true;
     }
-    if (nextProps.highlightFilter !== this.props.highlightFilter) {
-      return true;
-    }
 
     return false;
   }
@@ -383,7 +379,7 @@ class LogView extends React.Component {
       return true;
     });
     this.highlightLines = this.filteredLines.filter((line) => {
-      if (!this.props.shouldHighlightLine(this.props.highlightLine, line, this.props.highlightFilter, this.props.highlightInverseFilter)) {
+      if (!this.props.shouldHighlightLine(line, this.props.highlight, this.props.highlightLine)) {
         return false;
       }
       return true;

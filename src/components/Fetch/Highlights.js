@@ -63,25 +63,25 @@ export class Highlight extends React.PureComponent {
           value={this.props.highlight.on}
           onChange={this.toggleHighlight}
         >
-          <ToggleButton value={true} bsSize="small" bsStyle="warning">
+          <ToggleButton value={true} bsSize="small" bsStyle="info">
               on
           </ToggleButton>
-          <ToggleButton value={false} bsSize="small" bsStyle="warning">
+          <ToggleButton value={false} bsSize="small" bsStyle="info">
               off
           </ToggleButton>
         </ToggleButtonGroup>
         <ToggleButtonGroup
           style={buttonStyles}
           type="radio"
-          name="highlight-line-word"
+          name="filter-inverse"
           value={this.props.highlight.line}
           onChange={this.toggleHighlightLine}
         >
-          <ToggleButton value={true} bsSize="small" bsStyle="primary">
-            line
-          </ToggleButton>
           <ToggleButton value={false} bsSize="small" bsStyle="primary">
             word
+          </ToggleButton>
+          <ToggleButton value={true} bsSize="small" bsStyle="primary">
+            line
           </ToggleButton>
         </ToggleButtonGroup>
         <span className="filter-text">{this.props.highlight.text}</span>

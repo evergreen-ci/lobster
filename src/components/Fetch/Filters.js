@@ -64,10 +64,10 @@ export class Filter extends React.PureComponent {
           onChange={this.toggleFilter}
         >
           <ToggleButton value={true} bsSize="small" bsStyle="warning">
-              filter on
+              on
           </ToggleButton>
           <ToggleButton value={false} bsSize="small" bsStyle="warning">
-              filter off
+              off
           </ToggleButton>
         </ToggleButtonGroup>
         <ToggleButtonGroup
