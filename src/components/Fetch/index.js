@@ -332,7 +332,12 @@ export class Fetch extends React.Component {
     }
     // If there are both types of filters, it has to match the filter and not match
     // the inverseFilter.
-    if (this.matchFilters(filter, line.text, this.state.filterIntersection) &&
+    if (this.state.filterIntersection) {
+      if (this.matchFilters(filter, line.text, this.state.filterIntersection) &&
+            !this.matchFilters(inverseFilter, line.text)) {
+        return true;
+      }
+    } else if (this.matchFilters(filter, line.text, this.state.filterIntersection) ||
           !this.matchFilters(inverseFilter, line.text)) {
       return true;
     }
@@ -354,6 +359,15 @@ export class Fetch extends React.Component {
       }
       return false;
     }
+
+    if (this.state.filterIntersection) {
+      if (this.matchFilters(highlightFilter, line.text, this.state.filterIntersection) && !this.matchFilters(highlightInverseFilter, line.text)) {
+        return true;
+      }
+    } else if (this.matchFilters(highlightFilter, line.text, this.state.filterIntersection) || !this.matchFilters(highlightInverseFilter, line.text)) {
+      return true;
+    }
+    return false;
   }
 
   addFilter = () => {
