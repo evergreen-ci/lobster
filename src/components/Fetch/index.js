@@ -71,7 +71,6 @@ export class Fetch extends React.Component {
       bookmarks: bookmarksArr
     };
     if (locationSearch !== '') {
-      window.location.search = null;
       this.updateURL(this.state.bookmarks, this.state.filterList);
     }
     if (this.state.url) {
