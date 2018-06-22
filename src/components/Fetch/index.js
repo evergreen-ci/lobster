@@ -687,7 +687,7 @@ export class Fetch extends React.Component {
                   {this.showFind()}
                   <Button onClick={this.addFilter}>Add Filter</Button>
                   <Button onClick={this.addHighlight}>Add Highlight</Button>
-                  <Button onClick={this.togglePanel}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
+                  <Button onClick={this.togglePanel}>{this.state.detailsOpen ? 'Hide Details \u25B4' : 'Show Details \u25BE'}</Button>
                 </FormGroup>
               </Form>
               <Collapse className="collapse-menu" in={this.state.detailsOpen}>
