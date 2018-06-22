@@ -342,20 +342,18 @@ export class Fetch extends React.Component {
   shouldHighlightLine = (highlightLine, line, highlightFilter, highlightInverseFilter) => {
     if (highlightFilter.length === 0 && highlightInverseFilter.length === 0) {
       return false;
-    } else if (!highlightFilter || highlightFilter.length === 0) {
+    }
+    if (!highlightFilter || highlightFilter.length === 0) {
       if (this.matchFilters(highlightInverseFilter, line.text)) {
         return false;
       }
-      if (this.matchFilters(highlightLine, line.text)) {
-        return true;
-      }
+      return true;
     } else if (!highlightInverseFilter || highlightInverseFilter.length === 0) {
       if (this.matchFilters(highlightFilter, line.text, this.state.filterIntersection) && this.matchFilters(highlightLine, line.text)) {
         return true;
       }
       return false;
     }
-    return false;
   }
 
   addFilter = () => {

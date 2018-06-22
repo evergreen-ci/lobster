@@ -70,7 +70,8 @@ export class Filter extends React.PureComponent {
       <Button className="filter-button-big" onClick={this.toggleHighlightLine} bsStyle="primary" bsSize="xsmall">{this.props.filter.highlightLine ? 'words' : 'lines'}</Button>
       <Button className="filter-button-big" onClick={this.toggleFilterInverse} bsStyle="success" bsSize="xsmall">{this.props.filter.inverse ? 'match' : 'inverse'}</Button>
     */
-    const buttonStyles = { marginLeft: '10px' };
+    const buttonStyles = { marginLeft: '15px' };
+    const labelStyles = { fontSize: '13px' };
     return (
       <div>
         <Button className="filter-button" onClick={this.removeFilter} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
@@ -81,7 +82,7 @@ export class Filter extends React.PureComponent {
           value={this.props.filter.on}
           onChange={this.toggleFilter}
         >
-          <div>Filter</div>
+          <div style={labelStyles}>Filter</div>
           <ToggleButton value={true} bsSize="xsmall" bsStyle="warning">
             on
           </ToggleButton>
@@ -96,7 +97,7 @@ export class Filter extends React.PureComponent {
           value={this.props.filter.highlight}
           onChange={this.toggleFilterHighlight}
         >
-          <div>Highlight</div>
+          <div style={labelStyles}>Highlight</div>
           <ToggleButton value={true} bsSize="xsmall" bsStyle="info">
             on
           </ToggleButton>
