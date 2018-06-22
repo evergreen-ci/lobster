@@ -72,6 +72,11 @@
     font-size: 17px;
 }
 
+.filter-label-text {
+  margin-left: 10px;
+  font-size: 13px;
+}
+
 .filter {
     padding-bottom: 5px;
 }
