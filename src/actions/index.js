@@ -49,7 +49,7 @@ export type LogkeeperDataResponse = {|
   +payload: {|
     +data: string
   |},
-  +error: bool
+  +error: boolean
 |}
 
 export type Action = LogkeeperLoadData

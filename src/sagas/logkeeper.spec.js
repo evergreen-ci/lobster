@@ -11,7 +11,7 @@ describe('lobsterLoadData', function() {
   afterEach(() => sinon.restore());
 
   test('resolve', function() {
-    const stub = sinon.replace(api, 'fetchLobster', sinon.stub().resolves({
+    sinon.replace(api, 'fetchLobster', sinon.stub().resolves({
       data: 'lobster'
     }));
 
@@ -31,10 +31,10 @@ describe('lobsterLoadData', function() {
       assert.deepEqual(dispatch.firstCall.args[0].payload.data, 'lobster');
       assert.deepEqual(dispatch.firstCall.args[0].error, false);
     });
-  })
+  });
 
   test('fail', function() {
-    const stub = sinon.replace(api, 'fetchLobster', sinon.stub().rejects("error"));
+    sinon.replace(api, 'fetchLobster', sinon.stub().rejects('error'));
 
     const action = actions.lobsterLoadData('localhost:9001', 'a.log');
     const dispatch = sinon.fake();
@@ -46,25 +46,24 @@ describe('lobsterLoadData', function() {
       assert.deepEqual(dispatch.callCount, 1);
       assert.deepEqual(dispatch.firstCall.args[0].type, actions.LOGKEEPER_LOAD_RESPONSE);
       assert.deepEqual(dispatch.firstCall.args[0].error, true);
-    })
-  })
-})
+    });
+  });
+});
 
 describe('logkeeperLoadData', function() {
   afterEach(() => sinon.restore());
 
   test('resolve', function() {
-    const stub = sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves({
+    sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves({
       data: 'logkeeper'
     }));
 
     const action = actions.loadData('build0', 'test0');
-    const dispatch: any = sinon.fake();
+    const dispatch = sinon.fake();
     const result = runSaga({dispatch: dispatch}, sagas.logkeeperLoadData, action).done;
     assert.ok(result);
 
     result.then(function() {
-      (api.fetchLogkeeper: any);
       assert.deepEqual(api.fetchLogkeeper.callCount, 1);
       assert.deepEqual(api.fetchLogkeeper.firstCall.args, ['build0', 'test0']);
 
@@ -74,10 +73,10 @@ describe('logkeeperLoadData', function() {
       assert.deepEqual(dispatch.firstCall.args[0].payload.data, 'logkeeper');
       assert.deepEqual(dispatch.firstCall.args[0].error, false);
     });
-  })
+  });
 
   test('resolve-notest', function() {
-    const stub = sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves({
+    sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves({
       data: 'logkeeper'
     }));
 
@@ -96,10 +95,10 @@ describe('logkeeperLoadData', function() {
       assert.deepEqual(dispatch.firstCall.args[0].payload.data, 'logkeeper');
       assert.deepEqual(dispatch.firstCall.args[0].error, false);
     });
-  })
+  });
 
   test('fail', function() {
-    const stub = sinon.replace(api, 'fetchLogkeeper', sinon.stub().rejects("error"));
+    sinon.replace(api, 'fetchLogkeeper', sinon.stub().rejects('error'));
 
     const action = actions.loadData('build0', 'test0');
     const dispatch = sinon.fake();
@@ -115,5 +114,5 @@ describe('logkeeperLoadData', function() {
       assert.deepEqual(dispatch.firstCall.args[0].type, actions.LOGKEEPER_LOAD_RESPONSE);
       assert.deepEqual(dispatch.firstCall.args[0].error, true);
     });
-  })
-})
+  });
+});
