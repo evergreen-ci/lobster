@@ -1,5 +1,3 @@
-// @flow
-
 import sinon from 'sinon';
 import assert from 'assert';
 import { runSaga } from 'redux-saga';
