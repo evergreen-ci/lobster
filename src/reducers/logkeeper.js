@@ -108,8 +108,8 @@ export function logkeeperDataResponse(state: Log = initialState, action: Action)
     return state;
   }
 
-  if (action.status === 'success') {
-    return processServerResponse(action.data);
+  if (!action.error) {
+    return processServerResponse(action.payload.data);
   }
 
   return state;

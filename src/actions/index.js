@@ -30,20 +30,26 @@ export type Log = {
 
 export type LogkeeperLoadData = {|
   +type: 'logkeeper:load-data',
-  +build: string,
-  +test: ?string
+  +payload: {|
+    +build: string,
+    +test: ?string
+  |}
 |}
 
 export type LobsterLoadData = {|
   +type: 'lobster:load-data',
-  +url: string,
-  +server: string,
+  +payload: {|
+    +url: string,
+    +server: string
+  |}
 |}
 
 export type LogkeeperDataResponse = {|
   +type: 'logkeeper:response',
-  +status: 'success' | 'error',
-  +data: string
+  +payload: {|
+    +data: string
+  |},
+  +error: bool
 |}
 
 export type Action = LogkeeperLoadData
@@ -54,8 +60,10 @@ export type Action = LogkeeperLoadData
 export function loadData(build: string, test: ?string): LogkeeperLoadData {
   return {
     type: LOGKEEPER_LOAD_DATA,
-    build: build,
-    test: test
+    payload: {
+      build: build,
+      test: test
+    }
   };
 }
 
@@ -63,23 +71,29 @@ export function loadData(build: string, test: ?string): LogkeeperLoadData {
 export function lobsterLoadData(server: string, url: string): LobsterLoadData {
   return {
     type: LOBSTER_LOAD_DATA,
-    url: url,
-    server: server
+    payload: {
+      url: url,
+      server: server
+    }
   };
 }
 
 export function logkeeperDataSuccess(data: string): LogkeeperDataResponse {
   return {
     type: LOGKEEPER_LOAD_RESPONSE,
-    status: 'success',
-    data: data
+    payload: {
+      data: data
+    },
+    error: false
   };
 }
 
 export function logkeeperDataError(data: string): LogkeeperDataResponse {
   return {
     type: LOGKEEPER_LOAD_RESPONSE,
-    status: 'error',
-    data: data
+    payload: {
+      data: data
+    },
+    error: true
   };
 }
