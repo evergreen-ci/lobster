@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
 import { Filters } from './Filters';
 import { connect } from 'react-redux';
+import queryString from '../../thirdparty/query-string';
 
 
 // eslint-disable-next-line react/no-deprecated
@@ -21,7 +22,8 @@ export class Fetch extends React.Component {
   static propTypes = {
     lines: PropTypes.array,
     location: PropTypes.shape({
-      search: PropTypes.string
+      search: PropTypes.string,
+      hash: PropTypes.string
     }),
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -44,9 +46,10 @@ export class Fetch extends React.Component {
   constructor(props) {
     super(props);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
-    const searchParams = new URLSearchParams(props.location.search);
+    const locationSearch = props.location.search;
+    const parsed = queryString.parse(locationSearch === '' ? props.location.hash : locationSearch);
     const params = this.props.match.params;
-    const bookmarksList = searchParams.get('bookmarks');
+    const bookmarksList = parsed.bookmarks;
     let bookmarksArr = [];
     if (bookmarksList) {
       bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n, 10)}));
@@ -54,20 +57,22 @@ export class Fetch extends React.Component {
     this.state = {
       build: params.build,
       test: params.test,
-      scrollLine: parseInt(searchParams.get('scroll'), 10),
-      server: searchParams.get('server'),
-      url: searchParams.get('url'),
+      scrollLine: parseInt(parsed.scroll, 10),
+      server: parsed.server || null,
+      url: parsed.url || null,
       wrap: false,
       caseSensitive: false,
       filterIntersection: false,
       detailsOpen: false,
-      filterList: searchParams.getAll('f').map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
+      filterList: (params.f || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
       find: '',
       findIdx: -1,
       findResults: [],
       bookmarks: bookmarksArr
     };
-
+    if (locationSearch !== '') {
+      this.updateURL(this.state.bookmarks, this.state.filterList);
+    }
     if (this.state.url) {
       this.props.lobsterLoadData(this.state.server, this.state.url);
     } else if (this.state.build) {
@@ -146,20 +151,14 @@ export class Fetch extends React.Component {
 
   updateURL(bookmarks, filters) {
     const parsedParams = this.getUrlParams();
-    const searchParams = new URLSearchParams();
+    const locationSearch = this.props.location.search;
+    const parsed = queryString.parse(locationSearch === '' ? this.props.location.hash : locationSearch);
 
-    // make url match this state
-    let nextUrl = '';
-    if (!this.urlInput || !this.urlInput.value) {
-      nextUrl = '/lobster/build/' + parsedParams.build + '/test/' + parsedParams.test;
-    } else {
-      searchParams.append('url', this.urlInput.value);
-    }
     for (let i = 0; i < filters.length; i++) {
-      searchParams.append('f', this.makeFilterURLString(filters[i]));
+      parsed.f = this.makeFilterURLString(filters[i]);
     }
     if (parsedParams.scrollLine) {
-      searchParams.append('scroll', parsedParams.scrollLine);
+      parsed.scroll = parsedParams.scrollLine;
     }
     if (bookmarks.length > 0) {
       let bookmarkStr = '';
@@ -169,15 +168,12 @@ export class Fetch extends React.Component {
           bookmarkStr += ',';
         }
       }
-      searchParams.append('bookmarks', bookmarkStr);
+      parsed.bookmarks = bookmarkStr;
     }
     if (this.state.server) {
-      searchParams.append('server', this.state.server);
+      parsed.server = this.state.server;
     }
-    this.props.history.push({
-      pathname: nextUrl,
-      search: searchParams.toString()
-    });
+    window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));
   }
 
   handleSubmit = (event) => {
