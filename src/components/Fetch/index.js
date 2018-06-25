@@ -67,6 +67,7 @@ export class Fetch extends React.Component {
       filterIntersection: false,
       detailsOpen: false,
       filterList: (params.f || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
+      highlightList: (params.h || []).map((h) => ({text: h.substring(2), on: (h.charAt(0) === '1'), line: (h.charAt(1) === '1')})),
       find: '',
       findIdx: -1,
       findResults: [],
@@ -168,7 +169,7 @@ export class Fetch extends React.Component {
       parsed.f = this.makeFilterURLString(filters[i]);
     }
     for (let i = 0; i < highlights.length; i++) {
-      searchParams.append('h', this.makeHighlightURLString(highlights[i]));
+      parsed.h = this.makeHighlightURLString(highlights[i]);
     }
     if (parsedParams.scrollLine) {
       parsed.scroll = parsedParams.scrollLine;
