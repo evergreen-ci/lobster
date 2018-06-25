@@ -2,7 +2,7 @@
 
 import assert from 'assert';
 import { logkeeperDataResponse } from './logkeeper';
-import { logkeeperDataSuccess } from '../actions';
+import { logkeeperDataSuccess, logkeeperDataError } from '../actions';
 
 test('store-line-gitref', function() {
   const data = [
@@ -43,4 +43,11 @@ test('store-line-gitref', function() {
     state.lines[2].gitRef);
   assert.deepEqual(state.colorMap[':primary]'], '#5aae61');
   Object.keys(state.colorMap).forEach((value) => assert.notEqual(value, undefined));
+});
+
+test('logkeeperDataResponse-error', function() {
+  const action = logkeeperDataError('error');
+  const state = logkeeperDataResponse(undefined, action);
+  assert.deepEqual(state.lines.length, 0);
+  assert.deepEqual(state.colorMap.size, 0);
 });

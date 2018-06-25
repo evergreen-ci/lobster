@@ -24,7 +24,15 @@ if (cache) {
   myCache = require('./dummy_cache')();
 }
 
-const logsDir = require('yargs').argv.logs;
+const logsDir = (() => {
+  const dir = require('yargs').argv.logs;
+  if (dir) {
+    const absPath = path.resolve(dir);
+    console.log('Serving local logs from directory: ' + absPath);
+    return absPath;
+  }
+  return undefined;
+})();
 
 // Setup logger
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
@@ -99,6 +107,7 @@ app.post('/api/log', function(req, res, _next) {
     const reqPath = path.resolve(logsDir, logUrl);
     if (!reqPath.startsWith(logsDir)) {
       // since it's a security issue, we pretend it's not there
+      console.log(reqPath + ' not in log directory base (' + logsDir + ')');
       res.status(404).send('log not found');
       return;
     }
