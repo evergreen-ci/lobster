@@ -14,7 +14,8 @@ class LogLineText extends React.Component {
     lineNumber: PropTypes.number,
     lineRefCallback: PropTypes.func,
     port: PropTypes.string,
-    text: PropTypes.string
+    text: PropTypes.string,
+    highlightText: PropTypes.array
   };
 
   constructor(props) {
@@ -41,18 +42,25 @@ class LogLineText extends React.Component {
     }
   }
 
+  updateHighlightAndFind() {
+    const newHighlight = this.props.highlightText.slice();
+    newHighlight.push(this.props.find);
+    return newHighlight;
+  }
+
   render() {
     const style = {color: this.props.colorMap[this.props.port]};
+    const highlightAndFind = this.updateHighlightAndFind();
     const highlightStyle = {color: this.props.colorMap[this.props.port], 'backgroundImage': 'inherit', 'backgroundColor': 'pink'};
     return (
       <span ref={this.setRef}>
         <Highlighter
-          highlightClassName={'findResult' + this.props.lineNumber}
+          highlightClassName={'findResult and highlight' + this.props.lineNumber}
           caseSensitive={this.props.caseSensitive}
           unhighlightStyle={style}
           highlightStyle={highlightStyle}
           textToHighlight={this.props.text}
-          searchWords={[this.props.find]}
+          searchWords={this.props.highlightText.length === 0 ? [this.props.find] : highlightAndFind}
         />
       </span>
     );
@@ -108,6 +116,7 @@ class FullLogLine extends React.Component {
     colorMap: PropTypes.object,
     find: PropTypes.string.isRequired,
     found: PropTypes.bool.isRequired,
+    highlight: PropTypes.bool.isRequired,
     line: PropTypes.shape({
       gitRef: PropTypes.string,
       lineNumber: PropTypes.number,
@@ -118,7 +127,8 @@ class FullLogLine extends React.Component {
     toggleBookmark: PropTypes.func,
     wrap: PropTypes.bool,
     updateSelectStartIndex: PropTypes.func,
-    updateSelectEndIndex: PropTypes.func
+    updateSelectEndIndex: PropTypes.func,
+    highlightText: PropTypes.array.isRequired
   };
 
   constructor(props) {
@@ -158,12 +168,23 @@ class FullLogLine extends React.Component {
     if (this.props.found) {
       className += ' highlighted';
     }
-
+    if (this.props.highlight) {
+      className += ' filtered';
+    }
     return (
       <div className={className} onMouseUp={this.handleMouseUp} onMouseDown={this.handleMouseDown}>
         <LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} />
         <LogOptions gitRef={this.props.line.gitRef} />
-        <LogLineText lineRefCallback={this.props.lineRefCallback} text={this.props.line.text} lineNumber={this.props.line.lineNumber} port={this.props.line.port} colorMap={this.props.colorMap} find={this.props.find} caseSensitive={this.props.caseSensitive} />
+        <LogLineText
+          lineRefCallback={this.props.lineRefCallback}
+          text={this.props.line.text}
+          lineNumber={this.props.line.lineNumber}
+          port={this.props.line.port}
+          colorMap={this.props.colorMap}
+          find={this.props.find}
+          caseSensitive={this.props.caseSensitive}
+          highlightText={this.props.highlightText}
+        />
       </div>
     );
   }
@@ -172,18 +193,22 @@ class FullLogLine extends React.Component {
 class LogView extends React.Component {
   static propTypes = {
     findBookmark: PropTypes.func,
-    findLine: PropTypes.number,
+    findLine: PropTypes.number.isRequired,
     bookmarks: PropTypes.array,
-    wrap: PropTypes.bool,
-    toggleBookmark: PropTypes.func,
-    colorMap: PropTypes.object,
+    wrap: PropTypes.bool.isRequired,
+    toggleBookmark: PropTypes.func.isRequired,
+    colorMap: PropTypes.object.isRequired,
     find: PropTypes.string,
-    caseSensitive: PropTypes.bool,
-    scrollLine: PropTypes.number,
-    lines: PropTypes.array,
-    filter: PropTypes.array,
+    caseSensitive: PropTypes.bool.isRequired,
+    scrollLine: PropTypes.number.isRequired,
+    lines: PropTypes.array.isRequired,
+    filter: PropTypes.array.isRequired,
     inverseFilter: PropTypes.array,
-    shouldPrintLine: PropTypes.func
+    highlight: PropTypes.array.isRequired,
+    highlightText: PropTypes.array,
+    highlightLine: PropTypes.array.isRequired,
+    shouldPrintLine: PropTypes.func.isRequired,
+    shouldHighlightLine: PropTypes.func.isRequired
   };
   constructor(props) {
     super(props);
@@ -207,6 +232,7 @@ class LogView extends React.Component {
       }
     };
     this.filteredLines = [];
+    this.highlightLines = [];
   }
 
   updateSelectStartIndex = (index) => {
@@ -246,11 +272,13 @@ class LogView extends React.Component {
         key={key}
         found={this.filteredLines[index].lineNumber === this.props.findLine}
         bookmarked={this.props.findBookmark(this.props.bookmarks, this.filteredLines[index].lineNumber) !== -1}
+        highlight={this.highlightLines.includes(this.filteredLines[index])}
         wrap={this.props.wrap}
         line={this.filteredLines[index]}
         toggleBookmark={this.props.toggleBookmark}
         colorMap={this.props.colorMap}
         find={this.props.find}
+        highlightText={this.props.highlightText}
         caseSensitive={this.props.caseSensitive}
         updateSelectStartIndex={this.updateSelectStartIndex}
         updateSelectEndIndex={this.updateSelectEndIndex}
@@ -300,6 +328,9 @@ class LogView extends React.Component {
     if (nextState.clicks !== this.state.clicks) {
       return true;
     }
+    if (nextProps.highlight !== this.props.highlight) {
+      return true;
+    }
 
     return false;
   }
@@ -340,12 +371,16 @@ class LogView extends React.Component {
   render() {
     let j = 0;
     this.indexMap = {};
-
+    this.highlightLines = [];
     this.filteredLines = this.props.lines.filter((line, i) => {
       if (!this.props.shouldPrintLine(this.props.bookmarks, line, this.props.filter, this.props.inverseFilter)) {
         return false;
       }
       this.indexMap[i] = j++;
+      if (this.props.highlight.length > 0
+        && this.props.shouldHighlightLine(line, this.props.highlight, this.props.highlightLine)) {
+        this.highlightLines.push(line);
+      }
       return true;
     });
     if (this.filteredLines.length !== 0) {

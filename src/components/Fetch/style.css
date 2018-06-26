@@ -47,18 +47,42 @@
 
 }
 
-.filter-button {
-    width: 22px;
-    margin-left: 5px;
+.filter-highlight-buttons {
+    margin-left: 12px;
 }
 
-.filter-button-big {
+.filter-highlight-lines {
+    margin-bottom: 5px;
+}
+
+.exit-button {
+    width: 22px;
+    margin-left: 10px;
+}
+
+.filter-button-medium {
     width: 30px;
     margin-left: 5px;
 }
 
-.filter-text {
-    margin-left: 5px;
+.filter-button-big {
+  width: 50px;
+  margin-left: 5px;
+}
+
+.filter-button-xbig {
+  width: 75px;
+  margin-left: 5px
+}
+
+.filter-highlight-text {
+    margin-left: 10px;
+    font-size: 17px;
+}
+
+.filter-highlight-label {
+  margin-left: 10px;
+  font-size: 13px;
 }
 
 .filter {
@@ -66,6 +90,11 @@
 }
 
 .filter-box {
+    padding-left: 5px;
+    padding-bottom: 10px;
+}
+
+.highlight-box {
     padding-left: 5px;
     padding-bottom: 10px;
 }
