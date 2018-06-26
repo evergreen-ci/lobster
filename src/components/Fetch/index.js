@@ -1,21 +1,17 @@
 import React from 'react';
 import { loadData, lobsterLoadData } from '../../actions';
 import './style.css';
-import ToggleButton from 'react-toggle-button';
 import Button from 'react-bootstrap/lib/Button';
-import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Col from 'react-bootstrap/lib/Col';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import Collapse from 'react-bootstrap/lib/Collapse';
 import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
-import { Filters } from './Filters';
 import { connect } from 'react-redux';
 import queryString from '../../thirdparty/query-string';
-
+import { Toolbar } from './Toolbar';
 
 // eslint-disable-next-line react/no-deprecated
 export class Fetch extends React.Component {
@@ -463,46 +459,9 @@ export class Fetch extends React.Component {
 
   setURLRef = (ref) => {this.urlInput = ref;}
 
-  showLogBox() {
-    if (this.state.server) {
-      return (
-        <FormGroup controlId="urlInput">
-          <Col componentClass={ControlLabel} lg={1}>Log</Col>
-          <Col lg={6}>
-            <FormControl
-              type="text"
-              defaultValue={this.state.url}
-              placeholder="optional. custom file location iff used with local server"
-              inputRef={this.setURLRef}
-            />
-          </Col>
-          <Col lg={1}> <Button type="submit"> Apply </Button> </Col>
-        </FormGroup>
-      );
-    }
-  }
-
-  showJobLogs() {
-    if (!this.state.server) {
-      return (<Col lg={1}><Button href={'/build/' + this.state.build}>Job Logs</Button></Col>);
-    }
-  }
-
   toggleCaseSensitive = (value) => {
     this.setState({caseSensitive: !value});
     this.find();
-  }
-
-  showRaw() {
-    if (!this.state.server) {
-      return (<Col lg={1}><Button href={'/build/' + this.state.build + '/all?raw=1'}>Raw</Button></Col>);
-    }
-  }
-
-  showHTML() {
-    if (!this.state.server) {
-      return (<Col lg={1}><Button href={'/build/' + this.state.build + '/all?html=1'}>HTML</Button></Col>);
-    }
   }
 
   toggleFilterIntersection = (value) => {
@@ -562,52 +521,31 @@ export class Fetch extends React.Component {
       <div>
         <Bookmarks bookmarks={this.state.bookmarks} setScroll={this.setScroll} />
         <div className="main">
-          <Col lg={11} lgOffset={1}>
-            <div className="find-box">
-              <Form horizontal>
-                <FormGroup controlId="findInput" className="filter-header">
-                  <Col lg={6} >
-                    <FormControl
-                      type="text"
-                      placeholder="optional. regexp to search for"
-                      inputRef={this.setFormRef}
-                      onChange={this.handleChangeFindEvent}
-                    />
-                  </Col>
-                  <Button id="formSubmit" type="submit" onClick={this.find}>Find</Button>
-                  {this.showFind()}
-                  <Button onClick={this.addFilter}>Add Filter</Button>
-                  <Button onClick={this.togglePanel}>{this.state.detailsOpen ? 'Hide Details' : 'Show Details'}</Button>
-                </FormGroup>
-              </Form>
-              <Collapse className="collapse-menu" in={this.state.detailsOpen}>
-                <div>
-                  <Form horizontal onSubmit={this.handleSubmit}>
-                    {this.showLogBox()}
-                    <FormGroup controlId="wrap">
-                      <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
-                      <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={this.toggleWrap} /></Col>
-                      <Col componentClass={ControlLabel} lg={1}>Case Sensitive</Col>
-                      <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive} /></Col>
-                      <Col componentClass={ControlLabel} lg={1}>Filter Logic</Col>
-                      <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection} /></Col>
-                      <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
-                      <Col lg={1}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
-                      {this.showJobLogs()}
-                      {this.showRaw()}
-                      {this.showHTML()}
-                    </FormGroup>
-                  </Form>
-                  <Filters
-                    filters={this.state.filterList}
-                    removeFilter={this.removeFilter}
-                    toggleFilter={this.toggleFilter}
-                    toggleFilterInverse={this.toggleFilterInverse}
-                  />
-                </div>
-              </Collapse>
-            </div>
-          </Col>
+          <Toolbar
+            setFormRef={this.setFormRef}
+            handleChangeFindEvent={this.handleChangeFindEvent}
+            find={this.find}
+            showFind={this.showFind}
+            addFilter={this.addFilter}
+            togglePanel={this.togglePanel}
+            detailsOpen={this.state.detailsOpen}
+            handleSubmit={this.handleSubmit}
+            wrap={this.state.wrap}
+            toggleWrap={this.toggleWrap}
+            caseSensitive={this.state.caseSensitive}
+            toggleCaseSensitive={this.toggleCaseSensitive}
+            filterIntersection={this.state.filterIntersection}
+            toggleFilterIntersection={this.toggleFilterIntersection}
+            server={this.state.server}
+            build={this.state.build}
+            url={this.state.url}
+            setURLRef={this.setURLRef}
+            valueJIRA={this.showJIRA()}
+            filterList={this.state.filterList}
+            removeFilter={this.removeFilter}
+            toggleFilter={this.toggleFilter}
+            toggleFilterInverse={this.toggleFilterInverse}
+          />
           <div className="log-list">
             {this.showLines()}
           </div>
