@@ -51,7 +51,11 @@
     margin-left: 12px;
 }
 
-.filter-button {
+.filter-highlight-lines {
+    margin-bottom: 5px;
+}
+
+.exit-button {
     width: 22px;
     margin-left: 10px;
 }
@@ -71,12 +75,12 @@
   margin-left: 5px
 }
 
-.filter-text {
+.filter-highlight-text {
     margin-left: 10px;
     font-size: 17px;
 }
 
-.filter-label-text {
+.filter-highlight-label {
   margin-left: 10px;
   font-size: 13px;
 }

@@ -50,11 +50,10 @@ export class Filter extends React.PureComponent {
   toggleFilterInverse = () => this.props.toggleFilterInverse(this.props.filter.text);
 
   render() {
-    const lineStyles = { marginBottom: '5px'};
     return (
-      <div style={lineStyles}>
-        <Button className="filter-button" onClick={this.removeFilter} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
-        <span className="filter-label-text">Filter Options</span>
+      <div className="filter-highlight-lines">
+        <Button className="exit-button" onClick={this.removeFilter} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
+        <span className="filter-highlight-label">Filter Options</span>
         <ToggleButtonGroup
           className="filter-highlight-buttons"
           type="radio"
@@ -83,7 +82,7 @@ export class Filter extends React.PureComponent {
             inverse
           </ToggleButton>
         </ToggleButtonGroup>
-        <span className="filter-text">{this.props.filter.text}</span>
+        <span className="filter-highlight-text">{this.props.filter.text}</span>
       </div>
     );
   }
