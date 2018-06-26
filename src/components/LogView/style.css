@@ -1,5 +1,6 @@
 .bookmark-line { background-color: #ffffb3; }
 .highlighted { background-color: #fff0f2; }
+.filtered { background-color: #ffdde3; }
 .monospace { font-family: monospace;}
 .hover-highlight:hover {
   background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
@@ -8,7 +9,6 @@
   background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
   background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
-  
 }
 .inline { display: table; }
 .no-wrap { white-space: pre; }

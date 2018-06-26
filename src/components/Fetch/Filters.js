@@ -1,6 +1,7 @@
 import Button from 'react-bootstrap/lib/Button';
 import React from 'react';
 import PropTypes from 'prop-types';
+import {ToggleButton, ToggleButtonGroup} from 'react-bootstrap';
 
 export const Filters = (props) => {
   return (
@@ -50,11 +51,38 @@ export class Filter extends React.PureComponent {
 
   render() {
     return (
-      <div className="filter">
-        <Button className="filter-button" onClick={this.removeFilter} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
-        <Button className="filter-button" onClick={this.toggleFilter} bsStyle="warning" bsSize="xsmall">{this.props.filter.on ? '||' : '\u25B6'}</Button>
-        <Button className="filter-button-big" onClick={this.toggleFilterInverse} bsStyle="success" bsSize="xsmall">{this.props.filter.inverse ? 'out' : 'in'}</Button>
-        <span className="filter-text">{this.props.filter.text}</span>
+      <div className="filter-highlight-lines">
+        <Button className="exit-button" onClick={this.removeFilter} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
+        <span className="filter-highlight-label">Filter Options</span>
+        <ToggleButtonGroup
+          className="filter-highlight-buttons"
+          type="radio"
+          name="filter-on-off"
+          value={this.props.filter.on}
+          onChange={this.toggleFilter}
+        >
+          <ToggleButton value={true} bsSize="small" bsStyle="warning">
+              on
+          </ToggleButton>
+          <ToggleButton value={false} bsSize="small" bsStyle="warning">
+              off
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <ToggleButtonGroup
+          className="filter-highlight-buttons"
+          type="radio"
+          name="filter-inverse"
+          value={this.props.filter.inverse}
+          onChange={this.toggleFilterInverse}
+        >
+          <ToggleButton value={false} bsSize="small" bsStyle="success">
+            match
+          </ToggleButton>
+          <ToggleButton value={true} bsSize="small" bsStyle="success">
+            inverse
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <span className="filter-highlight-text">{this.props.filter.text}</span>
       </div>
     );
   }

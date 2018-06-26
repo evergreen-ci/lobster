@@ -58,14 +58,15 @@ export class Fetch extends React.Component {
       caseSensitive: false,
       filterIntersection: false,
       detailsOpen: false,
-      filterList: (params.f || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
+      filterList: ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
+      highlightList: ((typeof parsed.h === 'string' ? [parsed.h] : parsed.h) || []).map((h) => ({text: h.substring(2), on: (h.charAt(0) === '1'), line: (h.charAt(1) === '1')})),
       find: '',
       findIdx: -1,
       findResults: [],
       bookmarks: bookmarksArr
     };
     if (locationSearch !== '') {
-      this.updateURL(this.state.bookmarks, this.state.filterList);
+      this.updateURL(this.state.bookmarks, this.state.filterList, this.state.highlightList);
     }
     if (this.state.url) {
       this.props.lobsterLoadData(this.state.server, this.state.url);
@@ -129,7 +130,7 @@ export class Fetch extends React.Component {
       let newBookmarks = this.ensureBookmark(0, this.state.bookmarks);
       newBookmarks = this.ensureBookmark(nextProps.lines[nextProps.lines.length - 1].lineNumber, newBookmarks);
       if (newBookmarks.length !== this.state.bookmarks.length) {
-        this.updateURL(newBookmarks, this.state.filterList);
+        this.updateURL(newBookmarks, this.state.filterList, this.state.highlightList);
         this.setState({bookmarks: newBookmarks});
       }
     }
@@ -143,13 +144,24 @@ export class Fetch extends React.Component {
     return res;
   }
 
-  updateURL(bookmarks, filters) {
+  makeHighlightURLString(highlight) {
+    let res = '';
+    res += (highlight.on ? '1' : '0');
+    res += (highlight.line ? '1' : '0');
+    res += highlight.text;
+    return res;
+  }
+
+  updateURL(bookmarks, filters, highlights) {
     const parsedParams = this.getUrlParams();
     const locationSearch = this.props.location.search;
     const parsed = queryString.parse(locationSearch === '' ? this.props.location.hash : locationSearch);
 
     for (let i = 0; i < filters.length; i++) {
       parsed.f = this.makeFilterURLString(filters[i]);
+    }
+    for (let i = 0; i < highlights.length; i++) {
+      parsed.h = this.makeHighlightURLString(highlights[i]);
     }
     if (parsedParams.scrollLine) {
       parsed.scroll = parsedParams.scrollLine;
@@ -179,7 +191,7 @@ export class Fetch extends React.Component {
       return;
     }
 
-    this.updateURL(this.state.bookmarks, this.state.filterList);
+    this.updateURL(this.state.bookmarks, this.state.filterList, this.state.highlightList);
 
     if (this.urlInput.value !== this.state.url) {
       this.setState({url: this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
@@ -219,7 +231,7 @@ export class Fetch extends React.Component {
     }
     newBookmarks.sort(this.bookmarkSort);
     this.setState({bookmarks: newBookmarks});
-    this.updateURL(newBookmarks, this.state.filterList);
+    this.updateURL(newBookmarks, this.state.filterList, this.state.highlightList);
   }
 
   ensureBookmark(lineNum, bookmarks) {
@@ -315,8 +327,23 @@ export class Fetch extends React.Component {
     }
     // If there are both types of filters, it has to match the filter and not match
     // the inverseFilter.
-    if (this.matchFilters(filter, line.text, this.state.filterIntersection) &&
+    if (this.state.filterIntersection) {
+      if (this.matchFilters(filter, line.text, this.state.filterIntersection) &&
+            !this.matchFilters(inverseFilter, line.text)) {
+        return true;
+      }
+    } else if (this.matchFilters(filter, line.text, this.state.filterIntersection) ||
           !this.matchFilters(inverseFilter, line.text)) {
+      return true;
+    }
+    return false;
+  }
+
+  shouldHighlightLine = (line, highlight, highlightLine) => {
+    if (!highlight || highlight.length === 0) {
+      return false;
+    }
+    if (this.matchFilters(highlight, line.text, this.state.filterIntersection) && this.matchFilters(highlightLine, line.text)) {
       return true;
     }
     return false;
@@ -329,7 +356,18 @@ export class Fetch extends React.Component {
     const newFilters = this.state.filterList.slice();
     newFilters.push({text: this.findInput.value, on: true, inverse: false});
     this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters);
+    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
+    this.clearFind();
+  }
+
+  addHighlight = () => {
+    if (this.findInput.value === '' || this.state.highlightList.find((elem) => elem.text === this.findInput.value)) {
+      return;
+    }
+    const newHighlights = this.state.highlightList.slice();
+    newHighlights.push({text: this.findInput.value, on: true, line: true});
+    this.setState({highlightList: newHighlights});
+    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
     this.clearFind();
   }
 
@@ -339,7 +377,7 @@ export class Fetch extends React.Component {
     newFilters[filterIdx].on = !newFilters[filterIdx].on;
 
     this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters);
+    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
     this.clearFind();
   }
 
@@ -349,7 +387,27 @@ export class Fetch extends React.Component {
     newFilters[filterIdx].inverse = !newFilters[filterIdx].inverse;
 
     this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters);
+    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
+    this.clearFind();
+  }
+
+  toggleHighlight = (text) => {
+    const newHighlights = this.state.highlightList.slice();
+    const highlightIdx = newHighlights.findIndex((elem) => text === elem.text);
+    newHighlights[highlightIdx].on = !newHighlights[highlightIdx].on;
+
+    this.setState({highlightList: newHighlights});
+    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
+    this.clearFind();
+  }
+
+  toggleHighlightLine = (text) => {
+    const newHighlights = this.state.highlightList.slice();
+    const highlightIdx = newHighlights.findIndex((elem) => text === elem.text);
+    newHighlights[highlightIdx].line = !newHighlights[highlightIdx].line;
+
+    this.setState({highlightList: newHighlights});
+    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
     this.clearFind();
   }
 
@@ -359,7 +417,17 @@ export class Fetch extends React.Component {
     newFilters.splice(filterIdx, 1);
 
     this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters);
+    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
+    this.clearFind();
+  }
+
+  removeHighlight = (text) => {
+    const newHighlights = this.state.highlightList.slice();
+    const highlightIdx = newHighlights.findIndex((elem) => text === elem.text);
+    newHighlights.splice(highlightIdx, 1);
+
+    this.setState({highlightList: newHighlights});
+    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
     this.clearFind();
   }
 
@@ -386,6 +454,28 @@ export class Fetch extends React.Component {
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
+  mergeActiveHighlights(highlightList, caseSensitive) {
+    return highlightList
+      .filter((elem) => elem.on)
+      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
+  }
+
+  mergeActiveHighlightLines(highlightList, caseSensitive) {
+    return highlightList
+      .filter((elem) => elem.on && elem.line)
+      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
+  }
+
+  getHighlightText(highlightList) {
+    const highlight = [];
+    highlightList.forEach((element) => {
+      if (element.on && !element.line) {
+        highlight.push(element.text);
+      }
+    });
+    return highlight;
+  }
+
   // Checks a given string against a list of regular expression filters
   // If isIntersection === false, will return true if the string matches at least one regex
   // Otherwise, will return true if the string matches all regexes
@@ -399,6 +489,9 @@ export class Fetch extends React.Component {
   showLines() {
     const filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
     const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
+    const highlight = this.mergeActiveHighlights(this.state.highlightList, this.state.caseSensitive);
+    const highlightText = this.getHighlightText(this.state.highlightList);
+    const highlightLine = this.mergeActiveHighlightLines(this.state.highlightList, this.state.caseSensitive);
     if (!this.props.lines) {
       return <div />;
     }
@@ -408,6 +501,8 @@ export class Fetch extends React.Component {
         colorMap={this.props.colorMap}
         filter={filter}
         inverseFilter={inverseFilter}
+        highlight={highlight}
+        highlightLine={highlightLine}
         scrollLine={this.state.scrollLine}
         wrap={this.state.wrap}
         caseSensitive={this.state.caseSensitive}
@@ -415,8 +510,10 @@ export class Fetch extends React.Component {
         toggleBookmark={this.toggleBookmark}
         bookmarks={this.state.bookmarks}
         find={this.state.find}
+        highlightText={highlightText}
         findLine={this.state.findIdx === -1 ? -1 : this.state.findResults[this.state.findIdx]}
         shouldPrintLine={this.shouldPrintLine}
+        shouldHighlightLine={this.shouldHighlightLine}
       />);
   }
 
