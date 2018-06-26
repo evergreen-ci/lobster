@@ -26,16 +26,16 @@ export class Toolbar extends React.Component {
     toggleCaseSensitive: PropTypes.func.isRequired,
     filterIntersection: PropTypes.bool.isRequired,
     toggleFilterIntersection: PropTypes.func.isRequired,
-    filterList: PropTypes.object.isRequired,
+    filterList: PropTypes.array.isRequired,
     removeFilter: PropTypes.func.isRequired,
     toggleFilter: PropTypes.func.isRequired,
     toggleFilterInverse: PropTypes.func.isRequired,
-    server: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired,
+    server: PropTypes.string,
+    url: PropTypes.string,
     build: PropTypes.string.isRequired,
     setURLRef: PropTypes.func.isRequired,
     valueJIRA: PropTypes.string.isRequired,
-    highlightList: PropTypes.object.isRequired,
+    highlightList: PropTypes.array.isRequired,
     removeHighlight: PropTypes.func.isRequired,
     toggleHighlight: PropTypes.func.isRequired,
     toggleHighlightLine: PropTypes.func.isRequired
@@ -76,7 +76,7 @@ export class Toolbar extends React.Component {
               </Col>
               <ButtonToolbar>
                 <Button id="formSubmit" type="submit" onClick={this.props.find}>Find</Button>
-                {this.props.showFind}
+                {this.props.showFind()}
                 <Button onClick={this.props.addFilter}>Add Filter</Button>
                 <Button onClick={this.props.addHighlight}>Add Highlight</Button>
                 <Button onClick={this.props.togglePanel}>{this.props.detailsOpen ? 'Hide Details \u25B4' : 'Show Details \u25BE'}</Button>

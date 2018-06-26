@@ -517,7 +517,7 @@ export class Fetch extends React.Component {
       />);
   }
 
-  showFind() {
+  showFind = () => {
     if (this.state.find !== '') {
       if (this.state.findResults.length > 0) {
         return (

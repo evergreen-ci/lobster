@@ -4,5 +4,6 @@ import { combineReducers } from 'redux';
 import { logkeeperDataResponse } from './logkeeper';
 
 export const lobster = combineReducers({
-  log: logkeeperDataResponse
+  log: logkeeperDataResponse,
+  settimgs: settings
 });

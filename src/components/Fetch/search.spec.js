@@ -66,15 +66,16 @@ test('Fetch-Search', function() {
   ]));
 
   // Testing change in search bar with results
-  wrapper.find('#findInput').instance().value = '2018';
-  wrapper.find('#findInput').simulate('change', {});
+  const toolbarWrapper = wrapper.find('Toolbar');
+  toolbarWrapper.find('#findInput').instance().value = '2018';
+  toolbarWrapper.find('#findInput').simulate('change', {});
   assert.equal(wrapper.state('findIdx'), 0);
   assert.equal(wrapper.state('findResults').length, 1);
   assert.equal(wrapper.state('find'), '2018');
   assert.equal(wrapper.state('wrap'), false);
   assert.equal(wrapper.state('caseSensitive'), false);
   assert.equal(wrapper.state('detailsOpen'), false);
-  assert.ok(wrapper.containsAllMatchingElements([
+  assert.ok(toolbarWrapper.containsAllMatchingElements([
     <Button>Next</Button>,
     <Button>Prev</Button>
   ]));
