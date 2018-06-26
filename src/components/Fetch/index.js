@@ -622,6 +622,7 @@ export class Fetch extends React.Component {
             find={this.find}
             showFind={this.showFind}
             addFilter={this.addFilter}
+            addHighlight={this.addHighlight}
             togglePanel={this.togglePanel}
             detailsOpen={this.state.detailsOpen}
             handleSubmit={this.handleSubmit}
@@ -640,6 +641,10 @@ export class Fetch extends React.Component {
             removeFilter={this.removeFilter}
             toggleFilter={this.toggleFilter}
             toggleFilterInverse={this.toggleFilterInverse}
+            highlightList={this.state.highlightList}
+            removeHighlight={this.removeHighlight}
+            toggleHighlight={this.toggleHighlight}
+            toggleHighlightLine={this.toggleHighlightLine}
           />
           <div className="log-list">
             {this.showLines()}

@@ -10,6 +10,7 @@ import Col from 'react-bootstrap/lib/Col';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Collapse from 'react-bootstrap/lib/Collapse';
 import { Filters } from './Filters';
+import { Highlights } from './Highlights';
 
 export class CollapseMenu extends React.Component {
   static propTypes = {
@@ -29,7 +30,11 @@ export class CollapseMenu extends React.Component {
     url: PropTypes.string.isRequired,
     build: PropTypes.string.isRequired,
     setURLRef: PropTypes.func.isRequired,
-    valueJIRA: PropTypes.string.isRequired
+    valueJIRA: PropTypes.string.isRequired,
+    highlightList: PropTypes.object.isRequired,
+    removeHighlight: PropTypes.func.isRequired,
+    toggleHighlight: PropTypes.func.isRequired,
+    toggleHighlightLine: PropTypes.func.isRequired
   };
 
   shouldComponentUpdate(nextProps, _nextState) {
@@ -110,6 +115,12 @@ export class CollapseMenu extends React.Component {
             removeFilter={this.props.removeFilter}
             toggleFilter={this.props.toggleFilter}
             toggleFilterInverse={this.props.toggleFilterInverse}
+          />
+          <Highlights
+            highlights={this.props.highlightList}
+            removeHighlight={this.props.removeHighlight}
+            toggleHighlight={this.props.toggleHighlight}
+            toggleHighlightLine={this.props.toggleHighlightLine}
           />
         </div>
       </Collapse>
