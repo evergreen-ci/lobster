@@ -197,7 +197,7 @@ class LogView extends React.Component {
     bookmarks: PropTypes.array,
     wrap: PropTypes.bool.isRequired,
     toggleBookmark: PropTypes.func.isRequired,
-    colorMap: PropTypes.object.isReqyured,
+    colorMap: PropTypes.object.isRequired,
     find: PropTypes.string,
     caseSensitive: PropTypes.bool.isRequired,
     scrollLine: PropTypes.number.isRequired,
