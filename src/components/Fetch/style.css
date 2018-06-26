@@ -47,6 +47,10 @@
 
 }
 
+.filter-highlight-buttons {
+    margin-left: 12px;
+}
+
 .filter-button {
     width: 22px;
     margin-left: 10px;

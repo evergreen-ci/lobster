@@ -50,14 +50,13 @@ export class Highlight extends React.PureComponent {
   toggleHighlightLine = () => this.props.toggleHighlightLine(this.props.highlight.text);
 
   render() {
-    const buttonStyles = { marginLeft: '12px'};
     const lineStyles = { marginBottom: '5px'};
     return (
       <div style={lineStyles}>
         <Button className="filter-button" onClick={this.removeHighlight} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
         <span className="filter-label-text">Highlight Options</span>
         <ToggleButtonGroup
-          style={buttonStyles}
+          className="filter-highlight-buttons"
           type="radio"
           name="highlight-on-off"
           value={this.props.highlight.on}
@@ -71,7 +70,7 @@ export class Highlight extends React.PureComponent {
           </ToggleButton>
         </ToggleButtonGroup>
         <ToggleButtonGroup
-          style={buttonStyles}
+          className="filter-highlight-buttons"
           type="radio"
           name="filter-inverse"
           value={this.props.highlight.line}
