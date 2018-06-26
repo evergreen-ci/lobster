@@ -2,8 +2,6 @@ import React from 'react';
 import { loadData, lobsterLoadData } from '../../actions';
 import './style.css';
 import Button from 'react-bootstrap/lib/Button';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Col from 'react-bootstrap/lib/Col';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import LogView from '../LogView/index';
