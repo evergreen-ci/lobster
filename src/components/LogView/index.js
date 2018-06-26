@@ -193,22 +193,22 @@ class FullLogLine extends React.Component {
 class LogView extends React.Component {
   static propTypes = {
     findBookmark: PropTypes.func,
-    findLine: PropTypes.number,
+    findLine: PropTypes.number.isRequired,
     bookmarks: PropTypes.array,
-    wrap: PropTypes.bool,
-    toggleBookmark: PropTypes.func,
-    colorMap: PropTypes.object,
+    wrap: PropTypes.bool.isRequired,
+    toggleBookmark: PropTypes.func.isRequired,
+    colorMap: PropTypes.object.isReqyured,
     find: PropTypes.string,
-    caseSensitive: PropTypes.bool,
-    scrollLine: PropTypes.number,
-    lines: PropTypes.array,
-    filter: PropTypes.array,
+    caseSensitive: PropTypes.bool.isRequired,
+    scrollLine: PropTypes.number.isRequired,
+    lines: PropTypes.array.isRequired,
+    filter: PropTypes.array.isRequired,
     inverseFilter: PropTypes.array,
-    highlight: PropTypes.array,
+    highlight: PropTypes.array.isRequired,
     highlightText: PropTypes.array,
-    highlightLine: PropTypes.array,
-    shouldPrintLine: PropTypes.func,
-    shouldHighlightLine: PropTypes.func
+    highlightLine: PropTypes.array.isRequired,
+    shouldPrintLine: PropTypes.func.isRequired,
+    shouldHighlightLine: PropTypes.func.isRequired
   };
   constructor(props) {
     super(props);
@@ -232,7 +232,7 @@ class LogView extends React.Component {
       }
     };
     this.filteredLines = [];
-    this.highlightlines = [];
+    this.highlightLines = [];
   }
 
   updateSelectStartIndex = (index) => {
@@ -371,16 +371,15 @@ class LogView extends React.Component {
   render() {
     let j = 0;
     this.indexMap = {};
+    this.highlightLines = [];
     this.filteredLines = this.props.lines.filter((line, i) => {
       if (!this.props.shouldPrintLine(this.props.bookmarks, line, this.props.filter, this.props.inverseFilter)) {
         return false;
       }
       this.indexMap[i] = j++;
-      return true;
-    });
-    this.highlightLines = this.filteredLines.filter((line) => {
-      if (!this.props.shouldHighlightLine(line, this.props.highlight, this.props.highlightLine)) {
-        return false;
+      if (this.props.highlight.length > 0
+        && this.props.shouldHighlightLine(line, this.props.highlight, this.props.highlightLine)) {
+        this.highlightLines.push(line);
       }
       return true;
     });
