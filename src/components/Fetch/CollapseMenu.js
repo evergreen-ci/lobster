@@ -11,16 +11,20 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Collapse from 'react-bootstrap/lib/Collapse';
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
+import { connect } from 'react-redux';
+import * as actions from '../../actions';
 
-export class CollapseMenu extends React.Component {
+export class CollapseMenu extends React.PureComponent {
   static propTypes = {
     detailsOpen: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    wrap: PropTypes.bool.isRequired,
+    settings: PropTypes.shape({
+      wrap: PropTypes.bool.isRequired,
+      caseSensitive: PropTypes.bool.isRequired,
+      filterIntersection: PropTypes.bool.isRequired
+    }),
     toggleWrap: PropTypes.func.isRequired,
-    caseSensitive: PropTypes.bool.isRequired,
     toggleCaseSensitive: PropTypes.func.isRequired,
-    filterIntersection: PropTypes.bool.isRequired,
     toggleFilterIntersection: PropTypes.func.isRequired,
     filterList: PropTypes.array.isRequired,
     removeFilter: PropTypes.func.isRequired,
@@ -37,21 +41,22 @@ export class CollapseMenu extends React.Component {
     toggleHighlightLine: PropTypes.func.isRequired
   };
 
-  shouldComponentUpdate(nextProps, _nextState) {
-    if (nextProps.detailsOpen !== this.props.detailsOpen) {
-      return true;
-    }
-    if (nextProps.wrap !== this.props.wrap) {
-      return true;
-    }
-    if (nextProps.caseSensitive !== this.props.caseSensitive) {
-      return true;
-    }
-    if (nextProps.filterList !== this.props.filterList) {
-      return true;
-    }
-    return false;
-  }
+  // XXX: FYI, I've made this component pure since no state
+  //shouldComponentUpdate(nextProps, _nextState) {
+  //  if (nextProps.detailsOpen !== this.props.detailsOpen) {
+  //    return true;
+  //  }
+  //  if (nextProps.wrap !== this.props.wrap) {
+  //    return true;
+  //  }
+  //  if (nextProps.caseSensitive !== this.props.caseSensitive) {
+  //    return true;
+  //  }
+  //  if (nextProps.filterList !== this.props.filterList) {
+  //    return true;
+  //  }
+  //  return false;
+  //}
 
   showLogBox() {
     if (this.props.server) {
@@ -98,11 +103,11 @@ export class CollapseMenu extends React.Component {
             {this.showLogBox()}
             <FormGroup controlId="wrap">
               <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
-              <Col lg={1}><ToggleButton value={this.props.wrap || false} onToggle={this.props.toggleWrap} /></Col>
+              <Col lg={1}><ToggleButton value={this.props.settings.wrap} onToggle={this.props.toggleWrap} /></Col>
               <Col componentClass={ControlLabel} lg={1}>Case Sensitive</Col>
-              <Col lg={1}><ToggleButton value={this.props.caseSensitive || false} onToggle={this.props.toggleCaseSensitive} /></Col>
+              <Col lg={1}><ToggleButton value={this.props.settings.caseSensitive} onToggle={this.props.toggleCaseSensitive} /></Col>
               <Col componentClass={ControlLabel} lg={1}>Filter Logic</Col>
-              <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.props.filterIntersection || false} onToggle={this.props.toggleFilterIntersection} /></Col>
+              <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.props.settings.filterIntersection} onToggle={this.props.toggleFilterIntersection} /></Col>
               <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
               <Col lg={1}><textarea readOnly className="unmoving" value={this.props.valueJIRA}></textarea></Col>
               {this.showJobLogs()}
@@ -127,3 +132,21 @@ export class CollapseMenu extends React.Component {
     );
   }
 }
+
+function mapStateToProps(state, ownProps) {
+  return {
+    ...ownProps,
+    settings: state.settings
+  };
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+  return {
+    ...ownProps,
+    toggleWrap: () => dispatch(actions.toggleLineWrap()),
+    toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
+    toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection())
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CollapseMenu);

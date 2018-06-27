@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Col from 'react-bootstrap/lib/Col';
-import { CollapseMenu } from './CollapseMenu';
+import CollapseMenu from './CollapseMenu';
 
 export class Toolbar extends React.Component {
   static propTypes = {
@@ -20,12 +20,6 @@ export class Toolbar extends React.Component {
     togglePanel: PropTypes.func.isRequired,
     detailsOpen: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    wrap: PropTypes.bool.isRequired,
-    toggleWrap: PropTypes.func.isRequired,
-    caseSensitive: PropTypes.bool.isRequired,
-    toggleCaseSensitive: PropTypes.func.isRequired,
-    filterIntersection: PropTypes.bool.isRequired,
-    toggleFilterIntersection: PropTypes.func.isRequired,
     filterList: PropTypes.array.isRequired,
     removeFilter: PropTypes.func.isRequired,
     toggleFilter: PropTypes.func.isRequired,
@@ -43,12 +37,6 @@ export class Toolbar extends React.Component {
 
   shouldComponentUpdate(nextProps, _nextState) {
     if (nextProps.detailsOpen !== this.props.detailsOpen) {
-      return true;
-    }
-    if (nextProps.wrap !== this.props.wrap) {
-      return true;
-    }
-    if (nextProps.caseSensitive !== this.props.caseSensitive) {
       return true;
     }
     if (nextProps.filterList !== this.props.filterList) {
@@ -86,12 +74,6 @@ export class Toolbar extends React.Component {
           <CollapseMenu
             detailsOpen={this.props.detailsOpen}
             handleSubmit={this.props.handleSubmit}
-            wrap={this.props.wrap}
-            toggleWrap={this.props.toggleWrap}
-            caseSensitive={this.props.caseSensitive}
-            toggleCaseSensitive={this.props.toggleCaseSensitive}
-            filterIntersection={this.props.filterIntersection}
-            toggleFilterIntersection={this.props.toggleFilterIntersection}
             filterList={this.props.filterList}
             removeFilter={this.props.removeFilter}
             toggleFilter={this.props.toggleFilter}

@@ -3,6 +3,7 @@
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
+export const CHANGE_SETTING = 'change-setting';
 
 export type Filter = {
   text: string,
@@ -52,9 +53,18 @@ export type LogkeeperDataResponse = {|
   +error: boolean
 |}
 
+export type ChangeSetting = {|
+  +type: 'change-setting',
+  +payload: {|
+    +setting: string,
+    +value: string
+  |}
+|}
+
 export type Action = LogkeeperLoadData
   | LogkeeperDataResponse
   | LobsterLoadData
+  | ChangeSetting
 
 // Load data from Logkeeper
 export function loadData(build: string, test: ?string): LogkeeperLoadData {
@@ -96,4 +106,26 @@ export function logkeeperDataError(data: string): LogkeeperDataResponse {
     },
     error: true
   };
+}
+
+function toggleSetting(setting: string): ChangeSetting {
+  return {
+    type: CHANGE_SETTING,
+    payload: {
+      setting: setting,
+      value: 'toggle'
+    }
+  };
+}
+
+export function toggleLineWrap(): ChangeSetting {
+  return toggleSetting('line-wrap');
+}
+
+export function toggleCaseSensitivity(): ChangeSetting {
+  return toggleSetting('case-sensitive');
+}
+
+export function toggleFilterIntersection(): ChangeSetting {
+  return toggleSetting('filter-intersection');
 }
