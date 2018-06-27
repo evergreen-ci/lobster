@@ -22,8 +22,6 @@ export class Toolbar extends React.Component {
     handleSubmit: PropTypes.func.isRequired,
     filterList: PropTypes.array.isRequired,
     removeFilter: PropTypes.func.isRequired,
-    toggleFilter: PropTypes.func.isRequired,
-    toggleFilterInverse: PropTypes.func.isRequired,
     server: PropTypes.string,
     url: PropTypes.string,
     build: PropTypes.string.isRequired,
@@ -76,8 +74,6 @@ export class Toolbar extends React.Component {
             handleSubmit={this.props.handleSubmit}
             filterList={this.props.filterList}
             removeFilter={this.props.removeFilter}
-            toggleFilter={this.props.toggleFilter}
-            toggleFilterInverse={this.props.toggleFilterInverse}
             server={this.props.server}
             url={this.props.url}
             build={this.props.build}

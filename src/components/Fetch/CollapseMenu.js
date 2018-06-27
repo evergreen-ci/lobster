@@ -42,7 +42,7 @@ export class CollapseMenu extends React.PureComponent {
   };
 
   // XXX: FYI, I've made this component pure since no state
-  //shouldComponentUpdate(nextProps, _nextState) {
+  // shouldComponentUpdate(nextProps, _nextState) {
   //  if (nextProps.detailsOpen !== this.props.detailsOpen) {
   //    return true;
   //  }
@@ -56,7 +56,7 @@ export class CollapseMenu extends React.PureComponent {
   //    return true;
   //  }
   //  return false;
-  //}
+  // }
 
   showLogBox() {
     if (this.props.server) {
@@ -145,7 +145,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     ...ownProps,
     toggleWrap: () => dispatch(actions.toggleLineWrap()),
     toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
-    toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection())
+    toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection()),
+    toggleFilter: () => dispatch(actions.toggleFilter()),
+    toggleFilterInverse: () => dispatch(actions.toggleFilterInverse())
   };
 }
 

@@ -30,7 +30,12 @@ export class Fetch extends React.Component {
     }),
     history: PropTypes.object,
     lobsterLoadData: PropTypes.func.isRequired,
-    loadData: PropTypes.func.isRequired
+    loadData: PropTypes.func.isRequired,
+    settings: PropTypes.shape({
+      wrap: PropTypes.bool.isRequired,
+      caseSensitive: PropTypes.bool.isRequired,
+      filterIntersection: PropTypes.bool.isRequired
+    })
   };
 
   static defaultProps = {
@@ -55,8 +60,6 @@ export class Fetch extends React.Component {
       scrollLine: parseInt(parsed.scroll, 10),
       server: parsed.server || null,
       url: parsed.url || null,
-      caseSensitive: false,
-      filterIntersection: false,
       detailsOpen: false,
       filterList: ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
       highlightList: ((typeof parsed.h === 'string' ? [parsed.h] : parsed.h) || []).map((h) => ({text: h.substring(2), on: (h.charAt(0) === '1'), line: (h.charAt(1) === '1')})),
@@ -97,26 +100,27 @@ export class Fetch extends React.Component {
   componentWillReceiveProps(nextProps) {
     console.log('componentWillReceiveProps');
     const params = nextProps.match.params;
-    const searchParams = new URLSearchParams(nextProps.location.search);
+    const nextLocationSearch = nextProps.location.search;
+    const parsed = new URLSearchParams(nextLocationSearch === '' ? nextProps.location.hash : nextLocationSearch);
     // don't reload, just update state
-    if (params.build === this.state.build && params.test === this.state.test && !searchParams.get('server')) {
+    if (params.build === this.state.build && params.test === this.state.test && !parsed.sever) {
     // update the filter in the child component and return
-      if (this.state.filter !== searchParams.get('filter')) {
-        console.log('set filter to ' + searchParams.get('filter'));
-        this.setState({filter: searchParams.get('filter')});
+      if (this.state.filter !== parsed.filter) {
+        console.log('set filter to ' + parsed.filter);
+        this.setState({filter: parsed.filter});
       }
-      if (this.state.scrollLine !== parseInt(searchParams.get('scroll'), 10)) {
-        console.log('set scroll to: ' + searchParams.get('scroll'));
-        this.setState({scrollLine: parseInt(searchParams.get('scroll'), 10)});
+      if (this.state.scrollLine !== parseInt(parsed.scroll, 10)) {
+        console.log('set scroll to: ' + parsed.scroll);
+        this.setState({scrollLine: parseInt(parsed.scroll, 10)});
       }
     // reload and rerender
     } else {
-      console.log('set state to server: ' + searchParams.get('server'));
+      console.log('set state to server: ' + parsed.server);
       this.setState({build: params.build,
         test: params.test,
-        filter: searchParams.get('filter'),
-        scrollLine: parseInt(searchParams.get('scroll'), 10),
-        server: searchParams.get('server')});
+        filter: parsed.filter,
+        scrollLine: parseInt(parsed.scroll, 10),
+        server: parsed.server});
       let url = '';
       if (this.urlInput) {
         url = this.urlInput.value.trim();
@@ -284,9 +288,9 @@ export class Fetch extends React.Component {
     }
 
     const findResults = [];
-    const filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
-    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
-    const findRegexpFull = this.makeRegexp(findRegexp, this.state.caseSensitive);
+    const filter = this.mergeActiveFilters(this.state.filterList, this.props.settings.caseSensitive);
+    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.props.settings.caseSensitive);
+    const findRegexpFull = this.makeRegexp(findRegexp, this.props.settings.caseSensitive);
 
     for (let i = 0; i < this.props.log.lines.length; i++) {
       const line = this.props.log.lines[i];
@@ -343,7 +347,7 @@ export class Fetch extends React.Component {
     if (!highlight || highlight.length === 0) {
       return false;
     }
-    if (this.matchFilters(highlight, line.text, this.state.filterIntersection) && this.matchFilters(highlightLine, line.text)) {
+    if (this.matchFilters(highlight, line.text, this.props.settings.filterIntersection) && this.matchFilters(highlightLine, line.text)) {
       return true;
     }
     return false;
@@ -505,7 +509,7 @@ export class Fetch extends React.Component {
         highlightLine={highlightLine}
         scrollLine={this.state.scrollLine}
         wrap={this.props.settings.wrap}
-        caseSensitive={this.state.caseSensitive}
+        caseSensitive={this.props.settings.caseSensitive}
         findBookmark={this.findBookmark}
         toggleBookmark={this.toggleBookmark}
         bookmarks={this.state.bookmarks}
@@ -531,19 +535,19 @@ export class Fetch extends React.Component {
   }
 
   showJIRA() {
-    if (this.state.bookmarks.length === 0 || this.props.lines.length === 0) {
+    if (this.state.bookmarks.length === 0 || this.props.log.lines.length === 0) {
       return '';
     }
 
     let text = '{noformat}\n';
     for (let i = 0; i < this.state.bookmarks.length; i++) {
       const curr = this.state.bookmarks[i].lineNumber;
-      if (curr >= this.props.lines.length) {
+      if (curr >= this.props.log.lines.length) {
         text += '{noformat}';
         return text;
       }
 
-      text += this.props.lines[curr].text + '\n';
+      text += this.props.log.lines[curr].text + '\n';
       if ((i !== (this.state.bookmarks.length - 1)) && (this.state.bookmarks[i + 1].lineNumber !== (curr + 1))) {
         text += '...\n';
       }
@@ -553,15 +557,6 @@ export class Fetch extends React.Component {
   }
 
   setURLRef = (ref) => {this.urlInput = ref;}
-
-  toggleCaseSensitive = (value) => {
-    this.setState({caseSensitive: !value});
-    this.find();
-  }
-
-  toggleFilterIntersection = (value) => {
-    this.setState({filterIntersection: !value});
-  }
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);

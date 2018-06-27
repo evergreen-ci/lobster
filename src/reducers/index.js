@@ -3,10 +3,12 @@
 import { combineReducers } from 'redux';
 import { logkeeperDataResponse } from './logkeeper';
 import settings from './settings';
+import filters from './filters';
 
 export const lobster = combineReducers({
   log: logkeeperDataResponse,
-  settings: settings
+  settings: settings,
+  filters: filters
 
 
   // here are some suggestions:

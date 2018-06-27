@@ -4,6 +4,7 @@ export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
 export const CHANGE_SETTING = 'change-setting';
+export const CHANGE_FILTER = 'change-filter';
 
 export type Filter = {
   text: string,
@@ -61,10 +62,18 @@ export type ChangeSetting = {|
   |}
 |}
 
+export type LoadSetting = {|
+  +type: 'load-setting',
+  +payload: {|
+    +setting: string
+  |}
+|}
+
 export type Action = LogkeeperLoadData
   | LogkeeperDataResponse
   | LobsterLoadData
   | ChangeSetting
+  | LoadSetting
 
 // Load data from Logkeeper
 export function loadData(build: string, test: ?string): LogkeeperLoadData {
@@ -128,4 +137,21 @@ export function toggleCaseSensitivity(): ChangeSetting {
 
 export function toggleFilterIntersection(): ChangeSetting {
   return toggleSetting('filter-intersection');
+}
+
+function changeFilter(field: string): ChangeFilter {
+  return {
+    type: CHANGE_FILTER,
+    payload: {
+      field: field
+    }
+  };
+}
+
+export function toggleFilterInverse(): ChangeFilter {
+  return changeFilter('inverse');
+}
+
+export function toggleFilter(): ChangeFilter {
+  return changeFilter('on');
 }
