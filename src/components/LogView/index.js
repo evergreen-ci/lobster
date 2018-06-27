@@ -297,7 +297,8 @@ class LogView extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.scrollLine !== null && nextProps.scrollLine >= 0) {
+    if (nextProps.scrollLine !== null && nextProps.scrollLine >= 0 &&
+        this.props.scrollLine !== nextProps.scrollLine) {
       this.scrollToLine(nextProps.scrollLine);
     }
 
