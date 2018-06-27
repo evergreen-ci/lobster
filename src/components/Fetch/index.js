@@ -1,5 +1,5 @@
 import React from 'react';
-import { loadData, lobsterLoadData } from '../../actions';
+import * as actions from '../../actions';
 import './style.css';
 import Button from 'react-bootstrap/lib/Button';
 import Col from 'react-bootstrap/lib/Col';
@@ -14,7 +14,10 @@ import { Toolbar } from './Toolbar';
 // eslint-disable-next-line react/no-deprecated
 export class Fetch extends React.Component {
   static propTypes = {
-    lines: PropTypes.array,
+    log: PropTypes.shape({
+      lines: PropTypes.array,
+      colorMap: PropTypes.object
+    }),
     location: PropTypes.shape({
       search: PropTypes.string,
       hash: PropTypes.string
@@ -26,8 +29,6 @@ export class Fetch extends React.Component {
       })
     }),
     history: PropTypes.object,
-
-    colorMap: PropTypes.object,
     lobsterLoadData: PropTypes.func.isRequired,
     loadData: PropTypes.func.isRequired
   };
@@ -54,7 +55,6 @@ export class Fetch extends React.Component {
       scrollLine: parseInt(parsed.scroll, 10),
       server: parsed.server || null,
       url: parsed.url || null,
-      wrap: false,
       caseSensitive: false,
       filterIntersection: false,
       detailsOpen: false,
@@ -126,9 +126,9 @@ export class Fetch extends React.Component {
         this.setState({url: url});
       }
     }
-    if (this.props.lines.length !== nextProps.lines.length && nextProps.lines.length > 0) {
+    if (this.props.log.lines.length !== nextProps.log.lines.length && nextProps.log.lines.length > 0) {
       let newBookmarks = this.ensureBookmark(0, this.state.bookmarks);
-      newBookmarks = this.ensureBookmark(nextProps.lines[nextProps.lines.length - 1].lineNumber, newBookmarks);
+      newBookmarks = this.ensureBookmark(nextProps.log.lines[nextProps.log.lines.length - 1].lineNumber, newBookmarks);
       if (newBookmarks.length !== this.state.bookmarks.length) {
         this.updateURL(newBookmarks, this.state.filterList, this.state.highlightList);
         this.setState({bookmarks: newBookmarks});
@@ -288,8 +288,8 @@ export class Fetch extends React.Component {
     const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
     const findRegexpFull = this.makeRegexp(findRegexp, this.state.caseSensitive);
 
-    for (let i = 0; i < this.props.lines.length; i++) {
-      const line = this.props.lines[i];
+    for (let i = 0; i < this.props.log.lines.length; i++) {
+      const line = this.props.log.lines[i];
       if (line.text.match(findRegexpFull) && this.shouldPrintLine(this.state.bookmarks, line, filter, inverseFilter)) {
         findResults.push(line.lineNumber);
       }
@@ -492,19 +492,19 @@ export class Fetch extends React.Component {
     const highlight = this.mergeActiveHighlights(this.state.highlightList, this.state.caseSensitive);
     const highlightText = this.getHighlightText(this.state.highlightList);
     const highlightLine = this.mergeActiveHighlightLines(this.state.highlightList, this.state.caseSensitive);
-    if (!this.props.lines) {
+    if (!this.props.log.lines) {
       return <div />;
     }
     return (
       <LogView
-        lines={this.props.lines}
-        colorMap={this.props.colorMap}
+        lines={this.props.log.lines}
+        colorMap={this.props.log.colorMap}
         filter={filter}
         inverseFilter={inverseFilter}
         highlight={highlight}
         highlightLine={highlightLine}
         scrollLine={this.state.scrollLine}
-        wrap={this.state.wrap}
+        wrap={this.props.settings.wrap}
         caseSensitive={this.state.caseSensitive}
         findBookmark={this.findBookmark}
         toggleBookmark={this.toggleBookmark}
@@ -607,7 +607,6 @@ export class Fetch extends React.Component {
     }
   }
 
-  toggleWrap = (value) => this.setState({wrap: !value});
   togglePanel = () => this.setState((state) => ({detailsOpen: !state.detailsOpen}));
   setFormRef = (ref) => {this.findInput = ref;}
 
@@ -626,12 +625,6 @@ export class Fetch extends React.Component {
             togglePanel={this.togglePanel}
             detailsOpen={this.state.detailsOpen}
             handleSubmit={this.handleSubmit}
-            wrap={this.state.wrap}
-            toggleWrap={this.toggleWrap}
-            caseSensitive={this.state.caseSensitive}
-            toggleCaseSensitive={this.toggleCaseSensitive}
-            filterIntersection={this.state.filterIntersection}
-            toggleFilterIntersection={this.toggleFilterIntersection}
             server={this.state.server}
             build={this.state.build}
             url={this.state.url}
@@ -663,8 +656,8 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-    lobsterLoadData: (server, url) => dispatch(lobsterLoadData(server, url)),
-    loadData: (build, test) => dispatch(loadData(build, test)),
+    lobsterLoadData: (server, url) => dispatch(actions.lobsterLoadData(server, url)),
+    loadData: (build, test) => dispatch(actions.loadData(build, test)),
     ...ownProps
   };
 }
