@@ -6,6 +6,8 @@ export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
 export const CHANGE_SETTING = 'change-setting';
 export const CHANGE_FILTER = 'change-filter';
 export const LOAD_FILTERS = 'load-filters';
+export const CHANGE_HIGHLIGHT = 'change-highlight';
+export const LOAD_HIGHLIGHTS = 'load-highlights';
 
 export type Filter = {
   text: string,
@@ -173,4 +175,39 @@ export function toggleFilter(text: string): ChangeFilter {
 
 export function removeFilter(text: string): ChangeFilter {
   return changeFilter('remove', text);
+}
+
+export function loadInitialHighlights(initialHighlights: array): loadInitialHighlights {
+  return {
+    type: LOAD_HIGHLIGHTS,
+    payload: {
+      initialHighlights: initialHighlights
+    }
+  };
+}
+
+function changeHighlight(field: string, text: string): ChangeHighlight {
+  return {
+    type: CHANGE_HIGHLIGHT,
+    payload: {
+      field: field,
+      text: text
+    }
+  };
+}
+
+export function addHighlight(text: string): ChangeHighlight {
+  return changeHighlight('add', text);
+}
+
+export function toggleHighlightLine(text: string): ChangeHighlight {
+  return changeHighlight('line', text);
+}
+
+export function toggleHighlight(text: string): ChangeHighlight {
+  return changeHighlight('on', text);
+}
+
+export function removeHighlight(text: string): ChangeHighlight {
+  return changeHighlight('remove', text);
 }

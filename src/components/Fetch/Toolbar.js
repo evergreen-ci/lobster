@@ -25,19 +25,12 @@ export class Toolbar extends React.Component {
     build: PropTypes.string.isRequired,
     setURLRef: PropTypes.func.isRequired,
     valueJIRA: PropTypes.string.isRequired,
-    highlightList: PropTypes.array.isRequired,
-    removeHighlight: PropTypes.func.isRequired,
-    toggleHighlight: PropTypes.func.isRequired,
-    toggleHighlightLine: PropTypes.func.isRequired,
     findIdx: PropTypes.number.isRequired,
     findResults: PropTypes.array.isRequired
   };
 
   shouldComponentUpdate(nextProps, _nextState) {
     if (nextProps.detailsOpen !== this.props.detailsOpen) {
-      return true;
-    }
-    if (nextProps.highlightList !== this.props.highlightList) {
       return true;
     }
     if (nextProps.findIdx !== this.props.findIdx) {
@@ -80,10 +73,6 @@ export class Toolbar extends React.Component {
             build={this.props.build}
             setURLRef={this.props.setURLRef}
             valueJIRA={this.props.valueJIRA}
-            highlightList={this.props.highlightList}
-            removeHighlight={this.props.removeHighlight}
-            toggleHighlight={this.props.toggleHighlight}
-            toggleHighlightLine={this.props.toggleHighlightLine}
           />
         </div>
       </Col>

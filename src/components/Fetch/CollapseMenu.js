@@ -137,7 +137,8 @@ function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
     settings: state.settings,
-    filterList: state.filters
+    filterList: state.filters,
+    highlightList: state.highlights
   };
 }
 
@@ -149,7 +150,10 @@ function mapDispatchToProps(dispatch, ownProps) {
     toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection()),
     toggleFilter: (text) => dispatch(actions.toggleFilter(text)),
     toggleFilterInverse: (text) => dispatch(actions.toggleFilterInverse(text)),
-    removeFilter: (text) => dispatch(actions.removeFilter(text))
+    removeFilter: (text) => dispatch(actions.removeFilter(text)),
+    toggleHighlight: (text) => dispatch(actions.toggleHighlight(text)),
+    toggleHighlightLine: (text) => dispatch(actions.toggleHighlightLine(text)),
+    removeHighlight: (text) => dispatch(actions.removeHighlight(text))
   };
 }
 
