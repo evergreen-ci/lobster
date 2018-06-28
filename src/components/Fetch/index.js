@@ -100,6 +100,14 @@ export class Fetch extends React.Component {
     return {build: this.state.build, test: this.state.test};
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.filterList !== prevProps.filterList) {
+      console.log('here');
+      console.log(this.props.filterList);
+      this.updateURL(this.state.bookmarks, this.props.filterList, this.state.highlightList);
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     console.log('componentWillReceiveProps');
     const params = nextProps.match.params;
@@ -327,19 +335,19 @@ export class Fetch extends React.Component {
       }
       return true;
     } else if (!inverseFilter || inverseFilter.length === 0) {
-      if (this.matchFilters(filter, line.text, this.state.filterIntersection)) {
+      if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection)) {
         return true;
       }
       return false;
     }
     // If there are both types of filters, it has to match the filter and not match
     // the inverseFilter.
-    if (this.state.filterIntersection) {
-      if (this.matchFilters(filter, line.text, this.state.filterIntersection) &&
+    if (this.props.settings.filterIntersection) {
+      if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection) &&
             !this.matchFilters(inverseFilter, line.text)) {
         return true;
       }
-    } else if (this.matchFilters(filter, line.text, this.state.filterIntersection) ||
+    } else if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection) ||
           !this.matchFilters(inverseFilter, line.text)) {
       return true;
     }
@@ -357,10 +365,10 @@ export class Fetch extends React.Component {
   }
 
   addFilter = () => {
-    if (this.findInput.value === '' || this.state.filterList.find((elem) => elem.text === this.findInput.value)) {
+    if (this.findInput.value === '' || this.props.filterList.find((elem) => elem.text === this.findInput.value)) {
       return;
     }
-    const newFilters = this.state.filterList.slice();
+    const newFilters = this.props.filterList.slice();
     newFilters.push({text: this.findInput.value, on: true, inverse: false});
     this.setState({filterList: newFilters});
     this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
@@ -374,7 +382,7 @@ export class Fetch extends React.Component {
     const newHighlights = this.state.highlightList.slice();
     newHighlights.push({text: this.findInput.value, on: true, line: true});
     this.setState({highlightList: newHighlights});
-    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
+    this.updateURL(this.state.bookmarks, this.props.filterList, newHighlights);
     this.clearFind();
   }
 
@@ -384,7 +392,7 @@ export class Fetch extends React.Component {
     newHighlights[highlightIdx].on = !newHighlights[highlightIdx].on;
 
     this.setState({highlightList: newHighlights});
-    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
+    this.updateURL(this.state.bookmarks, this.props.filterList, newHighlights);
     this.clearFind();
   }
 
@@ -394,7 +402,7 @@ export class Fetch extends React.Component {
     newHighlights[highlightIdx].line = !newHighlights[highlightIdx].line;
 
     this.setState({highlightList: newHighlights});
-    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
+    this.updateURL(this.state.bookmarks, this.props.filterList, newHighlights);
     this.clearFind();
   }
 
@@ -404,7 +412,7 @@ export class Fetch extends React.Component {
     newHighlights.splice(highlightIdx, 1);
 
     this.setState({highlightList: newHighlights});
-    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
+    this.updateURL(this.state.bookmarks, this.props.filterList, newHighlights);
     this.clearFind();
   }
 
