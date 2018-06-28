@@ -41,7 +41,7 @@ export default function(state: Highlights = initialState, action: Action): Setti
       {
         text: action.payload.text,
         on: true,
-        line: true
+        line: false
       }
     ];
   }

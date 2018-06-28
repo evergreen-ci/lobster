@@ -2,6 +2,7 @@ import React from 'react';
 import ReactList from 'react-list';
 import Highlighter from 'react-highlight-words';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import './style.css';
 
@@ -401,4 +402,17 @@ class LogView extends React.Component {
     return (<div></div>);
   }
 }
-export default LogView;
+
+function mapStateToProps(state, ownProps) {
+  return {...state, ...ownProps, colorMap: state.log.colorMap, lines: state.log.lines,
+    caseSensitive: state.settings.caseSensitive, wrap: state.settings.wrap
+  };
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+  return {
+    ...ownProps
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LogView);

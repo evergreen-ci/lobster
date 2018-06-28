@@ -452,15 +452,13 @@ export class Fetch extends React.Component {
     }
     return (
       <LogView
-        lines={this.props.log.lines}
-        colorMap={this.props.log.colorMap}
+        wrap={this.props.settings.wrap}
+        caseSensitive={this.props.settings.caseSensitive}
         filter={filter}
         inverseFilter={inverseFilter}
         highlight={highlight}
         highlightLine={highlightLine}
         scrollLine={this.state.scrollLine}
-        wrap={this.props.settings.wrap}
-        caseSensitive={this.props.settings.caseSensitive}
         findBookmark={this.findBookmark}
         toggleBookmark={this.toggleBookmark}
         bookmarks={this.state.bookmarks}
