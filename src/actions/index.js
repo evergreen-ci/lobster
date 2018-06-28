@@ -159,6 +159,10 @@ function changeFilter(field: string, text: string): ChangeFilter {
   };
 }
 
+export function addFilter(text: string): ChangeFilter {
+  return changeFilter('add', text);
+}
+
 export function toggleFilterInverse(text: string): ChangeFilter {
   return changeFilter('inverse', text);
 }

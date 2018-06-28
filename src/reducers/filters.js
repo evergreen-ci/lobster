@@ -35,5 +35,16 @@ export default function(state: Filters = initialState, action: Action): Settings
       (filter.text !== action.payload.text));
   }
 
+  if (action.payload.field === 'add') {
+    return [
+      ...state,
+      {
+        text: action.payload.text,
+        on: true,
+        inverse: false
+      }
+    ];
+  }
+
   return state;
 }

@@ -37,7 +37,8 @@ export class Fetch extends React.Component {
       filterIntersection: PropTypes.bool.isRequired
     }),
     loadInitialFilters: PropTypes.func.isRequired,
-    filterList: PropTypes.array
+    filterList: PropTypes.array.isRequired,
+    addFilter: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -72,7 +73,7 @@ export class Fetch extends React.Component {
     const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')}));
     this.props.loadInitialFilters(initialFilters);
     if (locationSearch !== '') {
-      this.updateURL(this.state.bookmarks, this.state.filterList, this.state.highlightList);
+      this.updateURL(this.state.bookmarks, this.props.filterList, this.state.highlightList);
     }
     if (this.state.url) {
       this.props.lobsterLoadData(this.state.server, this.state.url);
@@ -102,9 +103,8 @@ export class Fetch extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.filterList !== prevProps.filterList) {
-      console.log('here');
-      console.log(this.props.filterList);
       this.updateURL(this.state.bookmarks, this.props.filterList, this.state.highlightList);
+      this.clearFind();
     }
   }
 
@@ -145,7 +145,7 @@ export class Fetch extends React.Component {
       let newBookmarks = this.ensureBookmark(0, this.state.bookmarks);
       newBookmarks = this.ensureBookmark(nextProps.log.lines[nextProps.log.lines.length - 1].lineNumber, newBookmarks);
       if (newBookmarks.length !== this.state.bookmarks.length) {
-        this.updateURL(newBookmarks, this.state.filterList, this.state.highlightList);
+        this.updateURL(newBookmarks, this.props.filterList, this.state.highlightList);
         this.setState({bookmarks: newBookmarks});
       }
     }
@@ -169,8 +169,8 @@ export class Fetch extends React.Component {
 
   updateURL(bookmarks, filters, highlights) {
     const parsedParams = this.getUrlParams();
-    const locationSearch = this.props.location.search;
-    const parsed = queryString.parse(locationSearch === '' ? this.props.location.hash : locationSearch);
+    // const locationSearch = this.props.location.search;
+    const parsed = [];
 
     for (let i = 0; i < filters.length; i++) {
       parsed.f = this.makeFilterURLString(filters[i]);
@@ -206,7 +206,7 @@ export class Fetch extends React.Component {
       return;
     }
 
-    this.updateURL(this.state.bookmarks, this.state.filterList, this.state.highlightList);
+    this.updateURL(this.state.bookmarks, this.props.filterList, this.state.highlightList);
 
     if (this.urlInput.value !== this.state.url) {
       this.setState({url: this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
@@ -246,7 +246,7 @@ export class Fetch extends React.Component {
     }
     newBookmarks.sort(this.bookmarkSort);
     this.setState({bookmarks: newBookmarks});
-    this.updateURL(newBookmarks, this.state.filterList, this.state.highlightList);
+    this.updateURL(newBookmarks, this.props.filterList, this.state.highlightList);
   }
 
   ensureBookmark(lineNum, bookmarks) {
@@ -299,8 +299,8 @@ export class Fetch extends React.Component {
     }
 
     const findResults = [];
-    const filter = this.mergeActiveFilters(this.state.filterList, this.props.settings.caseSensitive);
-    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.props.settings.caseSensitive);
+    const filter = this.mergeActiveFilters(this.props.filterList, this.props.settings.caseSensitive);
+    const inverseFilter = this.mergeActiveInverseFilters(this.props.filterList, this.props.settings.caseSensitive);
     const findRegexpFull = this.makeRegexp(findRegexp, this.props.settings.caseSensitive);
 
     for (let i = 0; i < this.props.log.lines.length; i++) {
@@ -368,10 +368,8 @@ export class Fetch extends React.Component {
     if (this.findInput.value === '' || this.props.filterList.find((elem) => elem.text === this.findInput.value)) {
       return;
     }
-    const newFilters = this.props.filterList.slice();
-    newFilters.push({text: this.findInput.value, on: true, inverse: false});
-    this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
+    this.props.addFilter(this.findInput.value);
+    this.updateURL(this.state.bookmarks, this.props.filterList, this.state.highlightList);
     this.clearFind();
   }
 
@@ -571,7 +569,7 @@ export class Fetch extends React.Component {
   }
 
   handleChangeFindEvent = () => {
-    this.find(this.state.caseSensitive);
+    this.find(this.props.settings.caseSensitive);
   }
 
   handleShiftEnter = (event) => {
@@ -634,6 +632,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     lobsterLoadData: (server, url) => dispatch(actions.lobsterLoadData(server, url)),
     loadData: (build, test) => dispatch(actions.loadData(build, test)),
     loadInitialFilters: (initialFilters) => dispatch(actions.loadInitialFilters(initialFilters)),
+    addFilter: (text) => dispatch(actions.addFilter(text)),
     ...ownProps
   };
 }
