@@ -20,8 +20,6 @@ export class Toolbar extends React.Component {
     togglePanel: PropTypes.func.isRequired,
     detailsOpen: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    filterList: PropTypes.array.isRequired,
-    removeFilter: PropTypes.func.isRequired,
     server: PropTypes.string,
     url: PropTypes.string,
     build: PropTypes.string.isRequired,
@@ -35,9 +33,6 @@ export class Toolbar extends React.Component {
 
   shouldComponentUpdate(nextProps, _nextState) {
     if (nextProps.detailsOpen !== this.props.detailsOpen) {
-      return true;
-    }
-    if (nextProps.filterList !== this.props.filterList) {
       return true;
     }
     if (nextProps.highlightList !== this.props.highlightList) {
@@ -72,8 +67,6 @@ export class Toolbar extends React.Component {
           <CollapseMenu
             detailsOpen={this.props.detailsOpen}
             handleSubmit={this.props.handleSubmit}
-            filterList={this.props.filterList}
-            removeFilter={this.props.removeFilter}
             server={this.props.server}
             url={this.props.url}
             build={this.props.build}

@@ -10,7 +10,6 @@ export const lobster = combineReducers({
   settings: settings,
   filters: filters
 
-
   // here are some suggestions:
   // filters: reducer returns list of these filters [{text: '', on: bool, inverse: bool}]
   // highlights: reducer returns the highlight objects

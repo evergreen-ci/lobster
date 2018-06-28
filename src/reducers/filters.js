@@ -1,6 +1,6 @@
 // @flow strict
 
-import { CHANGE_FILTER } from '../actions';
+import { CHANGE_FILTER, LOAD_FILTERS } from '../actions';
 import type { Action } from '../actions';
 
 export type Filters = {|
@@ -9,23 +9,30 @@ export type Filters = {|
   +inverse: boolean
 |}
 
-const initialState: Filters = {
-  text: '',
-  on: false,
-  inverse: false
-};
+const initialState: Filters[] = [];
 
 export default function(state: Filters = initialState, action: Action): Settings {
+  if (action.type === LOAD_FILTERS) {
+    return action.payload.initialFilters;
+  }
+
   if (action.type !== CHANGE_FILTER) {
     return state;
   }
 
   if (action.payload.field === 'on') {
-    return {...state, on: !state.on};
+    return state.map(filter =>
+      (filter.text === action.payload.text) ? {...filter, on: !filter.on} : filter);
   }
 
-  if (action.payload.setting === 'inverse') {
-    return {...state, inverse: !state.inverse};
+  if (action.payload.field === 'inverse') {
+    return state.map(filter =>
+      (filter.text === action.payload.text) ? {...filter, inverse: !filter.inverse} : filter);
+  }
+
+  if (action.payload.field === 'remove') {
+    return state.filter(filter =>
+      (filter.text !== action.payload.text));
   }
 
   return state;

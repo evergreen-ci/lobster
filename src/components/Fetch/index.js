@@ -35,7 +35,9 @@ export class Fetch extends React.Component {
       wrap: PropTypes.bool.isRequired,
       caseSensitive: PropTypes.bool.isRequired,
       filterIntersection: PropTypes.bool.isRequired
-    })
+    }),
+    loadInitialFilters: PropTypes.func.isRequired,
+    filterList: PropTypes.array
   };
 
   static defaultProps = {
@@ -61,13 +63,14 @@ export class Fetch extends React.Component {
       server: parsed.server || null,
       url: parsed.url || null,
       detailsOpen: false,
-      filterList: ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
       highlightList: ((typeof parsed.h === 'string' ? [parsed.h] : parsed.h) || []).map((h) => ({text: h.substring(2), on: (h.charAt(0) === '1'), line: (h.charAt(1) === '1')})),
       find: '',
       findIdx: -1,
       findResults: [],
       bookmarks: bookmarksArr
     };
+    const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')}));
+    this.props.loadInitialFilters(initialFilters);
     if (locationSearch !== '') {
       this.updateURL(this.state.bookmarks, this.state.filterList, this.state.highlightList);
     }
@@ -375,26 +378,6 @@ export class Fetch extends React.Component {
     this.clearFind();
   }
 
-  toggleFilter = (text) => {
-    const newFilters = this.state.filterList.slice();
-    const filterIdx = newFilters.findIndex((elem) => text === elem.text);
-    newFilters[filterIdx].on = !newFilters[filterIdx].on;
-
-    this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
-    this.clearFind();
-  }
-
-  toggleFilterInverse = (text) => {
-    const newFilters = this.state.filterList.slice();
-    const filterIdx = newFilters.findIndex((elem) => text === elem.text);
-    newFilters[filterIdx].inverse = !newFilters[filterIdx].inverse;
-
-    this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
-    this.clearFind();
-  }
-
   toggleHighlight = (text) => {
     const newHighlights = this.state.highlightList.slice();
     const highlightIdx = newHighlights.findIndex((elem) => text === elem.text);
@@ -412,16 +395,6 @@ export class Fetch extends React.Component {
 
     this.setState({highlightList: newHighlights});
     this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
-    this.clearFind();
-  }
-
-  removeFilter = (text) => {
-    const newFilters = this.state.filterList.slice();
-    const filterIdx = newFilters.findIndex((elem) => text === elem.text);
-    newFilters.splice(filterIdx, 1);
-
-    this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
     this.clearFind();
   }
 
@@ -491,11 +464,11 @@ export class Fetch extends React.Component {
   }
 
   showLines() {
-    const filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
-    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
-    const highlight = this.mergeActiveHighlights(this.state.highlightList, this.state.caseSensitive);
+    const filter = this.mergeActiveFilters(this.props.filterList, this.props.settings.caseSensitive);
+    const inverseFilter = this.mergeActiveInverseFilters(this.props.filterList, this.props.settings.caseSensitive);
+    const highlight = this.mergeActiveHighlights(this.state.highlightList, this.props.settings.caseSensitive);
     const highlightText = this.getHighlightText(this.state.highlightList);
-    const highlightLine = this.mergeActiveHighlightLines(this.state.highlightList, this.state.caseSensitive);
+    const highlightLine = this.mergeActiveHighlightLines(this.state.highlightList, this.props.settings.caseSensitive);
     if (!this.props.log.lines) {
       return <div />;
     }
@@ -625,7 +598,6 @@ export class Fetch extends React.Component {
             url={this.state.url}
             setURLRef={this.setURLRef}
             valueJIRA={this.showJIRA()}
-            filterList={this.state.filterList}
             removeFilter={this.removeFilter}
             toggleFilter={this.toggleFilter}
             toggleFilterInverse={this.toggleFilterInverse}
@@ -646,13 +618,14 @@ export class Fetch extends React.Component {
 // This is not the ideal way to do this, but it allows for better compatibility
 // as we migrate towards the react-redux model
 function mapStateToProps(state, ownProps) {
-  return {...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap};
+  return {...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap, filterList: state.filters, settings: state.settings};
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
     lobsterLoadData: (server, url) => dispatch(actions.lobsterLoadData(server, url)),
     loadData: (build, test) => dispatch(actions.loadData(build, test)),
+    loadInitialFilters: (initialFilters) => dispatch(actions.loadInitialFilters(initialFilters)),
     ...ownProps
   };
 }

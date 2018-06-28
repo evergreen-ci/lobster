@@ -136,7 +136,8 @@ export class CollapseMenu extends React.PureComponent {
 function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
-    settings: state.settings
+    settings: state.settings,
+    filterList: state.filters
   };
 }
 
@@ -146,8 +147,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     toggleWrap: () => dispatch(actions.toggleLineWrap()),
     toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
     toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection()),
-    toggleFilter: () => dispatch(actions.toggleFilter()),
-    toggleFilterInverse: () => dispatch(actions.toggleFilterInverse())
+    toggleFilter: (text) => dispatch(actions.toggleFilter(text)),
+    toggleFilterInverse: (text) => dispatch(actions.toggleFilterInverse(text)),
+    removeFilter: (text) => dispatch(actions.removeFilter(text))
   };
 }
 

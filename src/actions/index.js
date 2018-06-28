@@ -5,6 +5,7 @@ export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
 export const CHANGE_SETTING = 'change-setting';
 export const CHANGE_FILTER = 'change-filter';
+export const LOAD_FILTERS = 'load-filters';
 
 export type Filter = {
   text: string,
@@ -62,10 +63,10 @@ export type ChangeSetting = {|
   |}
 |}
 
-export type LoadSetting = {|
-  +type: 'load-setting',
+export type ChangeFilter = {|
+  +type: 'change-filter',
   +payload: {|
-    +setting: string
+    +field: string
   |}
 |}
 
@@ -139,19 +140,33 @@ export function toggleFilterIntersection(): ChangeSetting {
   return toggleSetting('filter-intersection');
 }
 
-function changeFilter(field: string): ChangeFilter {
+export function loadInitialFilters(initialFilters: array): loadInitialFilters {
   return {
-    type: CHANGE_FILTER,
+    type: LOAD_FILTERS,
     payload: {
-      field: field
+      initialFilters: initialFilters
     }
   };
 }
 
-export function toggleFilterInverse(): ChangeFilter {
-  return changeFilter('inverse');
+function changeFilter(field: string, text: string): ChangeFilter {
+  return {
+    type: CHANGE_FILTER,
+    payload: {
+      field: field,
+      text: text
+    }
+  };
 }
 
-export function toggleFilter(): ChangeFilter {
-  return changeFilter('on');
+export function toggleFilterInverse(text: string): ChangeFilter {
+  return changeFilter('inverse', text);
+}
+
+export function toggleFilter(text: string): ChangeFilter {
+  return changeFilter('on', text);
+}
+
+export function removeFilter(text: string): ChangeFilter {
+  return changeFilter('remove', text);
 }
