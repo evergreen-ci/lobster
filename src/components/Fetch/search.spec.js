@@ -3,6 +3,11 @@ import Enzyme from 'enzyme';
 import { Fetch } from '../Fetch';
 import assert from 'assert';
 import Button from 'react-bootstrap/lib/Button';
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import { lobster } from './reducers';
+import 'babel-polyfill';
+import 'url-search-params-polyfill';
 
 const linesArr = [
   {lineNumber: 1, text: '[cpp_integration_test:connection_pool_asio_integration_test] 2018-05-09T17:20:31.322+0000 Starting C++ integration test build'},
@@ -17,11 +22,17 @@ const linesArr = [
   {lineNumber: 10, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250'}
 ];
 
+const saga = createSagaMiddleware();
+const store = createStore(lobster, applyMiddleware(saga));
+
 export function makeWrapper() {
   const wrapper = Enzyme.mount(
     <Fetch
       dispatch={() => undefined}
-      lines={linesArr}
+      log={{
+        lines: linesArr,
+        colorMap: {}}
+      }
       location={{
         pathname: '/lobster/build/4191390ec6c7ee9bdea4e45f9cc94d31/test/5af32dbbf84ae86d1e01e964',
         search: '?bookmarks=0%2C1129',
@@ -35,9 +46,20 @@ export function makeWrapper() {
         isExact: true,
         params: {build: '4191390ec6c7ee9bdea4e45f9cc94d31', test: '5af32dbbf84ae86d1e01e964'}
       }}
-      colorMap={{}}
       loadData={() => undefined}
       lobsterLoadData={() => undefined}
+      loadBookmarks={() => []}
+      toggleBookmark={() => undefined}
+      loadInitialFilters={() => []}
+      loadInitialHighlights={() => []}
+      filterList={[]}
+      highlightList={[]}
+      settings={{
+        caseSensitive: false,
+        wrap: false,
+        filterIntersection: false}
+      }
+      store={store}
     />
   );
   assert.equal(wrapper.state('findIdx'), -1);
