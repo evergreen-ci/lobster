@@ -3,6 +3,7 @@ import Enzyme from 'enzyme';
 import { Fetch } from '../Fetch';
 import assert from 'assert';
 import Button from 'react-bootstrap/lib/Button';
+import sinon from 'sinon';
 
 const linesArr = [
   {lineNumber: 1, text: '[cpp_integration_test:connection_pool_asio_integration_test] 2018-05-09T17:20:31.322+0000 Starting C++ integration test build'},
@@ -18,13 +19,15 @@ const linesArr = [
 ];
 
 export function makeWrapper() {
-  const wrapper = Enzyme.mount(
+  const wrapper = Enzyme.shallow(
     <Fetch
-      dispatch={() => undefined}
-      lines={linesArr}
+      log={{
+        lines: linesArr,
+        colorMap: {}
+      }}
       location={{
         pathname: '/lobster/build/4191390ec6c7ee9bdea4e45f9cc94d31/test/5af32dbbf84ae86d1e01e964',
-        search: '?bookmarks=0%2C1129',
+        search: '?bookmarks=0%2C10',
         hash: '',
         state: undefined,
         key: 'dyozxy'}
@@ -35,16 +38,24 @@ export function makeWrapper() {
         isExact: true,
         params: {build: '4191390ec6c7ee9bdea4e45f9cc94d31', test: '5af32dbbf84ae86d1e01e964'}
       }}
-      colorMap={{}}
-      loadData={() => undefined}
-      lobsterLoadData={() => undefined}
+      loadData={sinon.fake()}
+      lobsterLoadData={sinon.fake()}
+      loadBookmarks={sinon.fake.returns([])}
+      loadInitialFilters={sinon.fake.returns([])}
+      loadInitialHighlights={sinon.fake.returns([])}
+      filterList={[]}
+      bookmarks={[]}
+      highlightList={[]}
+      settings={{
+        caseSensitive: false,
+        wrap: false,
+        filterIntersection: false
+      }}
     />
   );
   assert.equal(wrapper.state('findIdx'), -1);
   assert.equal(wrapper.state('findResults').length, 0);
   assert.equal(wrapper.state('find'), '');
-  assert.equal(wrapper.state('wrap'), false);
-  assert.equal(wrapper.state('caseSensitive'), false);
   assert.equal(wrapper.state('detailsOpen'), false);
   // console.log(wrapper.render());
   assert.ok(!wrapper.containsAllMatchingElements([
