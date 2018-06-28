@@ -8,6 +8,8 @@ export const CHANGE_FILTER = 'change-filter';
 export const LOAD_FILTERS = 'load-filters';
 export const CHANGE_HIGHLIGHT = 'change-highlight';
 export const LOAD_HIGHLIGHTS = 'load-highlights';
+export const CHANGE_BOOKMARK = 'change-bookmark';
+export const LOAD_BOOKMARKS = 'load-bookmarks';
 
 export type Filter = {
   text: string,
@@ -210,4 +212,22 @@ export function toggleHighlight(text: string): ChangeHighlight {
 
 export function removeHighlight(text: string): ChangeHighlight {
   return changeHighlight('remove', text);
+}
+
+export function toggleBookmark(lineNumArray: array): ChangeBookmark {
+  return {
+    type: CHANGE_BOOKMARK,
+    payload: {
+      lineNumArray: lineNumArray
+    }
+  };
+}
+
+export function loadBookmarks(bookmarksArr: array): LoadBookmarks {
+  return {
+    type: LOAD_BOOKMARKS,
+    payload: {
+      bookmarksArr: bookmarksArr
+    }
+  };
 }

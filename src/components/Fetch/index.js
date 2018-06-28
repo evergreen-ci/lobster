@@ -36,12 +36,15 @@ export class Fetch extends React.Component {
       caseSensitive: PropTypes.bool.isRequired,
       filterIntersection: PropTypes.bool.isRequired
     }),
-    loadInitialFilters: PropTypes.func.isRequired,
-    loadInitialHighlights: PropTypes.func.isRequired,
-    filterList: PropTypes.array.isRequired,
-    addFilter: PropTypes.func.isRequired,
-    addHighlight: PropTypes.func.isRequired,
-    highlightList: PropTypes.array.isRequired
+    loadInitialFilters: PropTypes.func,
+    loadInitialHighlights: PropTypes.func,
+    filterList: PropTypes.array,
+    addFilter: PropTypes.func,
+    addHighlight: PropTypes.func,
+    highlightList: PropTypes.array,
+    bookmarks: PropTypes.array,
+    loadBookmarks: PropTypes.func,
+    toggleBookmark: PropTypes.func
   };
 
   static defaultProps = {
@@ -60,6 +63,7 @@ export class Fetch extends React.Component {
     if (bookmarksList) {
       bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n, 10)}));
     }
+    this.props.loadBookmarks(bookmarksArr);
     this.state = {
       build: params.build,
       test: params.test,
@@ -69,15 +73,14 @@ export class Fetch extends React.Component {
       detailsOpen: false,
       find: '',
       findIdx: -1,
-      findResults: [],
-      bookmarks: bookmarksArr
+      findResults: []
     };
     const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')}));
     this.props.loadInitialFilters(initialFilters);
     const initialHighlights = ((typeof parsed.h === 'string' ? [parsed.h] : parsed.h) || []).map((h) => ({text: h.substring(2), on: (h.charAt(0) === '1'), line: (h.charAt(1) === '1')}));
     this.props.loadInitialHighlights(initialHighlights);
     if (locationSearch !== '') {
-      this.updateURL(this.state.bookmarks, this.props.filterList, this.props.highlightList);
+      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     }
     if (this.state.url) {
       this.props.lobsterLoadData(this.state.server, this.state.url);
@@ -107,8 +110,11 @@ export class Fetch extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.filterList !== prevProps.filterList) {
-      this.updateURL(this.state.bookmarks, this.props.filterList, this.props.highlightList);
+      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
       this.clearFind();
+    }
+    if (this.props.bookmarks !== prevProps.bookmarks) {
+      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     }
   }
 
@@ -146,11 +152,11 @@ export class Fetch extends React.Component {
       }
     }
     if (this.props.log.lines.length !== nextProps.log.lines.length && nextProps.log.lines.length > 0) {
-      let newBookmarks = this.ensureBookmark(0, this.state.bookmarks);
+      let newBookmarks = this.ensureBookmark(0, this.props.bookmarks);
       newBookmarks = this.ensureBookmark(nextProps.log.lines[nextProps.log.lines.length - 1].lineNumber, newBookmarks);
-      if (newBookmarks.length !== this.state.bookmarks.length) {
+      if (newBookmarks.length !== this.props.bookmarks.length) {
+        this.props.loadBookmarks(newBookmarks);
         this.updateURL(newBookmarks, this.props.filterList, this.props.highlightList);
-        this.setState({bookmarks: newBookmarks});
       }
     }
   }
@@ -210,7 +216,7 @@ export class Fetch extends React.Component {
       return;
     }
 
-    this.updateURL(this.state.bookmarks, this.props.filterList, this.props.highlightList);
+    this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
 
     if (this.urlInput.value !== this.state.url) {
       this.setState({url: this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
@@ -230,27 +236,6 @@ export class Fetch extends React.Component {
 
   bookmarkSort(b1, b2) {
     return b1.lineNumber - b2.lineNumber;
-  }
-
-  toggleBookmark = (lineNumArray) => {
-    let remove = true;
-    const newBookmarks = this.state.bookmarks.slice();
-    lineNumArray.forEach((element) => {
-      const index = this.findBookmark(newBookmarks, element);
-      if (index === -1) {
-        newBookmarks.push({lineNumber: element});
-        remove = false;
-      }
-    });
-    if (remove) {
-      lineNumArray.forEach((element) => {
-        const removeIndex = this.findBookmark(newBookmarks, element);
-        newBookmarks.splice(removeIndex, 1);
-      });
-    }
-    newBookmarks.sort(this.bookmarkSort);
-    this.setState({bookmarks: newBookmarks});
-    this.updateURL(newBookmarks, this.props.filterList, this.props.highlightList);
   }
 
   ensureBookmark(lineNum, bookmarks) {
@@ -309,7 +294,7 @@ export class Fetch extends React.Component {
 
     for (let i = 0; i < this.props.log.lines.length; i++) {
       const line = this.props.log.lines[i];
-      if (line.text.match(findRegexpFull) && this.shouldPrintLine(this.state.bookmarks, line, filter, inverseFilter)) {
+      if (line.text.match(findRegexpFull) && this.shouldPrintLine(this.props.bookmarks, line, filter, inverseFilter)) {
         findResults.push(line.lineNumber);
       }
     }
@@ -373,7 +358,7 @@ export class Fetch extends React.Component {
       return;
     }
     this.props.addFilter(this.findInput.value);
-    this.updateURL(this.state.bookmarks, this.props.filterList, this.props.highlightList);
+    this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     this.clearFind();
   }
 
@@ -382,7 +367,7 @@ export class Fetch extends React.Component {
       return;
     }
     this.props.addHighlight(this.findInput.value);
-    this.updateURL(this.state.bookmarks, this.props.filterList, this.props.highlightList);
+    this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     this.clearFind();
   }
 
@@ -452,16 +437,14 @@ export class Fetch extends React.Component {
     }
     return (
       <LogView
-        wrap={this.props.settings.wrap}
-        caseSensitive={this.props.settings.caseSensitive}
         filter={filter}
         inverseFilter={inverseFilter}
         highlight={highlight}
         highlightLine={highlightLine}
         scrollLine={this.state.scrollLine}
         findBookmark={this.findBookmark}
-        toggleBookmark={this.toggleBookmark}
-        bookmarks={this.state.bookmarks}
+        toggleBookmark={this.props.toggleBookmark}
+        bookmarks={this.props.bookmarks}
         find={this.state.find}
         highlightText={highlightText}
         findLine={this.state.findIdx === -1 ? -1 : this.state.findResults[this.state.findIdx]}
@@ -484,20 +467,20 @@ export class Fetch extends React.Component {
   }
 
   showJIRA() {
-    if (this.state.bookmarks.length === 0 || this.props.log.lines.length === 0) {
+    if (this.props.bookmarks.length === 0 || this.props.log.lines.length === 0) {
       return '';
     }
 
     let text = '{noformat}\n';
-    for (let i = 0; i < this.state.bookmarks.length; i++) {
-      const curr = this.state.bookmarks[i].lineNumber;
+    for (let i = 0; i < this.props.bookmarks.length; i++) {
+      const curr = this.props.bookmarks[i].lineNumber;
       if (curr >= this.props.log.lines.length) {
         text += '{noformat}';
         return text;
       }
 
       text += this.props.log.lines[curr].text + '\n';
-      if ((i !== (this.state.bookmarks.length - 1)) && (this.state.bookmarks[i + 1].lineNumber !== (curr + 1))) {
+      if ((i !== (this.props.bookmarks.length - 1)) && (this.props.bookmarks[i + 1].lineNumber !== (curr + 1))) {
         text += '...\n';
       }
     }
@@ -557,7 +540,7 @@ export class Fetch extends React.Component {
   render() {
     return (
       <div>
-        <Bookmarks bookmarks={this.state.bookmarks} setScroll={this.setScroll} />
+        <Bookmarks bookmarks={this.props.bookmarks} setScroll={this.setScroll} />
         <div className="main">
           <Toolbar
             setFormRef={this.setFormRef}
@@ -594,7 +577,7 @@ export class Fetch extends React.Component {
 // as we migrate towards the react-redux model
 function mapStateToProps(state, ownProps) {
   return {...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap,
-    filterList: state.filters, settings: state.settings, highlightList: state.highlights};
+    filterList: state.filters, settings: state.settings, highlightList: state.highlights, bookmarks: state.bookmarks};
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
@@ -605,6 +588,8 @@ function mapDispatchToProps(dispatch, ownProps) {
     loadInitialHighlights: (initialHighlights) => dispatch(actions.loadInitialHighlights(initialHighlights)),
     addFilter: (text) => dispatch(actions.addFilter(text)),
     addHighlight: (text) => dispatch(actions.addHighlight(text)),
+    loadBookmarks: (bookmarksArr) => dispatch(actions.loadBookmarks(bookmarksArr)),
+    toggleBookmark: (lineNumArray) => dispatch(actions.toggleBookmark(lineNumArray)),
     ...ownProps
   };
 }
