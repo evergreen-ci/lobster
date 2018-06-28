@@ -501,6 +501,7 @@ export class Fetch extends React.Component {
   }
 
   showFind = () => {
+    console.log(this.state);
     if (this.state.find !== '') {
       if (this.state.findResults.length > 0) {
         return (
@@ -604,13 +605,12 @@ export class Fetch extends React.Component {
             url={this.state.url}
             setURLRef={this.setURLRef}
             valueJIRA={this.showJIRA()}
-            removeFilter={this.removeFilter}
-            toggleFilter={this.toggleFilter}
-            toggleFilterInverse={this.toggleFilterInverse}
             highlightList={this.state.highlightList}
             removeHighlight={this.removeHighlight}
             toggleHighlight={this.toggleHighlight}
             toggleHighlightLine={this.toggleHighlightLine}
+            findResults={this.state.findResults}
+            findIdx={this.state.findIdx}
           />
           <div className="log-list">
             {this.showLines()}

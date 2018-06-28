@@ -28,7 +28,9 @@ export class Toolbar extends React.Component {
     highlightList: PropTypes.array.isRequired,
     removeHighlight: PropTypes.func.isRequired,
     toggleHighlight: PropTypes.func.isRequired,
-    toggleHighlightLine: PropTypes.func.isRequired
+    toggleHighlightLine: PropTypes.func.isRequired,
+    findIdx: PropTypes.number.isRequired,
+    findResults: PropTypes.array.isRequired
   };
 
   shouldComponentUpdate(nextProps, _nextState) {
@@ -36,6 +38,12 @@ export class Toolbar extends React.Component {
       return true;
     }
     if (nextProps.highlightList !== this.props.highlightList) {
+      return true;
+    }
+    if (nextProps.findIdx !== this.props.findIdx) {
+      return true;
+    }
+    if (nextProps.findResults !== this.props.findResults) {
       return true;
     }
     return false;
