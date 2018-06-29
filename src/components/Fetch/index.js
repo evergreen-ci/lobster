@@ -102,46 +102,66 @@ export class Fetch extends React.Component {
     return {build: this.state.build, test: this.state.test};
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log('componentWillReceiveProps');
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.bookmarks !== this.state.bookmarks) {
+      this.updateURL(this.state.bookmarks, this.state.filterList, this.state.highlightList);
+    }
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
     const params = nextProps.match.params;
     const searchParams = new URLSearchParams(nextProps.location.search);
+    let filterValue = prevState.filter;
+    let buildValue = prevState.build;
+    let scrollLineValue = prevState.scrollLine;
+    let urlValue = prevState.url;
+    let testValue = prevState.test;
+    let bookmarksValue = prevState.bookmarks;
+    let serverValue = prevState.serverValue;
     // don't reload, just update state
-    if (params.build === this.state.build && params.test === this.state.test && !searchParams.get('server')) {
-    // update the filter in the child component and return
-      if (this.state.filter !== searchParams.get('filter')) {
+    if (params.build === prevState.build && params.test === prevState.test && !searchParams.get('server')) {
+      // update the filter in the child component and return
+      if (prevState.filter !== searchParams.get('filter')) {
         console.log('set filter to ' + searchParams.get('filter'));
-        this.setState({filter: searchParams.get('filter')});
+        filterValue = searchParams.get('filter');
       }
-      if (this.state.scrollLine !== parseInt(searchParams.get('scroll'), 10)) {
+      if (prevState.scrollLine !== parseInt(searchParams.get('scroll'), 10)) {
         console.log('set scroll to: ' + searchParams.get('scroll'));
-        this.setState({scrollLine: parseInt(searchParams.get('scroll'), 10)});
+        scrollLineValue = parseInt(searchParams.get('scroll'), 10);
       }
     // reload and rerender
     } else {
       console.log('set state to server: ' + searchParams.get('server'));
-      this.setState({build: params.build,
-        test: params.test,
-        filter: searchParams.get('filter'),
-        scrollLine: parseInt(searchParams.get('scroll'), 10),
-        server: searchParams.get('server')});
+      buildValue = params.build;
+      testValue = params.test;
+      filterValue = searchParams.get('filter');
+      scrollLineValue = parseInt(searchParams.get('scroll'), 10);
+      serverValue = searchParams.get('server');
       let url = '';
       if (this.urlInput) {
         url = this.urlInput.value.trim();
       }
 
       if (url) {
-        this.setState({url: url});
+        urlValue = url;
       }
     }
     if (this.props.lines.length !== nextProps.lines.length && nextProps.lines.length > 0) {
-      let newBookmarks = this.ensureBookmark(0, this.state.bookmarks);
+      let newBookmarks = this.ensureBookmark(0, prevState.bookmarks);
       newBookmarks = this.ensureBookmark(nextProps.lines[nextProps.lines.length - 1].lineNumber, newBookmarks);
       if (newBookmarks.length !== this.state.bookmarks.length) {
-        this.updateURL(newBookmarks, this.state.filterList, this.state.highlightList);
-        this.setState({bookmarks: newBookmarks});
+        bookmarksValue = newBookmarks;
       }
     }
+    return {
+      filter: filterValue,
+      build: buildValue,
+      scrollLine: scrollLineValue,
+      url: urlValue,
+      test: testValue,
+      bookmarks: bookmarksValue,
+      server: serverValue
+    };
   }
 
   makeFilterURLString(filter) {
