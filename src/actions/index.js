@@ -10,6 +10,7 @@ export const CHANGE_HIGHLIGHT = 'change-highlight';
 export const LOAD_HIGHLIGHTS = 'load-highlights';
 export const CHANGE_BOOKMARK = 'change-bookmark';
 export const LOAD_BOOKMARKS = 'load-bookmarks';
+export const ENSURE_BOOKMARK = 'ensure-bookmark';
 
 export type Filter = {
   text: string,
@@ -219,6 +220,15 @@ export function toggleBookmark(lineNumArray: array): ChangeBookmark {
     type: CHANGE_BOOKMARK,
     payload: {
       lineNumArray: lineNumArray
+    }
+  };
+}
+
+export function ensureBookmark(lineNum: number): EnsureBookmarks {
+  return {
+    type: ENSURE_BOOKMARK,
+    payload: {
+      lineNum: lineNum
     }
   };
 }

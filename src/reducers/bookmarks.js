@@ -1,6 +1,6 @@
 // @flow strict
 
-import { CHANGE_BOOKMARK, LOAD_BOOKMARKS } from '../actions';
+import { CHANGE_BOOKMARK, LOAD_BOOKMARKS, ENSURE_BOOKMARK } from '../actions';
 import type { Action } from '../actions';
 
 export type Bookmark = {|
@@ -16,9 +16,29 @@ function findBookmark(bookmarkList, lineNum) {
   });
 }
 
+function bookmarkSort(b1, b2) {
+  return b1.lineNumber - b2.lineNumber;
+}
+
+function ensureBookmark(lineNum, bookmarks) {
+  const newBookmarks = bookmarks.slice();
+  const i = findBookmark(newBookmarks, lineNum);
+  if (i === -1) {
+    newBookmarks.push({lineNumber: lineNum});
+    newBookmarks.sort(bookmarkSort);
+  }
+  return newBookmarks;
+}
+
 export default function(state: Bookmarks = initialState, action: Action): Settings {
   if (action.type === LOAD_BOOKMARKS) {
     return action.payload.bookmarksArr;
+  }
+
+  if (action.type === ENSURE_BOOKMARK) {
+    const copyState = state.slice();
+    const finalBookmark = ensureBookmark(action.payload.lineNum, copyState);
+    return finalBookmark;
   }
 
   if (action.type !== CHANGE_BOOKMARK) {
@@ -40,7 +60,7 @@ export default function(state: Bookmarks = initialState, action: Action): Settin
       newBookmarks.splice(removeIndex, 1);
     });
   }
-  newBookmarks.sort((b1, b2) => b1.lineNumber - b2.lineNumber);
+  newBookmarks.sort(bookmarkSort);
 
   return newBookmarks;
 }

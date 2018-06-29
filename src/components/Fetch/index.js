@@ -44,7 +44,8 @@ export class Fetch extends React.Component {
     highlightList: PropTypes.array,
     bookmarks: PropTypes.array,
     loadBookmarks: PropTypes.func,
-    toggleBookmark: PropTypes.func
+    toggleBookmark: PropTypes.func,
+    ensureBookmark: PropTypes.func
   };
 
   static defaultProps = {
@@ -64,6 +65,8 @@ export class Fetch extends React.Component {
       bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n, 10)}));
     }
     this.props.loadBookmarks(bookmarksArr);
+    this.props.ensureBookmark(0);
+    console.log(this.props.log);
     this.state = {
       build: params.build,
       test: params.test,
@@ -113,51 +116,12 @@ export class Fetch extends React.Component {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
       this.clearFind();
     }
-    if (this.props.bookmarks !== prevProps.bookmarks) {
+    if (JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) {
+      if (this.props.log.lines.length > 0) {
+        this.props.ensureBookmark(0);
+        this.props.ensureBookmark(this.props.log.lines[this.props.log.lines.length - 1].lineNumber);
+      }
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    console.log('componentWillReceiveProps');
-    const params = nextProps.match.params;
-    const nextLocationSearch = nextProps.location.search;
-    const parsed = new URLSearchParams(nextLocationSearch === '' ? nextProps.location.hash : nextLocationSearch);
-    // don't reload, just update state
-    if (params.build === this.state.build && params.test === this.state.test && !parsed.sever) {
-    // update the filter in the child component and return
-      if (this.state.filter !== parsed.filter) {
-        console.log('set filter to ' + parsed.filter);
-        this.setState({filter: parsed.filter});
-      }
-      if (this.state.scrollLine !== parseInt(parsed.scroll, 10)) {
-        console.log('set scroll to: ' + parsed.scroll);
-        this.setState({scrollLine: parseInt(parsed.scroll, 10)});
-      }
-    // reload and rerender
-    } else {
-      console.log('set state to server: ' + parsed.server);
-      this.setState({build: params.build,
-        test: params.test,
-        filter: parsed.filter,
-        scrollLine: parseInt(parsed.scroll, 10),
-        server: parsed.server});
-      let url = '';
-      if (this.urlInput) {
-        url = this.urlInput.value.trim();
-      }
-
-      if (url) {
-        this.setState({url: url});
-      }
-    }
-    if (this.props.log.lines.length !== nextProps.log.lines.length && nextProps.log.lines.length > 0) {
-      let newBookmarks = this.ensureBookmark(0, this.props.bookmarks);
-      newBookmarks = this.ensureBookmark(nextProps.log.lines[nextProps.log.lines.length - 1].lineNumber, newBookmarks);
-      if (newBookmarks.length !== this.props.bookmarks.length) {
-        this.props.loadBookmarks(newBookmarks);
-        this.updateURL(newBookmarks, this.props.filterList, this.props.highlightList);
-      }
     }
   }
 
@@ -236,16 +200,6 @@ export class Fetch extends React.Component {
 
   bookmarkSort(b1, b2) {
     return b1.lineNumber - b2.lineNumber;
-  }
-
-  ensureBookmark(lineNum, bookmarks) {
-    const newBookmarks = bookmarks.slice();
-    const i = this.findBookmark(newBookmarks, lineNum);
-    if (i === -1) {
-      newBookmarks.push({lineNumber: lineNum});
-      newBookmarks.sort(this.bookmarkSort);
-    }
-    return newBookmarks;
   }
 
   nextFind = () => {
@@ -590,6 +544,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     addHighlight: (text) => dispatch(actions.addHighlight(text)),
     loadBookmarks: (bookmarksArr) => dispatch(actions.loadBookmarks(bookmarksArr)),
     toggleBookmark: (lineNumArray) => dispatch(actions.toggleBookmark(lineNumArray)),
+    ensureBookmark: (lineNum) => dispatch(actions.ensureBookmark(lineNum)),
     ...ownProps
   };
 }
