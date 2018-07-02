@@ -451,12 +451,16 @@ export class Fetch extends React.Component {
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
-    this.findInput.addEventListener('keydown', this.handleShiftEnter);
+    if (this.findInput) {
+      this.findInput.addEventListener('keydown', this.handleShiftEnter);
+    }
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
-    this.findInput.removeEventListener('keydown', this.handleShiftEnter);
+    if (this.findInput) {
+      this.findInput.removeEventListener('keydown', this.handleShiftEnter);
+    }
   }
 
   handleKeyDown = (event) => {
