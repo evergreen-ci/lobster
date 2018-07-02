@@ -65,8 +65,6 @@ export class Fetch extends React.Component {
       bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n, 10)}));
     }
     this.props.loadBookmarks(bookmarksArr);
-    this.props.ensureBookmark(0);
-    console.log(this.props.log);
     this.state = {
       build: params.build,
       test: params.test,
@@ -116,13 +114,20 @@ export class Fetch extends React.Component {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
       this.clearFind();
     }
-    if (JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) {
+    if ((JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) || this.props.log.lines !== prevProps.log.lines) {
       if (this.props.log.lines.length > 0) {
         this.props.ensureBookmark(0);
         this.props.ensureBookmark(this.props.log.lines[this.props.log.lines.length - 1].lineNumber);
       }
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     }
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.log.lines !== prevState.lines) {
+      return { lines: nextProps.log.lines };
+    }
+    return null;
   }
 
   makeFilterURLString(filter) {
