@@ -18,9 +18,6 @@ const linesArr = [
   {lineNumber: 10, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250'}
 ];
 
-const saga = createSagaMiddleware();
-const store = createStore(lobster, applyMiddleware(saga));
-
 export function makeWrapper() {
   const wrapper = Enzyme.shallow(
     <Fetch
@@ -70,17 +67,9 @@ export function makeWrapper() {
 
 test('Fetch-Search', function() {
   const wrapper = makeWrapper();
-
-  // Check for existence of raw and HTML buttons
-  const rawUrl = '/build/' + wrapper.state('build') + '/all?raw=1';
-  const HTMLUrl = '/build/' + wrapper.state('build') + '/all?html=1';
-  assert.ok(wrapper.containsAllMatchingElements([
-    <Button href={rawUrl}>Raw</Button>,
-    <Button href={HTMLUrl}>HTML</Button>
-  ]));
+  const toolbarWrapper = wrapper.find('Toolbar');
 
   // Testing change in search bar with results
-  const toolbarWrapper = wrapper.find('Toolbar');
   toolbarWrapper.find('#findInput').instance().value = '2018';
   toolbarWrapper.find('#findInput').simulate('change', {});
   assert.equal(wrapper.state('findIdx'), 0);

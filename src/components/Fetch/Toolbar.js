@@ -8,15 +8,39 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Col from 'react-bootstrap/lib/Col';
 import CollapseMenu from './CollapseMenu';
+import { connect } from 'react-redux';
+import * as actions from '../../actions';
 
 export class Toolbar extends React.Component {
   static propTypes = {
     setFormRef: PropTypes.func.isRequired,
+    settings: PropTypes.shape({
+      wrap: PropTypes.bool.isRequired,
+      caseSensitive: PropTypes.bool.isRequired,
+      filterIntersection: PropTypes.bool.isRequired
+    }),
+    toggleSettings: PropTypes.shape({
+      toggleWrap: PropTypes.func.isRequired,
+      toggleCaseSensitive: PropTypes.func.isRequired,
+      toggleFilterIntersection: PropTypes.func.isRequired
+    }).isRequired,
     handleChangeFindEvent: PropTypes.func.isRequired,
     find: PropTypes.func.isRequired,
     showFind: PropTypes.func.isRequired,
     addFilter: PropTypes.func.isRequired,
+    filterActions: PropTypes.shape({
+      removeFilter: PropTypes.func.isRequired,
+      toggleFilter: PropTypes.func.isRequired,
+      toggleFilterInverse: PropTypes.func.isRequired
+    }),
+    filterList: PropTypes.array.isRequired,
+    highlightList: PropTypes.array.isRequired,
     addHighlight: PropTypes.func.isRequired,
+    highlightActions: PropTypes.shape({
+      removeHighlight: PropTypes.func.isRequired,
+      toggleHighlight: PropTypes.func.isRequired,
+      toggleHighlightLine: PropTypes.func.isRequired
+    }),
     togglePanel: PropTypes.func.isRequired,
     detailsOpen: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
@@ -39,10 +63,36 @@ export class Toolbar extends React.Component {
     if (nextProps.findResults !== this.props.findResults) {
       return true;
     }
+    if (nextProps.settings !== this.props.settings) {
+      return true;
+    }
+    if (nextProps.toggleSettings !== this.props.toggleSettings) {
+      return true;
+    }
+    if (nextProps.filterList !== this.props.filterList || nextProps.highlightList !== this.props.highlightList) {
+      return true;
+    }
     return false;
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.settings !== prevState.settings) {
+      return { settings: nextProps.settings };
+    }
+    if (nextProps.toggleSettings !== prevState.toggleSettings) {
+      return { toggleSettings: nextProps.toggleSettings };
+    }
+    if (nextProps.filterList !== prevState.filterList) {
+      return { filterList: nextProps.filterList };
+    }
+    if (nextProps.highlightList !== prevState.highlightList) {
+      return { highlightList: nextProps.highlightList };
+    }
+    return null;
+  }
+
   render() {
+    console.log(this.props.toggleSettings);
     return (
       <Col lg={11} lgOffset={1}>
         <div className="find-box">
@@ -68,14 +118,52 @@ export class Toolbar extends React.Component {
           <CollapseMenu
             detailsOpen={this.props.detailsOpen}
             handleSubmit={this.props.handleSubmit}
+            settings={this.props.settings}
             server={this.props.server}
             url={this.props.url}
+            toggleSettings={this.props.toggleSettings}
             build={this.props.build}
             setURLRef={this.props.setURLRef}
             valueJIRA={this.props.valueJIRA}
+            filterActions={this.props.filterActions}
+            highlightActions={this.props.highlightActions}
+            highlightList={this.props.highlightList}
+            filterList={this.props.filterList}
           />
         </div>
       </Col>
     );
   }
 }
+
+function mapStateToProps(state, ownProps) {
+  return {
+    ...state, ...ownProps,
+    settings: state.settings,
+    filterList: state.filters,
+    highlightList: state.highlights
+  };
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+  const filterActions = {
+    toggleFilter: (text) => dispatch(actions.toggleFilter(text)),
+    toggleFilterInverse: (text) => dispatch(actions.toggleFilterInverse(text)),
+    removeFilter: (text) => dispatch(actions.removeFilter(text))
+  };
+  const highlightActions = {
+    toggleHighlight: (text) => dispatch(actions.toggleHighlight(text)),
+    toggleHighlightLine: (text) => dispatch(actions.toggleHighlightLine(text)),
+    removeHighlight: (text) => dispatch(actions.removeHighlight(text))
+  };
+  const toggleSettings = {
+    toggleWrap: () => dispatch(actions.toggleLineWrap()),
+    toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
+    toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection())
+  };
+  return {
+    ...ownProps, toggleSettings: toggleSettings, filterActions, highlightActions
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);

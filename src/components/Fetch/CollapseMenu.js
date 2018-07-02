@@ -11,8 +11,6 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Collapse from 'react-bootstrap/lib/Collapse';
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
-import { connect } from 'react-redux';
-import * as actions from '../../actions';
 
 export class CollapseMenu extends React.PureComponent {
   static propTypes = {
@@ -22,23 +20,32 @@ export class CollapseMenu extends React.PureComponent {
       wrap: PropTypes.bool.isRequired,
       caseSensitive: PropTypes.bool.isRequired,
       filterIntersection: PropTypes.bool.isRequired
-    }),
+    }).isRequired,
+    toggleSettings: PropTypes.shape({
+      toggleWrap: PropTypes.func.isRequired,
+      toggleCaseSensitive: PropTypes.func.isRequired,
+      toggleFilterIntersection: PropTypes.func.isRequired
+    }).isRequired,
     toggleWrap: PropTypes.func.isRequired,
     toggleCaseSensitive: PropTypes.func.isRequired,
     toggleFilterIntersection: PropTypes.func.isRequired,
     filterList: PropTypes.array.isRequired,
-    removeFilter: PropTypes.func.isRequired,
-    toggleFilter: PropTypes.func.isRequired,
-    toggleFilterInverse: PropTypes.func.isRequired,
+    filterActions: PropTypes.shape({
+      removeFilter: PropTypes.func.isRequired,
+      toggleFilter: PropTypes.func.isRequired,
+      toggleFilterInverse: PropTypes.func.isRequired
+    }),
     server: PropTypes.string,
     url: PropTypes.string,
     build: PropTypes.string.isRequired,
     setURLRef: PropTypes.func.isRequired,
     valueJIRA: PropTypes.string.isRequired,
     highlightList: PropTypes.array.isRequired,
-    removeHighlight: PropTypes.func.isRequired,
-    toggleHighlight: PropTypes.func.isRequired,
-    toggleHighlightLine: PropTypes.func.isRequired
+    highlightActions: PropTypes.shape({
+      removeHighlight: PropTypes.func.isRequired,
+      toggleHighlight: PropTypes.func.isRequired,
+      toggleHighlightLine: PropTypes.func.isRequired
+    }).isRequired
   };
 
   // XXX: FYI, I've made this component pure since no state
@@ -96,18 +103,19 @@ export class CollapseMenu extends React.PureComponent {
   }
 
   render() {
+    console.log(this.props.toggleSettings);
     return (
       <Collapse className="collapse-menu" in={this.props.detailsOpen}>
         <div>
           <Form horizontal onSubmit={this.props.handleSubmit}>
             {this.showLogBox()}
-            <FormGroup controlId="wrap">
+            <FormGroup controlId="collapseButtons">
               <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
-              <Col lg={1}><ToggleButton value={this.props.settings.wrap} onToggle={this.props.toggleWrap} /></Col>
+              <Col lg={1}><ToggleButton value={this.props.settings.wrap} onToggle={this.props.toggleSettings.toggleWrap} /></Col>
               <Col componentClass={ControlLabel} lg={1}>Case Sensitive</Col>
-              <Col lg={1}><ToggleButton value={this.props.settings.caseSensitive} onToggle={this.props.toggleCaseSensitive} /></Col>
+              <Col lg={1}><ToggleButton value={this.props.settings.caseSensitive} onToggle={this.props.toggleSettings.toggleCaseSensitive} /></Col>
               <Col componentClass={ControlLabel} lg={1}>Filter Logic</Col>
-              <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.props.settings.filterIntersection} onToggle={this.props.toggleFilterIntersection} /></Col>
+              <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.props.settings.filterIntersection} onToggle={this.props.toggleSettings.toggleFilterIntersection} /></Col>
               <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
               <Col lg={1}><textarea readOnly className="unmoving" value={this.props.valueJIRA}></textarea></Col>
               {this.showJobLogs()}
@@ -117,15 +125,15 @@ export class CollapseMenu extends React.PureComponent {
           </Form>
           <Filters
             filters={this.props.filterList}
-            removeFilter={this.props.removeFilter}
-            toggleFilter={this.props.toggleFilter}
-            toggleFilterInverse={this.props.toggleFilterInverse}
+            removeFilter={this.props.filterActions.removeFilter}
+            toggleFilter={this.props.filterActions.toggleFilter}
+            toggleFilterInverse={this.props.filterActions.toggleFilterInverse}
           />
           <Highlights
             highlights={this.props.highlightList}
-            removeHighlight={this.props.removeHighlight}
-            toggleHighlight={this.props.toggleHighlight}
-            toggleHighlightLine={this.props.toggleHighlightLine}
+            removeHighlight={this.props.highlightActions.removeHighlight}
+            toggleHighlight={this.props.highlightActions.toggleHighlight}
+            toggleHighlightLine={this.props.highlightActions.toggleHighlightLine}
           />
         </div>
       </Collapse>
@@ -133,28 +141,4 @@ export class CollapseMenu extends React.PureComponent {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    ...ownProps,
-    settings: state.settings,
-    filterList: state.filters,
-    highlightList: state.highlights
-  };
-}
-
-function mapDispatchToProps(dispatch, ownProps) {
-  return {
-    ...ownProps,
-    toggleWrap: () => dispatch(actions.toggleLineWrap()),
-    toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
-    toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection()),
-    toggleFilter: (text) => dispatch(actions.toggleFilter(text)),
-    toggleFilterInverse: (text) => dispatch(actions.toggleFilterInverse(text)),
-    removeFilter: (text) => dispatch(actions.removeFilter(text)),
-    toggleHighlight: (text) => dispatch(actions.toggleHighlight(text)),
-    toggleHighlightLine: (text) => dispatch(actions.toggleHighlightLine(text)),
-    removeHighlight: (text) => dispatch(actions.removeHighlight(text))
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(CollapseMenu);
+export default CollapseMenu;

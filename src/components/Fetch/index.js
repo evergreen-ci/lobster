@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
 import { connect } from 'react-redux';
 import queryString from '../../thirdparty/query-string';
-import { Toolbar } from './Toolbar';
+import Toolbar from './Toolbar';
 
 // eslint-disable-next-line react/no-deprecated
 export class Fetch extends React.Component {
@@ -520,10 +520,6 @@ export class Fetch extends React.Component {
             url={this.state.url}
             setURLRef={this.setURLRef}
             valueJIRA={this.showJIRA()}
-            highlightList={this.state.highlightList}
-            removeHighlight={this.removeHighlight}
-            toggleHighlight={this.toggleHighlight}
-            toggleHighlightLine={this.toggleHighlightLine}
             findResults={this.state.findResults}
             findIdx={this.state.findIdx}
           />
