@@ -11,7 +11,7 @@ export type Highlights = {|
 
 const initialState: Highlights[] = [];
 
-export default function(state: Highlights = initialState, action: Action): Settings {
+export default function(state: Highlights = initialState, action: Action): Highlights {
   if (action.type === LOAD_HIGHLIGHTS) {
     return action.payload.initialHighlights;
   }

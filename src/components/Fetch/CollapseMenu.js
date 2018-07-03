@@ -106,6 +106,7 @@ export class CollapseMenu extends React.PureComponent {
           <Form horizontal onSubmit={this.props.handleSubmit}>
             {this.showLogBox()}
             <FormGroup controlId="collapseButtons">
+              <Button>Hello</Button>
               <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
               <Col lg={1}><ToggleButton value={this.props.settings.wrap} onToggle={this.props.toggleSettings.toggleWrap} /></Col>
               <Col componentClass={ControlLabel} lg={1}>Case Sensitive</Col>

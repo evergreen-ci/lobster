@@ -11,7 +11,7 @@ export type Filters = {|
 
 const initialState: Filters[] = [];
 
-export default function(state: Filters = initialState, action: Action): Settings {
+export default function(state: Filters = initialState, action: Action): Filters {
   if (action.type === LOAD_FILTERS) {
     return action.payload.initialFilters;
   }

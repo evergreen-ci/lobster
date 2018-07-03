@@ -30,7 +30,7 @@ function ensureBookmark(lineNum, bookmarks) {
   return newBookmarks;
 }
 
-export default function(state: Bookmarks = initialState, action: Action): Settings {
+export default function(state: Bookmarks = initialState, action: Action): Bookmarks {
   if (action.type === LOAD_BOOKMARKS) {
     return action.payload.bookmarksArr;
   }

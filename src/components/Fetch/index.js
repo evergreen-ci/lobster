@@ -416,7 +416,7 @@ export class Fetch extends React.Component {
     if (this.state.find !== '') {
       if (this.state.findResults.length > 0) {
         return (
-          <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
+          <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
             <Button onClick={this.nextFind}>Next</Button>
             <Button onClick={this.prevFind}>Prev</Button>
           </span>);
