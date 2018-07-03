@@ -19,10 +19,6 @@ test('Reverse Search', function() {
   assert.equal(wrapper.state('wrap'), false);
   assert.equal(wrapper.state('caseSensitive'), false);
   assert.equal(wrapper.state('detailsOpen'), false);
-  assert.ok(wrapper.containsAllMatchingElements([
-    <Button>Next</Button>,
-    <Button>Prev</Button>
-  ]));
 
   // Testing shift+enter and enter combinations
   wrapper.instance().findInput.dispatchEvent(shiftEnterEvent);

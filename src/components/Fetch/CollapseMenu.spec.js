@@ -18,9 +18,11 @@ const wrapper = Enzyme.mount(
       toggleHighlight: sinon.fake(),
       toggleHighlightLine: sinon.fake()
     }}
-    toggleWrap={sinon.fake()}
-    toggleCaseSensitive={sinon.fake()}
-    toggleFilterIntersection={sinon.fake()}
+    toggleSettings={{
+      toggleWrap: sinon.fake(),
+      toggleCaseSensitive: sinon.fake(),
+      toggleFilterIntersection: sinon.fake()
+    }}
     filterList={[]}
     highlightList={[]}
     server={null}
@@ -34,13 +36,9 @@ const wrapper = Enzyme.mount(
 );
 
 test('CollapseMenu', function() {
-  const wrap = wrapper.find('FormGroup');
-  console.log(wrap);
-  const rawUrl = '/build/' + wrapper.state('build') + '/all?raw=1';
-  const HTMLUrl = '/build/' + wrapper.state('build') + '/all?html=1';
-  const buttons = wrap.find('Button');
-  console.log(buttons.length);
-  assert.ok(wrap.containsAllMatchingElements([
+  const rawUrl = '/build/' + wrapper.props().build + '/all?raw=1';
+  const HTMLUrl = '/build/' + wrapper.props().build + '/all?html=1';
+  assert.ok(wrapper.containsAllMatchingElements([
     <Button href={rawUrl}>Raw</Button>,
     <Button href={HTMLUrl}>HTML</Button>
   ]));
