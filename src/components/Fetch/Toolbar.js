@@ -75,24 +75,7 @@ export class Toolbar extends React.Component {
     return false;
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.settings !== prevState.settings) {
-      return { settings: nextProps.settings };
-    }
-    if (nextProps.toggleSettings !== prevState.toggleSettings) {
-      return { toggleSettings: nextProps.toggleSettings };
-    }
-    if (nextProps.filterList !== prevState.filterList) {
-      return { filterList: nextProps.filterList };
-    }
-    if (nextProps.highlightList !== prevState.highlightList) {
-      return { highlightList: nextProps.highlightList };
-    }
-    return null;
-  }
-
   render() {
-    console.log(this.props.toggleSettings);
     return (
       <Col lg={11} lgOffset={1}>
         <div className="find-box">

@@ -26,9 +26,6 @@ export class CollapseMenu extends React.PureComponent {
       toggleCaseSensitive: PropTypes.func.isRequired,
       toggleFilterIntersection: PropTypes.func.isRequired
     }).isRequired,
-    toggleWrap: PropTypes.func.isRequired,
-    toggleCaseSensitive: PropTypes.func.isRequired,
-    toggleFilterIntersection: PropTypes.func.isRequired,
     filterList: PropTypes.array.isRequired,
     filterActions: PropTypes.shape({
       removeFilter: PropTypes.func.isRequired,
@@ -103,7 +100,6 @@ export class CollapseMenu extends React.PureComponent {
   }
 
   render() {
-    console.log(this.props.toggleSettings);
     return (
       <Collapse className="collapse-menu" in={this.props.detailsOpen}>
         <div>
