@@ -340,11 +340,14 @@ class LogView extends React.Component {
     if (this.props.findLine < 0 || !(this.props.findLine in this.state.lineMap)) {
       return;
     }
-    const findElements = this.state.lineMap[this.props.findLine]
-      .getElementsByClassName('findResult' + this.props.findLine);
+    const findElements = document.getElementsByClassName('findResult' + this.props.findLine);
+    console.log(findElements);
+    console.log(this.props.findLine);
     if (findElements.length > 0) {
+      console.log('here');
       const elem = findElements[0];
       const position = elem.getBoundingClientRect();
+      console.log(position);
       const windowWidth = window.innerWidth;
 
       let scrollX = window.scrollX;
