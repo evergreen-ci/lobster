@@ -55,7 +55,7 @@ class LogLineText extends React.Component {
     return (
       <span ref={this.setRef}>
         <Highlighter
-          highlightClassName={'findResult and highlight' + this.props.lineNumber}
+          highlightClassName={'findResult' + this.props.lineNumber}
           caseSensitive={this.props.caseSensitive}
           unhighlightStyle={style}
           highlightStyle={highlightStyle}
