@@ -30,7 +30,7 @@ class LogLineText extends React.Component {
     };
   }
 
-  componentDidMount() {
+  componentDidUpdate() {
     if (this.lineRef) {
       this.props.lineRefCallback(this.lineRef, this.props.lineNumber);
     }
@@ -49,6 +49,11 @@ class LogLineText extends React.Component {
   }
 
   render() {
+    /*
+    if (this.lineRef) {
+      this.props.lineRefCallback(this.lineRef, this.props.lineNumber);
+    }
+    */
     const style = {color: this.props.colorMap[this.props.port]};
     const highlightAndFind = this.updateHighlightAndFind();
     const highlightStyle = {color: this.props.colorMap[this.props.port], 'backgroundImage': 'inherit', 'backgroundColor': 'pink'};
@@ -337,22 +342,19 @@ class LogView extends React.Component {
   }
 
   scrollFindIntoView() {
+    console.log(this.state.lineMap);
     if (this.props.findLine < 0 || !(this.props.findLine in this.state.lineMap)) {
       return;
     }
-    const findElements = document.getElementsByClassName('findResult' + this.props.findLine);
-    console.log(findElements);
-    console.log(this.props.findLine);
+    const findElements = this.state.lineMap[this.props.findLine]
+      .getElementsByClassName('findResult' + this.props.findLine);
     if (findElements.length > 0) {
-      console.log('here');
       const elem = findElements[0];
       const position = elem.getBoundingClientRect();
-      console.log(position);
       const windowWidth = window.innerWidth;
 
       let scrollX = window.scrollX;
-      const scrollY = window.scrollY - 45; // Account for header
-
+      const scrollY = window.scrollY; // Account for header
       if (position.right > windowWidth) {
         // Scroll so the leftmost part of the component is 2/3 of the way into the screen.
         scrollX = position.left - windowWidth / 3;
