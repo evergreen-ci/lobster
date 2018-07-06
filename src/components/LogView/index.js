@@ -342,7 +342,6 @@ class LogView extends React.Component {
   }
 
   scrollFindIntoView() {
-    console.log(this.state.lineMap);
     if (this.props.findLine < 0 || !(this.props.findLine in this.state.lineMap)) {
       return;
     }
