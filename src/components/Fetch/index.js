@@ -1,7 +1,7 @@
 import React from 'react';
 import { loadData, lobsterLoadData } from '../../actions';
 import './style.css';
-import ToggleButton from 'react-toggle-button';
+import { ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import Button from 'react-bootstrap/lib/Button';
 import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
 import Form from 'react-bootstrap/lib/Form';
@@ -587,11 +587,6 @@ export class Fetch extends React.Component {
     }
   }
 
-  toggleCaseSensitive = (value) => {
-    this.setState({caseSensitive: !value});
-    this.find();
-  }
-
   showRaw() {
     if (!this.state.server) {
       return (<Col lg={1}><Button href={'/build/' + this.state.build + '/all?raw=1'}>Raw</Button></Col>);
@@ -604,8 +599,20 @@ export class Fetch extends React.Component {
     }
   }
 
-  toggleFilterIntersection = (value) => {
-    this.setState({filterIntersection: !value});
+  toggleCaseSensitive = () => {
+    const currentValue = this.state.caseSensitive;
+    this.setState({caseSensitive: !currentValue});
+    this.find();
+  }
+
+  toggleFilterIntersection = () => {
+    const currentValue = this.state.filterIntersection;
+    this.setState({filterIntersection: !currentValue});
+  }
+
+  toggleWrap = () => {
+    const currentValue = this.state.wrap;
+    this.setState({wrap: !currentValue});
   }
 
   componentDidMount() {
@@ -652,7 +659,6 @@ export class Fetch extends React.Component {
     }
   }
 
-  toggleWrap = (value) => this.setState({wrap: !value});
   togglePanel = () => this.setState((state) => ({detailsOpen: !state.detailsOpen}));
   setFormRef = (ref) => {this.findInput = ref;}
 
@@ -661,7 +667,7 @@ export class Fetch extends React.Component {
       <div>
         <Bookmarks bookmarks={this.state.bookmarks} setScroll={this.setScroll} />
         <div className="main">
-          <Col lg={11} lgOffset={1}>
+          <Col lg={8} lgOffset={1}>
             <div className="find-box">
               <Form horizontal>
                 <FormGroup controlId="findInput" className="filter-header">
@@ -687,12 +693,41 @@ export class Fetch extends React.Component {
                   <Form horizontal onSubmit={this.handleSubmit}>
                     {this.showLogBox()}
                     <FormGroup controlId="wrap">
-                      <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
-                      <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={this.toggleWrap} /></Col>
-                      <Col componentClass={ControlLabel} lg={1}>Case Sensitive</Col>
-                      <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive} /></Col>
-                      <Col componentClass={ControlLabel} lg={1}>Filter Logic</Col>
-                      <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection} /></Col>
+                      <Col lg={3}>
+                        <span className="toggle-label">Wrap</span>
+                        <ToggleButtonGroup
+                          className="toggle-buttons"
+                          type="radio"
+                          name="wrap-on-off"
+                          value={this.state.wrap}
+                          onChange={this.toggleWrap}
+                        >
+                          <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
+                          <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
+                        </ToggleButtonGroup>
+                        <span className="toggle-label">Case Sensitive</span>
+                        <ToggleButtonGroup
+                          className="toggle-buttons"
+                          type="radio"
+                          name="case-sensitive-on-off"
+                          value={this.state.caseSensitive}
+                          onChange={this.toggleCaseSensitive}
+                        >
+                          <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
+                          <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
+                        </ToggleButtonGroup>
+                        <span className="toggle-label">Filter Logic</span>
+                        <ToggleButtonGroup
+                          className="toggle-buttons"
+                          type="radio"
+                          name="wrap-on-off"
+                          value={this.state.filterIntersection}
+                          onChange={this.toggleFilterIntersection}
+                        >
+                          <ToggleButton value={false} bsSize="small" bsStyle="primary">or</ToggleButton>
+                          <ToggleButton value={true} bsSize="small" bsStyle="primary">and</ToggleButton>
+                        </ToggleButtonGroup>
+                      </Col>
                       <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
                       <Col lg={1}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
                       {this.showJobLogs()}

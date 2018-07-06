@@ -47,7 +47,7 @@
 
 }
 
-.filter-highlight-buttons {
+.toggle-buttons {
     margin-left: 12px;
 }
 
@@ -80,7 +80,7 @@
     font-size: 17px;
 }
 
-.filter-highlight-label {
+.toggle-label {
   margin-left: 10px;
   font-size: 13px;
 }
