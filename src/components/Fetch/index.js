@@ -667,7 +667,7 @@ export class Fetch extends React.Component {
       <div>
         <Bookmarks bookmarks={this.state.bookmarks} setScroll={this.setScroll} />
         <div className="main">
-          <Col lg={8} lgOffset={1}>
+          <Col lg={11} lgOffset={1}>
             <div className="find-box">
               <Form horizontal>
                 <FormGroup controlId="findInput" className="filter-header">
@@ -693,8 +693,8 @@ export class Fetch extends React.Component {
                   <Form horizontal onSubmit={this.handleSubmit}>
                     {this.showLogBox()}
                     <FormGroup controlId="wrap">
-                      <Col lg={3}>
-                        <span className="toggle-label">Wrap</span>
+                      <Col lg={5}>
+                        <span className="far-left-label">Wrap</span>
                         <ToggleButtonGroup
                           className="toggle-buttons"
                           type="radio"
