@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/lib/Button';
 import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
 import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Col from 'react-bootstrap/lib/Col';
 import CollapseMenu from './CollapseMenu';
@@ -25,8 +26,8 @@ export class Toolbar extends React.Component {
       toggleFilterIntersection: PropTypes.func.isRequired
     }).isRequired,
     handleChangeFindEvent: PropTypes.func.isRequired,
+    searchRegex: PropTypes.string.isRequired,
     find: PropTypes.func.isRequired,
-    showFind: PropTypes.func.isRequired,
     addFilter: PropTypes.func.isRequired,
     filterActions: PropTypes.shape({
       removeFilter: PropTypes.func.isRequired,
@@ -50,7 +51,10 @@ export class Toolbar extends React.Component {
     setURLRef: PropTypes.func.isRequired,
     valueJIRA: PropTypes.string.isRequired,
     findIdx: PropTypes.number.isRequired,
-    findResults: PropTypes.array.isRequired
+    findResults: PropTypes.array.isRequired,
+    changeFindIdx: PropTypes.func.isRequired,
+    changeSearch: PropTypes.func.isRequired,
+    setScroll: PropTypes.func.isRequired
   };
 
   shouldComponentUpdate(nextProps, _nextState) {
@@ -75,6 +79,37 @@ export class Toolbar extends React.Component {
     return false;
   }
 
+  showFind = () => {
+    if (this.props.searchRegex !== '') {
+      if (this.props.findResults.length > 0) {
+        return (
+          <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.props.findIdx + 1}/{this.props.findResults.length}</Col>
+            <Button onClick={this.nextFind}>Next</Button>
+            <Button onClick={this.prevFind}>Prev</Button>
+          </span>);
+      }
+      return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
+    }
+  }
+
+  nextFind = () => {
+    let nextIdx = this.props.findIdx + 1;
+    if (nextIdx === this.props.findResults.length) {
+      nextIdx = 0;
+    }
+    this.props.changeFindIdx(nextIdx);
+    this.props.setScroll(this.props.findResults[nextIdx]);
+  }
+
+  prevFind = () => {
+    let nextIdx = this.props.findIdx - 1;
+    if (nextIdx === -1) {
+      nextIdx = this.props.findResults.length - 1;
+    }
+    this.props.changeFindIdx(nextIdx);
+    this.props.setScroll(this.props.findResults[nextIdx]);
+  }
+
   render() {
     return (
       <Col lg={11} lgOffset={1}>
@@ -91,7 +126,7 @@ export class Toolbar extends React.Component {
               </Col>
               <ButtonToolbar>
                 <Button id="formSubmit" type="submit" onClick={this.props.find}>Find</Button>
-                {this.props.showFind()}
+                {this.showFind()}
                 <Button onClick={this.props.addFilter}>Add Filter</Button>
                 <Button onClick={this.props.addHighlight}>Add Highlight</Button>
                 <Button onClick={this.props.togglePanel}>{this.props.detailsOpen ? 'Hide Details \u25B4' : 'Show Details \u25BE'}</Button>
@@ -124,7 +159,9 @@ function mapStateToProps(state, ownProps) {
     ...state, ...ownProps,
     settings: state.settings,
     filterList: state.filters,
-    highlightList: state.highlights
+    highlightList: state.highlights,
+    findIdx: state.find.findIdx,
+    searchRegex: state.find.searchRegex
   };
 }
 
@@ -145,7 +182,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection())
   };
   return {
-    ...ownProps, toggleSettings: toggleSettings, filterActions, highlightActions
+    ...ownProps, toggleSettings: toggleSettings, filterActions, highlightActions,
+    changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
+    changeSearch: (text) => dispatch(actions.changeSearch(text))
   };
 }
 

@@ -11,6 +11,8 @@ export const LOAD_HIGHLIGHTS = 'load-highlights';
 export const CHANGE_BOOKMARK = 'change-bookmark';
 export const LOAD_BOOKMARKS = 'load-bookmarks';
 export const ENSURE_BOOKMARK = 'ensure-bookmark';
+export const CHANGE_FINDIDX = 'change-findidx';
+export const CHANGE_SEARCH = 'change-search';
 
 export type Filter = {
   text: string,
@@ -238,6 +240,24 @@ export function loadBookmarks(bookmarksArr: array): LoadBookmarks {
     type: LOAD_BOOKMARKS,
     payload: {
       bookmarksArr: bookmarksArr
+    }
+  };
+}
+
+export function changeFindIdx(index: number): ChangeFind {
+  return {
+    type: CHANGE_FINDIDX,
+    payload: {
+      index: index
+    }
+  };
+}
+
+export function changeSearch(text: string): ChangeFind {
+  return {
+    type: CHANGE_SEARCH,
+    payload: {
+      text: text
     }
   };
 }

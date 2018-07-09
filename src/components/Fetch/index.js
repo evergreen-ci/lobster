@@ -1,9 +1,6 @@
 import React from 'react';
 import * as actions from '../../actions';
 import './style.css';
-import Button from 'react-bootstrap/lib/Button';
-import Col from 'react-bootstrap/lib/Col';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
@@ -45,7 +42,10 @@ export class Fetch extends React.Component {
     bookmarks: PropTypes.array,
     loadBookmarks: PropTypes.func,
     toggleBookmark: PropTypes.func,
-    ensureBookmark: PropTypes.func
+    ensureBookmark: PropTypes.func,
+    findIdx: PropTypes.number.isRequired,
+    changeFindIdx: PropTypes.func.isRequired,
+    searchRegex: PropTypes.string.isRequired
   };
 
   static defaultProps = {
@@ -72,8 +72,6 @@ export class Fetch extends React.Component {
       server: parsed.server || null,
       url: parsed.url || null,
       detailsOpen: false,
-      find: '',
-      findIdx: -1,
       findResults: []
     };
     const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')}));
@@ -188,7 +186,8 @@ export class Fetch extends React.Component {
     this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
 
     if (this.urlInput.value !== this.state.url) {
-      this.setState({url: this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
+      this.props.changeFindIdx(-1);
+      this.setState({url: this.urlInput.value, bookmarks: [], findResults: []});
       this.props.lobsterLoadData(this.state.server, this.state.url);
     }
   }
@@ -207,24 +206,6 @@ export class Fetch extends React.Component {
     return b1.lineNumber - b2.lineNumber;
   }
 
-  nextFind = () => {
-    let nextIdx = this.state.findIdx + 1;
-    if (nextIdx === this.state.findResults.length) {
-      nextIdx = 0;
-    }
-    this.setState({findIdx: nextIdx});
-    this.setScroll(this.state.findResults[nextIdx]);
-  }
-
-  prevFind = () => {
-    let nextIdx = this.state.findIdx - 1;
-    if (nextIdx === -1) {
-      nextIdx = this.state.findResults.length - 1;
-    }
-    this.setState({findIdx: nextIdx});
-    this.setScroll(this.state.findResults[nextIdx]);
-  }
-
   find = (event) => {
     if (event) {
       event.preventDefault();
@@ -239,7 +220,7 @@ export class Fetch extends React.Component {
       return;
     }
 
-    if (findRegexp === this.state.find) {
+    if (findRegexp === this.props.searchRegex) {
       if (this.state.findResults.length > 0) {
         return this.nextFind();
       }
@@ -259,15 +240,18 @@ export class Fetch extends React.Component {
     }
 
     if (findResults.length > 0) {
-      this.setState({find: findRegexp, findIdx: 0, findResults: findResults});
+      this.props.changeFindIdx(0);
+      this.setState({find: findRegexp, findResults: findResults});
       this.setScroll(findResults[0]);
     } else {
-      this.setState({find: findRegexp, findIdx: -1, findResults: findResults});
+      this.props.changeFindIdx(-1);
+      this.setState({find: findRegexp, findResults: findResults});
     }
   }
 
   clearFind() {
-    this.setState({find: '', findIdx: -1, findResults: []});
+    this.props.changeFindIdx(-1);
+    this.setState({find: '', findResults: []});
   }
 
   shouldPrintLine = (bookmarks, line, filter, inverseFilter) => {
@@ -404,25 +388,12 @@ export class Fetch extends React.Component {
         findBookmark={this.findBookmark}
         toggleBookmark={this.props.toggleBookmark}
         bookmarks={this.props.bookmarks}
-        find={this.state.find}
+        find={this.props.searchRegex}
         highlightText={highlightText}
-        findLine={this.state.findIdx === -1 ? -1 : this.state.findResults[this.state.findIdx]}
+        findLine={this.props.findIdx === -1 ? -1 : this.state.findResults[this.props.findIdx]}
         shouldPrintLine={this.shouldPrintLine}
         shouldHighlightLine={this.shouldHighlightLine}
       />);
-  }
-
-  showFind = () => {
-    if (this.state.find !== '') {
-      if (this.state.findResults.length > 0) {
-        return (
-          <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
-            <Button onClick={this.nextFind}>Next</Button>
-            <Button onClick={this.prevFind}>Prev</Button>
-          </span>);
-      }
-      return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
-    }
   }
 
   showJIRA() {
@@ -508,6 +479,7 @@ export class Fetch extends React.Component {
           <Toolbar
             setFormRef={this.setFormRef}
             handleChangeFindEvent={this.handleChangeFindEvent}
+            searchRegex={this.props.searchRegex}
             find={this.find}
             showFind={this.showFind}
             addFilter={this.addFilter}
@@ -521,7 +493,7 @@ export class Fetch extends React.Component {
             setURLRef={this.setURLRef}
             valueJIRA={this.showJIRA()}
             findResults={this.state.findResults}
-            findIdx={this.state.findIdx}
+            setScroll={this.setScroll}
           />
           <div className="log-list">
             {this.showLines()}
@@ -536,7 +508,8 @@ export class Fetch extends React.Component {
 // as we migrate towards the react-redux model
 function mapStateToProps(state, ownProps) {
   return {...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap,
-    filterList: state.filters, settings: state.settings, highlightList: state.highlights, bookmarks: state.bookmarks};
+    settings: state.settings, findIdx: state.find.findIdx, searchRegex: state.find.searchRegex,
+    filterList: state.filters, highlightList: state.highlights, bookmarks: state.bookmarks};
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
@@ -547,6 +520,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     loadInitialHighlights: (initialHighlights) => dispatch(actions.loadInitialHighlights(initialHighlights)),
     addFilter: (text) => dispatch(actions.addFilter(text)),
     addHighlight: (text) => dispatch(actions.addHighlight(text)),
+    changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
     loadBookmarks: (bookmarksArr) => dispatch(actions.loadBookmarks(bookmarksArr)),
     toggleBookmark: (lineNumArray) => dispatch(actions.toggleBookmark(lineNumArray)),
     ensureBookmark: (lineNum) => dispatch(actions.ensureBookmark(lineNum)),
