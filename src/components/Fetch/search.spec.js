@@ -28,10 +28,15 @@ export function makeWrapper() {
   const store = mockStore({
     log: {lines: linesArr, colorMap: {}},
     settings: {caseSensitive: false, wrap: false, filterIntersection: false},
+    find: {findIdx: -1, searchRegex: ''},
     filters: [],
     highlights: [],
     bookmarks: []
   });
+
+  const newFindState = (text) => {
+    return ({find: {searchRegex: text}});
+  };
   const providerWrapper = Enzyme.mount(
     <Provider store={store}>
       <Fetch
@@ -53,13 +58,14 @@ export function makeWrapper() {
         loadBookmarks={sinon.fake.returns([])}
         loadInitialFilters={sinon.fake.returns([])}
         loadInitialHighlights={sinon.fake.returns([])}
+        changeFind={newFindState}
       />
     </Provider>
   );
   const wrapper = providerWrapper.find('Fetch');
-  assert.equal(wrapper.instance().state.findIdx, -1);
+  assert.equal(wrapper.instance().props.findIdx, -1);
   assert.equal(wrapper.instance().state.findResults.length, 0);
-  assert.equal(wrapper.instance().state.find, '');
+  assert.equal(wrapper.instance().props.searchRegex, '');
   assert.equal(wrapper.instance().state.detailsOpen, false);
   assert.ok(!wrapper.containsAllMatchingElements([
     <Button>Next</Button>,
@@ -75,9 +81,9 @@ test('Fetch-Search', function() {
   // Testing change in search bar with results
   toolbarWrapper.find('#findInput').instance().value = '2018';
   toolbarWrapper.find('#findInput').simulate('change', {});
-  assert.equal(wrapper.instance().state.findIdx, 0);
+  assert.equal(wrapper.instance().props.findIdx, 0);
   assert.equal(wrapper.instance().state.findResults.length, 1);
-  assert.equal(wrapper.instance().state.find, '2018');
+  assert.equal(wrapper.instance().props.searchRegex, '2018');
   assert.equal(wrapper.instance().props.settings.wrap, false);
   assert.equal(wrapper.instance().props.settings.caseSensitive, false);
   assert.equal(wrapper.instance().props.settings.filterIntersection, false);
@@ -91,9 +97,9 @@ test('Fetch-Search', function() {
   // Testing change in search bar with no results
   wrapper.find('#findInput').instance().value = '2019';
   wrapper.find('#findInput').at(0).simulate('change', {});
-  assert.equal(wrapper.instance().state.findIdx, -1);
+  assert.equal(wrapper.instance().props.findIdx, -1);
   assert.equal(wrapper.instance().state.findResults.length, 0);
-  assert.equal(wrapper.instance().state.find, '2019');
+  assert.equal(wrapper.instance().props.searchRegex, '2019');
   assert.equal(wrapper.instance().props.settings.wrap, false);
   assert.equal(wrapper.instance().props.settings.caseSensitive, false);
   assert.equal(wrapper.instance().state.detailsOpen, false);
@@ -109,9 +115,9 @@ test('Fetch-Search', function() {
   wrapper.find('#findInput').at(0).simulate('change', {});
   wrapper.instance().props.settings.caseSensitive = true;
 
-  assert.equal(wrapper.instance().state.findIdx, 0);
+  assert.equal(wrapper.instance().props.findIdx, 0);
   assert.equal(wrapper.instance().state.findResults.length, 10);
-  assert.equal(wrapper.instance().state.find, 'ASIO');
+  assert.equal(wrapper.instance().props.searchRegex, 'ASIO');
   assert.equal(wrapper.instance().props.settings.wrap, false);
   assert.equal(wrapper.instance().props.settings.caseSensitive, true);
   assert.equal(wrapper.instance().state.detailsOpen, false);
