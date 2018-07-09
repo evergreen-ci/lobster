@@ -253,6 +253,24 @@ export class Fetch extends React.Component {
     }
   }
 
+  nextFind = () => {
+    let nextIdx = this.props.findIdx + 1;
+    if (nextIdx === this.state.findResults.length) {
+      nextIdx = 0;
+    }
+    this.props.changeFindIdx(nextIdx);
+    this.setScroll(this.state.findResults[nextIdx]);
+  }
+
+  prevFind = () => {
+    let nextIdx = this.props.findIdx - 1;
+    if (nextIdx === -1) {
+      nextIdx = this.state.findResults.length - 1;
+    }
+    this.props.changeFindIdx(nextIdx);
+    this.setScroll(this.state.findResults[nextIdx]);
+  }
+
   clearFind() {
     this.props.changeFindIdx(-1);
     this.setState({find: '', findResults: []});
@@ -392,7 +410,6 @@ export class Fetch extends React.Component {
         findBookmark={this.findBookmark}
         toggleBookmark={this.props.toggleBookmark}
         bookmarks={this.props.bookmarks}
-        find={this.props.searchRegex}
         highlightText={highlightText}
         findLine={this.props.findIdx === -1 ? -1 : this.state.findResults[this.props.findIdx]}
         shouldPrintLine={this.shouldPrintLine}
@@ -497,7 +514,8 @@ export class Fetch extends React.Component {
             setURLRef={this.setURLRef}
             valueJIRA={this.showJIRA()}
             findResults={this.state.findResults}
-            setScroll={this.setScroll}
+            nextFind={this.nextFind}
+            prevFind={this.prevFind}
           />
           <div className="log-list">
             {this.showLines()}

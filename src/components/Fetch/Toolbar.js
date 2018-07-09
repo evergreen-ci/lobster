@@ -54,7 +54,8 @@ export class Toolbar extends React.Component {
     findResults: PropTypes.array.isRequired,
     changeFindIdx: PropTypes.func.isRequired,
     changeSearch: PropTypes.func.isRequired,
-    setScroll: PropTypes.func.isRequired
+    nextFind: PropTypes.func.isRequired,
+    prevFind: PropTypes.func.isRequired
   };
 
   shouldComponentUpdate(nextProps, _nextState) {
@@ -84,30 +85,12 @@ export class Toolbar extends React.Component {
       if (this.props.findResults.length > 0) {
         return (
           <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.props.findIdx + 1}/{this.props.findResults.length}</Col>
-            <Button onClick={this.nextFind}>Next</Button>
-            <Button onClick={this.prevFind}>Prev</Button>
+            <Button onClick={this.props.nextFind}>Next</Button>
+            <Button onClick={this.props.prevFind}>Prev</Button>
           </span>);
       }
       return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
     }
-  }
-
-  nextFind = () => {
-    let nextIdx = this.props.findIdx + 1;
-    if (nextIdx === this.props.findResults.length) {
-      nextIdx = 0;
-    }
-    this.props.changeFindIdx(nextIdx);
-    this.props.setScroll(this.props.findResults[nextIdx]);
-  }
-
-  prevFind = () => {
-    let nextIdx = this.props.findIdx - 1;
-    if (nextIdx === -1) {
-      nextIdx = this.props.findResults.length - 1;
-    }
-    this.props.changeFindIdx(nextIdx);
-    this.props.setScroll(this.props.findResults[nextIdx]);
   }
 
   render() {
