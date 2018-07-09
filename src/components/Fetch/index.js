@@ -45,7 +45,8 @@ export class Fetch extends React.Component {
     ensureBookmark: PropTypes.func,
     findIdx: PropTypes.number.isRequired,
     changeFindIdx: PropTypes.func.isRequired,
-    searchRegex: PropTypes.string.isRequired
+    searchRegex: PropTypes.string.isRequired,
+    changeSearch: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -187,7 +188,8 @@ export class Fetch extends React.Component {
 
     if (this.urlInput.value !== this.state.url) {
       this.props.changeFindIdx(-1);
-      this.setState({url: this.urlInput.value, bookmarks: [], findResults: []});
+      this.setState({url: this.urlInput.value, findResults: []});
+      this.props.loadBookmarks([]);
       this.props.lobsterLoadData(this.state.server, this.state.url);
     }
   }
@@ -241,11 +243,13 @@ export class Fetch extends React.Component {
 
     if (findResults.length > 0) {
       this.props.changeFindIdx(0);
-      this.setState({find: findRegexp, findResults: findResults});
+      this.props.changeSearch(findRegexp);
+      this.setState({findResults: findResults});
       this.setScroll(findResults[0]);
     } else {
       this.props.changeFindIdx(-1);
-      this.setState({find: findRegexp, findResults: findResults});
+      this.props.changeSearch(findRegexp);
+      this.setState({findResults: findResults});
     }
   }
 
@@ -524,6 +528,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     loadBookmarks: (bookmarksArr) => dispatch(actions.loadBookmarks(bookmarksArr)),
     toggleBookmark: (lineNumArray) => dispatch(actions.toggleBookmark(lineNumArray)),
     ensureBookmark: (lineNum) => dispatch(actions.ensureBookmark(lineNum)),
+    changeSearch: (text) => dispatch(actions.changeSearch(text)),
     ...ownProps
   };
 }
