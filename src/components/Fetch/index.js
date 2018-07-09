@@ -724,8 +724,8 @@ export class Fetch extends React.Component {
                           value={this.state.filterIntersection}
                           onChange={this.toggleFilterIntersection}
                         >
-                          <ToggleButton value={false} bsSize="small" bsStyle="primary">or</ToggleButton>
                           <ToggleButton value={true} bsSize="small" bsStyle="primary">and</ToggleButton>
+                          <ToggleButton value={false} bsSize="small" bsStyle="primary">or</ToggleButton>
                         </ToggleButtonGroup>
                       </Col>
                       <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
