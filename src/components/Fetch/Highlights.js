@@ -1,8 +1,7 @@
 // @flow strict
 
-import Button from 'react-bootstrap/lib/Button';
 import React from 'react';
-import {ToggleButton, ToggleButtonGroup} from 'react-bootstrap';
+import { Button, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import type { Highlight as HighlightType } from '../../actions';
 
 type HighlightProps = {
