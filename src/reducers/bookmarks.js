@@ -1,6 +1,6 @@
 // @flow strict
 
-import { CHANGE_BOOKMARK, LOAD_BOOKMARKS, ENSURE_BOOKMARK } from '../actions';
+import { LOGVIEWER_CHANGE_BOOKMARK, LOGVIEWER_LOAD_BOOKMARKS, LOGVIEWER_ENSURE_BOOKMARK } from '../actions';
 import type { Action } from '../actions';
 import type { Bookmark } from '../actions';
 
@@ -27,17 +27,17 @@ function ensureBookmark(lineNum, bookmarks) {
 }
 
 export default function(state: Bookmark[] = initialState, action: Action): Bookmark[] {
-  if (action.type === LOAD_BOOKMARKS) {
+  if (action.type === LOGVIEWER_LOAD_BOOKMARKS) {
     return action.payload.bookmarksArr;
   }
 
-  if (action.type === ENSURE_BOOKMARK) {
+  if (action.type === LOGVIEWER_ENSURE_BOOKMARK) {
     const copyState = state.slice();
     const finalBookmark = ensureBookmark(action.payload.lineNum, copyState);
     return finalBookmark;
   }
 
-  if (action.type !== CHANGE_BOOKMARK) {
+  if (action.type !== LOGVIEWER_CHANGE_BOOKMARK) {
     return state;
   }
 

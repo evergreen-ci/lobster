@@ -3,16 +3,16 @@
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
-export const CHANGE_SETTING = 'change-setting';
-export const CHANGE_FILTER = 'change-filter';
-export const LOAD_FILTERS = 'load-filters';
-export const CHANGE_HIGHLIGHT = 'change-highlight';
-export const LOAD_HIGHLIGHTS = 'load-highlights';
-export const CHANGE_BOOKMARK = 'change-bookmark';
-export const LOAD_BOOKMARKS = 'load-bookmarks';
-export const ENSURE_BOOKMARK = 'ensure-bookmark';
-export const CHANGE_FINDIDX = 'change-findidx';
-export const CHANGE_SEARCH = 'change-search';
+export const LOGVIEWER_CHANGE_SETTING = 'logviewer:change-setting';
+export const LOGVIEWER_CHANGE_FILTER = 'logviewer:change-filter';
+export const LOGVIEWER_LOAD_FILTERS = 'logviewer:load-filters';
+export const LOGVIEWER_CHANGE_HIGHLIGHT = 'logviewer:change-highlight';
+export const LOGVIEWER_LOAD_HIGHLIGHTS = 'logviewer:load-highlights';
+export const LOGVIEWER_CHANGE_BOOKMARK = 'logviewer:change-bookmark';
+export const LOGVIEWER_LOAD_BOOKMARKS = 'logviewer:load-bookmarks';
+export const LOGVIEWER_ENSURE_BOOKMARK = 'logviewer:ensure-bookmark';
+export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
+export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
 
 export type Filter = {
   text: string,
@@ -199,7 +199,7 @@ export function logkeeperDataError(data: string): LogkeeperDataResponse {
 
 function toggleSetting(setting: string): ChangeSetting {
   return {
-    type: CHANGE_SETTING,
+    type: LOGVIEWER_CHANGE_SETTING,
     payload: {
       setting: setting,
       value: 'toggle'
@@ -221,7 +221,7 @@ export function toggleFilterIntersection(): ChangeSetting {
 
 export function loadInitialFilters(initialFilters: Filter[]): loadInitialFilters {
   return {
-    type: LOAD_FILTERS,
+    type: LOGVIEWER_LOAD_FILTERS,
     payload: {
       initialFilters: initialFilters
     }
@@ -230,7 +230,7 @@ export function loadInitialFilters(initialFilters: Filter[]): loadInitialFilters
 
 function changeFilter(field: string, text: string): ChangeFilter {
   return {
-    type: CHANGE_FILTER,
+    type: LOGVIEWER_CHANGE_FILTER,
     payload: {
       field: field,
       text: text
@@ -256,7 +256,7 @@ export function removeFilter(text: string): ChangeFilter {
 
 export function loadInitialHighlights(initialHighlights: Highlight[]): loadInitialHighlights {
   return {
-    type: LOAD_HIGHLIGHTS,
+    type: LOGVIEWER_LOAD_HIGHLIGHTS,
     payload: {
       initialHighlights: initialHighlights
     }
@@ -265,7 +265,7 @@ export function loadInitialHighlights(initialHighlights: Highlight[]): loadIniti
 
 function changeHighlight(field: string, text: string): ChangeHighlight {
   return {
-    type: CHANGE_HIGHLIGHT,
+    type: LOGVIEWER_CHANGE_HIGHLIGHT,
     payload: {
       field: field,
       text: text
@@ -291,7 +291,7 @@ export function removeHighlight(text: string): ChangeHighlight {
 
 export function toggleBookmark(lineNumArray: number[]): ChangeBookmark {
   return {
-    type: CHANGE_BOOKMARK,
+    type: LOGVIEWER_CHANGE_BOOKMARK,
     payload: {
       lineNumArray: lineNumArray
     }
@@ -300,7 +300,7 @@ export function toggleBookmark(lineNumArray: number[]): ChangeBookmark {
 
 export function ensureBookmark(lineNum: number): EnsureBookmark {
   return {
-    type: ENSURE_BOOKMARK,
+    type: LOGVIEWER_ENSURE_BOOKMARK,
     payload: {
       lineNum: lineNum
     }
@@ -309,7 +309,7 @@ export function ensureBookmark(lineNum: number): EnsureBookmark {
 
 export function loadBookmarks(bookmarksArr: Bookmark[]): LoadBookmarks {
   return {
-    type: LOAD_BOOKMARKS,
+    type: LOGVIEWER_LOAD_BOOKMARKS,
     payload: {
       bookmarksArr: bookmarksArr
     }
@@ -318,7 +318,7 @@ export function loadBookmarks(bookmarksArr: Bookmark[]): LoadBookmarks {
 
 export function changeFindIdx(index: number): ChangeFindIdx {
   return {
-    type: CHANGE_FINDIDX,
+    type: LOGVIEWER_CHANGE_FINDIDX,
     payload: {
       index: index
     }
@@ -327,7 +327,7 @@ export function changeFindIdx(index: number): ChangeFindIdx {
 
 export function changeSearch(text: string): ChangeSearch {
   return {
-    type: CHANGE_SEARCH,
+    type: LOGVIEWER_CHANGE_SEARCH,
     payload: {
       text: text
     }

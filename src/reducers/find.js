@@ -1,6 +1,6 @@
 // @flow strict
 
-import { CHANGE_FINDIDX, CHANGE_SEARCH } from '../actions';
+import { LOGVIEWER_CHANGE_FINDIDX, LOGVIEWER_CHANGE_SEARCH } from '../actions';
 import type { Action } from '../actions';
 
 export type Find = {|
@@ -14,10 +14,10 @@ const initialState: Find = {
 };
 
 export default function(state: Find = initialState, action: Action): Find {
-  if (action.type === CHANGE_FINDIDX) {
+  if (action.type === LOGVIEWER_CHANGE_FINDIDX) {
     return {...state, findIdx: action.payload.index};
   }
-  if (action.type === CHANGE_SEARCH) {
+  if (action.type === LOGVIEWER_CHANGE_SEARCH) {
     return {...state, searchRegex: action.payload.text};
   }
   return state;

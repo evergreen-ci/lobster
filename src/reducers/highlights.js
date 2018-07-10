@@ -1,17 +1,17 @@
 // @flow strict
 
-import { CHANGE_HIGHLIGHT, LOAD_HIGHLIGHTS } from '../actions';
+import { LOGVIEWER_CHANGE_HIGHLIGHT, LOGVIEWER_LOAD_HIGHLIGHTS } from '../actions';
 import type { Action } from '../actions';
 import type { Highlight } from '../actions';
 
 const initialState: Highlight[] = [];
 
 export default function(state: Highlight[] = initialState, action: Action): Highlight[] {
-  if (action.type === LOAD_HIGHLIGHTS) {
+  if (action.type === LOGVIEWER_LOAD_HIGHLIGHTS) {
     return action.payload.initialHighlights;
   }
 
-  if (action.type !== CHANGE_HIGHLIGHT) {
+  if (action.type !== LOGVIEWER_CHANGE_HIGHLIGHT) {
     return state;
   }
 

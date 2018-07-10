@@ -1,17 +1,17 @@
 // @flow strict
 
-import { CHANGE_FILTER, LOAD_FILTERS } from '../actions';
+import { LOGVIEWER_CHANGE_FILTER, LOGVIEWER_LOAD_FILTERS } from '../actions';
 import type { Action } from '../actions';
 import type { Filter } from '../actions';
 
 const initialState: Filter[] = [];
 
 export default function(state: Filter[] = initialState, action: Action): Filter[] {
-  if (action.type === LOAD_FILTERS) {
+  if (action.type === LOGVIEWER_LOAD_FILTERS) {
     return action.payload.initialFilters;
   }
 
-  if (action.type !== CHANGE_FILTER) {
+  if (action.type !== LOGVIEWER_CHANGE_FILTER) {
     return state;
   }
 
