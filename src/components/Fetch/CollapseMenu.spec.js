@@ -42,4 +42,9 @@ test('CollapseMenu', function() {
     <Button href={rawUrl}>Raw</Button>,
     <Button href={HTMLUrl}>HTML</Button>
   ]));
+
+  // Test button toggling
+  assert(!wrapper.instance().props.toggleSettings.toggleWrap.called);
+  assert(!wrapper.instance().props.toggleSettings.toggleCaseSensitive.called);
+  assert(!wrapper.instance().props.toggleSettings.toggleFilterIntersection.called);
 });

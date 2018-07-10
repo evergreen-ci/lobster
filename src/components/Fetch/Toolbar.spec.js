@@ -72,7 +72,7 @@ const wrapper = Enzyme.mount(
   />
 );
 
-test('Toolbar', function() {
+test('Toolbar-Search', function() {
   assert.equal(wrapper.instance().props.findIdx, -1);
   assert.equal(wrapper.instance().props.findResults.length, 0);
   assert.equal(wrapper.instance().props.searchRegex, '');
@@ -91,4 +91,13 @@ test('Toolbar', function() {
     <Button onClick={wrapper.instance().props.nextFind}>Next</Button>,
     <Button onClick={wrapper.instance().props.prevFind}>Prev</Button>
   ]));
+
+  // Test next and prev button clicks
+  assert(!wrapper.instance().props.nextFind.called);
+  assert(!wrapper.instance().props.prevFind.called);
+  const buttons = wrapper.find(Button);
+  buttons.at(1).simulate('click', {});
+  assert(wrapper.instance().props.nextFind.called);
+  buttons.at(2).simulate('click', {});
+  assert(wrapper.instance().props.prevFind.called);
 });
