@@ -69,7 +69,7 @@ export type LogkeeperDataResponse = {|
 |}
 
 export type ChangeSetting = {|
-  +type: 'change-setting',
+  +type: 'logviewer:change-setting',
   +payload: {|
     +setting: string,
     +value: string
@@ -77,7 +77,7 @@ export type ChangeSetting = {|
 |}
 
 export type ChangeFilter = {|
-  +type: 'change-filter',
+  +type: 'logviewer:change-filter',
   +payload: {|
     +field: string,
     +text: string
@@ -85,7 +85,7 @@ export type ChangeFilter = {|
 |}
 
 export type ChangeHighlight = {|
-  +type: 'change-highlight',
+  +type: 'logviewer:change-highlight',
   +payload: {|
     +field: string,
     +text: string
@@ -93,49 +93,49 @@ export type ChangeHighlight = {|
 |}
 
 export type ChangeBookmark = {|
-  +type: 'change-bookmark',
+  +type: 'logviewer:change-bookmark',
   +payload: {|
     +lineNumArray: number[]
   |}
 |}
 
 export type EnsureBookmark = {|
-  +type: 'ensure-bookmark',
+  +type: 'logviewer:ensure-bookmark',
   +payload: {|
     +lineNum: number
   |}
 |}
 
 export type LoadBookmarks = {|
-  +type: 'load-bookmarks',
+  +type: 'logviewer:load-bookmarks',
   +payload: {|
     +bookmarksArr: Bookmark[]
   |}
 |}
 
 export type ChangeFindIdx = {|
-  +type: 'change-findidx',
+  +type: 'logviewer:change-findidx',
   +payload: {|
     +index: number
   |}
 |}
 
 export type ChangeSearch = {|
-  +type: 'change-search',
+  +type: 'logviewer:change-search',
   +payload: {|
     +text: string
   |}
 |}
 
 export type LoadHighlights = {|
-  +type: 'load-highlights',
+  +type: 'logviewer:load-highlights',
   +payload: {|
     +initialHighlights: Highlight[]
   |}
 |}
 
 export type LoadFilters = {|
-  +type: 'load-filters',
+  +type: 'logviewer:load-filters',
   +payload: {|
     +initialFilters: Filter[]
   |}

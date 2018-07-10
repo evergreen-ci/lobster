@@ -1,64 +1,60 @@
+// @flow strict
+
 import React from 'react';
-import PropTypes from 'prop-types';
 import './style.css';
-import Button from 'react-bootstrap/lib/Button';
-import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
-import Form from 'react-bootstrap/lib/Form';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import Col from 'react-bootstrap/lib/Col';
+import { Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col } from 'react-bootstrap';
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
+import type { Highlight, Filter } from '../../actions';
 
-export class Toolbar extends React.Component {
-  static propTypes = {
-    setFormRef: PropTypes.func.isRequired,
-    settings: PropTypes.shape({
-      wrap: PropTypes.bool.isRequired,
-      caseSensitive: PropTypes.bool.isRequired,
-      filterIntersection: PropTypes.bool.isRequired
-    }),
-    toggleSettings: PropTypes.shape({
-      toggleWrap: PropTypes.func.isRequired,
-      toggleCaseSensitive: PropTypes.func.isRequired,
-      toggleFilterIntersection: PropTypes.func.isRequired
-    }).isRequired,
-    handleChangeFindEvent: PropTypes.func.isRequired,
-    searchRegex: PropTypes.string.isRequired,
-    find: PropTypes.func.isRequired,
-    addFilter: PropTypes.func.isRequired,
-    filterActions: PropTypes.shape({
-      removeFilter: PropTypes.func.isRequired,
-      toggleFilter: PropTypes.func.isRequired,
-      toggleFilterInverse: PropTypes.func.isRequired
-    }),
-    filterList: PropTypes.array.isRequired,
-    highlightList: PropTypes.array.isRequired,
-    addHighlight: PropTypes.func.isRequired,
-    highlightActions: PropTypes.shape({
-      removeHighlight: PropTypes.func.isRequired,
-      toggleHighlight: PropTypes.func.isRequired,
-      toggleHighlightLine: PropTypes.func.isRequired
-    }),
-    togglePanel: PropTypes.func.isRequired,
-    detailsOpen: PropTypes.bool.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
-    server: PropTypes.string,
-    url: PropTypes.string,
-    build: PropTypes.string.isRequired,
-    setURLRef: PropTypes.func.isRequired,
-    valueJIRA: PropTypes.string.isRequired,
-    findIdx: PropTypes.number.isRequired,
-    findResults: PropTypes.array.isRequired,
-    changeFindIdx: PropTypes.func.isRequired,
-    changeSearch: PropTypes.func.isRequired,
-    nextFind: PropTypes.func.isRequired,
-    prevFind: PropTypes.func.isRequired
-  };
+type Props = {
+  setFormRef: (?HTMLInputElement) => void,
+  settings: {
+    wrap: boolean,
+    caseSensitive: boolean,
+    filterIntersection: boolean
+  },
+  toggleSettings: {
+    toggleWrap: () => void,
+    toggleCaseSensitive: () => void,
+    toggleFilterIntersection: () => void
+  },
+  handleChangeFindEvent: () => void,
+  searchRegex: string,
+  find: (SyntheticEvent<HTMLButtonElement>) => void,
+  addFilter: () => void,
+  addHighlight: () => void,
+  filterActions: {
+    removeFilter: (string) => void,
+    toggleFilter: (string) => void,
+    toggleFilterInverse: (string) => void
+  },
+  highlightActions: {
+    removeHighlight: (string) => void,
+    toggleHighlight: (string) => void,
+    toggleHighlightLine: (string) => void
+  },
+  filterList: Filter[],
+  highlightList: Highlight[],
+  togglePanel: () => void,
+  detailsOpen: boolean,
+  handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
+  server?: string,
+  url?: string,
+  build: string,
+  setURLRef: (?HTMLInputElement) => void,
+  valueJIRA: string,
+  findIdx: number,
+  findResults: number[],
+  changeFindIdx: (number) => void,
+  changeSearch: (string) => void,
+  nextFind: () => void,
+  prevFind: () => void
+};
 
-  shouldComponentUpdate(nextProps, _nextState) {
+export class Toolbar extends React.Component<Props> {
+  shouldComponentUpdate(nextProps: Props, _nextState: void) {
     if (nextProps.detailsOpen !== this.props.detailsOpen) {
       return true;
     }
