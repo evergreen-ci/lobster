@@ -273,7 +273,8 @@ export class Fetch extends React.Component {
 
   clearFind() {
     this.props.changeFindIdx(-1);
-    this.setState({find: '', findResults: []});
+    this.props.changeSearch('');
+    this.setState({findResults: []});
   }
 
   shouldPrintLine = (bookmarks, line, filter, inverseFilter) => {
