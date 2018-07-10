@@ -1,50 +1,46 @@
+// @flow strict
+
 import React from 'react';
-import PropTypes from 'prop-types';
 import './style.css';
 import ToggleButton from 'react-toggle-button';
-import Button from 'react-bootstrap/lib/Button';
-import Form from 'react-bootstrap/lib/Form';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import Col from 'react-bootstrap/lib/Col';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import Collapse from 'react-bootstrap/lib/Collapse';
+import { Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse } from 'react-bootstrap';
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
+import type { Highlight, Filter } from '../../actions';
 
-export class CollapseMenu extends React.PureComponent {
-  static propTypes = {
-    detailsOpen: PropTypes.bool.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
-    settings: PropTypes.shape({
-      wrap: PropTypes.bool.isRequired,
-      caseSensitive: PropTypes.bool.isRequired,
-      filterIntersection: PropTypes.bool.isRequired
-    }).isRequired,
-    toggleSettings: PropTypes.shape({
-      toggleWrap: PropTypes.func.isRequired,
-      toggleCaseSensitive: PropTypes.func.isRequired,
-      toggleFilterIntersection: PropTypes.func.isRequired
-    }).isRequired,
-    filterList: PropTypes.array.isRequired,
-    filterActions: PropTypes.shape({
-      removeFilter: PropTypes.func.isRequired,
-      toggleFilter: PropTypes.func.isRequired,
-      toggleFilterInverse: PropTypes.func.isRequired
-    }),
-    server: PropTypes.string,
-    url: PropTypes.string,
-    build: PropTypes.string.isRequired,
-    setURLRef: PropTypes.func.isRequired,
-    valueJIRA: PropTypes.string.isRequired,
-    highlightList: PropTypes.array.isRequired,
-    highlightActions: PropTypes.shape({
-      removeHighlight: PropTypes.func.isRequired,
-      toggleHighlight: PropTypes.func.isRequired,
-      toggleHighlightLine: PropTypes.func.isRequired
-    }).isRequired
-  };
+type Props = {
+  detailsOpen: boolean,
+  handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
+  settings: {
+    wrap: boolean,
+    caseSensitive: boolean,
+    filterIntersection: boolean
+  },
+  toggleSettings: {
+    toggleWrap: () => void,
+    toggleCaseSensitive: () => void,
+    toggleFilterIntersection: () => void
+  },
+  filterList: Filter[],
+  filterActions: {
+    removeFilter: (string) => void,
+    toggleFilter: (string) => void,
+    toggleFilterInverse: (string) => void
+  },
+  highlightList: Highlight[],
+  highlightActions: {
+    removeHighlight: (string) => void,
+    toggleHighlight: (string) => void,
+    toggleHighlightLine: (string) => void
+  },
+  server?: string,
+  url?: string,
+  build: string,
+  setURLRef: (?HTMLInputElement) => void,
+  valueJIRA: string
+}
 
+export class CollapseMenu extends React.PureComponent<Props> {
   showLogBox() {
     if (this.props.server) {
       return (
