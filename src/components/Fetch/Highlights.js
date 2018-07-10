@@ -6,9 +6,9 @@ import type { Highlight as HighlightType } from '../../actions';
 
 type HighlightProps = {
   highlight: HighlightType,
-  removeHighlight: () => ((string) => void),
-  toggleHighlight: () => ((string) => void),
-  toggleHighlightLine: () => ((string) => void)
+  removeHighlight: (string) => void,
+  toggleHighlight: (string) => void,
+  toggleHighlightLine: (string) => void
 }
 
 type HighlightsProps = {

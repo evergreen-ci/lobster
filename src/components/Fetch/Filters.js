@@ -6,9 +6,9 @@ import type { Filter as FilterType } from '../../actions';
 
 type FilterProps = {
   filter: FilterType,
-  removeFilter: () => ((string) => void),
-  toggleFilter: () => ((string) => void),
-  toggleFilterInverse: () => ((string) => void)
+  removeFilter: (string) => void,
+  toggleFilter: (string) => void,
+  toggleFilterInverse: (string) => void
 }
 
 type FiltersProps = {
