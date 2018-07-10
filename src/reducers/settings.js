@@ -1,6 +1,6 @@
 // @flow strict
 
-import { CHANGE_SETTING } from '../actions';
+import { LOGVIEWER_CHANGE_SETTING } from '../actions';
 import type { Action } from '../actions';
 
 export type Settings = {|
@@ -16,7 +16,7 @@ const initialState: Settings = {
 };
 
 export default function(state: Settings = initialState, action: Action): Settings {
-  if (action.type !== CHANGE_SETTING || action.payload.value !== 'toggle') {
+  if (action.type !== LOGVIEWER_CHANGE_SETTING || action.payload.value !== 'toggle') {
     return state;
   }
 
