@@ -78,6 +78,10 @@ test('Toolbar-Search', function() {
   assert.equal(wrapper.instance().props.searchRegex, '');
   assert(!wrapper.instance().props.handleChangeFindEvent.called);
   assert(!wrapper.instance().props.find.called);
+  assert.ok(!wrapper.containsAllMatchingElements([
+    <Button onClick={wrapper.instance().props.nextFind}>Next</Button>,
+    <Button onClick={wrapper.instance().props.prevFind}>Prev</Button>
+  ]));
 
   // Testing change in search bar with results
   wrapper.find('#findInput').instance().value = '2018';
@@ -88,8 +92,8 @@ test('Toolbar-Search', function() {
   wrapper.setProps({findResults: [1, 2, 3], searchRegex: '2018'});
   assert.equal(wrapper.instance().props.findResults.length, 3);
   assert.ok(wrapper.containsAllMatchingElements([
-    <Button onClick={wrapper.instance().props.nextFind}>Next</Button>,
-    <Button onClick={wrapper.instance().props.prevFind}>Prev</Button>
+    <Button>Next</Button>,
+    <Button>Prev</Button>
   ]));
 
   // Test next and prev button clicks
