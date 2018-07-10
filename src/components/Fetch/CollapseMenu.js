@@ -45,23 +45,6 @@ export class CollapseMenu extends React.PureComponent {
     }).isRequired
   };
 
-  // XXX: FYI, I've made this component pure since no state
-  // shouldComponentUpdate(nextProps, _nextState) {
-  //  if (nextProps.detailsOpen !== this.props.detailsOpen) {
-  //    return true;
-  //  }
-  //  if (nextProps.wrap !== this.props.wrap) {
-  //    return true;
-  //  }
-  //  if (nextProps.caseSensitive !== this.props.caseSensitive) {
-  //    return true;
-  //  }
-  //  if (nextProps.filterList !== this.props.filterList) {
-  //    return true;
-  //  }
-  //  return false;
-  // }
-
   showLogBox() {
     if (this.props.server) {
       return (
