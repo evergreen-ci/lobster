@@ -2,13 +2,9 @@
 
 import { CHANGE_BOOKMARK, LOAD_BOOKMARKS, ENSURE_BOOKMARK } from '../actions';
 import type { Action } from '../actions';
+import type { Bookmark } from '../actions';
 
-export type Bookmark = {|
-  +lineNumber: number,
-  +scrollFunc: func
-|}
-
-const initialState: Bookmarks[] = [];
+const initialState: Bookmark[] = [];
 
 function findBookmark(bookmarkList, lineNum) {
   return bookmarkList.findIndex(function(bookmark) {
@@ -30,7 +26,7 @@ function ensureBookmark(lineNum, bookmarks) {
   return newBookmarks;
 }
 
-export default function(state: Bookmarks = initialState, action: Action): Bookmarks {
+export default function(state: Bookmark[] = initialState, action: Action): Bookmark[] {
   if (action.type === LOAD_BOOKMARKS) {
     return action.payload.bookmarksArr;
   }

@@ -20,6 +20,12 @@ export type Filter = {
   inverse: boolean
 }
 
+export type Highlight = {
+  text: string,
+  on: boolean,
+  line: boolean
+}
+
 export type Bookmark = {
   lineNumber: number,
 }
@@ -73,7 +79,65 @@ export type ChangeSetting = {|
 export type ChangeFilter = {|
   +type: 'change-filter',
   +payload: {|
-    +field: string
+    +field: string,
+    +text: string
+  |}
+|}
+
+export type ChangeHighlight = {|
+  +type: 'change-highlight',
+  +payload: {|
+    +field: string,
+    +text: string
+  |}
+|}
+
+export type ChangeBookmark = {|
+  +type: 'change-bookmark',
+  +payload: {|
+    +lineNumArray: number[]
+  |}
+|}
+
+export type EnsureBookmark = {|
+  +type: 'ensure-bookmark',
+  +payload: {|
+    +lineNum: number
+  |}
+|}
+
+export type LoadBookmarks = {|
+  +type: 'load-bookmarks',
+  +payload: {|
+    +bookmarksArr: Bookmark[]
+  |}
+|}
+
+export type ChangeFindIdx = {|
+  +type: 'change-findidx',
+  +payload: {|
+    +index: number
+  |}
+|}
+
+export type ChangeSearch = {|
+  +type: 'change-search',
+  +payload: {|
+    +text: string
+  |}
+|}
+
+export type LoadHighlights = {|
+  +type: 'load-highlights',
+  +payload: {|
+    +initialHighlights: Highlight[]
+  |}
+|}
+
+export type LoadFilters = {|
+  +type: 'load-filters',
+  +payload: {|
+    +initialFilters: Filter[]
   |}
 |}
 
@@ -81,7 +145,15 @@ export type Action = LogkeeperLoadData
   | LogkeeperDataResponse
   | LobsterLoadData
   | ChangeSetting
-  | LoadSetting
+  | ChangeFilter
+  | ChangeHighlight
+  | ChangeBookmark
+  | EnsureBookmark
+  | LoadBookmarks
+  | ChangeFindIdx
+  | ChangeSearch
+  | LoadHighlights
+  | LoadFilters
 
 // Load data from Logkeeper
 export function loadData(build: string, test: ?string): LogkeeperLoadData {
@@ -147,7 +219,7 @@ export function toggleFilterIntersection(): ChangeSetting {
   return toggleSetting('filter-intersection');
 }
 
-export function loadInitialFilters(initialFilters: array): loadInitialFilters {
+export function loadInitialFilters(initialFilters: Filter[]): loadInitialFilters {
   return {
     type: LOAD_FILTERS,
     payload: {
@@ -182,7 +254,7 @@ export function removeFilter(text: string): ChangeFilter {
   return changeFilter('remove', text);
 }
 
-export function loadInitialHighlights(initialHighlights: array): loadInitialHighlights {
+export function loadInitialHighlights(initialHighlights: Highlight[]): loadInitialHighlights {
   return {
     type: LOAD_HIGHLIGHTS,
     payload: {
@@ -217,7 +289,7 @@ export function removeHighlight(text: string): ChangeHighlight {
   return changeHighlight('remove', text);
 }
 
-export function toggleBookmark(lineNumArray: array): ChangeBookmark {
+export function toggleBookmark(lineNumArray: number[]): ChangeBookmark {
   return {
     type: CHANGE_BOOKMARK,
     payload: {
@@ -226,7 +298,7 @@ export function toggleBookmark(lineNumArray: array): ChangeBookmark {
   };
 }
 
-export function ensureBookmark(lineNum: number): EnsureBookmarks {
+export function ensureBookmark(lineNum: number): EnsureBookmark {
   return {
     type: ENSURE_BOOKMARK,
     payload: {
@@ -235,7 +307,7 @@ export function ensureBookmark(lineNum: number): EnsureBookmarks {
   };
 }
 
-export function loadBookmarks(bookmarksArr: array): LoadBookmarks {
+export function loadBookmarks(bookmarksArr: Bookmark[]): LoadBookmarks {
   return {
     type: LOAD_BOOKMARKS,
     payload: {
@@ -244,7 +316,7 @@ export function loadBookmarks(bookmarksArr: array): LoadBookmarks {
   };
 }
 
-export function changeFindIdx(index: number): ChangeFind {
+export function changeFindIdx(index: number): ChangeFindIdx {
   return {
     type: CHANGE_FINDIDX,
     payload: {
@@ -253,7 +325,7 @@ export function changeFindIdx(index: number): ChangeFind {
   };
 }
 
-export function changeSearch(text: string): ChangeFind {
+export function changeSearch(text: string): ChangeSearch {
   return {
     type: CHANGE_SEARCH,
     payload: {

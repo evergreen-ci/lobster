@@ -2,16 +2,11 @@
 
 import { CHANGE_FILTER, LOAD_FILTERS } from '../actions';
 import type { Action } from '../actions';
+import type { Filter } from '../actions';
 
-export type Filters = {|
-  +text: string,
-  +on: boolean,
-  +inverse: boolean
-|}
+const initialState: Filter[] = [];
 
-const initialState: Filters[] = [];
-
-export default function(state: Filters = initialState, action: Action): Filters {
+export default function(state: Filter[] = initialState, action: Action): Filter[] {
   if (action.type === LOAD_FILTERS) {
     return action.payload.initialFilters;
   }

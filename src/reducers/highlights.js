@@ -2,16 +2,11 @@
 
 import { CHANGE_HIGHLIGHT, LOAD_HIGHLIGHTS } from '../actions';
 import type { Action } from '../actions';
+import type { Highlight } from '../actions';
 
-export type Highlights = {|
-  +text: string,
-  +on: boolean,
-  +line: boolean
-|}
+const initialState: Highlight[] = [];
 
-const initialState: Highlights[] = [];
-
-export default function(state: Highlights = initialState, action: Action): Highlights {
+export default function(state: Highlight[] = initialState, action: Action): Highlight[] {
   if (action.type === LOAD_HIGHLIGHTS) {
     return action.payload.initialHighlights;
   }
