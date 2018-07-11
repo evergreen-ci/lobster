@@ -9,8 +9,6 @@ import { Highlights } from './Highlights';
 import type { Highlight, Filter } from '../../actions';
 
 type Props = {
-  detailsOpen: boolean,
-  handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
   settings: {
     wrap: boolean,
     caseSensitive: boolean,
@@ -21,18 +19,20 @@ type Props = {
     toggleCaseSensitive: () => void,
     toggleFilterIntersection: () => void
   },
-  filterList: Filter[],
   filterActions: {
     removeFilter: (string) => void,
     toggleFilter: (string) => void,
     toggleFilterInverse: (string) => void
   },
-  highlightList: Highlight[],
   highlightActions: {
     removeHighlight: (string) => void,
     toggleHighlight: (string) => void,
     toggleHighlightLine: (string) => void
   },
+  filterList: Filter[],
+  highlightList: Highlight[],
+  detailsOpen: boolean,
+  handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
   server?: string,
   url?: string,
   build: string,
