@@ -60,21 +60,15 @@ export class CollapseMenu extends React.PureComponent<Props> {
     }
   }
 
-  showJobLogs() {
-    if (!this.props.server) {
-      return (<Col lg={1}><Button href={'/build/' + this.props.build}>Job Logs</Button></Col>);
-    }
-  }
-
-  showRaw() {
-    if (!this.props.server) {
-      return (<Col lg={1}><Button href={'/build/' + this.props.build + '/all?raw=1'}>Raw</Button></Col>);
-    }
-  }
-
-  showHTML() {
-    if (!this.props.server) {
-      return (<Col lg={1}><Button href={'/build/' + this.props.build + '/all?html=1'}>HTML</Button></Col>);
+  showDetailButtons(server: ?string): ?React.Component {
+    if (!server) {
+      return (
+        <span>
+          <Col lg={1}><Button href={'/build/' + this.props.build}>Job Logs</Button></Col>
+          <Col lg={1}><Button href={'/build/' + this.props.build + '/all?raw=1'}>Raw</Button></Col>
+          <Col lg={1}><Button href={'/build/' + this.props.build + '/all?html=1'}>HTML</Button></Col>
+        </span>
+      );
     }
   }
 
@@ -85,7 +79,6 @@ export class CollapseMenu extends React.PureComponent<Props> {
           <Form horizontal onSubmit={this.props.handleSubmit}>
             {this.showLogBox()}
             <FormGroup controlId="collapseButtons">
-              <Button>Hello</Button>
               <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
               <Col lg={1}><ToggleButton value={this.props.settings.wrap} onToggle={this.props.toggleSettings.toggleWrap} /></Col>
               <Col componentClass={ControlLabel} lg={1}>Case Sensitive</Col>
@@ -94,9 +87,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
               <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.props.settings.filterIntersection} onToggle={this.props.toggleSettings.toggleFilterIntersection} /></Col>
               <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
               <Col lg={1}><textarea readOnly className="unmoving" value={this.props.valueJIRA}></textarea></Col>
-              {this.showJobLogs()}
-              {this.showRaw()}
-              {this.showHTML()}
+              {this.showDetailButtons(this.props.server)}
             </FormGroup>
           </Form>
           <Filters
