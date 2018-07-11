@@ -6,6 +6,7 @@
     "babel-polyfill": "^6.26.0",
     "body-parser": "^1.18.3",
     "decode-uri-component": "^0.2.0",
+    "eslint-plugin-dependencies": "^2.4.0",
     "eslint-plugin-flowtype": "^2.49.3",
     "express": "^4.16.3",
     "morgan": "^1.8.2",
