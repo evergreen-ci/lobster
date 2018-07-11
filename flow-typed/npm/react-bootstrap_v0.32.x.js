@@ -54,7 +54,7 @@ declare module "react-bootstrap" {
     bsClass?: string
   }> {}
 
-  declare export class ButtonToolbar extends React$Component<{
+  declare export class ToggleButtonGroup extends React$Component<{
     name?: string,
     value?: any,
     onChange?: Function,
