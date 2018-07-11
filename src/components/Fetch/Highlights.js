@@ -1,9 +1,24 @@
-import Button from 'react-bootstrap/lib/Button';
-import React from 'react';
-import PropTypes from 'prop-types';
-import {ToggleButton, ToggleButtonGroup} from 'react-bootstrap';
+// @flow strict
 
-export const Highlights = (props) => {
+import React from 'react';
+import { Button, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
+import type { Highlight as HighlightType } from '../../actions/logviewer';
+
+type HighlightProps = {
+  highlight: HighlightType,
+  removeHighlight: (string) => void,
+  toggleHighlight: (string) => void,
+  toggleHighlightLine: (string) => void
+}
+
+type HighlightsProps = {
+  highlights: HighlightType[],
+  removeHighlight: (string) => void,
+  toggleHighlight: (string) => void,
+  toggleHighlightLine: (string) => void
+}
+
+export const Highlights = (props: HighlightsProps) => {
   return (
     <div className="highlightBox">
       <div className="highlight-box">{props.highlights.map(function(highlight) {
@@ -22,29 +37,7 @@ export const Highlights = (props) => {
   );
 };
 
-Highlights.propTypes = {
-  highlights: PropTypes.arrayOf(PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    on: PropTypes.bool.isRequired,
-    line: PropTypes.bool.isRequired
-  })).isRequired,
-  removeHighlight: PropTypes.func.isRequired,
-  toggleHighlight: PropTypes.func.isRequired,
-  toggleHighlightLine: PropTypes.func.isRequired
-};
-
-export class Highlight extends React.PureComponent {
-  static propTypes = {
-    highlight: PropTypes.shape({
-      text: PropTypes.string.isRequired,
-      on: PropTypes.bool.isRequired,
-      line: PropTypes.bool.isRequired
-    }).isRequired,
-    removeHighlight: PropTypes.func.isRequired,
-    toggleHighlight: PropTypes.func.isRequired,
-    toggleHighlightLine: PropTypes.func.isRequired
-  };
-
+export class Highlight extends React.PureComponent<HighlightProps> {
   removeHighlight = () => this.props.removeHighlight(this.props.highlight.text);
   toggleHighlight = () => this.props.toggleHighlight(this.props.highlight.text);
   toggleHighlightLine = () => this.props.toggleHighlightLine(this.props.highlight.text);
@@ -53,9 +46,9 @@ export class Highlight extends React.PureComponent {
     return (
       <div className="filter-highlight-lines">
         <Button className="exit-button" onClick={this.removeHighlight} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
-        <span className="filter-highlight-label">Highlight Options</span>
+        <span className="toggle-label">Highlight Options</span>
         <ToggleButtonGroup
-          className="filter-highlight-buttons"
+          className="toggle-buttons"
           type="radio"
           name="highlight-on-off"
           value={this.props.highlight.on}
@@ -69,7 +62,7 @@ export class Highlight extends React.PureComponent {
           </ToggleButton>
         </ToggleButtonGroup>
         <ToggleButtonGroup
-          className="filter-highlight-buttons"
+          className="toggle-buttons"
           type="radio"
           name="highlight-line-word"
           value={this.props.highlight.line}
