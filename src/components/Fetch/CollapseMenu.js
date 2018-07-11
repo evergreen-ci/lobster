@@ -1,12 +1,12 @@
 // @flow strict
 
-import React from 'react';
+import * as React from 'react';
 import './style.css';
 import ToggleButton from 'react-toggle-button';
 import { Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse } from 'react-bootstrap';
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
-import type { Highlight, Filter } from '../../actions';
+import type { Highlight, Filter } from '../../actions/logviewer';
 
 type Props = {
   settings: {
@@ -40,44 +40,44 @@ type Props = {
   valueJIRA: string
 }
 
+function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement) => void) {
+  if (server) {
+    return (
+      <FormGroup controlId="urlInput">
+        <Col componentClass={ControlLabel} lg={1}>Log</Col>
+        <Col lg={6}>
+          <FormControl
+            type="text"
+            defaultValue={url}
+            placeholder="optional. custom file location iff used with local server"
+            inputRef={setURLRef}
+          />
+        </Col>
+        <Col lg={1}> <Button type="submit"> Apply </Button> </Col>
+      </FormGroup>
+    );
+  }
+}
+
+function showDetailButtons(server: ?string, build: string): ?React.Element<'span'> {
+  if (!server) {
+    return (
+      <span>
+        <Col lg={1}><Button href={'/build/' + build}>Job Logs</Button></Col>
+        <Col lg={1}><Button href={'/build/' + build + '/all?raw=1'}>Raw</Button></Col>
+        <Col lg={1}><Button href={'/build/' + build + '/all?html=1'}>HTML</Button></Col>
+      </span>
+    );
+  }
+}
+
 export class CollapseMenu extends React.PureComponent<Props> {
-  showLogBox() {
-    if (this.props.server) {
-      return (
-        <FormGroup controlId="urlInput">
-          <Col componentClass={ControlLabel} lg={1}>Log</Col>
-          <Col lg={6}>
-            <FormControl
-              type="text"
-              defaultValue={this.props.url}
-              placeholder="optional. custom file location iff used with local server"
-              inputRef={this.props.setURLRef}
-            />
-          </Col>
-          <Col lg={1}> <Button type="submit"> Apply </Button> </Col>
-        </FormGroup>
-      );
-    }
-  }
-
-  showDetailButtons(server: ?string): ?React.Component {
-    if (!server) {
-      return (
-        <span>
-          <Col lg={1}><Button href={'/build/' + this.props.build}>Job Logs</Button></Col>
-          <Col lg={1}><Button href={'/build/' + this.props.build + '/all?raw=1'}>Raw</Button></Col>
-          <Col lg={1}><Button href={'/build/' + this.props.build + '/all?html=1'}>HTML</Button></Col>
-        </span>
-      );
-    }
-  }
-
   render() {
     return (
       <Collapse className="collapse-menu" in={this.props.detailsOpen}>
         <div>
           <Form horizontal onSubmit={this.props.handleSubmit}>
-            {this.showLogBox()}
+            {showLogBox(this.props.server, this.props.url, this.props.setURLRef)}
             <FormGroup controlId="collapseButtons">
               <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
               <Col lg={1}><ToggleButton value={this.props.settings.wrap} onToggle={this.props.toggleSettings.toggleWrap} /></Col>
@@ -87,7 +87,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
               <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.props.settings.filterIntersection} onToggle={this.props.toggleSettings.toggleFilterIntersection} /></Col>
               <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
               <Col lg={1}><textarea readOnly className="unmoving" value={this.props.valueJIRA}></textarea></Col>
-              {this.showDetailButtons(this.props.server)}
+              {showDetailButtons(this.props.server, this.props.build)}
             </FormGroup>
           </Form>
           <Filters
