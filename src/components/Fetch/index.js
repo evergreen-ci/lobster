@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import queryString from '../../thirdparty/query-string';
 import Toolbar from './Toolbar';
 
-// eslint-disable-next-line react/no-deprecated
 export class Fetch extends React.Component {
   static propTypes = {
     log: PropTypes.shape({
