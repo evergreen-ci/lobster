@@ -5,8 +5,8 @@ import './style.css';
 import { Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col } from 'react-bootstrap';
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
-import * as actions from '../../actions';
-import type { Highlight, Filter } from '../../actions';
+import * as actions from '../../actions/logviewer';
+import type { Highlight, Filter } from '../../actions/logviewer';
 
 type Props = {
   setFormRef: (?HTMLInputElement) => void,

@@ -1,7 +1,7 @@
 // @flow strict
 
-import { LOGVIEWER_CHANGE_SETTING } from '../actions';
-import type { Action } from '../actions';
+import { LOGVIEWER_CHANGE_SETTING } from '../actions/logviewer';
+import type { Action } from '../actions/logviewer';
 
 export type Settings = {|
   +wrap: boolean,

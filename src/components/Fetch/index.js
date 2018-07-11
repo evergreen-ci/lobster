@@ -1,5 +1,6 @@
 import React from 'react';
 import * as actions from '../../actions';
+import * as logviewerActions from '../../actions/logviewer';
 import './style.css';
 import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
@@ -539,15 +540,15 @@ function mapDispatchToProps(dispatch, ownProps) {
   return {
     lobsterLoadData: (server, url) => dispatch(actions.lobsterLoadData(server, url)),
     loadData: (build, test) => dispatch(actions.loadData(build, test)),
-    loadInitialFilters: (initialFilters) => dispatch(actions.loadInitialFilters(initialFilters)),
-    loadInitialHighlights: (initialHighlights) => dispatch(actions.loadInitialHighlights(initialHighlights)),
-    addFilter: (text) => dispatch(actions.addFilter(text)),
-    addHighlight: (text) => dispatch(actions.addHighlight(text)),
-    changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
-    loadBookmarks: (bookmarksArr) => dispatch(actions.loadBookmarks(bookmarksArr)),
-    toggleBookmark: (lineNumArray) => dispatch(actions.toggleBookmark(lineNumArray)),
-    ensureBookmark: (lineNum) => dispatch(actions.ensureBookmark(lineNum)),
-    changeSearch: (text) => dispatch(actions.changeSearch(text)),
+    loadInitialFilters: (initialFilters) => dispatch(logviewerActions.loadInitialFilters(initialFilters)),
+    loadInitialHighlights: (initialHighlights) => dispatch(logviewerActions.loadInitialHighlights(initialHighlights)),
+    addFilter: (text) => dispatch(logviewerActions.addFilter(text)),
+    addHighlight: (text) => dispatch(logviewerActions.addHighlight(text)),
+    changeFindIdx: (index) => dispatch(logviewerActions.changeFindIdx(index)),
+    loadBookmarks: (bookmarksArr) => dispatch(logviewerActions.loadBookmarks(bookmarksArr)),
+    toggleBookmark: (lineNumArray) => dispatch(logviewerActions.toggleBookmark(lineNumArray)),
+    ensureBookmark: (lineNum) => dispatch(logviewerActions.ensureBookmark(lineNum)),
+    changeSearch: (text) => dispatch(logviewerActions.changeSearch(text)),
     ...ownProps
   };
 }

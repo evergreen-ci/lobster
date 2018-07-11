@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
-import type { Highlight as HighlightType } from '../../actions';
+import type { Highlight as HighlightType } from '../../actions/logviewer';
 
 type HighlightProps = {
   highlight: HighlightType,

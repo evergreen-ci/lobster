@@ -1,8 +1,8 @@
 // @flow strict
 
-import { LOGVIEWER_CHANGE_HIGHLIGHT, LOGVIEWER_LOAD_HIGHLIGHTS } from '../actions';
-import type { Action } from '../actions';
-import type { Highlight } from '../actions';
+import { LOGVIEWER_CHANGE_HIGHLIGHT, LOGVIEWER_LOAD_HIGHLIGHTS } from '../actions/logviewer';
+import type { Action } from '../actions/logviewer';
+import type { Highlight } from '../actions/logviewer';
 
 const initialState: Highlight[] = [];
 
