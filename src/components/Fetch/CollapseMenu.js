@@ -105,7 +105,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
                 <ToggleButtonGroup
                   className="toggle-buttons"
                   type="radio"
-                  name="wrap-on-off"
+                  name="filter-intersection-and-or"
                   value={this.props.settings.filterIntersection}
                   onChange={this.props.toggleSettings.toggleFilterIntersection}
                 >

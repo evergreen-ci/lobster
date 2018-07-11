@@ -1,6 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import { CollapseMenu } from './CollapseMenu';
+import { ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import assert from 'assert';
 import Button from 'react-bootstrap/lib/Button';
 import sinon from 'sinon';
@@ -36,11 +37,29 @@ const wrapper = Enzyme.mount(
 );
 
 test('CollapseMenu', function() {
-  const rawUrl = '/build/' + wrapper.props().build + '/all?raw=1';
-  const HTMLUrl = '/build/' + wrapper.props().build + '/all?html=1';
+  const rawUrl = '/build/' + wrapper.instance().props.build + '/all?raw=1';
+  const HTMLUrl = '/build/' + wrapper.instance().props.build + '/all?html=1';
   assert.ok(wrapper.containsAllMatchingElements([
     <Button href={rawUrl}>Raw</Button>,
     <Button href={HTMLUrl}>HTML</Button>
+  ]));
+
+  // Test existence of toggle buttons
+  const toggleButtons = wrapper.find('ToggleButtonGroup');
+  assert.equal(toggleButtons.length, 3);
+  assert.ok(wrapper.containsAllMatchingElements([
+    <ToggleButtonGroup name={'wrap-on-off'}>
+      <ToggleButton value={true}>on</ToggleButton>
+      <ToggleButton value={false}>off</ToggleButton>
+    </ToggleButtonGroup>,
+    <ToggleButtonGroup name={'case-sensitive-on-off'}>
+      <ToggleButton value={true}>on</ToggleButton>
+      <ToggleButton value={false}>off</ToggleButton>
+    </ToggleButtonGroup>,
+    <ToggleButtonGroup name={'filter-intersection-and-or'}>
+      <ToggleButton value={true}>and</ToggleButton>
+      <ToggleButton value={false}>or</ToggleButton>
+    </ToggleButtonGroup>
   ]));
 
   // Test button toggling

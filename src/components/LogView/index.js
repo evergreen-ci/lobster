@@ -50,11 +50,6 @@ class LogLineText extends React.Component {
   }
 
   render() {
-    /*
-    if (this.lineRef) {
-      this.props.lineRefCallback(this.lineRef, this.props.lineNumber);
-    }
-    */
     const style = {color: this.props.colorMap[this.props.port]};
     const highlightAndFind = this.updateHighlightAndFind();
     const highlightStyle = {color: this.props.colorMap[this.props.port], 'backgroundImage': 'inherit', 'backgroundColor': 'pink'};
