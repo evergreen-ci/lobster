@@ -40,7 +40,7 @@ type Props = {
   valueJIRA: string
 }
 
-function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement) => void) {
+function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement) => void): ?React.Node {
   if (server) {
     return (
       <FormGroup controlId="urlInput">
@@ -59,7 +59,7 @@ function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement
   }
 }
 
-function showDetailButtons(server: ?string, build: string): ?React.Element<'span'> {
+function showDetailButtons(server: ?string, build: string): ?React.Node {
   if (!server) {
     return (
       <span>

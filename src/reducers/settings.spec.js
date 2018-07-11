@@ -1,5 +1,5 @@
 import settings from './settings';
-import * as actions from '../actions';
+import * as actions from '../actions/logviewer';
 import assert from 'assert';
 
 describe('settings', function() {
