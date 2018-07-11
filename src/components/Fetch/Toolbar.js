@@ -144,7 +144,7 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   const filterActions = {
     toggleFilter: (text) => dispatch(actions.toggleFilter(text)),
     toggleFilterInverse: (text) => dispatch(actions.toggleFilterInverse(text)),
