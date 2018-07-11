@@ -12,7 +12,7 @@ module.exports = {
   'env': {
     'es6': true
   },
-  'plugins': ['flowtype'],
+  'plugins': ['flowtype', 'dependencies'],
   'overrides': [
     {
       'files': ['src/**/*.js', 'src/**/*.jsx'],
@@ -67,6 +67,10 @@ module.exports = {
     // 'object-curly-spacing': ["error", "always"]
     'space-in-parens': ['error', 'never'],
     'no-param-reassign': 2,
+
+    'dependencies/case-sensitive': 2,
+    'dependencies/no-unresolved': 2,
+    'dependencies/no-cycles': [2, {'types': true}],
 
     'flowtype/newline-after-flow-annotation': 2,
     'flowtype/array-style-complex-type': [2, 'verbose'],
