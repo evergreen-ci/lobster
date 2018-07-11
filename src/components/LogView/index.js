@@ -220,7 +220,8 @@ class LogView extends React.Component {
       lineMap: new Map(),
       selectStartIndex: null,
       selectEndIndex: null,
-      clicks: []
+      clicks: [],
+      scrollLine: null
     };
     this.logListRef = null;
     this.indexMap = {};
@@ -232,6 +233,9 @@ class LogView extends React.Component {
         this.state.lineMap.delete(line);
       } else {
         this.state.lineMap[line] = element;
+        if (this.state.scrollLine && line === this.state.scrollLine) {
+          this.scrollFindIntoView();
+        }
       }
     };
     this.filteredLines = [];
@@ -344,8 +348,12 @@ class LogView extends React.Component {
 
   scrollFindIntoView() {
     if (this.props.findLine < 0 || !(this.props.findLine in this.state.lineMap)) {
+      if (this.props.findLine >= 0) {
+        this.setState({scrollLine: this.props.findLine});
+      }
       return;
     }
+    // console.log(this.props.findLine);
     const findElements = this.state.lineMap[this.props.findLine]
       .getElementsByClassName('findResult' + this.props.findLine);
     if (findElements.length > 0) {
