@@ -2,8 +2,7 @@
 
 import * as React from 'react';
 import './style.css';
-import ToggleButton from 'react-toggle-button';
-import { Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse } from 'react-bootstrap';
+import { Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
 import type { Highlight, Filter } from '../../actions/logviewer';
@@ -79,12 +78,41 @@ export class CollapseMenu extends React.PureComponent<Props> {
           <Form horizontal onSubmit={this.props.handleSubmit}>
             {showLogBox(this.props.server, this.props.url, this.props.setURLRef)}
             <FormGroup controlId="collapseButtons">
-              <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
-              <Col lg={1}><ToggleButton value={this.props.settings.wrap} onToggle={this.props.toggleSettings.toggleWrap} /></Col>
-              <Col componentClass={ControlLabel} lg={1}>Case Sensitive</Col>
-              <Col lg={1}><ToggleButton value={this.props.settings.caseSensitive} onToggle={this.props.toggleSettings.toggleCaseSensitive} /></Col>
-              <Col componentClass={ControlLabel} lg={1}>Filter Logic</Col>
-              <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.props.settings.filterIntersection} onToggle={this.props.toggleSettings.toggleFilterIntersection} /></Col>
+              <Col lg={5}>
+                <span className="far-left-label">Wrap</span>
+                <ToggleButtonGroup
+                  className="toggle-buttons"
+                  type="radio"
+                  name="wrap-on-off"
+                  value={this.props.settings.wrap}
+                  onChange={this.props.toggleSettings.toggleWrap}
+                >
+                  <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
+                  <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
+                </ToggleButtonGroup>
+                <span className="toggle-label">Case Sensitive</span>
+                <ToggleButtonGroup
+                  className="toggle-buttons"
+                  type="radio"
+                  name="case-sensitive-on-off"
+                  value={this.props.settings.caseSensitive}
+                  onChange={this.props.toggleSettings.toggleCaseSensitive}
+                >
+                  <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
+                  <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
+                </ToggleButtonGroup>
+                <span className="toggle-label">Filter Logic</span>
+                <ToggleButtonGroup
+                  className="toggle-buttons"
+                  type="radio"
+                  name="wrap-on-off"
+                  value={this.props.settings.filterIntersection}
+                  onChange={this.props.toggleSettings.toggleFilterIntersection}
+                >
+                  <ToggleButton value={true} bsSize="small" bsStyle="primary">and</ToggleButton>
+                  <ToggleButton value={false} bsSize="small" bsStyle="primary">or</ToggleButton>
+                </ToggleButtonGroup>
+              </Col>
               <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
               <Col lg={1}><textarea readOnly className="unmoving" value={this.props.valueJIRA}></textarea></Col>
               {showDetailButtons(this.props.server, this.props.build)}

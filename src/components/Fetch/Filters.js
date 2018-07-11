@@ -46,9 +46,9 @@ export class Filter extends React.PureComponent<FilterProps> {
     return (
       <div className="filter-highlight-lines">
         <Button className="exit-button" onClick={this.removeFilter} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
-        <span className="filter-highlight-label">Filter Options</span>
+        <span className="toggle-label">Filter Options</span>
         <ToggleButtonGroup
-          className="filter-highlight-buttons"
+          className="toggle-buttons"
           type="radio"
           name="filter-on-off"
           value={this.props.filter.on}
@@ -62,7 +62,7 @@ export class Filter extends React.PureComponent<FilterProps> {
           </ToggleButton>
         </ToggleButtonGroup>
         <ToggleButtonGroup
-          className="filter-highlight-buttons"
+          className="toggle-buttons"
           type="radio"
           name="filter-inverse"
           value={this.props.filter.inverse}
