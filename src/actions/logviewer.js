@@ -100,8 +100,7 @@ export type LoadFilters = {|
   |}
 |}
 
-export type Action =
-  | ChangeSetting
+export type Action = ChangeSetting
   | ChangeFilter
   | ChangeHighlight
   | ChangeBookmark
@@ -248,4 +247,3 @@ export function changeSearch(text: string): ChangeSearch {
     }
   };
 }
-

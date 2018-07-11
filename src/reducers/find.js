@@ -1,7 +1,7 @@
 // @flow strict
 
 import { LOGVIEWER_CHANGE_FINDIDX, LOGVIEWER_CHANGE_SEARCH } from '../actions/logviewer';
-import type { Action } from '../actions/logviewer';
+import type { Action } from '../actions';
 
 export type Find = {|
   +findIdx: number,
