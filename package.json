@@ -8,7 +8,6 @@
     "decode-uri-component": "^0.2.0",
     "eslint-plugin-flowtype": "^2.49.3",
     "express": "^4.16.3",
-    "hadron-react-components": "^1.14.1",
     "morgan": "^1.8.2",
     "needle": "^2.2.1",
     "prop-types": "^15.6.1",
