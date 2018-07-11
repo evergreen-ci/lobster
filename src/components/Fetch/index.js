@@ -1,28 +1,21 @@
 import React from 'react';
-import { loadData, lobsterLoadData } from '../../actions';
+import * as actions from '../../actions';
+import * as logviewerActions from '../../actions/logviewer';
 import './style.css';
-import ToggleButton from 'react-toggle-button';
-import Button from 'react-bootstrap/lib/Button';
-import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
-import Form from 'react-bootstrap/lib/Form';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import Col from 'react-bootstrap/lib/Col';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import Collapse from 'react-bootstrap/lib/Collapse';
 import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
-import { Filters } from './Filters';
-import { Highlights } from './Highlights';
 import { connect } from 'react-redux';
 import queryString from '../../thirdparty/query-string';
-
+import Toolbar from './Toolbar';
 
 // eslint-disable-next-line react/no-deprecated
 export class Fetch extends React.Component {
   static propTypes = {
-    lines: PropTypes.array,
+    log: PropTypes.shape({
+      lines: PropTypes.array,
+      colorMap: PropTypes.object
+    }),
     location: PropTypes.shape({
       search: PropTypes.string,
       hash: PropTypes.string
@@ -34,10 +27,27 @@ export class Fetch extends React.Component {
       })
     }),
     history: PropTypes.object,
-
-    colorMap: PropTypes.object,
     lobsterLoadData: PropTypes.func.isRequired,
-    loadData: PropTypes.func.isRequired
+    loadData: PropTypes.func.isRequired,
+    settings: PropTypes.shape({
+      wrap: PropTypes.bool.isRequired,
+      caseSensitive: PropTypes.bool.isRequired,
+      filterIntersection: PropTypes.bool.isRequired
+    }),
+    loadInitialFilters: PropTypes.func,
+    loadInitialHighlights: PropTypes.func,
+    filterList: PropTypes.array,
+    addFilter: PropTypes.func,
+    addHighlight: PropTypes.func,
+    highlightList: PropTypes.array,
+    bookmarks: PropTypes.array,
+    loadBookmarks: PropTypes.func,
+    toggleBookmark: PropTypes.func,
+    ensureBookmark: PropTypes.func,
+    findIdx: PropTypes.number.isRequired,
+    changeFindIdx: PropTypes.func.isRequired,
+    searchRegex: PropTypes.string.isRequired,
+    changeSearch: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -56,25 +66,22 @@ export class Fetch extends React.Component {
     if (bookmarksList) {
       bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n, 10)}));
     }
+    this.props.loadBookmarks(bookmarksArr);
     this.state = {
       build: params.build,
       test: params.test,
       scrollLine: parseInt(parsed.scroll, 10),
       server: parsed.server || null,
       url: parsed.url || null,
-      wrap: false,
-      caseSensitive: false,
-      filterIntersection: false,
       detailsOpen: false,
-      filterList: ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')})),
-      highlightList: ((typeof parsed.h === 'string' ? [parsed.h] : parsed.h) || []).map((h) => ({text: h.substring(2), on: (h.charAt(0) === '1'), line: (h.charAt(1) === '1')})),
-      find: '',
-      findIdx: -1,
-      findResults: [],
-      bookmarks: bookmarksArr
+      findResults: []
     };
+    const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')}));
+    this.props.loadInitialFilters(initialFilters);
+    const initialHighlights = ((typeof parsed.h === 'string' ? [parsed.h] : parsed.h) || []).map((h) => ({text: h.substring(2), on: (h.charAt(0) === '1'), line: (h.charAt(1) === '1')}));
+    this.props.loadInitialHighlights(initialHighlights);
     if (locationSearch !== '') {
-      this.updateURL(this.state.bookmarks, this.state.filterList, this.state.highlightList);
+      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     }
     if (this.state.url) {
       this.props.lobsterLoadData(this.state.server, this.state.url);
@@ -102,46 +109,25 @@ export class Fetch extends React.Component {
     return {build: this.state.build, test: this.state.test};
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log('componentWillReceiveProps');
-    const params = nextProps.match.params;
-    const searchParams = new URLSearchParams(nextProps.location.search);
-    // don't reload, just update state
-    if (params.build === this.state.build && params.test === this.state.test && !searchParams.get('server')) {
-    // update the filter in the child component and return
-      if (this.state.filter !== searchParams.get('filter')) {
-        console.log('set filter to ' + searchParams.get('filter'));
-        this.setState({filter: searchParams.get('filter')});
+  componentDidUpdate(prevProps) {
+    if (this.props.filterList !== prevProps.filterList) {
+      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
+      this.clearFind();
+    }
+    if ((JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) || this.props.log.lines !== prevProps.log.lines) {
+      if (this.props.log.lines.length > 0) {
+        this.props.ensureBookmark(0);
+        this.props.ensureBookmark(this.props.log.lines[this.props.log.lines.length - 1].lineNumber);
       }
-      if (this.state.scrollLine !== parseInt(searchParams.get('scroll'), 10)) {
-        console.log('set scroll to: ' + searchParams.get('scroll'));
-        this.setState({scrollLine: parseInt(searchParams.get('scroll'), 10)});
-      }
-    // reload and rerender
-    } else {
-      console.log('set state to server: ' + searchParams.get('server'));
-      this.setState({build: params.build,
-        test: params.test,
-        filter: searchParams.get('filter'),
-        scrollLine: parseInt(searchParams.get('scroll'), 10),
-        server: searchParams.get('server')});
-      let url = '';
-      if (this.urlInput) {
-        url = this.urlInput.value.trim();
-      }
+      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
+    }
+  }
 
-      if (url) {
-        this.setState({url: url});
-      }
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.log.lines !== prevState.lines) {
+      return { lines: nextProps.log.lines };
     }
-    if (this.props.lines.length !== nextProps.lines.length && nextProps.lines.length > 0) {
-      let newBookmarks = this.ensureBookmark(0, this.state.bookmarks);
-      newBookmarks = this.ensureBookmark(nextProps.lines[nextProps.lines.length - 1].lineNumber, newBookmarks);
-      if (newBookmarks.length !== this.state.bookmarks.length) {
-        this.updateURL(newBookmarks, this.state.filterList, this.state.highlightList);
-        this.setState({bookmarks: newBookmarks});
-      }
-    }
+    return null;
   }
 
   makeFilterURLString(filter) {
@@ -162,8 +148,8 @@ export class Fetch extends React.Component {
 
   updateURL(bookmarks, filters, highlights) {
     const parsedParams = this.getUrlParams();
-    const locationSearch = this.props.location.search;
-    const parsed = queryString.parse(locationSearch === '' ? this.props.location.hash : locationSearch);
+    // const locationSearch = this.props.location.search;
+    const parsed = [];
 
     for (let i = 0; i < filters.length; i++) {
       parsed.f = this.makeFilterURLString(filters[i]);
@@ -199,10 +185,12 @@ export class Fetch extends React.Component {
       return;
     }
 
-    this.updateURL(this.state.bookmarks, this.state.filterList, this.state.highlightList);
+    this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
 
     if (this.urlInput.value !== this.state.url) {
-      this.setState({url: this.urlInput.value, bookmarks: [], findResults: [], findIdx: -1});
+      this.props.changeFindIdx(-1);
+      this.setState({url: this.urlInput.value, findResults: []});
+      this.props.loadBookmarks([]);
       this.props.lobsterLoadData(this.state.server, this.state.url);
     }
   }
@@ -221,55 +209,6 @@ export class Fetch extends React.Component {
     return b1.lineNumber - b2.lineNumber;
   }
 
-  toggleBookmark = (lineNumArray) => {
-    let remove = true;
-    const newBookmarks = this.state.bookmarks.slice();
-    lineNumArray.forEach((element) => {
-      const index = this.findBookmark(newBookmarks, element);
-      if (index === -1) {
-        newBookmarks.push({lineNumber: element});
-        remove = false;
-      }
-    });
-    if (remove) {
-      lineNumArray.forEach((element) => {
-        const removeIndex = this.findBookmark(newBookmarks, element);
-        newBookmarks.splice(removeIndex, 1);
-      });
-    }
-    newBookmarks.sort(this.bookmarkSort);
-    this.setState({bookmarks: newBookmarks});
-    this.updateURL(newBookmarks, this.state.filterList, this.state.highlightList);
-  }
-
-  ensureBookmark(lineNum, bookmarks) {
-    const newBookmarks = bookmarks.slice();
-    const i = this.findBookmark(newBookmarks, lineNum);
-    if (i === -1) {
-      newBookmarks.push({lineNumber: lineNum});
-      newBookmarks.sort(this.bookmarkSort);
-    }
-    return newBookmarks;
-  }
-
-  nextFind = () => {
-    let nextIdx = this.state.findIdx + 1;
-    if (nextIdx === this.state.findResults.length) {
-      nextIdx = 0;
-    }
-    this.setState({findIdx: nextIdx});
-    this.setScroll(this.state.findResults[nextIdx]);
-  }
-
-  prevFind = () => {
-    let nextIdx = this.state.findIdx - 1;
-    if (nextIdx === -1) {
-      nextIdx = this.state.findResults.length - 1;
-    }
-    this.setState({findIdx: nextIdx});
-    this.setScroll(this.state.findResults[nextIdx]);
-  }
-
   find = (event) => {
     if (event) {
       event.preventDefault();
@@ -284,7 +223,7 @@ export class Fetch extends React.Component {
       return;
     }
 
-    if (findRegexp === this.state.find) {
+    if (findRegexp === this.props.searchRegex) {
       if (this.state.findResults.length > 0) {
         return this.nextFind();
       }
@@ -292,27 +231,51 @@ export class Fetch extends React.Component {
     }
 
     const findResults = [];
-    const filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
-    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
-    const findRegexpFull = this.makeRegexp(findRegexp, this.state.caseSensitive);
+    const filter = this.mergeActiveFilters(this.props.filterList, this.props.settings.caseSensitive);
+    const inverseFilter = this.mergeActiveInverseFilters(this.props.filterList, this.props.settings.caseSensitive);
+    const findRegexpFull = this.makeRegexp(findRegexp, this.props.settings.caseSensitive);
 
-    for (let i = 0; i < this.props.lines.length; i++) {
-      const line = this.props.lines[i];
-      if (line.text.match(findRegexpFull) && this.shouldPrintLine(this.state.bookmarks, line, filter, inverseFilter)) {
+    for (let i = 0; i < this.props.log.lines.length; i++) {
+      const line = this.props.log.lines[i];
+      if (line.text.match(findRegexpFull) && this.shouldPrintLine(this.props.bookmarks, line, filter, inverseFilter)) {
         findResults.push(line.lineNumber);
       }
     }
 
     if (findResults.length > 0) {
-      this.setState({find: findRegexp, findIdx: 0, findResults: findResults});
+      this.props.changeFindIdx(0);
+      this.props.changeSearch(findRegexp);
+      this.setState({findResults: findResults});
       this.setScroll(findResults[0]);
     } else {
-      this.setState({find: findRegexp, findIdx: -1, findResults: findResults});
+      this.props.changeFindIdx(-1);
+      this.props.changeSearch(findRegexp);
+      this.setState({findResults: findResults});
     }
   }
 
+  nextFind = () => {
+    let nextIdx = this.props.findIdx + 1;
+    if (nextIdx === this.state.findResults.length) {
+      nextIdx = 0;
+    }
+    this.props.changeFindIdx(nextIdx);
+    this.setScroll(this.state.findResults[nextIdx]);
+  }
+
+  prevFind = () => {
+    let nextIdx = this.props.findIdx - 1;
+    if (nextIdx === -1) {
+      nextIdx = this.state.findResults.length - 1;
+    }
+    this.props.changeFindIdx(nextIdx);
+    this.setScroll(this.state.findResults[nextIdx]);
+  }
+
   clearFind() {
-    this.setState({find: '', findIdx: -1, findResults: []});
+    this.props.changeFindIdx(-1);
+    this.props.changeSearch('');
+    this.setState({findResults: []});
   }
 
   shouldPrintLine = (bookmarks, line, filter, inverseFilter) => {
@@ -328,19 +291,19 @@ export class Fetch extends React.Component {
       }
       return true;
     } else if (!inverseFilter || inverseFilter.length === 0) {
-      if (this.matchFilters(filter, line.text, this.state.filterIntersection)) {
+      if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection)) {
         return true;
       }
       return false;
     }
     // If there are both types of filters, it has to match the filter and not match
     // the inverseFilter.
-    if (this.state.filterIntersection) {
-      if (this.matchFilters(filter, line.text, this.state.filterIntersection) &&
+    if (this.props.settings.filterIntersection) {
+      if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection) &&
             !this.matchFilters(inverseFilter, line.text)) {
         return true;
       }
-    } else if (this.matchFilters(filter, line.text, this.state.filterIntersection) ||
+    } else if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection) ||
           !this.matchFilters(inverseFilter, line.text)) {
       return true;
     }
@@ -351,91 +314,27 @@ export class Fetch extends React.Component {
     if (!highlight || highlight.length === 0) {
       return false;
     }
-    if (this.matchFilters(highlight, line.text, this.state.filterIntersection) && this.matchFilters(highlightLine, line.text)) {
+    if (this.matchFilters(highlight, line.text, this.props.settings.filterIntersection) && this.matchFilters(highlightLine, line.text)) {
       return true;
     }
     return false;
   }
 
   addFilter = () => {
-    if (this.findInput.value === '' || this.state.filterList.find((elem) => elem.text === this.findInput.value)) {
+    if (this.findInput.value === '' || this.props.filterList.find((elem) => elem.text === this.findInput.value)) {
       return;
     }
-    const newFilters = this.state.filterList.slice();
-    newFilters.push({text: this.findInput.value, on: true, inverse: false});
-    this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
+    this.props.addFilter(this.findInput.value);
+    this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     this.clearFind();
   }
 
   addHighlight = () => {
-    if (this.findInput.value === '' || this.state.highlightList.find((elem) => elem.text === this.findInput.value)) {
+    if (this.findInput.value === '' || this.props.highlightList.find((elem) => elem.text === this.findInput.value)) {
       return;
     }
-    const newHighlights = this.state.highlightList.slice();
-    newHighlights.push({text: this.findInput.value, on: true, line: true});
-    this.setState({highlightList: newHighlights});
-    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
-    this.clearFind();
-  }
-
-  toggleFilter = (text) => {
-    const newFilters = this.state.filterList.slice();
-    const filterIdx = newFilters.findIndex((elem) => text === elem.text);
-    newFilters[filterIdx].on = !newFilters[filterIdx].on;
-
-    this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
-    this.clearFind();
-  }
-
-  toggleFilterInverse = (text) => {
-    const newFilters = this.state.filterList.slice();
-    const filterIdx = newFilters.findIndex((elem) => text === elem.text);
-    newFilters[filterIdx].inverse = !newFilters[filterIdx].inverse;
-
-    this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
-    this.clearFind();
-  }
-
-  toggleHighlight = (text) => {
-    const newHighlights = this.state.highlightList.slice();
-    const highlightIdx = newHighlights.findIndex((elem) => text === elem.text);
-    newHighlights[highlightIdx].on = !newHighlights[highlightIdx].on;
-
-    this.setState({highlightList: newHighlights});
-    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
-    this.clearFind();
-  }
-
-  toggleHighlightLine = (text) => {
-    const newHighlights = this.state.highlightList.slice();
-    const highlightIdx = newHighlights.findIndex((elem) => text === elem.text);
-    newHighlights[highlightIdx].line = !newHighlights[highlightIdx].line;
-
-    this.setState({highlightList: newHighlights});
-    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
-    this.clearFind();
-  }
-
-  removeFilter = (text) => {
-    const newFilters = this.state.filterList.slice();
-    const filterIdx = newFilters.findIndex((elem) => text === elem.text);
-    newFilters.splice(filterIdx, 1);
-
-    this.setState({filterList: newFilters});
-    this.updateURL(this.state.bookmarks, newFilters, this.state.highlightList);
-    this.clearFind();
-  }
-
-  removeHighlight = (text) => {
-    const newHighlights = this.state.highlightList.slice();
-    const highlightIdx = newHighlights.findIndex((elem) => text === elem.text);
-    newHighlights.splice(highlightIdx, 1);
-
-    this.setState({highlightList: newHighlights});
-    this.updateURL(this.state.bookmarks, this.state.filterList, newHighlights);
+    this.props.addHighlight(this.findInput.value);
+    this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     this.clearFind();
   }
 
@@ -495,64 +394,46 @@ export class Fetch extends React.Component {
   }
 
   showLines() {
-    const filter = this.mergeActiveFilters(this.state.filterList, this.state.caseSensitive);
-    const inverseFilter = this.mergeActiveInverseFilters(this.state.filterList, this.state.caseSensitive);
-    const highlight = this.mergeActiveHighlights(this.state.highlightList, this.state.caseSensitive);
-    const highlightText = this.getHighlightText(this.state.highlightList);
-    const highlightLine = this.mergeActiveHighlightLines(this.state.highlightList, this.state.caseSensitive);
-    if (!this.props.lines) {
+    const filter = this.mergeActiveFilters(this.props.filterList, this.props.settings.caseSensitive);
+    const inverseFilter = this.mergeActiveInverseFilters(this.props.filterList, this.props.settings.caseSensitive);
+    const highlight = this.mergeActiveHighlights(this.props.highlightList, this.props.settings.caseSensitive);
+    const highlightText = this.getHighlightText(this.props.highlightList);
+    const highlightLine = this.mergeActiveHighlightLines(this.props.highlightList, this.props.settings.caseSensitive);
+    if (!this.props.log.lines) {
       return <div />;
     }
     return (
       <LogView
-        lines={this.props.lines}
-        colorMap={this.props.colorMap}
         filter={filter}
         inverseFilter={inverseFilter}
         highlight={highlight}
         highlightLine={highlightLine}
         scrollLine={this.state.scrollLine}
-        wrap={this.state.wrap}
-        caseSensitive={this.state.caseSensitive}
         findBookmark={this.findBookmark}
-        toggleBookmark={this.toggleBookmark}
-        bookmarks={this.state.bookmarks}
-        find={this.state.find}
+        toggleBookmark={this.props.toggleBookmark}
+        bookmarks={this.props.bookmarks}
         highlightText={highlightText}
-        findLine={this.state.findIdx === -1 ? -1 : this.state.findResults[this.state.findIdx]}
+        findLine={this.props.findIdx === -1 ? -1 : this.state.findResults[this.props.findIdx]}
         shouldPrintLine={this.shouldPrintLine}
         shouldHighlightLine={this.shouldHighlightLine}
       />);
   }
 
-  showFind() {
-    if (this.state.find !== '') {
-      if (this.state.findResults.length > 0) {
-        return (
-          <span><Col lg={1} componentClass={ControlLabel} >{this.state.findIdx + 1}/{this.state.findResults.length}</Col>
-            <Button onClick={this.nextFind}>Next</Button>
-            <Button onClick={this.prevFind}>Prev</Button>
-          </span>);
-      }
-      return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
-    }
-  }
-
   showJIRA() {
-    if (this.state.bookmarks.length === 0 || this.props.lines.length === 0) {
+    if (this.props.bookmarks.length === 0 || this.props.log.lines.length === 0) {
       return '';
     }
 
     let text = '{noformat}\n';
-    for (let i = 0; i < this.state.bookmarks.length; i++) {
-      const curr = this.state.bookmarks[i].lineNumber;
-      if (curr >= this.props.lines.length) {
+    for (let i = 0; i < this.props.bookmarks.length; i++) {
+      const curr = this.props.bookmarks[i].lineNumber;
+      if (curr >= this.props.log.lines.length) {
         text += '{noformat}';
         return text;
       }
 
-      text += this.props.lines[curr].text + '\n';
-      if ((i !== (this.state.bookmarks.length - 1)) && (this.state.bookmarks[i + 1].lineNumber !== (curr + 1))) {
+      text += this.props.log.lines[curr].text + '\n';
+      if ((i !== (this.props.bookmarks.length - 1)) && (this.props.bookmarks[i + 1].lineNumber !== (curr + 1))) {
         text += '...\n';
       }
     }
@@ -562,60 +443,18 @@ export class Fetch extends React.Component {
 
   setURLRef = (ref) => {this.urlInput = ref;}
 
-  showLogBox() {
-    if (this.state.server) {
-      return (
-        <FormGroup controlId="urlInput">
-          <Col componentClass={ControlLabel} lg={1}>Log</Col>
-          <Col lg={6}>
-            <FormControl
-              type="text"
-              defaultValue={this.state.url}
-              placeholder="optional. custom file location iff used with local server"
-              inputRef={this.setURLRef}
-            />
-          </Col>
-          <Col lg={1}> <Button type="submit"> Apply </Button> </Col>
-        </FormGroup>
-      );
-    }
-  }
-
-  showJobLogs() {
-    if (!this.state.server) {
-      return (<Col lg={1}><Button href={'/build/' + this.state.build}>Job Logs</Button></Col>);
-    }
-  }
-
-  toggleCaseSensitive = (value) => {
-    this.setState({caseSensitive: !value});
-    this.find();
-  }
-
-  showRaw() {
-    if (!this.state.server) {
-      return (<Col lg={1}><Button href={'/build/' + this.state.build + '/all?raw=1'}>Raw</Button></Col>);
-    }
-  }
-
-  showHTML() {
-    if (!this.state.server) {
-      return (<Col lg={1}><Button href={'/build/' + this.state.build + '/all?html=1'}>HTML</Button></Col>);
-    }
-  }
-
-  toggleFilterIntersection = (value) => {
-    this.setState({filterIntersection: !value});
-  }
-
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
-    this.findInput.addEventListener('keydown', this.handleShiftEnter);
+    if (this.findInput) {
+      this.findInput.addEventListener('keydown', this.handleShiftEnter);
+    }
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
-    this.findInput.removeEventListener('keydown', this.handleShiftEnter);
+    if (this.findInput) {
+      this.findInput.removeEventListener('keydown', this.handleShiftEnter);
+    }
   }
 
   handleKeyDown = (event) => {
@@ -640,7 +479,7 @@ export class Fetch extends React.Component {
   }
 
   handleChangeFindEvent = () => {
-    this.find(this.state.caseSensitive);
+    this.find(this.props.settings.caseSensitive);
   }
 
   handleShiftEnter = (event) => {
@@ -652,70 +491,34 @@ export class Fetch extends React.Component {
     }
   }
 
-  toggleWrap = (value) => this.setState({wrap: !value});
   togglePanel = () => this.setState((state) => ({detailsOpen: !state.detailsOpen}));
   setFormRef = (ref) => {this.findInput = ref;}
 
   render() {
     return (
       <div>
-        <Bookmarks bookmarks={this.state.bookmarks} setScroll={this.setScroll} />
+        <Bookmarks bookmarks={this.props.bookmarks} setScroll={this.setScroll} />
         <div className="main">
-          <Col lg={11} lgOffset={1}>
-            <div className="find-box">
-              <Form horizontal>
-                <FormGroup controlId="findInput" className="filter-header">
-                  <Col lg={6} >
-                    <FormControl
-                      type="text"
-                      placeholder="optional. regexp to search for"
-                      inputRef={this.setFormRef}
-                      onChange={this.handleChangeFindEvent}
-                    />
-                  </Col>
-                  <ButtonToolbar>
-                    <Button id="formSubmit" type="submit" onClick={this.find}>Find</Button>
-                    {this.showFind()}
-                    <Button onClick={this.addFilter}>Add Filter</Button>
-                    <Button onClick={this.addHighlight}>Add Highlight</Button>
-                    <Button onClick={this.togglePanel}>{this.state.detailsOpen ? 'Hide Details \u25B4' : 'Show Details \u25BE'}</Button>
-                  </ButtonToolbar>
-                </FormGroup>
-              </Form>
-              <Collapse className="collapse-menu" in={this.state.detailsOpen}>
-                <div>
-                  <Form horizontal onSubmit={this.handleSubmit}>
-                    {this.showLogBox()}
-                    <FormGroup controlId="wrap">
-                      <Col componentClass={ControlLabel} lg={1}>Wrap</Col>
-                      <Col lg={1}><ToggleButton value={this.state.wrap || false} onToggle={this.toggleWrap} /></Col>
-                      <Col componentClass={ControlLabel} lg={1}>Case Sensitive</Col>
-                      <Col lg={1}><ToggleButton value={this.state.caseSensitive || false} onToggle={this.toggleCaseSensitive} /></Col>
-                      <Col componentClass={ControlLabel} lg={1}>Filter Logic</Col>
-                      <Col lg={1}><ToggleButton inactiveLabel={'OR'} activeLabel={'AND'} value={this.state.filterIntersection || false} onToggle={this.toggleFilterIntersection} /></Col>
-                      <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
-                      <Col lg={1}><textarea readOnly className="unmoving" value={this.showJIRA()}></textarea></Col>
-                      {this.showJobLogs()}
-                      {this.showRaw()}
-                      {this.showHTML()}
-                    </FormGroup>
-                  </Form>
-                  <Filters
-                    filters={this.state.filterList}
-                    removeFilter={this.removeFilter}
-                    toggleFilter={this.toggleFilter}
-                    toggleFilterInverse={this.toggleFilterInverse}
-                  />
-                  <Highlights
-                    highlights={this.state.highlightList}
-                    removeHighlight={this.removeHighlight}
-                    toggleHighlight={this.toggleHighlight}
-                    toggleHighlightLine={this.toggleHighlightLine}
-                  />
-                </div>
-              </Collapse>
-            </div>
-          </Col>
+          <Toolbar
+            setFormRef={this.setFormRef}
+            handleChangeFindEvent={this.handleChangeFindEvent}
+            searchRegex={this.props.searchRegex}
+            find={this.find}
+            showFind={this.showFind}
+            addFilter={this.addFilter}
+            addHighlight={this.addHighlight}
+            togglePanel={this.togglePanel}
+            detailsOpen={this.state.detailsOpen}
+            handleSubmit={this.handleSubmit}
+            server={this.state.server}
+            build={this.state.build}
+            url={this.state.url}
+            setURLRef={this.setURLRef}
+            valueJIRA={this.showJIRA()}
+            findResults={this.state.findResults}
+            nextFind={this.nextFind}
+            prevFind={this.prevFind}
+          />
           <div className="log-list">
             {this.showLines()}
           </div>
@@ -728,13 +531,24 @@ export class Fetch extends React.Component {
 // This is not the ideal way to do this, but it allows for better compatibility
 // as we migrate towards the react-redux model
 function mapStateToProps(state, ownProps) {
-  return {...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap};
+  return {...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap,
+    settings: state.settings, findIdx: state.find.findIdx, searchRegex: state.find.searchRegex,
+    filterList: state.filters, highlightList: state.highlights, bookmarks: state.bookmarks};
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-    lobsterLoadData: (server, url) => dispatch(lobsterLoadData(server, url)),
-    loadData: (build, test) => dispatch(loadData(build, test)),
+    lobsterLoadData: (server, url) => dispatch(actions.lobsterLoadData(server, url)),
+    loadData: (build, test) => dispatch(actions.loadData(build, test)),
+    loadInitialFilters: (initialFilters) => dispatch(logviewerActions.loadInitialFilters(initialFilters)),
+    loadInitialHighlights: (initialHighlights) => dispatch(logviewerActions.loadInitialHighlights(initialHighlights)),
+    addFilter: (text) => dispatch(logviewerActions.addFilter(text)),
+    addHighlight: (text) => dispatch(logviewerActions.addHighlight(text)),
+    changeFindIdx: (index) => dispatch(logviewerActions.changeFindIdx(index)),
+    loadBookmarks: (bookmarksArr) => dispatch(logviewerActions.loadBookmarks(bookmarksArr)),
+    toggleBookmark: (lineNumArray) => dispatch(logviewerActions.toggleBookmark(lineNumArray)),
+    ensureBookmark: (lineNum) => dispatch(logviewerActions.ensureBookmark(lineNum)),
+    changeSearch: (text) => dispatch(logviewerActions.changeSearch(text)),
     ...ownProps
   };
 }

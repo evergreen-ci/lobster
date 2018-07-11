@@ -1,18 +1,10 @@
 // @flow strict
 
+import type { Action as LogviewerAction } from './logviewer';
+
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
-
-export type Filter = {
-  text: string,
-  on: boolean,
-  inverse: boolean
-}
-
-export type Bookmark = {
-  lineNumber: number,
-}
 
 export type Line = {
   +lineNumber: number,
@@ -55,6 +47,7 @@ export type LogkeeperDataResponse = {|
 export type Action = LogkeeperLoadData
   | LogkeeperDataResponse
   | LobsterLoadData
+  | LogviewerAction
 
 // Load data from Logkeeper
 export function loadData(build: string, test: ?string): LogkeeperLoadData {
