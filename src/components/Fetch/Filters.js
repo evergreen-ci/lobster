@@ -1,9 +1,24 @@
-import Button from 'react-bootstrap/lib/Button';
-import React from 'react';
-import PropTypes from 'prop-types';
-import {ToggleButton, ToggleButtonGroup} from 'react-bootstrap';
+// @flow strict
 
-export const Filters = (props) => {
+import React from 'react';
+import { ToggleButton, ToggleButtonGroup, Button } from 'react-bootstrap';
+import type { Filter as FilterType } from '../../actions/logviewer';
+
+type FilterProps = {
+  filter: FilterType,
+  removeFilter: (string) => void,
+  toggleFilter: (string) => void,
+  toggleFilterInverse: (string) => void
+}
+
+type FiltersProps = {
+  filters: FilterType[],
+  removeFilter: (string) => void,
+  toggleFilter: (string) => void,
+  toggleFilterInverse: (string) => void
+}
+
+export const Filters = (props: FiltersProps) => {
   return (
     <div className="filterBox">
       <div className="filter-box">{props.filters.map(function(filter) {
@@ -22,29 +37,7 @@ export const Filters = (props) => {
   );
 };
 
-Filters.propTypes = {
-  filters: PropTypes.arrayOf(PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    on: PropTypes.bool.isRequired,
-    inverse: PropTypes.bool.isRequired
-  })).isRequired,
-  removeFilter: PropTypes.func.isRequired,
-  toggleFilter: PropTypes.func.isRequired,
-  toggleFilterInverse: PropTypes.func.isRequired
-};
-
-export class Filter extends React.PureComponent {
-  static propTypes = {
-    filter: PropTypes.shape({
-      text: PropTypes.string.isRequired,
-      on: PropTypes.bool.isRequired,
-      inverse: PropTypes.bool.isRequired
-    }).isRequired,
-    removeFilter: PropTypes.func.isRequired,
-    toggleFilter: PropTypes.func.isRequired,
-    toggleFilterInverse: PropTypes.func.isRequired
-  };
-
+export class Filter extends React.PureComponent<FilterProps> {
   removeFilter = () => this.props.removeFilter(this.props.filter.text);
   toggleFilter = () => this.props.toggleFilter(this.props.filter.text);
   toggleFilterInverse = () => this.props.toggleFilterInverse(this.props.filter.text);
@@ -53,9 +46,9 @@ export class Filter extends React.PureComponent {
     return (
       <div className="filter-highlight-lines">
         <Button className="exit-button" onClick={this.removeFilter} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
-        <span className="filter-highlight-label">Filter Options</span>
+        <span className="toggle-label">Filter Options</span>
         <ToggleButtonGroup
-          className="filter-highlight-buttons"
+          className="toggle-buttons"
           type="radio"
           name="filter-on-off"
           value={this.props.filter.on}
@@ -69,7 +62,7 @@ export class Filter extends React.PureComponent {
           </ToggleButton>
         </ToggleButtonGroup>
         <ToggleButtonGroup
-          className="filter-highlight-buttons"
+          className="toggle-buttons"
           type="radio"
           name="filter-inverse"
           value={this.props.filter.inverse}

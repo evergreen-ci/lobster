@@ -2,6 +2,7 @@ import React from 'react';
 import ReactList from 'react-list';
 import Highlighter from 'react-highlight-words';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import './style.css';
 
@@ -75,7 +76,8 @@ class LogLineText extends React.Component {
 class LineNumber extends React.Component {
   static propTypes = {
     toggleBookmark: PropTypes.func,
-    lineNumber: PropTypes.number
+    lineNumber: PropTypes.number,
+    handleDoubleClick: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -85,7 +87,7 @@ class LineNumber extends React.Component {
 
   render() {
     const style = {width: '60px', display: 'inline-block'};
-    return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style}></span>;
+    return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style} onDoubleClick={this.props.handleDoubleClick}></span>;
   }
 }
 
@@ -133,7 +135,8 @@ class FullLogLine extends React.Component {
     wrap: PropTypes.bool,
     updateSelectStartIndex: PropTypes.func,
     updateSelectEndIndex: PropTypes.func,
-    highlightText: PropTypes.array.isRequired
+    highlightText: PropTypes.array.isRequired,
+    handleDoubleClick: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -177,8 +180,8 @@ class FullLogLine extends React.Component {
       className += ' filtered';
     }
     return (
-      <div className={className} onMouseUp={this.handleMouseUp} onMouseDown={this.handleMouseDown}>
-        <LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} />
+      <div className={className} onMouseUp={this.handleMouseUp} onMouseDown={this.handleMouseDown} >
+        <LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} handleDoubleClick={this.props.handleDoubleClick} />
         <LogOptions gitRef={this.props.line.gitRef} />
         <LogLineText
           lineRefCallback={this.props.lineRefCallback}
@@ -256,18 +259,20 @@ class LogView extends React.Component {
     let indexArray = [];
     const lastClick = this.state.clicks[this.state.clicks.length - 1];
     const secondToLastClick = this.state.clicks[this.state.clicks.length - 2];
-    // Check if trying to toggle one line
-    if (lastClick[0] === secondToLastClick[0] && lastClick[1] === secondToLastClick[1]) {
-      indexArray.push(lastClick[0]);
-    } if (this.state.clicks.length > 2) {
-      const selectClick = this.state.clicks[this.state.clicks.length - 3];
-      if (lastClick[0] >= selectClick[0] && lastClick[1] <= selectClick[1]) {
-        indexArray = Array(selectClick[1] - selectClick[0] + 1).fill().map((item, index) => selectClick[0] + index);
+    if (lastClick && secondToLastClick) {
+      // Check if trying to toggle one line
+      if (lastClick[0] === secondToLastClick[0] && lastClick[1] === secondToLastClick[1]) {
+        indexArray.push(lastClick[0]);
+      } if (this.state.clicks.length > 2) {
+        const selectClick = this.state.clicks[this.state.clicks.length - 3];
+        if (lastClick[0] >= selectClick[0] && lastClick[1] <= selectClick[1]) {
+          indexArray = Array(selectClick[1] - selectClick[0] + 1).fill().map((item, index) => selectClick[0] + index);
+        }
       }
+      // Call toggle bookmark
+      this.props.toggleBookmark(indexArray);
+      this.setState({clicks: []});
     }
-    // Call toggle bookmark
-    this.props.toggleBookmark(indexArray);
-    this.setState({clicks: []});
   }
 
   genList = (index, key) => {
@@ -287,6 +292,7 @@ class LogView extends React.Component {
         caseSensitive={this.props.caseSensitive}
         updateSelectStartIndex={this.updateSelectStartIndex}
         updateSelectEndIndex={this.updateSelectEndIndex}
+        handleDoubleClick={this.handleDoubleClick}
       />
     );
   }
@@ -390,7 +396,7 @@ class LogView extends React.Component {
     });
     if (this.filteredLines.length !== 0) {
       return (
-        <div onDoubleClick={this.handleDoubleClick}>
+        <div>
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
@@ -405,4 +411,20 @@ class LogView extends React.Component {
     return (<div></div>);
   }
 }
-export default LogView;
+
+function mapStateToProps(state, ownProps) {
+  return {...state, ...ownProps,
+    colorMap: state.log.colorMap, lines: state.log.lines,
+    caseSensitive: state.settings.caseSensitive,
+    wrap: state.settings.wrap,
+    find: state.find.searchRegex
+  };
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+  return {
+    ...ownProps
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LogView);

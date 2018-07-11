@@ -47,7 +47,7 @@
 
 }
 
-.filter-highlight-buttons {
+.toggle-buttons {
     margin-left: 12px;
 }
 
@@ -58,6 +58,11 @@
 .exit-button {
     width: 22px;
     margin-left: 10px;
+}
+
+.far-left-label {
+  margin-left: 25px;
+  font-size: 13px;
 }
 
 .filter-button-medium {
@@ -80,7 +85,7 @@
     font-size: 17px;
 }
 
-.filter-highlight-label {
+.toggle-label {
   margin-left: 10px;
   font-size: 13px;
 }
