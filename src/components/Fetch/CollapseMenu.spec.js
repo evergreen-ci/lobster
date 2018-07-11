@@ -37,8 +37,8 @@ const wrapper = Enzyme.mount(
 );
 
 test('CollapseMenu', function() {
-  const rawUrl = '/build/' + wrapper.instance().props.build + '/all?raw=1';
-  const HTMLUrl = '/build/' + wrapper.instance().props.build + '/all?html=1';
+  const rawUrl = '/build/' + wrapper.prop('build') + '/all?raw=1';
+  const HTMLUrl = '/build/' + wrapper.prop('build') + '/all?html=1';
   assert.ok(wrapper.containsAllMatchingElements([
     <Button href={rawUrl}>Raw</Button>,
     <Button href={HTMLUrl}>HTML</Button>
@@ -63,7 +63,7 @@ test('CollapseMenu', function() {
   ]));
 
   // Test button toggling
-  assert(!wrapper.instance().props.toggleSettings.toggleWrap.called);
-  assert(!wrapper.instance().props.toggleSettings.toggleCaseSensitive.called);
-  assert(!wrapper.instance().props.toggleSettings.toggleFilterIntersection.called);
+  assert(!wrapper.prop('toggleSettings').toggleWrap.called);
+  assert(!wrapper.prop('toggleSettings').toggleCaseSensitive.called);
+  assert(!wrapper.prop('toggleSettings').toggleFilterIntersection.called);
 });
