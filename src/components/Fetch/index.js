@@ -55,7 +55,7 @@ export class Fetch extends React.Component {
   }
 
   constructor(props) {
-    super(props);
+    super(props)
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
     const locationSearch = props.location.search;
     const parsed = queryString.parse(locationSearch === '' ? props.location.hash : locationSearch);
