@@ -477,10 +477,6 @@ export class Fetch extends React.Component {
     event.preventDefault();
   }
 
-  handleChangeFindEvent = () => {
-    this.find(this.props.settings.caseSensitive);
-  }
-
   handleShiftEnter = (event) => {
     if (this.state.findResults.length !== 0) {
       if (event.keyCode === 13 && event.shiftKey) {
@@ -500,7 +496,7 @@ export class Fetch extends React.Component {
         <div className="main">
           <Toolbar
             setFormRef={this.setFormRef}
-            handleChangeFindEvent={this.handleChangeFindEvent}
+            handleChangeFindEvent={this.find}
             searchRegex={this.props.searchRegex}
             find={this.find}
             showFind={this.showFind}
