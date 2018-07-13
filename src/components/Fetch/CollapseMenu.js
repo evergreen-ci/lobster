@@ -1,6 +1,7 @@
 // @flow strict
 
-import * as React from 'react';
+import React from 'react';
+import type { Node as ReactNode } from 'react';
 import './style.css';
 import { Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Filters } from './Filters';
@@ -39,7 +40,7 @@ type Props = {
   valueJIRA: string
 }
 
-function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement) => void): ?React.Node {
+function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement) => void): ?ReactNode {
   if (server) {
     return (
       <FormGroup controlId="urlInput">
@@ -58,7 +59,7 @@ function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement
   }
 }
 
-function showDetailButtons(server: ?string, build: string): ?React.Node {
+function showDetailButtons(server: ?string, build: string): ?ReactNode {
   if (!server) {
     return (
       <span>
@@ -105,7 +106,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
                 <ToggleButtonGroup
                   className="toggle-buttons"
                   type="radio"
-                  name="wrap-on-off"
+                  name="filter-intersection-and-or"
                   value={this.props.settings.filterIntersection}
                   onChange={this.props.toggleSettings.toggleFilterIntersection}
                 >
