@@ -6,11 +6,10 @@ import { Provider } from 'react-redux';
 import { lobster } from './reducers';
 import 'babel-polyfill';
 import 'url-search-params-polyfill';
+import 'whatwg-fetch';
 import rootSaga from './sagas';
-
-import './index.css';
-
 import App from './components/App';
+import './index.css';
 
 const saga = createSagaMiddleware();
 const store = createStore(lobster, applyMiddleware(saga));
