@@ -5,6 +5,7 @@ import type { Action as LogviewerAction } from './logviewer';
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
+export const SETUP_CACHE = 'setup-cache';
 
 export type Line = {
   +lineNumber: number,
@@ -92,5 +93,55 @@ export function logkeeperDataError(data: string): LogkeeperDataResponse {
       isDone: true
     },
     error: true
+  };
+}
+
+export type CacheStatus = 'ok' | 'error' | 'never' | 'later' | 'unsupported' | null;
+
+export type SetupCache = {|
+  +type: 'setup-cache',
+  +payload: {
+    +status: CacheStatus,
+    +size: number
+  },
+  +error: boolean
+|}
+
+function setCache(status: CacheStatus, size: number): SetupCache {
+  return {
+    type: SETUP_CACHE,
+    payload: {
+      status: status,
+      size: size
+    },
+    error: false
+  };
+}
+
+function setupCacheError(dispatch: Dispatch<*>) {
+  return () => dispatch(setCache('error', 0));
+}
+
+function setupCacheInitFS(dispatch: Dispatch<*>, grant: number) {
+  return (fs) => {
+    console.log(`FileSystem is open with size ${grant}`);
+    return Promise.all([dispatch(setCache('ok', grant))]);
+  };
+}
+
+function setupCacheGrant(dispatch: Dispatch<*>) {
+  return (grant: number) => window.requestFileSystem(window.PERSISTENT, grant, setupCacheInitFS(dispatch, grant), setupCacheError(dispatch));
+}
+
+export function setupCache(status: CacheStatus, value: number) {
+  return function(dispatch: Dispatch<*>) {
+    if (status === 'ok') {
+      window.requestFileSystem(window.PERSISTENT, value, function() {
+        window.webkitStorageInfo.requestQuota(window.PERSISTENT, 1024 * 1024 * value,
+          setupCacheGrant(dispatch), setupCacheError(dispatch));
+      });
+    } else {
+      dispatch(setCache(status, 0));
+    }
   };
 }
