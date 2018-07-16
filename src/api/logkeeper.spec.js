@@ -37,4 +37,4 @@ describe('api-logkeeper', function() {
     assert.deepEqual(fake.lastCall.args[0].method, 'GET');
     assert.deepEqual(fake.lastCall.args[0].url, 'http://domain.invalid/build/build/test/test?raw=1');
   });
-})
+});

@@ -20,7 +20,7 @@ function getFullGitRef(fileLine: ?string, gitVersion: string): ?string {
   return gitPrefix + gitVersion + '/' + fileLine;
 }
 
-function processServerResponse(response: string): Log {
+function processServerResponse(state: Log, response: string): Log {
   // set the url to the url we requested
   const lines = response.split('\n');
 
@@ -31,7 +31,8 @@ function processServerResponse(response: string): Log {
   const portRegex = / [sdbc](\d{1,5})\|/;
   const stateRegex = /(:shard\d*|:configsvr)?:(initsync|primary|mongos|secondary\d*|node\d*)]/;
 
-  const colorMap = {};
+  const colorMap = state.colorMap;
+  const latestLineNum = state.lines.length === 0 ? 0 : state.lines[state.lines.length - 1].lineNumber + 1 || 0;
 
   const colorList = [
     '#5aae61',
@@ -85,7 +86,7 @@ function processServerResponse(response: string): Log {
     }
 
     processed.push({
-      lineNumber: i,
+      lineNumber: i + latestLineNum,
       text: lineText,
       port: port,
       gitRef: gitRef
@@ -109,7 +110,7 @@ export function logkeeperDataResponse(state: Log = initialState, action: Action)
   }
 
   if (!action.error) {
-    return processServerResponse(action.payload.data);
+    return processServerResponse(state, action.payload.data);
   }
 
   return state;

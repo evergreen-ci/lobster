@@ -33,7 +33,7 @@ test('store-line-gitref', function() {
     '' // Lobster log files are interpreted to have an extra newline
   ];
 
-  const state = logkeeperDataResponse(undefined, logkeeperDataSuccess(data.join('\n')));
+  const state = logkeeperDataResponse({lines: [], colorMap: {}}, logkeeperDataSuccess(data.join('\n')));
 
   assert.deepEqual(state.lines.length, 25);
   assert.deepEqual(state.lines[0].gitRef, null);

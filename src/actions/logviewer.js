@@ -11,21 +11,21 @@ export const LOGVIEWER_ENSURE_BOOKMARK = 'logviewer:ensure-bookmark';
 export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
 export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
 
-export type Filter = {
+export type Filter = {|
   text: string,
   on: boolean,
   inverse: boolean
-}
+|}
 
-export type Highlight = {
+export type Highlight = {|
   text: string,
   on: boolean,
   line: boolean
-}
+|}
 
-export type Bookmark = {
+export type Bookmark = {|
   lineNumber: number,
-}
+|}
 
 export type ChangeSetting = {|
   +type: 'logviewer:change-setting',
