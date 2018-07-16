@@ -95,13 +95,15 @@ function processServerResponse(state: Log, response: string): Log {
 
   return {
     lines: state.lines.concat(processed),
-    colorMap: colorMap
+    colorMap: colorMap,
+    isDone: false
   };
 }
 
 const initialState: Log = {
   lines: [],
-  colorMap: new Map()
+  colorMap: new Map(),
+  isDone: false
 };
 
 export function logkeeperDataResponse(state: Log = initialState, action: Action): Log {

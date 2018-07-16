@@ -5,6 +5,18 @@ import type { Saga } from 'redux-saga';
 import * as actions from '../actions';
 import * as api from '../api/logkeeper';
 
+function findLastNewline(v: Uint8Array): number | null {
+  const newLine = 10;
+
+  for (let i = v.length - 1; i >= 0; --i) {
+    if (v[i] === newLine) {
+      return i;
+    }
+  }
+
+  return null;
+}
+
 export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void> {
   console.log('fetch (logkeeper)', action.payload.build, action.payload.test);
   try {
@@ -14,7 +26,7 @@ export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void
     }
 
     const data = yield resp.text();
-    yield put(actions.logkeeperDataSuccess(data));
+    yield put(actions.logkeeperDataSuccess(data, true));
   } catch (error) {
     yield put(actions.logkeeperDataError(error));
   }
@@ -29,7 +41,7 @@ export function* lobsterLoadData(action: actions.LobsterLoadData): Saga<void> {
     }
 
     const data = yield resp.text();
-    yield put(actions.logkeeperDataSuccess(data));
+    yield put(actions.logkeeperDataSuccess(data, true));
   } catch (error) {
     yield put(actions.logkeeperDataError(error));
   }

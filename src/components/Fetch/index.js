@@ -13,7 +13,8 @@ export class Fetch extends React.Component {
   static propTypes = {
     log: PropTypes.shape({
       lines: PropTypes.array,
-      colorMap: PropTypes.object
+      colorMap: PropTypes.object,
+      isDone: PropTypes.bool
     }),
     location: PropTypes.shape({
       search: PropTypes.string,
@@ -113,7 +114,7 @@ export class Fetch extends React.Component {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
       this.clearFind();
     }
-    if ((JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) || this.props.log.lines !== prevProps.log.lines) {
+    if (this.props.log.isDone && ((JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) || this.props.log.lines !== prevProps.log.lines)) {
       if (this.props.log.lines.length > 0) {
         this.props.ensureBookmark(0);
         this.props.ensureBookmark(this.props.log.lines[this.props.log.lines.length - 1].lineNumber);

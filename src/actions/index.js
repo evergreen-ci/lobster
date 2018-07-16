@@ -15,10 +15,11 @@ export type Line = {
 
 export type ColorMap = { [string]: string }
 
-export type Log = {
+export type Log = {|
   +lines: Line[],
-  +colorMap: ColorMap
-}
+  +colorMap: ColorMap,
+  +isDone: boolean
+|}
 
 export type LogkeeperLoadData = {|
   +type: 'logkeeper:load-data',
@@ -39,7 +40,8 @@ export type LobsterLoadData = {|
 export type LogkeeperDataResponse = {|
   +type: 'logkeeper:response',
   +payload: {|
-    +data: string
+    +data: string,
+    +isDone: boolean
   |},
   +error: boolean
 |}
@@ -71,11 +73,12 @@ export function lobsterLoadData(server: string, url: string): LobsterLoadData {
   };
 }
 
-export function logkeeperDataSuccess(data: string): LogkeeperDataResponse {
+export function logkeeperDataSuccess(data: string, isDone?: boolean): LogkeeperDataResponse {
   return {
     type: LOGKEEPER_LOAD_RESPONSE,
     payload: {
-      data: data
+      data: data,
+      isDone: isDone || false
     },
     error: false
   };
@@ -85,7 +88,8 @@ export function logkeeperDataError(data: string): LogkeeperDataResponse {
   return {
     type: LOGKEEPER_LOAD_RESPONSE,
     payload: {
-      data: data
+      data: data,
+      isDone: true
     },
     error: true
   };

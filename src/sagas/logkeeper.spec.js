@@ -26,6 +26,7 @@ describe('lobsterLoadData', function() {
       assert.deepEqual(dispatch.firstCall.args[0].type, actions.LOGKEEPER_LOAD_RESPONSE);
       assert.deepEqual(dispatch.firstCall.args[0].payload.data, 'lobster');
       assert.deepEqual(dispatch.firstCall.args[0].error, false);
+      assert.deepEqual(dispatch.lastCall.args[0].payload.isDone, true);
     });
   });
 
@@ -62,11 +63,13 @@ describe('logkeeperLoadData', function() {
       assert.deepEqual(api.fetchLogkeeper.callCount, 1);
       assert.deepEqual(api.fetchLogkeeper.firstCall.args, ['build0', 'test0']);
 
+      //assert.deepEqual(dispatch, 1);
       assert.deepEqual(dispatch.callCount, 1);
       assert.deepEqual(dispatch.firstCall.args.length, 1);
       assert.deepEqual(dispatch.firstCall.args[0].type, actions.LOGKEEPER_LOAD_RESPONSE);
       assert.deepEqual(dispatch.firstCall.args[0].payload.data, 'logkeeper');
       assert.deepEqual(dispatch.firstCall.args[0].error, false);
+      assert.deepEqual(dispatch.lastCall.args[0].payload.isDone, true);
     });
   });
 
