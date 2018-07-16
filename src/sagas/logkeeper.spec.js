@@ -9,9 +9,7 @@ describe('lobsterLoadData', function() {
   afterEach(() => sinon.restore());
 
   test('resolve', function() {
-    sinon.replace(api, 'fetchLobster', sinon.stub().resolves({
-      data: 'lobster'
-    }));
+    sinon.replace(api, 'fetchLobster', sinon.stub().resolves(new Response('lobster')));
 
     const action = actions.lobsterLoadData('localhost:9001', 'a.log');
 
@@ -37,6 +35,7 @@ describe('lobsterLoadData', function() {
     const action = actions.lobsterLoadData('localhost:9001', 'a.log');
     const dispatch = sinon.fake();
     const result = runSaga({dispatch: dispatch}, sagas.lobsterLoadData, action).done;
+    assert.ok(result);
     result.then(function() {
       assert.deepEqual(api.fetchLobster.callCount, 1);
       assert.deepEqual(api.fetchLobster.firstCall.args, ['localhost:9001', 'a.log']);
@@ -52,9 +51,7 @@ describe('logkeeperLoadData', function() {
   afterEach(() => sinon.restore());
 
   test('resolve', function() {
-    sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves({
-      data: 'logkeeper'
-    }));
+    sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves(new Response('logkeeper')));
 
     const action = actions.loadData('build0', 'test0');
     const dispatch = sinon.fake();
@@ -73,10 +70,8 @@ describe('logkeeperLoadData', function() {
     });
   });
 
-  test('resolve-notest', function() {
-    sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves({
-      data: 'logkeeper'
-    }));
+  test('resolve-error', function() {
+    sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves(new Response('nope logkeeper', {status: 500})));
 
     const action = actions.loadData('build0');
     const dispatch = sinon.fake();
@@ -90,12 +85,15 @@ describe('logkeeperLoadData', function() {
       assert.deepEqual(dispatch.callCount, 1);
       assert.deepEqual(dispatch.firstCall.args.length, 1);
       assert.deepEqual(dispatch.firstCall.args[0].type, actions.LOGKEEPER_LOAD_RESPONSE);
-      assert.deepEqual(dispatch.firstCall.args[0].payload.data, 'logkeeper');
-      assert.deepEqual(dispatch.firstCall.args[0].error, false);
+
+      dispatch.firstCall.args[0].payload.data.text().then(function(text) {
+        assert.deepEqual(text, 'nope logkeeper');
+      });
+      assert.deepEqual(dispatch.firstCall.args[0].error, true);
     });
   });
 
-  test('fail', function() {
+  test('reject', function() {
     sinon.replace(api, 'fetchLogkeeper', sinon.stub().rejects('error'));
 
     const action = actions.loadData('build0', 'test0');

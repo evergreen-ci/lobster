@@ -94,7 +94,7 @@ function processServerResponse(state: Log, response: string): Log {
   }
 
   return {
-    lines: processed,
+    lines: state.lines.concat(processed),
     colorMap: colorMap
   };
 }

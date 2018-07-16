@@ -51,3 +51,31 @@ test('logkeeperDataResponse-error', function() {
   assert.deepEqual(state.lines.length, 0);
   assert.deepEqual(state.colorMap.size, 0);
 });
+
+test('logkeeperDataResponse-chunked', function() {
+  let data = [
+    '[test:node0] line0',
+    '[test:node0] line1'
+  ];
+  let state = {lines: [], colorMap: {}};
+  state = logkeeperDataResponse(state, logkeeperDataSuccess(data.join('\n')));
+  assert.deepEqual(state.lines.length, 2);
+  assert.deepEqual(Object.keys(state.colorMap).length, 1);
+
+  data = [
+    '[test:node1] line2',
+    '[test:node2] line3'
+  ];
+  state = logkeeperDataResponse(state, logkeeperDataSuccess(data.join('\n')));
+
+  assert.deepEqual(state.lines.length, 4);
+  assert.deepEqual(Object.keys(state.colorMap).length, 3);
+
+  const colors = [];
+  Object.keys(state.colorMap).map((key) => {
+    if (!(colors.hasOwnProperty(key))) {
+      colors.push(state.colorMap[key]);
+    }
+  });
+  assert.deepEqual(colors.length, 3);
+});
