@@ -17,9 +17,9 @@ type Props = {
   }
 }
 
-const lineRegex = new RegExp('#L([0-9]+)');
-
 const EvergreenLogViewer = (props: Props) => {
+  const lineRegex = new RegExp('#L([0-9]+)');
+
   const newProps = {};
   const matches = lineRegex.exec(props.location.hash);
   if (matches && matches.length > 1) {
