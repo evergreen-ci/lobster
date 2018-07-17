@@ -13,7 +13,8 @@ import './index.css';
 import 'babel-polyfill';
 import 'url-search-params-polyfill';
 import 'whatwg-fetch';
-import 'idb.filesystem.js';
+// Y U NO HAVE SANE BUILD?!
+import '../node_modules/idb.filesystem.js/dist/idb.filesystem.min.js';
 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL ||
   window.webkitResolveLocalFileSystemURL;
