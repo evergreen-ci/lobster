@@ -59,7 +59,6 @@ export class Fetch extends React.Component {
   constructor(props) {
     super(props);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
-    console.log(props.location);
     const locationSearch = props.location.search;
     const parsed = queryString.parse(locationSearch === '' ? props.location.hash : locationSearch);
     const params = this.props.match.params;
@@ -68,7 +67,6 @@ export class Fetch extends React.Component {
     if (bookmarksList) {
       bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n, 10)}));
     }
-    console.log(parsed);
     this.props.loadBookmarks(bookmarksArr);
     this.state = {
       build: params.build,
@@ -382,7 +380,6 @@ export class Fetch extends React.Component {
     if (!this.props.log.lines) {
       return <div />;
     }
-    console.log(this.state.scrolLine);
     return (
       <LogView
         filter={filter}

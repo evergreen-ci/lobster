@@ -27,7 +27,7 @@ export function* lobsterLoadData(action: actions.LobsterLoadData): Saga<void> {
 }
 
 export function* evergreenLoadData(action: actions.EvergreenLoadData): Saga<void> {
-  console.log(`fetch (evergreen) id: ${action.payload.id} type: ${action.payload.type}`);
+  console.log(`fetch (evergreen) ${JSON.stringify(action.payload)}`);
   try {
     const resp = yield call(fetchEvergreen, action.payload);
     const body = yield resp.text();

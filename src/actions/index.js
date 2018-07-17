@@ -92,7 +92,27 @@ export function logkeeperDataError(data: string): LogkeeperDataResponse {
   };
 }
 
-export type EvergreenTaskLogType = 'all' | 'task' | 'agent' | 'system';
+const evergreenTaskLogTypes: { [string]: string } = {
+  'all': 'ALL',
+  'task': 'T',
+  'agent': 'A',
+  'system': 'S'
+  // 'event': 'E' // Not actually supported by the api
+};
+
+export type EvergreenTaskLogType = $Keys<typeof evergreenTaskLogTypes>;
+
+export function stringToInteralEvergreenTaskLogType(a: string): ?string {
+  return evergreenTaskLogTypes[a];
+}
+
+export function stringToEvergreenTaskLogType(a: string): ?EvergreenTaskLogType {
+  if (!evergreenTaskLogTypes[a]) {
+    return null;
+  }
+
+  return a;
+}
 
 export type EvergreenTaskLog = {|
   type: 'task',

@@ -2,25 +2,11 @@
 
 import type { EvergreenTestLog, EvergreenTaskLogType, EvergreenTaskLog } from '../actions';
 import { EVERGREEN_BASE } from '../config';
-
-function shortType(type: EvergreenTaskLogType): string {
-  switch (type) {
-    case 'task':
-      return 'T';
-
-    case 'agent':
-      return 'A';
-
-    case 'system':
-      return 'S';
-
-    default:
-      return 'ALL';
-  }
-}
+import { stringToInteralEvergreenTaskLogType } from '../actions';
 
 function taskLogURL(id: string, execution: number, type: EvergreenTaskLogType): string {
-  return `${EVERGREEN_BASE}/task_log_raw/${id}/${execution}?type=${shortType(type)}&text=true`;
+  const logType = stringToInteralEvergreenTaskLogType(type) || 'all';
+  return `${EVERGREEN_BASE}/task_log_raw/${id}/${execution}?type=${logType}&text=true`;
 }
 
 function testLogURL(id: string): string {
@@ -28,10 +14,10 @@ function testLogURL(id: string): string {
 }
 
 export function fetchEvergreen(log: EvergreenTaskLog | EvergreenTestLog): Promise<Response> {
-  const init = {method: 'GET'};
+  const init = {method: 'GET', credentials: 'include'};
   let req;
   if (log.type === 'task') {
-    req = new Request(taskLogURL(log.id, log.execution, log.type), init);
+    req = new Request(taskLogURL(log.id, log.execution, log.log), init);
   } else if (log.type === 'test') {
     req = new Request(testLogURL(log.id), init);
   }
