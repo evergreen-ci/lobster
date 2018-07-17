@@ -11,6 +11,8 @@ import Toolbar from './Toolbar';
 
 export class Fetch extends React.Component {
   static propTypes = {
+    action: PropTypes.func,
+    dispatch: PropTypes.func,
     log: PropTypes.shape({
       lines: PropTypes.array,
       colorMap: PropTypes.object
@@ -86,6 +88,8 @@ export class Fetch extends React.Component {
       this.props.lobsterLoadData(this.state.server, this.state.url);
     } else if (this.state.build) {
       this.props.loadData(this.state.build, this.state.test);
+    } else if (this.props.action) {
+      this.props.dispatch(this.props.action());
     }
   }
 
@@ -544,6 +548,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     toggleBookmark: (lineNumArray) => dispatch(logviewerActions.toggleBookmark(lineNumArray)),
     ensureBookmark: (lineNum) => dispatch(logviewerActions.ensureBookmark(lineNum)),
     changeSearch: (text) => dispatch(logviewerActions.changeSearch(text)),
+    dispatch: dispatch,
     ...ownProps
   };
 }

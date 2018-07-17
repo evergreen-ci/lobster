@@ -4,6 +4,7 @@ import './style.css';
 import About from '../About';
 import NotFound from '../NotFound';
 import Fetch from '../Fetch';
+import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
 import { Nav, NavItem } from 'react-bootstrap';
 
 const Main = () => (
@@ -12,6 +13,8 @@ const Main = () => (
       <Route exact path="/lobster/about" component={About} />
       <Route path="/lobster/build/:build/test/:test" component={Fetch} />
       <Route path="/lobster/build/:build/all" component={Fetch} />
+      <Route exact path="/lobster/evergreen/:id/:execution/type/:type" component={EvergreenLogViewer} />
+      <Route exact path="/lobster/evergreen/:id" component={EvergreenLogViewer} />
       <Route exact path="/lobster/" component={Fetch} />
       <Route path="*" component={NotFound} />
     </Switch>

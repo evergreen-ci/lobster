@@ -66,6 +66,14 @@
     "^/build": {
       "target": "https://logkeeper.mongodb.org",
       "changeOrigin": true
+    },
+    "^/task_log_raw": {
+      "target": "https://evergreen.mongodb.com",
+      "changeOrigin": true
+    },
+    "^/test_log": {
+      "target": "https://evergreen.mongodb.com",
+      "changeOrigin": true
     }
   }
 }
