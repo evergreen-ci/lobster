@@ -4,6 +4,7 @@ import { put, call } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import * as actions from '../actions';
 import * as api from '../api/logkeeper';
+import { fetchEvergreen } from '../api/evergreen';
 
 // function findLastNewline(v: Uint8Array): number | null {
 //   const newLine = 10;
@@ -26,7 +27,7 @@ export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void
     }
 
     const data = yield resp.text();
-    yield put(actions.logkeeperDataSuccess(data, true));
+    yield put(actions.logkeeperDataSuccess(data, 'resmoke', true));
   } catch (error) {
     yield put(actions.logkeeperDataError(error));
   }
@@ -41,7 +42,18 @@ export function* lobsterLoadData(action: actions.LobsterLoadData): Saga<void> {
     }
 
     const data = yield resp.text();
-    yield put(actions.logkeeperDataSuccess(data, true));
+    yield put(actions.logkeeperDataSuccess(data, 'resmoke', true));
+  } catch (error) {
+    yield put(actions.logkeeperDataError(error));
+  }
+}
+
+export function* evergreenLoadData(action: actions.EvergreenLoadData): Saga<void> {
+  console.log(`fetch (evergreen) ${JSON.stringify(action.payload)}`);
+  try {
+    const resp = yield call(fetchEvergreen, action.payload);
+    const body = yield resp.text();
+    yield put(actions.logkeeperDataSuccess(body, 'raw', true));
   } catch (error) {
     yield put(actions.logkeeperDataError(error));
   }

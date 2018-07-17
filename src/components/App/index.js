@@ -6,16 +6,22 @@ import './style.css';
 import About from '../About';
 import NotFound from '../NotFound';
 import Fetch from '../Fetch';
+import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
 import { Nav, NavItem } from 'react-bootstrap';
 import CacheModal from './CacheModal';
+
+const logviewer = (props) => (<Fetch {...props} />);
+const evergreenLogviewer = (props) => (<EvergreenLogViewer {...props} />);
 
 const Main = () => (
   <main>
     <Switch>
       <Route exact path="/lobster/about" component={About} />
-      <Route path="/lobster/build/:build/test/:test" component={Fetch} />
-      <Route path="/lobster/build/:build/all" component={Fetch} />
-      <Route exact path="/lobster/" component={Fetch} />
+      <Route path="/lobster/build/:build/test/:test" render={logviewer} />
+      <Route path="/lobster/build/:build/all" render={logviewer} />
+      <Route exact path="/lobster/evergreen/task/:id/:execution/:type" render={evergreenLogviewer} />
+      <Route exact path="/lobster/evergreen/test/:id" render={evergreenLogviewer} />
+      <Route exact path="/lobster/" render={logviewer} />
       <Route path="*" component={NotFound} />
     </Switch>
   </main>

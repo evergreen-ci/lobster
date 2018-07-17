@@ -72,7 +72,10 @@
     },
     "^/evergreen": {
       "target": "https://evergreen.mongodb.com",
-      "changeOrigin": true
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/evergreen": "/"
+      }
     }
   }
 }

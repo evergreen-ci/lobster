@@ -5,6 +5,7 @@ import type { Action as LogviewerAction } from './logviewer';
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
+export const EVERGREEN_LOAD_DATA = 'evergreen:load-data';
 export const SETUP_CACHE = 'setup-cache';
 
 export type Line = {
@@ -38,21 +39,18 @@ export type LobsterLoadData = {|
   |}
 |}
 
+export type LogType = 'resmoke' | 'raw'
+
 export type LogkeeperDataResponse = {|
   +type: 'logkeeper:response',
   +payload: {|
+    +type: LogType,
     +data: string,
     +isDone: boolean
   |},
   +error: boolean
 |}
 
-export type Action = LogkeeperLoadData
-  | LogkeeperDataResponse
-  | LobsterLoadData
-  | LogviewerAction
-
-// Load data from Logkeeper
 export function loadData(build: string, test: ?string): LogkeeperLoadData {
   return {
     type: LOGKEEPER_LOAD_DATA,
@@ -74,10 +72,11 @@ export function lobsterLoadData(server: string, url: string): LobsterLoadData {
   };
 }
 
-export function logkeeperDataSuccess(data: string, isDone?: boolean): LogkeeperDataResponse {
+export function logkeeperDataSuccess(data: string, type: LogType, isDone?: boolean): LogkeeperDataResponse {
   return {
     type: LOGKEEPER_LOAD_RESPONSE,
     payload: {
+      type: type,
       data: data,
       isDone: isDone || false
     },
@@ -89,6 +88,7 @@ export function logkeeperDataError(data: string): LogkeeperDataResponse {
   return {
     type: LOGKEEPER_LOAD_RESPONSE,
     payload: {
+      type: 'resmoke',
       data: data,
       isDone: true
     },
@@ -153,3 +153,70 @@ export function setupCache(status: CacheStatus, value: number) {
     return dispatch(setCache(status, 0));
   };
 }
+
+const evergreenTaskLogTypes: { [string]: string } = {
+  'all': 'ALL',
+  'task': 'T',
+  'agent': 'A',
+  'system': 'S'
+  // 'event': 'E' // Not actually supported by the api
+};
+
+export type EvergreenTaskLogType = $Keys<typeof evergreenTaskLogTypes>;
+
+export function stringToInteralEvergreenTaskLogType(a: string): ?string {
+  return evergreenTaskLogTypes[a];
+}
+
+export function stringToEvergreenTaskLogType(a: string): ?EvergreenTaskLogType {
+  if (!evergreenTaskLogTypes[a]) {
+    return null;
+  }
+
+  return a;
+}
+
+export type EvergreenTaskLog = {|
+  type: 'task',
+  id: string,
+  execution: number,
+  log: EvergreenTaskLogType
+|};
+
+export type EvergreenTestLog = {|
+  type: 'test',
+  id: string,
+|};
+
+export type EvergreenLoadData = {|
+  +type: 'evergreen:load-data',
+  +payload: EvergreenTaskLog | EvergreenTestLog
+|}
+
+export function evergreenLoadTaskLog(id: string, execution: number, log: EvergreenTaskLogType): EvergreenLoadData {
+  return {
+    type: 'evergreen:load-data',
+    payload: {
+      type: 'task',
+      id: id,
+      execution: execution,
+      log: log
+    }
+  };
+}
+
+export function evergreenLoadTestLog(id: string): EvergreenLoadData {
+  return {
+    type: 'evergreen:load-data',
+    payload: {
+      type: 'test',
+      id: id
+    }
+  };
+}
+
+export type Action = LogkeeperLoadData
+  | LogkeeperDataResponse
+  | LobsterLoadData
+  | EvergreenLoadData
+  | LogviewerAction
