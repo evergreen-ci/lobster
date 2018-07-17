@@ -5,6 +5,8 @@ import type { Action as LogviewerAction } from './logviewer';
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
+export const EVERGREEN_LOAD_DATA = 'logkeeper:load-data';
+export const EVERGREEN_LOAD_RESPONSE = 'logkeeper:response';
 
 export type Line = {
   +lineNumber: number,
@@ -90,3 +92,19 @@ export function logkeeperDataError(data: string): LogkeeperDataResponse {
     error: true
   };
 }
+
+export type EvergreenTaskLog = {|
+  type: 'task',
+  id: string,
+  log: 'all' | 'task' | 'agent' | 'system'
+|};
+
+export type EvergreenTestLog = {|
+  type: 'test',
+  id: string
+|};
+
+export type EvergreenLoadData = {|
+  +type: 'evergreen:load-data',
+  +payload: EvergreenTaskLog | EvergreenTestLog
+|}
