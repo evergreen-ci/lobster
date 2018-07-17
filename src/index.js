@@ -4,17 +4,33 @@ import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
 import { lobster } from './reducers';
-import 'babel-polyfill';
-import 'url-search-params-polyfill';
-import 'whatwg-fetch';
 import rootSaga from './sagas';
 import thunk from 'redux-thunk';
 import App from './components/App';
+import { setupCache } from './actions';
 import './index.css';
+
+import 'babel-polyfill';
+import 'url-search-params-polyfill';
+import 'whatwg-fetch';
+import 'idb.filesystem.js';
+window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL ||
+  window.webkitResolveLocalFileSystemURL;
+
+if (!window.requestFileSystem) {
+  console.log('No FileSystem API available. Lobster will NOT cache');
+}
 
 const saga = createSagaMiddleware();
 const store = createStore(lobster, applyMiddleware(thunk, saga));
 saga.run(rootSaga);
+
+const cacheStatus = window.localStorage.getItem('lobster-cache-status');
+if (cacheStatus === 'ok') {
+  const size = parseInt(window.localStorage.getItem('lobster-cache-size'), 10);
+  setupCache(cacheStatus, size)(store.dispatch);
+}
 
 ReactDOM.render((
   <Provider store={store}>
@@ -28,10 +44,15 @@ window.lobsterWipeLocalStorage = () => {
 };
 
 window.lobsterWipeFilesystem = () => {
-  console.error("Not implemented!");
+  if (window.lobsterCage) {
+    window.lobsterCage.root.removeRecursively(() => console.log('Wiped Lobster FS'),
+      (err) => console.error(`Failed to wipe Lobster FileSystem: ${err}`));
+  } else {
+    console.log('No fs handle to clear');
+  }
 };
 
 window.boilLobster = () => {
   window.lobsterWipeFilesystem();
   window.lobsterWipeLocalStorage();
-}
+};

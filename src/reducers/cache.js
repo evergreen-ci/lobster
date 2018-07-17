@@ -8,7 +8,6 @@ export type CacheSettings = {
 };
 
 const cacheSettings = () => {
-  window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
   if (!window.localStorage || !window.requestFileSystem) {
     return {
       status: 'unsupported',

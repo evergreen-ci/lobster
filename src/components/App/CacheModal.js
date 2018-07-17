@@ -76,7 +76,7 @@ export class CacheModal extends React.PureComponent<Props, State> {
   }
 }
 
-function mapStateToProps(state, _ownProps) {
+function mapStateToProps(state) {
   return {show: state.cache.status === null};
 }
 

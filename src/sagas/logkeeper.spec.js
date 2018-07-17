@@ -63,7 +63,6 @@ describe('logkeeperLoadData', function() {
       assert.deepEqual(api.fetchLogkeeper.callCount, 1);
       assert.deepEqual(api.fetchLogkeeper.firstCall.args, ['build0', 'test0']);
 
-      //assert.deepEqual(dispatch, 1);
       assert.deepEqual(dispatch.callCount, 1);
       assert.deepEqual(dispatch.firstCall.args.length, 1);
       assert.deepEqual(dispatch.firstCall.args[0].type, actions.LOGKEEPER_LOAD_RESPONSE);

@@ -40,7 +40,5 @@ describe('CacheModal', function() {
       }
     }
     assert.strictEqual(count, 3);
-    // wrapper.find(<Button>Not Now</Button>)
-    // wrapper.find(<Button>Yes</Button>)
   });
 });

@@ -107,7 +107,7 @@ export type SetupCache = {|
   +error: boolean
 |}
 
-function setCache(status: CacheStatus, size: number): SetupCache {
+export function setCache(status: CacheStatus, size: number): SetupCache {
   return {
     type: SETUP_CACHE,
     payload: {
@@ -118,30 +118,38 @@ function setCache(status: CacheStatus, size: number): SetupCache {
   };
 }
 
-function setupCacheError(dispatch: Dispatch<*>) {
-  return () => dispatch(setCache('error', 0));
-}
-
-function setupCacheInitFS(dispatch: Dispatch<*>, grant: number) {
-  return (fs) => {
-    console.log(`FileSystem is open with size ${grant}`);
-    return Promise.all([dispatch(setCache('ok', grant))]);
-  };
-}
-
-function setupCacheGrant(dispatch: Dispatch<*>) {
-  return (grant: number) => window.requestFileSystem(window.PERSISTENT, grant, setupCacheInitFS(dispatch, grant), setupCacheError(dispatch));
-}
+const fsPromise = (value: number) => {
+  return new Promise(function(resolve, reject) {
+    const size = parseInt(window.localStorage.getItem('lobster-cache-size'), 10);
+    // $FlowFixMe
+    if (navigator.webkitPersistentStorage && size !== value) {
+      // $FlowFixMe
+      navigator.webkitPersistentStorage.requestQuota(window.PERSISTENT, 1024 * 1024 * value,
+        function(grant) {
+          window.requestFileSystem(window.PERSISTENT, grant, (fs) => resolve({fs, grant}), (v) => reject(v));
+        },
+        function(err) {
+          reject(err);
+        });
+    } else {
+      window.requestFileSystem(window.PERSISTENT, value, (fs) => resolve({fs, grant: value}), (v) => reject(v));
+    }
+  });
+};
 
 export function setupCache(status: CacheStatus, value: number) {
-  return function(dispatch: Dispatch<*>) {
+  return function(dispatch: Dispatch<*>): Promise<*> {
     if (status === 'ok') {
-      window.requestFileSystem(window.PERSISTENT, value, function() {
-        window.webkitStorageInfo.requestQuota(window.PERSISTENT, 1024 * 1024 * value,
-          setupCacheGrant(dispatch), setupCacheError(dispatch));
+      return fsPromise(value).then(({fs, grant}) => {
+        console.log(`FileSystem API grant: ${grant} bytes`);
+        window.lobsterCage = fs;
+        console.log(window.lobsterCage);
+        return dispatch(setCache('ok', grant));
+      }).catch((err) => {
+        console.log(err);
+        return dispatch(setCache('error', 0));
       });
-    } else {
-      dispatch(setCache(status, 0));
     }
+    return dispatch(setCache(status, 0));
   };
 }
