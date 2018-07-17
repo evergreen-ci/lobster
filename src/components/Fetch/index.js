@@ -11,6 +11,8 @@ import Toolbar from './Toolbar';
 
 export class Fetch extends React.Component {
   static propTypes = {
+    action: PropTypes.func,
+    dispatch: PropTypes.func,
     log: PropTypes.shape({
       lines: PropTypes.array,
       colorMap: PropTypes.object
@@ -55,7 +57,7 @@ export class Fetch extends React.Component {
   }
 
   constructor(props) {
-    super(props)
+    super(props);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
     const locationSearch = props.location.search;
     const parsed = queryString.parse(locationSearch === '' ? props.location.hash : locationSearch);
@@ -86,26 +88,9 @@ export class Fetch extends React.Component {
       this.props.lobsterLoadData(this.state.server, this.state.url);
     } else if (this.state.build) {
       this.props.loadData(this.state.build, this.state.test);
+    } else if (this.props.action) {
+      this.props.dispatch(this.props.action());
     }
-  }
-
-  getUrlParams() {
-    // parse
-    /*
-    let input = this.urlInput.value.trim();
-    let buildRegex = /(?:build\/)([^/]+)/g;
-    let testRegex = /(?:test\/)([^?|$]+)/g;
-    let build = buildRegex.exec(input);
-    let test = testRegex.exec(input);
-    if(!build || !build[1]){
-    console.log("Couldn't parse build version");
-    return;
-  }
-  build = build[1];
-  test = test && test[1] ? test[1] : "";
-  return {build: build, test: test, filter: this.filterInput.value.trim(), scrollLine: this.scrollInput.value.trim()}
-  */
-    return {build: this.state.build, test: this.state.test};
   }
 
   componentDidUpdate(prevProps) {
@@ -146,18 +131,12 @@ export class Fetch extends React.Component {
   }
 
   updateURL(bookmarks, filters, highlights) {
-    const parsedParams = this.getUrlParams();
-    // const locationSearch = this.props.location.search;
-    const parsed = [];
-
+    const parsed = {};
     for (let i = 0; i < filters.length; i++) {
       parsed.f = this.makeFilterURLString(filters[i]);
     }
     for (let i = 0; i < highlights.length; i++) {
       parsed.h = this.makeHighlightURLString(highlights[i]);
-    }
-    if (parsedParams.scrollLine) {
-      parsed.scroll = parsedParams.scrollLine;
     }
     if (bookmarks.length > 0) {
       let bookmarkStr = '';
@@ -544,6 +523,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     toggleBookmark: (lineNumArray) => dispatch(logviewerActions.toggleBookmark(lineNumArray)),
     ensureBookmark: (lineNum) => dispatch(logviewerActions.ensureBookmark(lineNum)),
     changeSearch: (text) => dispatch(logviewerActions.changeSearch(text)),
+    dispatch: dispatch,
     ...ownProps
   };
 }

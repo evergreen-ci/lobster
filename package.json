@@ -66,6 +66,13 @@
     "^/build": {
       "target": "https://logkeeper.mongodb.org",
       "changeOrigin": true
+    },
+    "^/evergreen": {
+      "target": "https://evergreen.mongodb.com",
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/evergreen": "/"
+      }
     }
   }
 }
