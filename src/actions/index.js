@@ -6,7 +6,6 @@ export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
 export const EVERGREEN_LOAD_DATA = 'evergreen:load-data';
-export const EVERGREEN_LOAD_RESPONSE = 'evergreen:response';
 
 export type Line = {
   +lineNumber: number,
