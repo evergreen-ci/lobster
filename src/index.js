@@ -30,7 +30,9 @@ saga.run(rootSaga);
 const cacheStatus = window.localStorage.getItem('lobster-cache-status');
 if (cacheStatus === 'ok') {
   const size = parseInt(window.localStorage.getItem('lobster-cache-size'), 10);
-  setupCache(cacheStatus, size)(store.dispatch);
+  if (size > 0) {
+    setupCache(cacheStatus, size)(store.dispatch);
+  }
 }
 
 ReactDOM.render((
