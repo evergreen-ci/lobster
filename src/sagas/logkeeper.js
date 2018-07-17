@@ -30,10 +30,8 @@ export function* evergreenLoadData(action: actions.EvergreenLoadData): Saga<void
   console.log(`fetch (evergreen) id: ${action.payload.id} type: ${action.payload.type}`);
   try {
     const resp = yield call(fetchEvergreen, action.payload);
-    console.log(resp);
-    const body = yield resp.body.text();
-    console.log(body);
-    //yield put(actions.evergreenDataSuccess(body));
+    const body = yield resp.text();
+    yield put(actions.logkeeperDataSuccess(body, 'raw'));
   } catch (error) {
     yield put(actions.logkeeperDataError(error));
   }

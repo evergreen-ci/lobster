@@ -38,7 +38,7 @@ export type LobsterLoadData = {|
   |}
 |}
 
-export type LogType = 'resmoke' | 'evergreen'
+export type LogType = 'resmoke' | 'raw'
 
 export type LogkeeperDataResponse = {|
   +type: 'logkeeper:response',
@@ -74,7 +74,7 @@ export function logkeeperDataSuccess(data: string, type: LogType): LogkeeperData
   return {
     type: LOGKEEPER_LOAD_RESPONSE,
     payload: {
-      type: 'resmoke',
+      type: type,
       data: data
     },
     error: false

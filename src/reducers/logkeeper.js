@@ -14,18 +14,14 @@ export function logkeeperDataResponse(state: Log = initialState, action: Action)
     return state;
   }
 
-  console.log(action.payload);
-
   switch (action.payload.type) {
     case 'resmoke':
       return LogProcessor.resmoke(action.payload.data);
 
-    case 'evergreen':
-      return LogProcessor.evergreen(action.payload.data);
+    case 'raw':
+      return LogProcessor.raw('\n')(action.payload.data);
 
     default:
-      break;
+      return initialState;
   }
-
-  return state;
 }
