@@ -2,7 +2,6 @@
   "name": "lobster",
   "private": true,
   "dependencies": {
-    "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "body-parser": "^1.18.3",
     "decode-uri-component": "^0.2.0",
@@ -26,6 +25,7 @@
     "rmdir": "^1.2.0",
     "string-hash": "^1.1.3",
     "url-search-params-polyfill": "^4.0.0",
+    "whatwg-fetch": "^2.0.4",
     "yargs": "^8.0.2"
   },
   "scripts": {
@@ -49,8 +49,10 @@
     "eslint-plugin-babel": "^5.1.0",
     "eslint-plugin-jest": "^21.15.1",
     "eslint-plugin-react": "^7.8.2",
+    "idb.filesystem.js": "0.0.8",
     "flow-bin": "^0.74.0",
     "jest-junit": "^3.7.0",
+    "node-localstorage": "^1.3.1",
     "react-test-renderer": "^15.5.0",
     "sinon": "^6.0.0"
   },

@@ -29,6 +29,7 @@ type Props = {
     toggleHighlight: (string) => void,
     toggleHighlightLine: (string) => void
   },
+  wipeCache: () => void,
   filterList: Filter[],
   highlightList: Highlight[],
   detailsOpen: boolean,
@@ -59,16 +60,19 @@ function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement
   }
 }
 
-function showDetailButtons(server: ?string, build: string): ?ReactNode {
+function showDetailButtons(server: ?string, build: string, clearCache: ?() => void): ?ReactNode {
+  const buttons = [];
   if (!server) {
-    return (
-      <span>
-        <Col lg={1}><Button href={'/build/' + build}>Job Logs</Button></Col>
-        <Col lg={1}><Button href={'/build/' + build + '/all?raw=1'}>Raw</Button></Col>
-        <Col lg={1}><Button href={'/build/' + build + '/all?html=1'}>HTML</Button></Col>
-      </span>
-    );
+    buttons.push(...[
+      <Col key={0} lg={1}><Button href={'/build/' + build}>Job Logs</Button></Col>,
+      <Col key={1} lg={1}><Button href={'/build/' + build + '/all?raw=1'}>Raw</Button></Col>,
+      <Col key={2} lg={1}><Button href={'/build/' + build + '/all?html=1'}>HTML</Button></Col>
+    ]);
   }
+  if (clearCache != null) {
+    buttons.push(<Col key={3} lg={1}><Button bsStyle="danger" onClick={clearCache}>Clear Cache</Button></Col>);
+  }
+  return (<span>{buttons}</span>);
 }
 
 export class CollapseMenu extends React.PureComponent<Props> {
@@ -116,7 +120,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
               </Col>
               <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
               <Col lg={1}><textarea readOnly className="unmoving" value={this.props.valueJIRA}></textarea></Col>
-              {showDetailButtons(this.props.server, this.props.build)}
+              {showDetailButtons(this.props.server, this.props.build, this.props.wipeCache)}
             </FormGroup>
           </Form>
           <Filters

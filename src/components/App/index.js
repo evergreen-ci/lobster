@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import './style.css';
@@ -6,6 +8,7 @@ import NotFound from '../NotFound';
 import Fetch from '../Fetch';
 import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
 import { Nav, NavItem } from 'react-bootstrap';
+import CacheModal from './CacheModal';
 
 const logviewer = (props) => (<Fetch {...props} />);
 const evergreenLogviewer = (props) => (<EvergreenLogViewer {...props} />);
@@ -35,6 +38,7 @@ const Header = () => (
   </header>
 );
 
+
 /*
   <Grid>
     <Row className="show-grid">
@@ -45,6 +49,7 @@ const Header = () => (
 const App = () => (
   <BrowserRouter>
     <div>
+      <CacheModal />
       <Header />
       <Main />
     </div>

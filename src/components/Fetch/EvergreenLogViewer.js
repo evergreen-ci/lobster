@@ -7,9 +7,10 @@ import * as actions from '../../actions';
 type Props = {
   match: {
     params: {
-      id: string,
-      execution?: number,
-      type?: string
+      id?: ?string,
+      execution?: ?string,
+      type?: ?string,
+      [key: string]: ?string
     }
   },
   location: {
@@ -30,13 +31,15 @@ const EvergreenLogViewer = (props: Props) => {
   }
   const { id, execution, type } = props.match.params;
   let action;
-  if (execution !== undefined && type !== undefined) {
-    const logType = actions.stringToEvergreenTaskLogType(type);
-    if (logType) {
-      action = () => actions.evergreenLoadTaskLog(id, execution, logType);
+  if (id) {
+    if (execution != null && type != null) {
+      const logType = actions.stringToEvergreenTaskLogType(type);
+      if (logType) {
+        action = () => actions.evergreenLoadTaskLog(id, parseInt(execution, 10), logType);
+      }
+    } else {
+      action = () => actions.evergreenLoadTestLog(id);
     }
-  } else {
-    action = () => actions.evergreenLoadTestLog(id);
   }
   return (<Fetch {...props} {...newProps} action={action} />);
 };

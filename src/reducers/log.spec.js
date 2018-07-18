@@ -1,8 +1,8 @@
 // @flow strict
 
 import assert from 'assert';
-import { logkeeperDataResponse } from './logkeeper';
-import { logkeeperDataSuccess, logkeeperDataError } from '../actions';
+import reducer from './processData';
+import { processData, processDataError } from '../actions';
 
 describe('log', function() {
   test('store-line-gitref', function() {
@@ -11,15 +11,15 @@ describe('log', function() {
       'line1'
     ];
 
-    const state = logkeeperDataResponse(undefined, logkeeperDataSuccess(data.join('\n'), 'resmoke'));
+    const state = reducer(undefined, processData(data.join('\n'), 'resmoke'));
 
     assert.deepEqual(state.lines.length, 2);
     assert.deepEqual(Object.keys(state.colorMap).length, 0);
   });
 
   test('logkeeperDataResponse-error', function() {
-    const action = logkeeperDataError('error');
-    const state = logkeeperDataResponse(undefined, action);
+    const action = processDataError('error');
+    const state = reducer(undefined, action);
     assert.deepEqual(state.lines.length, 0);
     assert.deepEqual(state.colorMap.size, 0);
   });

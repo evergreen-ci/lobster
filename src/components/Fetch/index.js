@@ -15,7 +15,8 @@ export class Fetch extends React.Component {
     dispatch: PropTypes.func,
     log: PropTypes.shape({
       lines: PropTypes.array,
-      colorMap: PropTypes.object
+      colorMap: PropTypes.object,
+      isDone: PropTypes.bool
     }),
     location: PropTypes.shape({
       search: PropTypes.string,
@@ -29,7 +30,7 @@ export class Fetch extends React.Component {
     }),
     history: PropTypes.object,
     lobsterLoadData: PropTypes.func.isRequired,
-    loadData: PropTypes.func.isRequired,
+    logkeeperLoadData: PropTypes.func.isRequired,
     settings: PropTypes.shape({
       wrap: PropTypes.bool.isRequired,
       caseSensitive: PropTypes.bool.isRequired,
@@ -87,7 +88,7 @@ export class Fetch extends React.Component {
     if (this.state.url) {
       this.props.lobsterLoadData(this.state.server, this.state.url);
     } else if (this.state.build) {
-      this.props.loadData(this.state.build, this.state.test);
+      this.props.logkeeperLoadData(this.state.build, this.state.test);
     } else if (this.props.action) {
       this.props.dispatch(this.props.action());
     }
@@ -98,7 +99,7 @@ export class Fetch extends React.Component {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
       this.clearFind();
     }
-    if ((JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) || this.props.log.lines !== prevProps.log.lines) {
+    if (this.props.log.isDone && ((JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) || this.props.log.lines !== prevProps.log.lines)) {
       if (this.props.log.lines.length > 0) {
         this.props.ensureBookmark(0);
         this.props.ensureBookmark(this.props.log.lines[this.props.log.lines.length - 1].lineNumber);
@@ -513,7 +514,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch, ownProps) {
   return {
     lobsterLoadData: (server, url) => dispatch(actions.lobsterLoadData(server, url)),
-    loadData: (build, test) => dispatch(actions.loadData(build, test)),
+    logkeeperLoadData: (build, test) => dispatch(actions.logkeeperLoadData(build, test)),
     loadInitialFilters: (initialFilters) => dispatch(logviewerActions.loadInitialFilters(initialFilters)),
     loadInitialHighlights: (initialHighlights) => dispatch(logviewerActions.loadInitialHighlights(initialHighlights)),
     addFilter: (text) => dispatch(logviewerActions.addFilter(text)),

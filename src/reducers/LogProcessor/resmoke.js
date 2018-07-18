@@ -1,6 +1,6 @@
 // @flow strict
 
-import type { Log } from '../../actions';
+import type { Log } from '../../models';
 
 function getGitVersion(line: string): string {
   const gitVersionStr = 'git version: ';
@@ -93,6 +93,7 @@ export default function(response: string): Log {
 
   return {
     lines: processed,
-    colorMap: colorMap
+    colorMap: colorMap,
+    isDone: true
   };
 }

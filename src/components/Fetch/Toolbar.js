@@ -5,6 +5,7 @@ import './style.css';
 import { Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col } from 'react-bootstrap';
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
+import { wipeCache } from '../../actions';
 import * as actions from '../../actions/logviewer';
 import type { Highlight, Filter } from '../../actions/logviewer';
 
@@ -35,6 +36,7 @@ type Props = {
     toggleHighlight: (string) => void,
     toggleHighlightLine: (string) => void
   },
+  wipeCache: () => void,
   filterList: Filter[],
   highlightList: Highlight[],
   togglePanel: () => void,
@@ -126,6 +128,7 @@ export class Toolbar extends React.Component<Props> {
             highlightActions={this.props.highlightActions}
             highlightList={this.props.highlightList}
             filterList={this.props.filterList}
+            wipeCache={this.props.wipeCache}
           />
         </div>
       </Col>
@@ -160,10 +163,12 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
     toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
     toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection())
   };
+
   return {
     ...ownProps, toggleSettings: toggleSettings, filterActions, highlightActions,
     changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
-    changeSearch: (text) => dispatch(actions.changeSearch(text))
+    changeSearch: (text) => dispatch(actions.changeSearch(text)),
+    wipeCache: () => dispatch(wipeCache())
   };
 }
 

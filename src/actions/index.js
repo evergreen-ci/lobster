@@ -1,25 +1,15 @@
 // @flow strict
 
 import type { Action as LogviewerAction } from './logviewer';
+import type { Log } from '../models';
 
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
-export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
+export const PROCESS_RESPONSE = 'process-response';
+export const LOAD_CACHED_DATA = 'load-cached-data';
 export const EVERGREEN_LOAD_DATA = 'evergreen:load-data';
-
-export type Line = {
-  +lineNumber: number,
-  +text: string,
-  +port: ?string,
-  +gitRef: ?string,
-}
-
-export type ColorMap = { [string]: string }
-
-export type Log = {
-  +lines: Line[],
-  +colorMap: ColorMap
-}
+export const SETUP_CACHE = 'setup-cache';
+export const WIPE_CACHE = 'wipe-cache';
 
 export type LogkeeperLoadData = {|
   +type: 'logkeeper:load-data',
@@ -39,16 +29,17 @@ export type LobsterLoadData = {|
 
 export type LogType = 'resmoke' | 'raw'
 
-export type LogkeeperDataResponse = {|
-  +type: 'logkeeper:response',
+export type ProcessResponse = {|
+  +type: 'process-response',
   +payload: {|
     +type: LogType,
-    +data: string
+    +data: string,
+    +isDone: boolean
   |},
   +error: boolean
 |}
 
-export function loadData(build: string, test: ?string): LogkeeperLoadData {
+export function logkeeperLoadData(build: string, test: ?string): LogkeeperLoadData {
   return {
     type: LOGKEEPER_LOAD_DATA,
     payload: {
@@ -69,25 +60,65 @@ export function lobsterLoadData(server: string, url: string): LobsterLoadData {
   };
 }
 
-export function logkeeperDataSuccess(data: string, type: LogType): LogkeeperDataResponse {
+export function processData(data: string, type: LogType, isDone?: boolean): ProcessResponse {
   return {
-    type: LOGKEEPER_LOAD_RESPONSE,
+    type: PROCESS_RESPONSE,
     payload: {
       type: type,
-      data: data
+      data: data,
+      isDone: isDone || false
     },
     error: false
   };
 }
 
-export function logkeeperDataError(data: string): LogkeeperDataResponse {
+export function processDataError(data: string): ProcessResponse {
   return {
-    type: LOGKEEPER_LOAD_RESPONSE,
+    type: PROCESS_RESPONSE,
     payload: {
       type: 'resmoke',
-      data: data
+      data: data,
+      isDone: true
     },
     error: true
+  };
+}
+
+export type LoadCachedData = {|
+  type: 'load-cached-data',
+  payload: {|
+    log: Log
+  |}
+|}
+
+export function loadCachedData(data: Log): LoadCachedData {
+  return {
+    type: LOAD_CACHED_DATA,
+    payload: {
+      log: data
+    }
+  };
+}
+
+export type CacheStatus = 'ok' | 'error' | 'never' | 'later' | 'unsupported' | null;
+
+export type SetupCache = {|
+  +type: 'setup-cache',
+  +payload: {
+    +status: CacheStatus,
+    +size: number
+  },
+  +error: boolean
+|}
+
+export function setCache(status: CacheStatus, size: number): SetupCache {
+  return {
+    type: SETUP_CACHE,
+    payload: {
+      status: status,
+      size: size
+    },
+    error: false
   };
 }
 
@@ -152,8 +183,34 @@ export function evergreenLoadTestLog(id: string): EvergreenLoadData {
   };
 }
 
-export type Action = LogkeeperLoadData
-  | LogkeeperDataResponse
+export type WipeCache = {|
+  type: 'wipe-cache',
+  payload: {|
+    file: ?string
+  |}
+|}
+
+export function wipeCache(): WipeCache {
+  return {
+    type: WIPE_CACHE,
+    payload: {
+      file: null
+    }
+  };
+}
+
+export function fromFileFromCache(f: string): WipeCache {
+  return {
+    type: WIPE_CACHE,
+    payload: {
+      file: f
+    }
+  };
+}
+export type Action = ProcessResponse
+  | LoadCachedData
+  | WipeCache
+  | LogkeeperLoadData
   | LobsterLoadData
   | EvergreenLoadData
   | LogviewerAction
