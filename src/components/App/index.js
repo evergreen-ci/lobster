@@ -9,7 +9,9 @@ import Fetch from '../Fetch';
 import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
 import { Nav, NavItem } from 'react-bootstrap';
 import CacheModal from './CacheModal';
+import LogDrop from '../LogDrop';
 
+const logdrop = (props) => (<LogDrop {...props} />);
 const logviewer = (props) => (<Fetch {...props} />);
 const evergreenLogviewer = (props) => (<EvergreenLogViewer {...props} />);
 
@@ -21,7 +23,8 @@ const Main = () => (
       <Route path="/lobster/build/:build/all" render={logviewer} />
       <Route exact path="/lobster/evergreen/task/:id/:execution/:type" render={evergreenLogviewer} />
       <Route exact path="/lobster/evergreen/test/:id" render={evergreenLogviewer} />
-      <Route exact path="/lobster/" render={logviewer} />
+      <Route path="/lobster/logdrop" render={logviewer} />
+      <Route path="/lobster" render={logdrop} />
       <Route path="*" component={NotFound} />
     </Switch>
   </main>
@@ -37,7 +40,6 @@ const Header = () => (
     </Nav>
   </header>
 );
-
 
 /*
   <Grid>
