@@ -9,7 +9,7 @@ import Fetch from '../Fetch';
 import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
 import { Nav, NavItem } from 'react-bootstrap';
 import CacheModal from './CacheModal';
-import LogDrop from '../Fetch/LogDrop';
+import LogDrop from '../LogDrop';
 
 const logdrop = (props) => (<LogDrop {...props} />);
 const logviewer = (props) => (<Fetch {...props} />);

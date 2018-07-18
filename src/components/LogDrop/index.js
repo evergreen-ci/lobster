@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import {Button} from 'react-bootstrap';
 import type { ContextRouter } from 'react-router-dom';
-import './LogDrop.css';
+import './style.css';
 
 type Props = {|
   processLog: (data: string, type: actions.LogType) => void,

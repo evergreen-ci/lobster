@@ -1,7 +1,7 @@
 import React from 'react';
 import assert from 'assert';
 import Enzyme from 'enzyme';
-import { LogDrop } from './LogDrop';
+import { LogDrop } from '.';
 import sinon from 'sinon';
 
 describe('LogDrop', function() {
