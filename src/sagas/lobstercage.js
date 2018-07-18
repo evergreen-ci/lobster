@@ -148,11 +148,15 @@ function* wipeFileFromCache(f: string): Saga<void> {
 }
 
 export function* boil(action: actions.WipeCache): Saga<void> {
-  if (action.payload.file == null) {
-    yield wipeCache();
-  } else {
-    yield wipeFileFromCache(action.payload.file);
-  }
   window.localStorage.clear();
-  window.refresh();
+  try {
+    if (action.payload.file == null) {
+      yield wipeCache();
+    } else {
+      yield wipeFileFromCache(action.payload.file);
+    }
+    window.location.reload();
+  } catch (err) {
+    console.error(err);
+  }
 }
