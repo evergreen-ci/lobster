@@ -14,7 +14,16 @@ describe('lobsterLoadData', function() {
     const action = actions.lobsterLoadData('localhost:9001', 'a.log');
 
     const dispatch = sinon.fake();
-    const result = runSaga({dispatch: dispatch}, sagas.lobsterLoadData, action).done;
+    const getState = sinon.fake.returns({
+      cache: {
+        size: 123
+      }
+    });
+    const options = {
+      dispatch: dispatch,
+      getState: getState
+    };
+    const result = runSaga(options, sagas.lobsterLoadData, action).done;
     assert.ok(result);
 
     result.then(function() {
@@ -56,7 +65,12 @@ describe('logkeeperLoadData', function() {
 
     const action = actions.logkeeperLoadData('build0', 'test0');
     const dispatch = sinon.fake();
-    const result = runSaga({dispatch: dispatch}, sagas.logkeeperLoadData, action).done;
+    const getState = sinon.fake.returns({
+      cache: {
+        size: 123
+      }
+    });
+    const result = runSaga({dispatch: dispatch, getState: getState}, sagas.logkeeperLoadData, action).done;
     assert.ok(result);
 
     result.then(function() {
@@ -77,7 +91,12 @@ describe('logkeeperLoadData', function() {
 
     const action = actions.logkeeperLoadData('build0');
     const dispatch = sinon.fake();
-    const result = runSaga({dispatch: dispatch}, sagas.logkeeperLoadData, action).done;
+    const getState = sinon.fake.returns({
+      cache: {
+        size: 123
+      }
+    });
+    const result = runSaga({dispatch: dispatch, getState: getState}, sagas.logkeeperLoadData, action).done;
     assert.ok(result);
 
     result.then(function() {
@@ -100,7 +119,12 @@ describe('logkeeperLoadData', function() {
 
     const action = actions.logkeeperLoadData('build0', 'test0');
     const dispatch = sinon.fake();
-    const result = runSaga({dispatch: dispatch}, sagas.logkeeperLoadData, action).done;
+    const getState = sinon.fake.returns({
+      cache: {
+        size: 123
+      }
+    });
+    const result = runSaga({dispatch: dispatch, getState: getState}, sagas.logkeeperLoadData, action).done;
     assert.ok(result);
 
     result.then(function() {
