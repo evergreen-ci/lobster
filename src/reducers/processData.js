@@ -1,7 +1,8 @@
 // @flow strict
 
-import type { Action, Log, EvergreenTaskLogType } from '../actions';
-import { LOGKEEPER_LOAD_RESPONSE } from '../actions';
+import type { Log } from '../models';
+import type { Action, EvergreenTaskLogType } from '../actions';
+import { PROCESS_RESPONSE } from '../actions';
 import * as LogProcessor from './LogProcessor';
 
 const initialState: Log = {
@@ -18,8 +19,8 @@ const processors: {[EvergreenTaskLogType]: ProcessorFunc} = {
 };
 
 export default function(state: Log = initialState, action: Action): Log {
-  if (action.type !== LOGKEEPER_LOAD_RESPONSE || action.error) {
-    if (action.error) {
+  if (action.type !== PROCESS_RESPONSE || action.error) {
+    if (action.error === true) {
       return {...state, isDone: false};
     }
     return state;

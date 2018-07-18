@@ -4,24 +4,9 @@ import type { Action as LogviewerAction } from './logviewer';
 
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
-export const LOGKEEPER_LOAD_RESPONSE = 'logkeeper:response';
+export const PROCESS_RESPONSE = 'process-response';
 export const EVERGREEN_LOAD_DATA = 'evergreen:load-data';
 export const SETUP_CACHE = 'setup-cache';
-
-export type Line = {
-  +lineNumber: number,
-  +text: string,
-  +port: ?string,
-  +gitRef: ?string,
-}
-
-export type ColorMap = { [string]: string }
-
-export type Log = {|
-  +lines: Line[],
-  +colorMap: ColorMap,
-  +isDone: boolean
-|}
 
 export type LogkeeperLoadData = {|
   +type: 'logkeeper:load-data',
@@ -41,8 +26,8 @@ export type LobsterLoadData = {|
 
 export type LogType = 'resmoke' | 'raw'
 
-export type LogkeeperDataResponse = {|
-  +type: 'logkeeper:response',
+export type ProcessResponse = {|
+  +type: 'process-response',
   +payload: {|
     +type: LogType,
     +data: string,
@@ -51,7 +36,7 @@ export type LogkeeperDataResponse = {|
   +error: boolean
 |}
 
-export function loadData(build: string, test: ?string): LogkeeperLoadData {
+export function logkeeperLoadData(build: string, test: ?string): LogkeeperLoadData {
   return {
     type: LOGKEEPER_LOAD_DATA,
     payload: {
@@ -72,9 +57,9 @@ export function lobsterLoadData(server: string, url: string): LobsterLoadData {
   };
 }
 
-export function logkeeperDataSuccess(data: string, type: LogType, isDone?: boolean): LogkeeperDataResponse {
+export function processData(data: string, type: LogType, isDone?: boolean): ProcessResponse {
   return {
-    type: LOGKEEPER_LOAD_RESPONSE,
+    type: PROCESS_RESPONSE,
     payload: {
       type: type,
       data: data,
@@ -84,9 +69,9 @@ export function logkeeperDataSuccess(data: string, type: LogType, isDone?: boole
   };
 }
 
-export function logkeeperDataError(data: string): LogkeeperDataResponse {
+export function processDataError(data: string): ProcessResponse {
   return {
-    type: LOGKEEPER_LOAD_RESPONSE,
+    type: PROCESS_RESPONSE,
     payload: {
       type: 'resmoke',
       data: data,
@@ -215,8 +200,8 @@ export function evergreenLoadTestLog(id: string): EvergreenLoadData {
   };
 }
 
-export type Action = LogkeeperLoadData
-  | LogkeeperDataResponse
+export type Action = ProcessResponse
+  | LogkeeperLoadData
   | LobsterLoadData
   | EvergreenLoadData
   | LogviewerAction

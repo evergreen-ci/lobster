@@ -1,6 +1,6 @@
 // @flow strict
 
-import type { Log } from '../../actions';
+import type { Log } from '../../models';
 
 export default function(delimiter: string) {
   return function(response: string): Log {

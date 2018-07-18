@@ -10,20 +10,15 @@ import { fetchEvergreen } from '../api/evergreen';
 export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void> {
   console.log('fetch (logkeeper)', action.payload.build, action.payload.test);
   try {
-    // const { build, test } = action.payload;
-    // const testV = test ? test : 'undefined';
-    // //const cache = yield cachedRequest(`fetchLogkeeper:${build}-${testV}`);
-    // //console.log(cache);
     const resp = yield call(api.fetchLogkeeper, action.payload.build, action.payload.test);
-    console.log(resp);
     if (resp.status !== 200) {
       throw resp;
     }
 
     const data = yield resp.text();
-    yield put(actions.logkeeperDataSuccess(data, 'resmoke', true));
+    yield put(actions.processData(data, 'resmoke', true));
   } catch (error) {
-    yield put(actions.logkeeperDataError(error));
+    yield put(actions.processDataError(error));
   }
 }
 
@@ -36,9 +31,9 @@ export function* lobsterLoadData(action: actions.LobsterLoadData): Saga<void> {
     }
 
     const data = yield resp.text();
-    yield put(actions.logkeeperDataSuccess(data, 'resmoke', true));
+    yield put(actions.processData(data, 'resmoke', true));
   } catch (error) {
-    yield put(actions.logkeeperDataError(error));
+    yield put(actions.processDataError(error));
   }
 }
 
@@ -51,9 +46,9 @@ export function* evergreenLoadData(action: actions.EvergreenLoadData): Saga<void
     }
 
     const body = yield resp.text();
-    yield put(actions.logkeeperDataSuccess(body, 'raw', true));
+    yield put(actions.processData(body, 'raw', true));
   } catch (error) {
-    yield put(actions.logkeeperDataError(error));
+    yield put(actions.processDataError(error));
   }
 }
 

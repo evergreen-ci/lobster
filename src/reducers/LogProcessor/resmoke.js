@@ -1,6 +1,6 @@
 // @flow strict
 
-import type { Log } from '../../actions';
+import type { Log } from '../../models';
 
 function getGitVersion(line: string): string {
   const gitVersionStr = 'git version: ';
