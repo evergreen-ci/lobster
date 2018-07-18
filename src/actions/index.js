@@ -183,6 +183,7 @@ export function evergreenLoadTestLog(id: string): EvergreenLoadData {
 }
 
 export type Action = ProcessResponse
+  | LoadCachedData
   | LogkeeperLoadData
   | LobsterLoadData
   | EvergreenLoadData

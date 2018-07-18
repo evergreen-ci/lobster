@@ -3,7 +3,7 @@
 import { put, call, select } from 'redux-saga/effects';
 import * as actions from '../actions';
 
-export const fsUp = (size: number) => {
+const fsUp = (size: number) => {
   return new Promise(function(resolve, reject) {
     if (size === 0) {
       reject();
@@ -54,7 +54,7 @@ export function* writeToCache(f: string): Saga<void> {
 }
 
 // $FlowFixMe
-const fsReadPromise = (fs: any, f: string) =>  {
+const fsReadPromise = (fs: any, f: string) => {
   return new Promise(function(resolve, reject) {
     if (!fs) {
       reject();

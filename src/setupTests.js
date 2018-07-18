@@ -16,8 +16,6 @@ import 'url-search-params-polyfill';
 process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';
 process.env.REACT_APP_EVERGREEN_BASE = 'http://domain.invalid';
 
-import '../node_modules/idb.filesystem.js/dist/idb.filesystem.min.js';
-
 if (!window.localStorage) {
   /* global global:{} */
   global.localStorage = new LocalStorage('./build/localStorageTemp');
