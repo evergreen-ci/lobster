@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import {Button} from 'react-bootstrap';
 import type { ContextRouter } from 'react-router-dom';
-import './logdrop.css';
+import './LogDrop.css';
 
 type Props = {|
   processLog: (data: string, type: actions.LogType) => void,
@@ -34,7 +34,6 @@ export class LogDrop extends React.PureComponent<Props, State> {
   drop = (e: DragEvent) => {
     e.preventDefault();
     if (e.type === 'drop') {
-      console.log(e);
       if (e.dataTransfer != null) {
         this.setState({files: e.dataTransfer.files});
       }
@@ -61,15 +60,16 @@ export class LogDrop extends React.PureComponent<Props, State> {
     const f = this.state.files[0];
     const type = this.select.value;
     const reader = new FileReader();
-    reader.addEventListener('loadend', function() {
+    reader.onloadend = function() {
+      // Flow is wrong about this type
+      // $FlowFixMe
       self.props.processLog(reader.result, type);
       self.props.history.push('/lobster/logdrop');
-    });
+    };
 
-    // $FlowFixMe
-    reader.addEventListener('error', function(err: any) {
+    reader.onerror = function(err: Error) {
       self.setState({error: String(err)});
-    });
+    };
     reader.readAsText(f);
     this.setState({processing: true});
   }
