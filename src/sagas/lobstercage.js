@@ -1,7 +1,14 @@
 // @flow strict
 
+/* eslint-disable flowtype/no-weak-types */
+/* eslint-disable flowtype/no-flow-fix-me-comments */
+
 import { put, call, select } from 'redux-saga/effects';
 import * as actions from '../actions';
+
+const VERSION = 'v1';
+
+const fname = (f: string) => `${VERSION}-${f}`;
 
 const fsUp = (size: number) => {
   return new Promise(function(resolve, reject) {
@@ -47,7 +54,7 @@ export function* writeToCache(f: string): Saga<void> {
   try {
     const fs = yield call(fsUp, state.size);
     const log = new Blob([JSON.stringify(data)], {type: 'application/json'});
-    yield call(write, fs, f, log);
+    yield call(write, fs, fname(f), log);
   } catch (err) {
     console.error(`Failed to write ${f}:`, err);
   }
@@ -82,7 +89,7 @@ export function* readFromCache(f: string): Saga<void> {
     throw state;
   }
   const fs = yield call(fsUp, state.size);
-  const log = yield call(fsReadPromise, fs, f);
+  const log = yield call(fsReadPromise, fs, fname(f));
   yield put(actions.loadCachedData(log));
 }
 
@@ -113,4 +120,39 @@ export function* wipeCache(): Saga<void> {
   } catch (err) {
     console.error('Failed to wipe cache:', err);
   }
+}
+
+// $FlowFixMe
+function remove(fs: any, f: string) {
+  return new Promise(function(resolve, reject) {
+    fs.root.getFile(f, (fileEntry) => {
+      entryPromise(fileEntry)
+        .then(() => resolve())
+        .catch((e) => reject(e));
+    }, (e) => reject(e));
+  });
+}
+
+function* wipeFileFromCache(f: string): Saga<void> {
+  const state = yield select((s) => s.cache);
+  if (state.status !== 'ok') {
+    console.log('Caching is not set up; assuming no data in filesystem');
+    return;
+  }
+  try {
+    const fs = yield call(fsUp, state.size);
+    yield remove(fs, f);
+  } catch (err) {
+    console.error('Failed to wipe cache:', err);
+  }
+}
+
+export function* boil(action: actions.WipeCache): Saga<void> {
+  if (action.payload.file == null) {
+    yield wipeCache();
+  } else {
+    yield wipeFileFromCache(action.payload.file);
+  }
+  window.localStorage.clear();
+  window.refresh();
 }

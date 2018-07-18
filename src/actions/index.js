@@ -9,6 +9,7 @@ export const PROCESS_RESPONSE = 'process-response';
 export const LOAD_CACHED_DATA = 'load-cached-data';
 export const EVERGREEN_LOAD_DATA = 'evergreen:load-data';
 export const SETUP_CACHE = 'setup-cache';
+export const WIPE_CACHE = 'wipe-cache';
 
 export type LogkeeperLoadData = {|
   +type: 'logkeeper:load-data',
@@ -182,8 +183,33 @@ export function evergreenLoadTestLog(id: string): EvergreenLoadData {
   };
 }
 
+export type WipeCache = {|
+  type: 'wipe-cache',
+  payload: {|
+    file: ?string
+  |}
+|}
+
+export function wipeCache(): WipeCache {
+  return {
+    type: WIPE_CACHE,
+    payload: {
+      file: null
+    }
+  };
+}
+
+export function fromFileFromCache(f: string): WipeCache {
+  return {
+    type: WIPE_CACHE,
+    payload: {
+      file: f
+    }
+  };
+}
 export type Action = ProcessResponse
   | LoadCachedData
+  | WipeCache
   | LogkeeperLoadData
   | LobsterLoadData
   | EvergreenLoadData

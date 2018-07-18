@@ -5,8 +5,11 @@ import assert from 'assert';
 import * as lobstercage from './lobstercage';
 import { runSaga } from 'redux-saga';
 
+/* eslint-disable flowtype/no-flow-fix-me-comments */
+
 describe('lobstercage', function() {
   test('readFromCache-unsupported', function() {
+    assert.strictEqual(window.requestFileSystem, undefined);
     const dispatch = sinon.fake();
     const getState = sinon.fake.returns({
       cache: {
