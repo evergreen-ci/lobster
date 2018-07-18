@@ -66,7 +66,7 @@ export class Fetch extends React.Component {
     const bookmarksList = parsed.bookmarks;
     let bookmarksArr = [];
     if (bookmarksList) {
-      bookmarksArr = bookmarksList.split(',').map((n)=>({lineNumber: parseInt(n, 10)}));
+      bookmarksArr = bookmarksList.split(',').map((n)=>({ lineNumber: parseInt(n, 10) }));
     }
     this.props.loadBookmarks(bookmarksArr);
     this.state = {
@@ -78,9 +78,9 @@ export class Fetch extends React.Component {
       detailsOpen: false,
       findResults: []
     };
-    const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1')}));
+    const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({ text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1') }));
     this.props.loadInitialFilters(initialFilters);
-    const initialHighlights = ((typeof parsed.h === 'string' ? [parsed.h] : parsed.h) || []).map((h) => ({text: h.substring(2), on: (h.charAt(0) === '1'), line: (h.charAt(1) === '1')}));
+    const initialHighlights = ((typeof parsed.h === 'string' ? [parsed.h] : parsed.h) || []).map((h) => ({ text: h.substring(2), on: (h.charAt(0) === '1'), line: (h.charAt(1) === '1') }));
     this.props.loadInitialHighlights(initialHighlights);
     if (locationSearch !== '') {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
@@ -168,14 +168,14 @@ export class Fetch extends React.Component {
 
     if (this.urlInput.value !== this.state.url) {
       this.props.changeFindIdx(-1);
-      this.setState({url: this.urlInput.value, findResults: []});
+      this.setState({ url: this.urlInput.value, findResults: [] });
       this.props.loadBookmarks([]);
       this.props.lobsterLoadData(this.state.server, this.state.url);
     }
   }
 
   setScroll = (lineNum) => {
-    this.setState({scrollLine: lineNum});
+    this.setState({ scrollLine: lineNum });
   }
 
   findBookmark(bookmarkList, lineNum) {
@@ -224,12 +224,12 @@ export class Fetch extends React.Component {
     if (findResults.length > 0) {
       this.props.changeFindIdx(0);
       this.props.changeSearch(findRegexp);
-      this.setState({findResults: findResults});
+      this.setState({ findResults: findResults });
       this.setScroll(findResults[0]);
     } else {
       this.props.changeFindIdx(-1);
       this.props.changeSearch(findRegexp);
-      this.setState({findResults: findResults});
+      this.setState({ findResults: findResults });
     }
   }
 
@@ -254,7 +254,7 @@ export class Fetch extends React.Component {
   clearFind() {
     this.props.changeFindIdx(-1);
     this.props.changeSearch('');
-    this.setState({findResults: []});
+    this.setState({ findResults: [] });
   }
 
   shouldPrintLine = (bookmarks, line, filter, inverseFilter) => {
@@ -466,7 +466,7 @@ export class Fetch extends React.Component {
     }
   }
 
-  togglePanel = () => this.setState((state) => ({detailsOpen: !state.detailsOpen}));
+  togglePanel = () => this.setState((state) => ({ detailsOpen: !state.detailsOpen }));
   setFormRef = (ref) => {this.findInput = ref;}
 
   render() {
@@ -506,9 +506,9 @@ export class Fetch extends React.Component {
 // This is not the ideal way to do this, but it allows for better compatibility
 // as we migrate towards the react-redux model
 function mapStateToProps(state, ownProps) {
-  return {...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap,
+  return { ...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap,
     settings: state.settings, findIdx: state.find.findIdx, searchRegex: state.find.searchRegex,
-    filterList: state.filters, highlightList: state.highlights, bookmarks: state.bookmarks};
+    filterList: state.filters, highlightList: state.highlights, bookmarks: state.bookmarks };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {

@@ -50,9 +50,9 @@ class LogLineText extends React.Component {
   }
 
   render() {
-    const style = {color: this.props.colorMap[this.props.port]};
+    const style = { color: this.props.colorMap[this.props.port] };
     const highlightAndFind = this.updateHighlightAndFind();
-    const highlightStyle = {color: this.props.colorMap[this.props.port], 'backgroundImage': 'inherit', 'backgroundColor': 'pink'};
+    const highlightStyle = { color: this.props.colorMap[this.props.port], 'backgroundImage': 'inherit', 'backgroundColor': 'pink' };
     return (
       <span ref={this.setRef}>
         <Highlighter
@@ -81,7 +81,7 @@ class LineNumber extends React.Component {
   }
 
   render() {
-    const style = {width: '60px', display: 'inline-block'};
+    const style = { width: '60px', display: 'inline-block' };
     return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style} onDoubleClick={this.props.handleDoubleClick}></span>;
   }
 }
@@ -103,7 +103,7 @@ class LogOptions extends React.Component {
   }
 
   render() {
-    const style = {width: '30px', display: 'inline-block'};
+    const style = { width: '30px', display: 'inline-block' };
     if (this.props.gitRef) {
       return <span style={style} data-pseudo-content="&nbsp;&#128279;&nbsp;" onClick={this.handleClick}></span>;
     }
@@ -243,15 +243,15 @@ class LogView extends React.Component {
   }
 
   updateSelectStartIndex = (index) => {
-    this.setState({selectStartIndex: index});
+    this.setState({ selectStartIndex: index });
   }
 
   updateSelectEndIndex = (index) => {
-    this.setState({selectEndIndex: index});
+    this.setState({ selectEndIndex: index });
     const newClicks = this.state.clicks.slice();
     const clickElem = [this.state.selectStartIndex, index];
     newClicks.push(clickElem);
-    this.setState({clicks: newClicks});
+    this.setState({ clicks: newClicks });
   }
 
   handleDoubleClick = () => {
@@ -270,7 +270,7 @@ class LogView extends React.Component {
       }
       // Call toggle bookmark
       this.props.toggleBookmark(indexArray);
-      this.setState({clicks: []});
+      this.setState({ clicks: [] });
     }
   }
 
@@ -349,7 +349,7 @@ class LogView extends React.Component {
   scrollFindIntoView() {
     if (this.props.findLine < 0 || !(this.props.findLine in this.state.lineMap)) {
       if (this.props.findLine >= 0) {
-        this.setState({scrollLine: this.props.findLine});
+        this.setState({ scrollLine: this.props.findLine });
       }
       return;
     }
@@ -416,7 +416,7 @@ class LogView extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  return {...state, ...ownProps,
+  return { ...state, ...ownProps,
     colorMap: state.log.colorMap, lines: state.log.lines,
     caseSensitive: state.settings.caseSensitive,
     wrap: state.settings.wrap,

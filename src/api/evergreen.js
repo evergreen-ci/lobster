@@ -14,7 +14,7 @@ function testLogURL(id: string): string {
 }
 
 export function fetchEvergreen(log: EvergreenTaskLog | EvergreenTestLog): Promise<Response> {
-  const init = {method: 'GET', credentials: 'include'};
+  const init = { method: 'GET', credentials: 'include' };
   let req;
   if (log.type === 'task') {
     req = new Request(taskLogURL(log.id, log.execution, log.log), init);

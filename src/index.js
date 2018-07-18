@@ -5,7 +5,7 @@ import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
 import { lobster } from './reducers';
 import rootSaga from './sagas';
-import {wipeCache} from './sagas/lobstercage';
+import { wipeCache } from './sagas/lobstercage';
 import App from './components/App';
 import './index.css';
 

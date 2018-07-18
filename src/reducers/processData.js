@@ -24,7 +24,7 @@ export default function(state: Log = initialState, action: Action): Log {
   }
   if (action.type !== PROCESS_RESPONSE || action.error) {
     if (action.error === true) {
-      return {...state, isDone: false};
+      return { ...state, isDone: false };
     }
     return state;
   }

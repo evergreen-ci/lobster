@@ -10,10 +10,10 @@ test('Bookmarks', function() {
     scrollTo = num;
   };
   const data = [
-    {lineNumber: 0},
-    {lineNumber: 5},
-    {lineNumber: 10},
-    {lineNumber: 20}
+    { lineNumber: 0 },
+    { lineNumber: 5 },
+    { lineNumber: 10 },
+    { lineNumber: 20 }
   ];
 
   const wrapper = Enzyme.mount(<Bookmarks bookmarks={data} setScroll={scroll} />);
