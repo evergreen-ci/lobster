@@ -13,15 +13,8 @@ import './index.css';
 import 'babel-polyfill';
 import 'url-search-params-polyfill';
 import 'whatwg-fetch';
-// Y U NO HAVE SANE BUILD?!
-import '../node_modules/idb.filesystem.js/dist/idb.filesystem.min.js';
-window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL ||
-  window.webkitResolveLocalFileSystemURL;
-
-if (!window.requestFileSystem) {
-  console.log('No FileSystem API available. Lobster will NOT cache');
-}
+// TODO: Firefox support
+// import '../node_modules/idb.filesystem.js/dist/idb.filesystem.min.js';
 
 const saga = createSagaMiddleware();
 const store = createStore(lobster, applyMiddleware(thunk, saga));
@@ -41,11 +34,6 @@ ReactDOM.render((
   </Provider>
 ), document.getElementById('root'));
 
-window.lobsterWipeLocalStorage = () => {
-  window.localStorage.removeItem('lobster-cache-status');
-  window.localStorage.removeItem('lobster-cache-size');
-};
-
 window.lobsterWipeFilesystem = () => {
   if (window.lobsterCage) {
     window.lobsterCage.root.removeRecursively(() => console.log('Wiped Lobster FS'),
@@ -57,5 +45,5 @@ window.lobsterWipeFilesystem = () => {
 
 window.boilLobster = () => {
   window.lobsterWipeFilesystem();
-  window.lobsterWipeLocalStorage();
+  window.localStorage.clear();
 };

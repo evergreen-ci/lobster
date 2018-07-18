@@ -1,7 +1,7 @@
 // @flow
 
 import { combineReducers } from 'redux';
-import { logkeeperDataResponse } from './logkeeper';
+import processData from './processData';
 import settings from './settings';
 import filters from './filters';
 import highlights from './highlights';
@@ -11,7 +11,7 @@ import cache from './cache';
 
 export const lobster = combineReducers({
   cache: cache,
-  log: logkeeperDataResponse,
+  log: processData,
   settings: settings,
   filters: filters,
   highlights: highlights,

@@ -1,7 +1,7 @@
 // @flow strict
 
 import assert from 'assert';
-import { logkeeperDataResponse } from './logkeeper';
+import processData from './processData';
 import { logkeeperDataSuccess, logkeeperDataError } from '../actions';
 
 describe('log', function() {
@@ -11,7 +11,7 @@ describe('log', function() {
       'line1'
     ];
 
-    const state = logkeeperDataResponse(undefined, logkeeperDataSuccess(data.join('\n'), 'resmoke'));
+    const state = processData(undefined, logkeeperDataSuccess(data.join('\n'), 'resmoke'));
 
     assert.deepEqual(state.lines.length, 2);
     assert.deepEqual(Object.keys(state.colorMap).length, 0);
@@ -19,7 +19,7 @@ describe('log', function() {
 
   test('logkeeperDataResponse-error', function() {
     const action = logkeeperDataError('error');
-    const state = logkeeperDataResponse(undefined, action);
+    const state = processData(undefined, action);
     assert.deepEqual(state.lines.length, 0);
     assert.deepEqual(state.colorMap.size, 0);
   });

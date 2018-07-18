@@ -17,8 +17,11 @@ const processors: {[EvergreenTaskLogType]: ProcessorFunc} = {
   raw: LogProcessor.raw('\n')
 };
 
-export function logkeeperDataResponse(state: Log = initialState, action: Action): Log {
+export default function(state: Log = initialState, action: Action): Log {
   if (action.type !== LOGKEEPER_LOAD_RESPONSE || action.error) {
+    if (action.error) {
+      return {...state, isDone: false};
+    }
     return state;
   }
 

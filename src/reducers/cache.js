@@ -8,6 +8,13 @@ export type CacheSettings = {
 };
 
 const cacheSettings = () => {
+  window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+  window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL ||
+    window.webkitResolveLocalFileSystemURL;
+
+  if (!window.requestFileSystem) {
+    console.log('No FileSystem API available. Lobster will NOT cache');
+  }
   if (!window.localStorage || !window.requestFileSystem) {
     return {
       status: 'unsupported',
