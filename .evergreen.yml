@@ -50,6 +50,7 @@ functions:
         export CI=true
         export NPM_CONFIG_CACHE="./.node_cache"
         npm install || npm install || npm install
+        mkdir build
 
   npm:
     command: shell.exec

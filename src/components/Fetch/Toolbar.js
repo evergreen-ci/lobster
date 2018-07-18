@@ -36,6 +36,7 @@ type Props = {
     toggleHighlight: (string) => void,
     toggleHighlightLine: (string) => void
   },
+  wipeCache: () => void,
   filterList: Filter[],
   highlightList: Highlight[],
   togglePanel: () => void,
