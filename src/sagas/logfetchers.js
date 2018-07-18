@@ -6,73 +6,7 @@ import * as actions from '../actions';
 import * as api from '../api/logkeeper';
 // import cachedRequest from '../api/cachedRequest';
 import { fetchEvergreen } from '../api/evergreen';
-
-const fsWritePromise = (fs: any, f: string, blob: Blob) => {
-  return new Promise(function(resolve, reject) {
-    fs.root.getFile(f, {create: true}, function(fileEntry) {
-      fileEntry.createWriter(function(fileWriter) {
-        fileWriter.onwriteend = function() {
-          resolve();
-        };
-
-        fileWriter.onerror = function(e) {
-          reject(e);
-        };
-
-        fileWriter.write(blob);
-      }, (e) => reject(e));
-    }, (e) => reject(e));
-  });
-};
-
-function* writeToCache(fs: any, f: string): Saga<void> {
-  if (!fs) {
-    return;
-  }
-  const data = yield select((s) => s.log);
-  if (!data.isDone) {
-    return;
-  }
-
-  const log = new Blob([JSON.stringify(data)], {type: 'application/json'});
-  try {
-    yield call(fsWritePromise, fs, f, log);
-  } catch (err) {
-    console.error(`Failed to write ${f}:`, err);
-  }
-}
-
-const fsReadPromise = (fs: any, f: string) => {
-  return new Promise(function(resolve, reject) {
-    if (!fs) {
-      reject();
-    }
-    fs.root.getFile(f, {create: false}, function(fileEntry) {
-      fileEntry.file(function(file) {
-        const reader = new FileReader();
-
-        reader.onloadend = function() {
-          console.log(`Read processed log data from cache: ${f}`);
-          resolve(JSON.parse(this.result));
-        };
-        reader.onerror = (e) => reject(e);
-        reader.onabort = () => reject();
-
-        reader.readAsText(file);
-      }, (e) => reject(e));
-    }, (e) => reject(e));
-  });
-};
-
-const fsUp = (size) => {
-  return new Promise(function(resolve, reject) {
-    if (size === 0) {
-      reject();
-    }
-    const errh = (e) => reject(e);
-    window.requestFileSystem(window.PERSISTENT, size, (fs) => resolve(fs), errh);
-  });
-};
+import { fsUp, writeToCache, fsReadPromise} from '../lobstercage';
 
 export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void> {
   console.log('fetch (logkeeper)', action.payload.build, action.payload.test);
@@ -82,7 +16,9 @@ export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void
   let fs;
   try {
     try {
-      console.log(state);
+      if (state.status !== 'ok') {
+        throw Object();
+      }
       fs = yield call(fsUp, state.size);
       const log = yield call(fsReadPromise, fs, f);
       yield put(actions.loadCachedData(log));
@@ -94,7 +30,7 @@ export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void
 
       const data = yield resp.text();
       yield put.resolve(actions.processData(data, 'resmoke', true));
-      yield call(writeToCache, fs, f);
+      yield call(writeToCache, f);
     }
   } catch (error) {
     yield put(actions.processDataError(error));

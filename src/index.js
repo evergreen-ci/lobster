@@ -5,6 +5,7 @@ import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
 import { lobster } from './reducers';
 import rootSaga from './sagas';
+import {wipeCache} from './lobstercage';
 import App from './components/App';
 import './index.css';
 
@@ -25,12 +26,7 @@ ReactDOM.render((
 ), document.getElementById('root'));
 
 window.lobsterWipeFilesystem = () => {
-  if (window.lobsterCage) {
-    window.lobsterCage.root.removeRecursively(() => console.log('Wiped Lobster FS'),
-      (err) => console.error(`Failed to wipe Lobster FileSystem: ${err}`));
-  } else {
-    console.log('No fs handle to clear');
-  }
+  saga.run(wipeCache);
 };
 
 window.boilLobster = () => {
