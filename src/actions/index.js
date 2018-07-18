@@ -27,7 +27,14 @@ export type LobsterLoadData = {|
   |}
 |}
 
-export type LogType = 'resmoke' | 'raw'
+const logTypes_ = {
+  'resmoke': '',
+  'raw': ''
+};
+
+export const logTypes = (): string[] => Object.keys(logTypes_);
+
+export type LogType = $Keys<typeof logTypes_>
 
 export type ProcessResponse = {|
   +type: 'process-response',
@@ -67,6 +74,18 @@ export function processData(data: string, type: LogType, isDone?: boolean): Proc
       type: type,
       data: data,
       isDone: isDone || false
+    },
+    error: false
+  };
+}
+
+export function processLocalData(data: string, type: LogType): ProcessResponse {
+  return {
+    type: PROCESS_RESPONSE,
+    payload: {
+      type: type,
+      data: data,
+      isDone: true
     },
     error: false
   };

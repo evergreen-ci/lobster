@@ -1,0 +1,14 @@
+.logview-drop {
+  display: inline-block;
+  margin: 10px;
+  margin-top: 5vh;
+  width: 50vw;
+  height: 31vh;
+  padding: 10px;
+  border: 4px dashed red;
+  border-radius: 10px;
+}
+
+.logview-parent {
+  text-align: center;
+}
