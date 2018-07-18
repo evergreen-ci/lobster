@@ -25,7 +25,7 @@ const fsWritePromise = (fs: any, f: string, blob: Blob) => {
   });
 };
 
-function* cache(fs: any, f: string): Saga<void> {
+function* writeToCache(fs: any, f: string): Saga<void> {
   if (!fs) {
     return;
   }
@@ -52,8 +52,11 @@ const fsReadPromise = (fs: any, f: string) => {
         const reader = new FileReader();
 
         reader.onloadend = function() {
+          console.log(`Read processed log data from cache: ${f}`);
           resolve(JSON.parse(this.result));
         };
+        reader.onerror = (e) => reject(e);
+        reader.onabort = () => reject();
 
         reader.readAsText(file);
       }, (e) => reject(e));
@@ -79,6 +82,7 @@ export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void
   let fs;
   try {
     try {
+      console.log(state);
       fs = yield call(fsUp, state.size);
       const log = yield call(fsReadPromise, fs, f);
       yield put(actions.loadCachedData(log));
@@ -89,8 +93,8 @@ export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void
       }
 
       const data = yield resp.text();
-      yield put(actions.processData(data, 'resmoke', true));
-      yield call(cache, fs, f);
+      yield put.resolve(actions.processData(data, 'resmoke', true));
+      yield call(writeToCache, fs, f);
     }
   } catch (error) {
     yield put(actions.processDataError(error));
