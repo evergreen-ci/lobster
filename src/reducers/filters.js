@@ -17,12 +17,12 @@ export default function(state: Filter[] = initialState, action: Action): Filter[
 
   if (action.payload.field === 'on') {
     return state.map(filter =>
-      (filter.text === action.payload.text) ? {...filter, on: !filter.on} : filter);
+      (filter.text === action.payload.text) ? { ...filter, on: !filter.on } : filter);
   }
 
   if (action.payload.field === 'inverse') {
     return state.map(filter =>
-      (filter.text === action.payload.text) ? {...filter, inverse: !filter.inverse} : filter);
+      (filter.text === action.payload.text) ? { ...filter, inverse: !filter.inverse } : filter);
   }
 
   if (action.payload.field === 'remove') {

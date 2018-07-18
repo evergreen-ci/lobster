@@ -62,15 +62,15 @@ module.exports = {
   'rules': {
     'complexity': 'off',
     'no-console': 'off',
-    'no-unused-vars': ['error', {'vars': 'all', 'argsIgnorePattern': '^_'}],
+    'no-unused-vars': ['error', { 'vars': 'all', 'argsIgnorePattern': '^_' }],
     'eqeqeq': [2, 'allow-null'],
-    // 'object-curly-spacing': ["error", "always"]
+    'object-curly-spacing': ['error', 'always'],
     'space-in-parens': ['error', 'never'],
     'no-param-reassign': 2,
 
     'dependencies/case-sensitive': 2,
     'dependencies/no-unresolved': 2,
-    'dependencies/no-cycles': [2, {'types': true}],
+    'dependencies/no-cycles': [2, { 'types': true }],
 
     'flowtype/newline-after-flow-annotation': 2,
     'flowtype/array-style-complex-type': [2, 'verbose'],
@@ -84,7 +84,7 @@ module.exports = {
     // 'flowtype/require-parameter-type': [2, {'excludeArrowFunctions': 'expressionsOnly'}],
     // 'flowtype/require-return-type': [2, {'excludeArrowFunctions': 'expressionsOnly'}],
     // Maybe one day this can be always
-    'flowtype/require-valid-file-annotation': [2, 'never', {'annotationStyle': 'line'}],
+    'flowtype/require-valid-file-annotation': [2, 'never', { 'annotationStyle': 'line' }],
 
     // Enable a more strict set of react lints
     'react/jsx-closing-bracket-location': 2,
@@ -93,8 +93,8 @@ module.exports = {
     'react/jsx-no-bind': 2,
     'react/jsx-tag-spacing': 2,
     'react/jsx-wrap-multilines': 2,
-    'react/prefer-stateless-function': [2, {'ignorePureComponents': true}],
-    'react/self-closing-comp': [2, {'html': false, 'component': true}],
+    'react/prefer-stateless-function': [2, { 'ignorePureComponents': true }],
+    'react/self-closing-comp': [2, { 'html': false, 'component': true }],
     'react/jsx-first-prop-new-line': [2, 'multiline'],
     'react/no-this-in-sfc': 2,
 
@@ -132,7 +132,7 @@ module.exports = {
     // non-obvious terseness
     'react/jsx-boolean-value': 0,
     // Facebook discourages use of the .jsx extension, for better or for worse
-    'react/jsx-filename-extension': [2, { 'extensions': ['.js']}],
+    'react/jsx-filename-extension': [2, { 'extensions': ['.js'] }],
     // Prevents us from setting classes on buttons
     'react/forbid-component-props': 0
   },

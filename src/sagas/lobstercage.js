@@ -23,7 +23,7 @@ const fsUp = (size: number) => {
 // $FlowFixMe
 const write = (fs: any, f: string, blob: Blob) => {
   return new Promise(function(resolve, reject) {
-    fs.root.getFile(f, {create: true}, function(fileEntry) {
+    fs.root.getFile(f, { create: true }, function(fileEntry) {
       fileEntry.createWriter(function(fileWriter) {
         fileWriter.onwriteend = function() {
           console.log(`Added to cache: ${f}`);
@@ -53,7 +53,7 @@ export function* writeToCache(f: string): Saga<void> {
 
   try {
     const fs = yield call(fsUp, state.size);
-    const log = new Blob([JSON.stringify(data)], {type: 'application/json'});
+    const log = new Blob([JSON.stringify(data)], { type: 'application/json' });
     yield call(write, fs, fname(f), log);
   } catch (err) {
     console.error(`Failed to write ${f}:`, err);
@@ -66,7 +66,7 @@ const fsReadPromise = (fs: any, f: string) => {
     if (!fs) {
       reject();
     }
-    fs.root.getFile(f, {create: false}, function(fileEntry) {
+    fs.root.getFile(f, { create: false }, function(fileEntry) {
       fileEntry.file(function(file) {
         const reader = new FileReader();
 

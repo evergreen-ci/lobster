@@ -32,7 +32,7 @@ export class CacheModal extends React.PureComponent<Props, State> {
 
   onChange = () => {
     if (this.inputRef) {
-      this.setState({value: parseInt(this.inputRef.value, 10)});
+      this.setState({ value: parseInt(this.inputRef.value, 10) });
     }
   }
 
@@ -77,7 +77,7 @@ export class CacheModal extends React.PureComponent<Props, State> {
 }
 
 function mapStateToProps(state) {
-  return {show: state.cache.status === null};
+  return { show: state.cache.status === null };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<*>) {

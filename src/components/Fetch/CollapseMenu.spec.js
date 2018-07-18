@@ -8,7 +8,7 @@ import sinon from 'sinon';
 
 const wrapper = Enzyme.mount(
   <CollapseMenu
-    settings={{caseSensitive: false, wrap: false, filterIntersection: false}}
+    settings={{ caseSensitive: false, wrap: false, filterIntersection: false }}
     filterActions={{
       removeFilter: sinon.fake(),
       toggleFilter: sinon.fake(),

@@ -20,7 +20,7 @@ function ensureBookmark(lineNum, bookmarks) {
   const newBookmarks = bookmarks.slice();
   const i = findBookmark(newBookmarks, lineNum);
   if (i === -1) {
-    newBookmarks.push({lineNumber: lineNum});
+    newBookmarks.push({ lineNumber: lineNum });
     newBookmarks.sort(bookmarkSort);
   }
   return newBookmarks;
@@ -46,7 +46,7 @@ export default function(state: Bookmark[] = initialState, action: Action): Bookm
   action.payload.lineNumArray.forEach((element) => {
     const index = findBookmark(newBookmarks, element);
     if (index === -1) {
-      newBookmarks.push({lineNumber: element});
+      newBookmarks.push({ lineNumber: element });
       remove = false;
     }
   });

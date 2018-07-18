@@ -44,7 +44,7 @@ describe('lobsterLoadData', function() {
 
     const action = actions.lobsterLoadData('localhost:9001', 'a.log');
     const dispatch = sinon.fake();
-    const result = runSaga({dispatch: dispatch}, sagas.lobsterLoadData, action).done;
+    const result = runSaga({ dispatch: dispatch }, sagas.lobsterLoadData, action).done;
     assert.ok(result);
     result.then(function() {
       assert.strictEqual(api.fetchLobster.callCount, 1);
@@ -70,7 +70,7 @@ describe('logkeeperLoadData', function() {
         size: 123
       }
     });
-    const result = runSaga({dispatch: dispatch, getState: getState}, sagas.logkeeperLoadData, action).done;
+    const result = runSaga({ dispatch: dispatch, getState: getState }, sagas.logkeeperLoadData, action).done;
     assert.ok(result);
 
     result.then(function() {
@@ -87,7 +87,7 @@ describe('logkeeperLoadData', function() {
   });
 
   test('resolve-error', function() {
-    sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves(new Response('nope logkeeper', {status: 500})));
+    sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves(new Response('nope logkeeper', { status: 500 })));
 
     const action = actions.logkeeperLoadData('build0');
     const dispatch = sinon.fake();
@@ -96,7 +96,7 @@ describe('logkeeperLoadData', function() {
         size: 123
       }
     });
-    const result = runSaga({dispatch: dispatch, getState: getState}, sagas.logkeeperLoadData, action).done;
+    const result = runSaga({ dispatch: dispatch, getState: getState }, sagas.logkeeperLoadData, action).done;
     assert.ok(result);
 
     result.then(function() {
@@ -124,7 +124,7 @@ describe('logkeeperLoadData', function() {
         size: 123
       }
     });
-    const result = runSaga({dispatch: dispatch, getState: getState}, sagas.logkeeperLoadData, action).done;
+    const result = runSaga({ dispatch: dispatch, getState: getState }, sagas.logkeeperLoadData, action).done;
     assert.ok(result);
 
     result.then(function() {

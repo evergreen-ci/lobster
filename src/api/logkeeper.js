@@ -13,7 +13,7 @@ function generateLogkeeperUrl(buildParam: string, testParam: ?string): string {
 }
 
 export function fetchLogkeeper(build: string, test: ?string): Promise<Response> {
-  const req = new Request(generateLogkeeperUrl(build, test), {method: 'GET'});
+  const req = new Request(generateLogkeeperUrl(build, test), { method: 'GET' });
   return window.fetch(req);
 }
 

@@ -17,12 +17,12 @@ export default function(state: Highlight[] = initialState, action: Action): High
 
   if (action.payload.field === 'on') {
     return state.map(highlight =>
-      (highlight.text === action.payload.text) ? {...highlight, on: !highlight.on} : highlight);
+      (highlight.text === action.payload.text) ? { ...highlight, on: !highlight.on } : highlight);
   }
 
   if (action.payload.field === 'line') {
     return state.map(highlight =>
-      (highlight.text === action.payload.text) ? {...highlight, line: !highlight.line} : highlight);
+      (highlight.text === action.payload.text) ? { ...highlight, line: !highlight.line } : highlight);
   }
 
   if (action.payload.field === 'remove') {

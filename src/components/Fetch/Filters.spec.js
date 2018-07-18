@@ -58,7 +58,7 @@ test('Filters', function() {
   assert.equal(buttons.length, 10);
   buttons.at(0).simulate('click', {});
   assert.equal(data.length, 1);
-  wrapper.setProps({filters: data});
+  wrapper.setProps({ filters: data });
   assert.equal(wrapper.find('Button').length, 5);
 });
 

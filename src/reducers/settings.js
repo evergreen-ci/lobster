@@ -21,15 +21,15 @@ export default function(state: Settings = initialState, action: Action): Setting
   }
 
   if (action.payload.setting === 'line-wrap') {
-    return {...state, wrap: !state.wrap};
+    return { ...state, wrap: !state.wrap };
   }
 
   if (action.payload.setting === 'case-sensitive') {
-    return {...state, caseSensitive: !state.caseSensitive};
+    return { ...state, caseSensitive: !state.caseSensitive };
   }
 
   if (action.payload.setting === 'filter-intersection') {
-    return {...state, filterIntersection: !state.filterIntersection};
+    return { ...state, filterIntersection: !state.filterIntersection };
   }
 
   return state;
