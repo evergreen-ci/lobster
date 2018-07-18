@@ -5,13 +5,13 @@ import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
 import { lobster } from './reducers';
 import rootSaga from './sagas';
-import {wipeCache} from './lobstercage';
+import {wipeCache} from './sagas/lobstercage';
 import App from './components/App';
 import './index.css';
 
 import 'babel-polyfill';
 import 'url-search-params-polyfill';
-// import 'whatwg-fetch';
+import 'whatwg-fetch';
 // TODO: Firefox support
 // import '../node_modules/idb.filesystem.js/dist/idb.filesystem.min.js';
 

@@ -1,6 +1,7 @@
 // @flow strict
 
-import { put, call, takeEvery, select } from 'redux-saga/effects';
+import { put, call, select } from 'redux-saga/effects';
+import * as actions from '../actions';
 
 export const fsUp = (size: number) => {
   return new Promise(function(resolve, reject) {
@@ -53,7 +54,7 @@ export function* writeToCache(f: string): Saga<void> {
 }
 
 // $FlowFixMe
-export const fsReadPromise = (fs: any, f: string) =>  {
+const fsReadPromise = (fs: any, f: string) =>  {
   return new Promise(function(resolve, reject) {
     if (!fs) {
       reject();
@@ -75,22 +76,14 @@ export const fsReadPromise = (fs: any, f: string) =>  {
   });
 };
 
-// $FlowFixMe
-export function* readFromCache(fs: any, f: string): Saga<void> {
-  if (!fs) {
-    return;
+export function* readFromCache(f: string): Saga<void> {
+  const state = yield select((s) => s.cache);
+  if (state.status !== 'ok') {
+    throw state;
   }
-  const data = yield select((s) => s.log);
-  if (!data.isDone) {
-    return;
-  }
-
-  const log = new Blob([JSON.stringify(data)], {type: 'application/json'});
-  try {
-    yield call(write, fs, f, log);
-  } catch (err) {
-    console.error(`Failed to write ${f}:`, err);
-  }
+  const fs = yield call(fsUp, state.size);
+  const log = yield call(fsReadPromise, fs, f);
+  yield put(actions.loadCachedData(log));
 }
 
 const entryPromise = (e) => {

@@ -1,27 +1,20 @@
 // @flow strict
 
-import { put, call, takeEvery, select } from 'redux-saga/effects';
+import { put, call, takeEvery } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import * as actions from '../actions';
 import * as api from '../api/logkeeper';
 // import cachedRequest from '../api/cachedRequest';
 import { fetchEvergreen } from '../api/evergreen';
-import { fsUp, writeToCache, fsReadPromise} from '../lobstercage';
+import { writeToCache, readFromCache } from './lobstercage';
 
 export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void> {
   console.log('fetch (logkeeper)', action.payload.build, action.payload.test);
   const test = action.payload.test || 'all';
   const f = `fetchLogkeeper-${action.payload.build}-${test}.json`;
-  const state = yield select((s) => s.cache);
-  let fs;
   try {
     try {
-      if (state.status !== 'ok') {
-        throw Object();
-      }
-      fs = yield call(fsUp, state.size);
-      const log = yield call(fsReadPromise, fs, f);
-      yield put(actions.loadCachedData(log));
+      yield call(readFromCache, f);
     } catch (_err) {
       const resp = yield call(api.fetchLogkeeper, action.payload.build, action.payload.test);
       if (resp.status !== 200) {
