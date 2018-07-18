@@ -2,7 +2,7 @@
 
 import type { Log } from '../models';
 import type { Action, EvergreenTaskLogType } from '../actions';
-import { PROCESS_RESPONSE } from '../actions';
+import { PROCESS_RESPONSE, LOAD_CACHED_DATA } from '../actions';
 import * as LogProcessor from './LogProcessor';
 
 const initialState: Log = {
@@ -19,6 +19,9 @@ const processors: {[EvergreenTaskLogType]: ProcessorFunc} = {
 };
 
 export default function(state: Log = initialState, action: Action): Log {
+  if (action.type === LOAD_CACHED_DATA) {
+    return action.payload.log;
+  }
   if (action.type !== PROCESS_RESPONSE || action.error) {
     if (action.error === true) {
       return {...state, isDone: false};

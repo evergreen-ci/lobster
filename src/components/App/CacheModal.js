@@ -82,9 +82,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch: Dispatch<*>) {
   return {
-    save: (value: number) => dispatch(actions.setupCache('ok', value)),
-    never: () => dispatch(actions.setupCache('never', 0)),
-    later: () => dispatch(actions.setupCache('later', 0))
+    save: (value: number) => dispatch(actions.setCache('ok', value)),
+    never: () => dispatch(actions.setCache('never', 0)),
+    later: () => dispatch(actions.setCache('later', 0))
   };
 }
 

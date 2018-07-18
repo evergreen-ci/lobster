@@ -14,6 +14,9 @@ import 'url-search-params-polyfill';
 // Prevent us from hitting production
 /* global process:{} */
 process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';
+process.env.REACT_APP_EVERGREEN_BASE = 'http://domain.invalid';
+
+import '../node_modules/idb.filesystem.js/dist/idb.filesystem.min.js';
 
 if (!window.localStorage) {
   /* global global:{} */

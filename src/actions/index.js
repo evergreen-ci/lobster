@@ -1,10 +1,12 @@
 // @flow strict
 
 import type { Action as LogviewerAction } from './logviewer';
+import type { Log } from '../models';
 
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const PROCESS_RESPONSE = 'process-response';
+export const LOAD_CACHED_DATA = 'load-cached-data';
 export const EVERGREEN_LOAD_DATA = 'evergreen:load-data';
 export const SETUP_CACHE = 'setup-cache';
 
@@ -81,6 +83,22 @@ export function processDataError(data: string): ProcessResponse {
   };
 }
 
+export type LoadCachedData = {|
+  type: 'load-cached-data',
+  payload: {|
+    log: Log
+  |}
+|}
+
+export function loadCachedData(data: Log): LoadCachedData {
+  return {
+    type: LOAD_CACHED_DATA,
+    payload: {
+      log: data
+    }
+  };
+}
+
 export type CacheStatus = 'ok' | 'error' | 'never' | 'later' | 'unsupported' | null;
 
 export type SetupCache = {|
@@ -100,42 +118,6 @@ export function setCache(status: CacheStatus, size: number): SetupCache {
       size: size
     },
     error: false
-  };
-}
-
-const fsPromise = (value: number) => {
-  return new Promise(function(resolve, reject) {
-    const size = parseInt(window.localStorage.getItem('lobster-cache-size'), 10);
-    // $FlowFixMe
-    if (navigator.webkitPersistentStorage && size !== value) {
-      // $FlowFixMe
-      navigator.webkitPersistentStorage.requestQuota(window.PERSISTENT, 1024 * 1024 * value,
-        function(grant) {
-          window.requestFileSystem(window.PERSISTENT, grant, (fs) => resolve({fs, grant}), (v) => reject(v));
-        },
-        function(err) {
-          reject(err);
-        });
-    } else {
-      window.requestFileSystem(window.PERSISTENT, value, (fs) => resolve({fs, grant: value}), (v) => reject(v));
-    }
-  });
-};
-
-export function setupCache(status: CacheStatus, value: number) {
-  return function(dispatch: Dispatch<*>): Promise<*> {
-    if (status === 'ok') {
-      return fsPromise(value).then(({fs, grant}) => {
-        console.log(`FileSystem API grant: ${grant} bytes`);
-        window.lobsterCage = fs;
-        console.log(window.lobsterCage);
-        return dispatch(setCache('ok', grant));
-      }).catch((err) => {
-        console.log(err);
-        return dispatch(setCache('error', 0));
-      });
-    }
-    return dispatch(setCache(status, 0));
   };
 }
 
