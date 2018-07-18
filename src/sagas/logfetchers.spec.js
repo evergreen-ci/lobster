@@ -3,7 +3,7 @@ import assert from 'assert';
 import { runSaga } from 'redux-saga';
 import * as api from '../api/logkeeper';
 import * as actions from '../actions';
-import * as sagas from './logkeeper';
+import * as sagas from './logfetchers';
 
 describe('lobsterLoadData', function() {
   afterEach(() => sinon.restore());

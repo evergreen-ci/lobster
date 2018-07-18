@@ -1,6 +1,6 @@
 // @flow strict
 
-import { logkeeperLoadData, lobsterLoadData, evergreenLoadData } from './logkeeper';
+import { logkeeperLoadData, lobsterLoadData, evergreenLoadData } from './logfetchers';
 import type { Saga } from 'redux-saga';
 import { takeEvery } from 'redux-saga/effects';
 import * as actions from '../actions';
