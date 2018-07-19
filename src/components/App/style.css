@@ -18,7 +18,7 @@
   box-shadow: 0 0 6px 0 rgba(0,0,0,.2), 0 0 2px 0 rgba(0,0,0,.19);
 }
 
-main {
+main.lobster {
   padding-top: 45px;
 }
 
@@ -31,4 +31,9 @@ main {
 .NavItem {
   background:black;
   color:white;
+}
+
+.lobster-icon {
+    width: auto;
+    height: 25px;
 }
