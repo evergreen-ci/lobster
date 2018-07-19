@@ -35,21 +35,15 @@ const Main = () => (
 
 // The Header creates links that can be used to navigate
 // between routes.
-const isActive = (match, location) => {
-  return location.pathname.startsWith('/lobster/') && location.pathname !== '/lobster/about';
-};
-
 const never = () => false;
 
 const Header = () => (
   <header className="head">
     <Nav bsStyle="pills">
       <LinkContainer to="/lobster/about" isActive={never}>
-        <NavItem>
-          <img alt="About" className="lobster-icon" src="/static/icons/lobster.ico" />
-        </NavItem>
+        <NavItem>About</NavItem>
       </LinkContainer>
-      <LinkContainer to="/lobster" isActive={isActive}>
+      <LinkContainer to="/lobster" isActive={never}>
         <NavItem>Viewer</NavItem>
       </LinkContainer>
     </Nav>
