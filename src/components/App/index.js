@@ -50,13 +50,6 @@ const Header = () => (
   </header>
 );
 
-/*
-  <Grid>
-    <Row className="show-grid">
-        <Col md={12}><Header /></Col>
-    </Row>
-  </Grid>
- */
 const App = () => (
   <BrowserRouter>
     <div>
