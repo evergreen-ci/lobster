@@ -14,3 +14,33 @@ export type Log = {|
   +colorMap: ColorMap,
   +isDone: boolean
 |}
+
+export type Event = {|
+  +type: string,
+  +start: string,
+  +end: string
+|}
+
+export type FixtureLogList = {|
+  +isResmoke: boolean,
+  +isConfigsvr: boolean,
+  +isMongos: boolean,
+  +isShard: boolean,
+  +isMongoProcess: boolean,
+  +curThread: string,
+  +curLogLine: MongoLine,
+  +events: Event[],
+  +currentElectionVoteEvent: Event[], // EletionVoteEvent[]
+  +currentElectionStartEvent: Event, // ElectionStartEvent
+  +logStart: Date,
+  +logEnd: Date
+|}
+
+export type MongoLine = {|
+  +ts: Date,
+  +rawTs: string,
+  +severity: string,
+  +logcomponent: string,
+  +thread: string,
+  +message: String[]
+|}
