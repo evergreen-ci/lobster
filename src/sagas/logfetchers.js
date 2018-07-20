@@ -1,31 +1,49 @@
 // @flow strict
 
 import { put, call, takeEvery } from 'redux-saga/effects';
+import type { Log } from '../models';
 import type { Saga } from 'redux-saga';
 import * as actions from '../actions';
 import * as api from '../api/logkeeper';
 import { fetchEvergreen } from '../api/evergreen';
 import { writeToCache, readFromCache } from './lobstercage';
 
-export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void> {
-  console.log('fetch (logkeeper)', action.payload.build, action.payload.test);
-  const test = action.payload.test || 'all';
-  const f = `fetchLogkeeper-${action.payload.build}-${test}.json`;
+// $FlowFixMe
+function* cacheFetch(f: string, ...args: any[]): Saga<?string> {
   try {
     try {
-      yield call(readFromCache, f);
+      const log = yield call(readFromCache, f);
+      if (log != null) {
+        yield put(actions.loadCachedData(log));
+      }
     } catch (_err) {
-      const resp = yield call(api.fetchLogkeeper, action.payload.build, action.payload.test);
+      const resp = yield call(...args);
       if (resp.status !== 200) {
         throw resp;
       }
 
-      const data = yield resp.text();
-      yield put.resolve(actions.processData(data, 'resmoke', true));
-      yield call(writeToCache, f);
+      return yield resp.text();
     }
   } catch (error) {
     yield put(actions.processDataError(error));
+  }
+  try {
+    console.log('doop');
+    yield call(writeToCache, f);
+    console.log('doop');
+  } catch (err) {
+    console.error(`Failed to cache ${f}: `, err)
+  }
+}
+
+export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void> {
+  console.log('fetch (logkeeper)', action.payload.build, action.payload.test);
+  const test = action.payload.test || 'all';
+  const f = `fetchLogkeeper-${action.payload.build}-${test}.json`;
+
+  const data = yield cacheFetch(f, api.fetchLogkeeper, action.payload.build, action.payload.test);
+  if (data != null) {
+    yield put.resolve(actions.processData(data, 'resmoke', true));
   }
 }
 
@@ -46,6 +64,15 @@ export function* lobsterLoadData(action: actions.LobsterLoadData): Saga<void> {
 
 export function* evergreenLoadData(action: actions.EvergreenLoadData): Saga<void> {
   console.log(`fetch (evergreen) ${JSON.stringify(action.payload)}`);
+  // DO NOT cache Evergreen task logs!
+  if (action.payload.type === 'test') {
+    const f = `fetchEvergreen-test-${action.payload.id}`;
+    const data = yield cacheFetch(f, fetchEvergreen, action.payload);
+    if (data != null) {
+      yield put.resolve(actions.processData(data, 'raw', true));
+    }
+    return;
+  }
   try {
     const resp = yield call(fetchEvergreen, action.payload);
     if (resp.status !== 200) {

@@ -3,6 +3,7 @@
 /* eslint-disable flowtype/no-weak-types */
 /* eslint-disable flowtype/no-flow-fix-me-comments */
 
+import type { Log } from '../models';
 import { put, call, select } from 'redux-saga/effects';
 import * as actions from '../actions';
 
@@ -83,14 +84,13 @@ const fsReadPromise = (fs: any, f: string) => {
   });
 };
 
-export function* readFromCache(f: string): Saga<void> {
+export function* readFromCache(f: string): Saga<?Log> {
   const state = yield select((s) => s.cache);
   if (state.status !== 'ok') {
     throw state;
   }
   const fs = yield call(fsUp, state.size);
   const log = yield call(fsReadPromise, fs, fname(f));
-  yield put(actions.loadCachedData(log));
 }
 
 const entryPromise = (e) => {
