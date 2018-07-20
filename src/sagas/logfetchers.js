@@ -4,7 +4,6 @@ import { put, call, takeEvery } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import * as actions from '../actions';
 import * as api from '../api/logkeeper';
-import type { LogType } from '../models';
 import { fetchEvergreen } from '../api/evergreen';
 import { writeToCache, readFromCache } from './lobstercage';
 
