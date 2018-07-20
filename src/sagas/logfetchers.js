@@ -27,7 +27,7 @@ function* cacheFetch(f: string, type: LogType, ...args: any[]): Saga<void> {
       try {
         yield call(writeToCache, f);
       } catch (err) {
-        console.error(`Failed to cache ${f}: `, err)
+        console.error(`Failed to cache ${f}: `, err);
       }
     }
   } catch (error) {

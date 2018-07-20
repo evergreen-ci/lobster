@@ -1,8 +1,5 @@
 // @flow strict
 
-/* eslint-disable flowtype/no-weak-types */
-/* eslint-disable flowtype/no-flow-fix-me-comments */
-
 import { put, call, select } from 'redux-saga/effects';
 import * as actions from '../actions';
 
@@ -16,9 +13,16 @@ const fsUp = (size: number) => {
       reject();
     }
     const errh = (e) => reject(e);
+    const fsh = (fs) => resolve(fs);
+
+    if (!('requestFileSystem' in window)) {
+      reject();
+      return;
+    }
 
     if (!('webkitPersistentStorage' in navigator)) {
-      reject();
+      window.requestFileSystem(window.PERSISTENT, size, fsh, errh);
+      return;
     }
 
     // $FlowFixMe
@@ -27,10 +31,10 @@ const fsUp = (size: number) => {
         console.log(`Requesting quota increase to ${limit}`);
         // $FlowFixMe
         navigator.webkitPersistentStorage.requestQuota(size, function(grant) {
-          window.requestFileSystem(window.PERSISTENT, grant, (fs) => resolve(fs), errh);
+          window.requestFileSystem(window.PERSISTENT, grant, fsh, errh);
         }, errh);
       } else {
-        window.requestFileSystem(window.PERSISTENT, size, (fs) => resolve(fs), errh);
+        window.requestFileSystem(window.PERSISTENT, size, fsh, errh);
       }
     });
   });
