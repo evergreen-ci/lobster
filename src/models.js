@@ -1,16 +1,25 @@
 // @flow strict
 
-export type Line = {
+export type Line = $Exact<$ReadOnly<{
   +lineNumber: number,
   +text: string,
   +port: ?string,
   +gitRef: ?string,
-}
+}>>
 
-export type ColorMap = { [string]: string }
+export type ColorMap = $ReadOnly<{ [string]: string }>
 
-export type Log = {|
-  +lines: Line[],
-  +colorMap: ColorMap,
-  +isDone: boolean
-|}
+const logTypes_ = {
+  'resmoke': '',
+  'raw': ''
+};
+
+export const logTypes = (): string[] => Object.keys(logTypes_);
+
+export type LogType = $Keys<typeof logTypes_>
+
+export type Log = $Exact<$ReadOnly<{
+  lines: Line[],
+  colorMap: ColorMap,
+  isDone: boolean
+}>>
