@@ -137,12 +137,6 @@ export class LogDrop extends React.PureComponent<Props, State> {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    ...ownProps,
-  };
-}
-
 function mapDispatchToProps(dispatch: Dispatch<*>) {
   return {
     processLog: (data, type) => dispatch(actions.processLocalData(data, type))
