@@ -4,7 +4,7 @@ import { put, call, takeEvery } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import type { LogType } from '../models';
 import * as actions from '../actions';
-import * as api from '../api/logkeeper';
+import * as api from '../api';
 import { fetchEvergreen } from '../api/evergreen';
 import { writeToCache, readFromCache } from './lobstercage';
 
@@ -60,10 +60,10 @@ export function* lobsterLoadData(action: actions.LobsterLoadData): Saga<void> {
 
 export function* evergreenLoadData(action: actions.EvergreenLoadData): Saga<void> {
   console.log(`fetch (evergreen) ${JSON.stringify(action.payload)}`);
-  // DO NOT cache Evergreen task logs!
+  // DO NOT cache Evergreen task logs without checking if the task is done
   if (action.payload.type === 'test') {
     const f = `fetchEvergreen-test-${action.payload.id}`;
-    yield cacheFetch(f, 'raw', api.fetchLogkeeper, action.payload);
+    yield cacheFetch(f, 'raw', api.fetchEvergreen, action.payload);
     return;
   }
   try {
