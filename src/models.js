@@ -7,7 +7,7 @@ export type Line = $Exact<$ReadOnly<{
   +gitRef: ?string,
 }>>
 
-export type ColorMap = { [string]: string }
+export type ColorMap = $ReadOnly<{ [string]: string }>
 
 const logTypes_ = {
   'resmoke': '',
@@ -19,7 +19,7 @@ export const logTypes = (): string[] => Object.keys(logTypes_);
 export type LogType = $Keys<typeof logTypes_>
 
 export type Log = $Exact<$ReadOnly<{
-  +lines: Line[],
-  +colorMap: ColorMap,
-  +isDone: boolean
+  lines: Line[],
+  colorMap: ColorMap,
+  isDone: boolean
 }>>
