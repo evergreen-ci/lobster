@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
-import {Button} from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import type { ContextRouter } from 'react-router-dom';
 import './style.css';
 
@@ -35,7 +35,7 @@ export class LogDrop extends React.PureComponent<Props, State> {
     e.preventDefault();
     if (e.type === 'drop') {
       if (e.dataTransfer != null) {
-        this.setState({files: e.dataTransfer.files});
+        this.setState({ files: e.dataTransfer.files });
       }
     }
   }
@@ -68,10 +68,10 @@ export class LogDrop extends React.PureComponent<Props, State> {
     };
 
     reader.onerror = function(err: Error) {
-      self.setState({error: String(err)});
+      self.setState({ error: String(err) });
     };
     reader.readAsText(f);
-    this.setState({processing: true});
+    this.setState({ processing: true });
   }
 
   render() {
