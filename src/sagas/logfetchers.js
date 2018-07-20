@@ -2,13 +2,14 @@
 
 import { put, call, takeEvery } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
+import type { LogType } from '../models';
 import * as actions from '../actions';
 import * as api from '../api/logkeeper';
 import { fetchEvergreen } from '../api/evergreen';
 import { writeToCache, readFromCache } from './lobstercage';
 
 // $FlowFixMe
-function* cacheFetch(f: string, ...args: any[]): Saga<?string> {
+function* cacheFetch(f: string, type: LogType, ...args: any[]): Saga<void> {
   try {
     try {
       const log = yield call(readFromCache, f);
@@ -21,15 +22,16 @@ function* cacheFetch(f: string, ...args: any[]): Saga<?string> {
         throw resp;
       }
 
-      return yield resp.text();
+      const data = yield resp.text();
+      yield put.resolve(actions.processData(data, type, true));
+      try {
+        yield call(writeToCache, f);
+      } catch (err) {
+        console.error(`Failed to cache ${f}: `, err)
+      }
     }
   } catch (error) {
     yield put(actions.processDataError(error));
-  }
-  try {
-    yield call(writeToCache, f);
-  } catch (err) {
-    console.error(`Failed to cache ${f}: `, err)
   }
 }
 
@@ -38,10 +40,7 @@ export function* logkeeperLoadData(action: actions.LogkeeperLoadData): Saga<void
   const test = action.payload.test || 'all';
   const f = `fetchLogkeeper-${action.payload.build}-${test}.json`;
 
-  const data = yield cacheFetch(f, api.fetchLogkeeper, action.payload.build, action.payload.test);
-  if (data != null) {
-    yield put.resolve(actions.processData(data, 'resmoke', true));
-  }
+  yield cacheFetch(f, 'resmoke', api.fetchLogkeeper, action.payload.build, action.payload.test);
 }
 
 export function* lobsterLoadData(action: actions.LobsterLoadData): Saga<void> {
@@ -64,10 +63,7 @@ export function* evergreenLoadData(action: actions.EvergreenLoadData): Saga<void
   // DO NOT cache Evergreen task logs!
   if (action.payload.type === 'test') {
     const f = `fetchEvergreen-test-${action.payload.id}`;
-    const data = yield cacheFetch(f, fetchEvergreen, action.payload);
-    if (data != null) {
-      yield put.resolve(actions.processData(data, 'raw', true));
-    }
+    yield cacheFetch(f, 'raw', api.fetchLogkeeper, action.payload);
     return;
   }
   try {

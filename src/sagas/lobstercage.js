@@ -3,8 +3,7 @@
 /* eslint-disable flowtype/no-weak-types */
 /* eslint-disable flowtype/no-flow-fix-me-comments */
 
-import type { Log } from '../models';
-import { call, select } from 'redux-saga/effects';
+import { put, call, select } from 'redux-saga/effects';
 import * as actions from '../actions';
 
 const VERSION = 'v1';
@@ -17,6 +16,10 @@ const fsUp = (size: number) => {
       reject();
     }
     const errh = (e) => reject(e);
+
+    if (!('webkitPersistentStorage' in navigator)) {
+      reject();
+    }
 
     // $FlowFixMe
     navigator.webkitPersistentStorage.queryUsageAndQuota((_used, limit) => {
@@ -96,13 +99,14 @@ const fsReadPromise = (fs: any, f: string) => {
   });
 };
 
-export function* readFromCache(f: string): Saga<?Log> {
+export function* readFromCache(f: string): Saga<void> {
   const state = yield select((s) => s.cache);
   if (state.status !== 'ok') {
     throw state;
   }
   const fs = yield call(fsUp, state.size);
-  return yield call(fsReadPromise, fs, fname(f));
+  const log = yield call(fsReadPromise, fs, fname(f));
+  yield put(actions.loadCachedData(log));
 }
 
 const entryPromise = (e) => {
