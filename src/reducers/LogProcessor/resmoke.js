@@ -5,8 +5,8 @@ import type { Log, Event, FixtureLogList, MongoLine } from '../../models';
 const LOG = 'Log';
 const RESMOKE_LOGGING_PREFIX = new RegExp('\[.*?\]');
 const TIME_RE = new RegExp(String.raw`(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})`);
-const MONGO_TS_PREFIX_LENGTH = ("2017-01-23T19:51:55.058").length;
-cosnt DEFAULT_THREAD_ID = '[NO_THREAD]';
+const MONGO_TS_PREFIX_LENGTH = ('2017-01-23T19:51:55.058').length;
+const DEFAULT_THREAD_ID = '[NO_THREAD]';
 
 function getGitVersion(line: string): string {
   const gitVersionStr = 'git version: ';
@@ -42,13 +42,13 @@ function initiateFixtureLogList(): FixtureLogList {
     isBridge: false,
     isMongoProcess: false,
     curThread: '',
-    curLogLine: null, //type is MongoLine
+    curLogLine: null, // type is MongoLine
     events: [],
     currentElectionStartEvent: null,
     currentElectionVoteEvent: [],
     logStart: null,
     logEnd: null,
-    logLines: {} //type this dictionary Dict{string, MongoLine[]}
+    logLines: {} // type this dictionary Dict{string, MongoLine[]}
   });
 }
 
@@ -61,14 +61,13 @@ function updateTimeRange(fll: FixtureLogList, ts: Date): FixtureLogList {
   if (fll.logEnd === null || ts > fll.logEnd) {
     logEnd = ts;
   }
-  return({ logStart: logStart, logEnd: logEnd });
+  return ({ logStart: logStart, logEnd: logEnd });
 }
 
 function addEvent(logLine: MongoLine): MongoLine {
   if (logLine === null) {
     return null;
   }
-
 }
 
 function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList {
@@ -76,7 +75,7 @@ function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList
   if (!ts) {
     if (!fll.curThread) {
       fll.curLogLine = fll.logLines[DEFAULT_THREAD_ID][0];
-      fll.curThread = fll.DEFAULT_THREAD_ID;
+      fll.curThread = DEFAULT_THREAD_ID;
     }
     const curLogLine = fll.curLogLine;
     curLogLine.messages.push(line);
@@ -85,7 +84,7 @@ function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList
     const updatedTime = updateTimeRange(fll, ts);
     fll.logStart = updatedTime.logStart;
     fll.logEnd = updatedTime.logEnd;
-    addEvent() // TODO check out events/event factory
+    addEvent(); // TODO check out events/event factory
     fll.curLogLine = returnMongoLine(ts, line);
     fll.curThread = fll.curLogLine.thread;
 
