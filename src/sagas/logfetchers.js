@@ -1,7 +1,6 @@
 // @flow strict
 
 import { put, call, takeEvery } from 'redux-saga/effects';
-import type { Log } from '../models';
 import type { Saga } from 'redux-saga';
 import * as actions from '../actions';
 import * as api from '../api/logkeeper';
@@ -28,9 +27,7 @@ function* cacheFetch(f: string, ...args: any[]): Saga<?string> {
     yield put(actions.processDataError(error));
   }
   try {
-    console.log('doop');
     yield call(writeToCache, f);
-    console.log('doop');
   } catch (err) {
     console.error(`Failed to cache ${f}: `, err)
   }
@@ -74,6 +71,7 @@ export function* evergreenLoadData(action: actions.EvergreenLoadData): Saga<void
     return;
   }
   try {
+    // $FlowFixMe
     const resp = yield call(fetchEvergreen, action.payload);
     if (resp.status !== 200) {
       throw resp;

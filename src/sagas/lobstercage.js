@@ -4,7 +4,7 @@
 /* eslint-disable flowtype/no-flow-fix-me-comments */
 
 import type { Log } from '../models';
-import { put, call, select } from 'redux-saga/effects';
+import { call, select } from 'redux-saga/effects';
 import * as actions from '../actions';
 
 const VERSION = 'v1';
@@ -17,7 +17,19 @@ const fsUp = (size: number) => {
       reject();
     }
     const errh = (e) => reject(e);
-    window.requestFileSystem(window.PERSISTENT, size, (fs) => resolve(fs), errh);
+
+    // $FlowFixMe
+    navigator.webkitPersistentStorage.queryUsageAndQuota((_used, limit) => {
+      if (limit < size) {
+        console.log(`Requesting quota increase to ${limit}`);
+        // $FlowFixMe
+        navigator.webkitPersistentStorage.requestQuota(size, function(grant) {
+          window.requestFileSystem(window.PERSISTENT, grant, (fs) => resolve(fs), errh);
+        }, errh);
+      } else {
+        window.requestFileSystem(window.PERSISTENT, size, (fs) => resolve(fs), errh);
+      }
+    });
   });
 };
 
@@ -90,7 +102,7 @@ export function* readFromCache(f: string): Saga<?Log> {
     throw state;
   }
   const fs = yield call(fsUp, state.size);
-  const log = yield call(fsReadPromise, fs, fname(f));
+  return yield call(fsReadPromise, fs, fname(f));
 }
 
 const entryPromise = (e) => {
