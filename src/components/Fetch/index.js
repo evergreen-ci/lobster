@@ -206,7 +206,7 @@ export class Fetch extends React.Component {
       return;
     }
 
-    if (findRegexpFull === this.props.searchRegex) {
+    if (this.props.searchRegex === findRegexpFull) {
       if (this.state.findResults.length > 0) {
         return this.nextFind();
       }
