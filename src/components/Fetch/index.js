@@ -106,6 +106,9 @@ export class Fetch extends React.Component {
       }
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     }
+    if (this.props.settings !== prevProps.settings) {
+      this.find();
+    }
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -196,23 +199,22 @@ export class Fetch extends React.Component {
       }
     }
     const findRegexp = this.findInput.value;
+    const findRegexpFull = this.makeRegexp(findRegexp, this.props.settings.caseSensitive);
 
     if (findRegexp === '') {
       this.clearFind();
       return;
     }
 
-    if (findRegexp === this.props.searchRegex) {
+    if (findRegexpFull === this.props.searchRegex) {
       if (this.state.findResults.length > 0) {
         return this.nextFind();
       }
       return;
     }
-
     const findResults = [];
     const filter = this.mergeActiveFilters(this.props.filterList, this.props.settings.caseSensitive);
     const inverseFilter = this.mergeActiveInverseFilters(this.props.filterList, this.props.settings.caseSensitive);
-    const findRegexpFull = this.makeRegexp(findRegexp, this.props.settings.caseSensitive);
 
     for (let i = 0; i < this.props.log.lines.length; i++) {
       const line = this.props.log.lines[i];
@@ -223,12 +225,12 @@ export class Fetch extends React.Component {
 
     if (findResults.length > 0) {
       this.props.changeFindIdx(0);
-      this.props.changeSearch(findRegexp);
+      this.props.changeSearch(findRegexpFull);
       this.setState({ findResults: findResults });
       this.setScroll(findResults[0]);
     } else {
       this.props.changeFindIdx(-1);
-      this.props.changeSearch(findRegexp);
+      this.props.changeSearch(findRegexpFull);
       this.setState({ findResults: findResults });
     }
   }
