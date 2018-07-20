@@ -8,6 +8,32 @@ const TIME_RE = new RegExp(String.raw`(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\
 const MONGO_TS_PREFIX_LENGTH = ('2017-01-23T19:51:55.058').length;
 const DEFAULT_THREAD_ID = '[NO_THREAD]';
 
+const eventMatcherList = {
+  // Lifecycle events
+  serverStartEvent: new RegExp(String.raw`MongoDB starting : pid=(?P<pid>\d+) port=(?P<port>\d+)`),
+  serverStartMongosEvent: new RegExp(String.raw`bridge waiting for connections on port (?P<port>\d+)`),
+  serverShutdownStartEvent: new RegExp(String.raw`got signal (?P<signal>\d+) \((?P<signal_str>\w+)\)`),
+  serverShutdownCompleteEvent: new RegExp(String.raw`dbexit:  rc: \d+`),
+
+  // Replica set events
+  replicasetReconfigEvent: new RegExp(String.raw`New replica set config in use: (?P<config>.*)$`),
+  transitionEvent: new RegExp(String.raw`transition to (?P<state>\w*) from`),
+  stepDownEvent: new RegExp(String.raw`Stepping down from primary`),
+  electionDryRunEvent: new RegExp(String.raw`conducting a dry run election`),
+  electionDryRunFailEvent: new RegExp(String.raw`not running for primary`),
+  electionStartEvent: [new RegExp(String.raw`dry election run succeeded, running for election`), new RegExp(String.raw`running for election; slept last election`)],
+  electionFailEvent: new RegExp(String.raw`couldn't elect self`),
+  electionVoteEvent: new RegExp(String.raw`VoteRequester`),
+  electionSuccessEvent: new RegExp(String.raw`election succeeded`),
+  initialSyncStartEvent: new RegExp(String.raw`initial sync pending`),
+  initialSyncSuccessEvent: new RegExp(String.raw`initial sync done`),
+  heartbeatScheduledEvent: new RegExp(String.raw`Scheduling heartbeat to (?P<node>[\w:-]+) at (?P<time>.*)$`),
+  heartbeatSentEvent: new RegExp(String.raw`Sending heartbeat \(requestId: (?P<req_id>\d+)\) to (?P<node>[\w:-]+)`),
+  heartbeatReceivedEvent: new RegExp(String.raw`Received response to heartbeat \(requestId: (?P<req_id>\d+)\) from (?P<node>[\w:-]+)`),
+
+  // For Warning, Error and Fatal Events, check severity
+}
+
 function getGitVersion(line: string): string {
   const gitVersionStr = 'git version: ';
   const gitVersionPos = line.indexOf(gitVersionStr);
@@ -64,10 +90,30 @@ function updateTimeRange(fll: FixtureLogList, ts: Date): FixtureLogList {
   return ({ logStart: logStart, logEnd: logEnd });
 }
 
+function getEventFromLine()
+
 function addEvent(logLine: MongoLine): MongoLine {
   if (logLine === null) {
     return null;
   }
+  const event =
+  if (event) {
+    const events = event.slice();
+    events.push({
+      type: type,
+      start: start,
+      end: end
+    });
+    return events;
+  }
+}
+
+function returnMongoLine(ts: Date, line: string): MongoLine {
+  const components = line.split(' ', 4);
+  return ({
+    rawTs: components[0], severity: components[1], logComponent: components[2], thread: components[3].substring(1, components[3].length - 1),
+    messages: components.length === 5 ? [components[4]] : []
+  });
 }
 
 function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList {
@@ -94,24 +140,6 @@ function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList
     fll.logLines[fll.curThread] = mongoLinesList;
   }
   return fll;
-}
-
-function returnMongoLine(ts: Date, line: string): MongoLine {
-  const components = line.split(' ', 4);
-  return ({
-    rawTs: components[0], severity: components[1], logComponent: components[2], thread: components[3].substring(1, components[3].length - 1),
-    messages: components.length === 5 ? [components[4]] : []
-  });
-}
-
-function addEvent(currentEvents: Event[], type: string, start: string, end: string): Event[] {
-  const events = currentEvents.slice();
-  events.push({
-    type: type,
-    start: start,
-    end: end
-  });
-  return events;
 }
 
 function loggingPrefix(rawPrefix: string): string {
@@ -169,7 +197,7 @@ function parseTestLog(processed) {
       } else {
         const newBodyList = initiateFixtureLogList();
         newBodyList = appendFixtureLogList(newBodyList, presplit.body);
-        fixtureLogList[prefix.fixtureId] = newBodyList;
+        fixtureLogLists[prefix.fixtureId] = newBodyList;
       }
     }
   }
