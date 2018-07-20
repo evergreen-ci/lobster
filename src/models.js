@@ -21,6 +21,15 @@ export type Event = {|
   +end: string
 |}
 
+export type MongoLine = {|
+  +ts: Date,
+  +rawTs: string,
+  +severity: string,
+  +logcomponent: string,
+  +thread: string,
+  +message: String[]
+|}
+
 export type FixtureLogList = {|
   +isResmoke: boolean,
   +isConfigsvr: boolean,
@@ -34,13 +43,4 @@ export type FixtureLogList = {|
   +currentElectionStartEvent: Event, // ElectionStartEvent
   +logStart: Date,
   +logEnd: Date
-|}
-
-export type MongoLine = {|
-  +ts: Date,
-  +rawTs: string,
-  +severity: string,
-  +logcomponent: string,
-  +thread: string,
-  +message: String[]
 |}
