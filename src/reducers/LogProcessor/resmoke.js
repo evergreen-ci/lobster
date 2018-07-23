@@ -15,36 +15,81 @@ const eventMatcherList = {
     matcher: serverStartEventMatcher
   },
   serverStartMongosEvent: {
-      matchRegEx: new RegExp(String.raw`mongos version `),
-      matcher: serverStartEventMatcher
+    matchRegEx: new RegExp(String.raw`mongos version `),
+    matcher: serverStartEventMatcher
   },
-  serverShutdownStartEvent: new RegExp(String.raw`got signal (?P<signal>\d+) \((?P<signal_str>\w+)\)`),
-  serverShutdownCompleteEvent: new RegExp(String.raw`dbexit:  rc: \d+`),
+  serverShutdownStartEvent: {
+    matchRegEx: new RegExp(String.raw`got signal (?<signal>\d+) \((?<signal_str>\w+)\)`),
+    matcher: serverShutdownEventMatcher
+  },
+  serverShutdownCompleteEvent: {
+    matchRegEx: new RegExp(String.raw`dbexit:  rc: \d+`),
+    matcher: serverShutdownEventMatcher
+  },
 
   // Replica set events
   replicasetReconfigEvent: {
-    matchRegEx: new RegExp(String.raw`New replica set config in use: (?P<config>.*)$`),
-    matcher:
+    matchRegEx: new RegExp(String.raw`New replica set config in use: (?<config>.*)$`),
+    matcher: replicasetReconfigEventMatcher
   },
   transitionEvent: {
     matchRegEx: new RegExp(String.raw`transition to (?P<state>\w*) from`),
-    matcher:
+    matcher: transitionEventMatcher
   },
-  stepDownEvent: new RegExp(String.raw`Stepping down from primary`),
-  electionDryRunEvent: new RegExp(String.raw`conducting a dry run election`),
-  electionDryRunFailEvent: new RegExp(String.raw`not running for primary`),
-  electionStartEvent: [new RegExp(String.raw`dry election run succeeded, running for election`), new RegExp(String.raw`running for election; slept last election`)],
-  electionFailEvent: new RegExp(String.raw`couldn't elect self`),
-  electionVoteEvent: new RegExp(String.raw`VoteRequester`),
-  electionSuccessEvent: new RegExp(String.raw`election succeeded`),
-  initialSyncStartEvent: new RegExp(String.raw`initial sync pending`),
-  initialSyncSuccessEvent: new RegExp(String.raw`initial sync done`),
-  heartbeatScheduledEvent: new RegExp(String.raw`Scheduling heartbeat to (?P<node>[\w:-]+) at (?P<time>.*)$`),
-  heartbeatSentEvent: new RegExp(String.raw`Sending heartbeat \(requestId: (?P<req_id>\d+)\) to (?P<node>[\w:-]+)`),
-  heartbeatReceivedEvent: new RegExp(String.raw`Received response to heartbeat \(requestId: (?P<req_id>\d+)\) from (?P<node>[\w:-]+)`),
+  stepDownEvent: {
+    matchRegEx: new RegExp(String.raw`Stepping down from primary`),
+    matcher: stepDownEventMatcher
+  },
+  electionDryRunEvent: {
+    matchRegEx: new RegExp(String.raw`conducting a dry run election`),
+    matcher: electionDryRunEventMatcher
+  },
+  electionDryRunFailEvent: {
+    matchRegEx: new RegExp(String.raw`not running for primary`),
+    matcher: electionDryRunEventMatcher
+  },
+  electionStartEvent: {
+    matchRegEx: [new RegExp(String.raw`dry election run succeeded, running for election`), new RegExp(String.raw`running for election; slept last election`)],
+    matcher: electionStartEventMatcher
+  },
+  electionFailEvent: {
+    matchRegEx: new RegExp(String.raw`couldn't elect self`),
+    matcher: electionEventMatcher
+  },
+  electionVoteEvent: {
+    matchRegEx: new RegExp(String.raw`VoteRequester`),
+    matcher: electionEventMatcher
+  },
+  electionSuccessEvent: {
+    matchRegEx: new RegExp(String.raw`election succeeded`),
+    matcher: electionSuccessEventMatcher
+  },
+  initialSyncStartEvent: {
+    matchRegEx: new RegExp(String.raw`initial sync pending`),
+    matcher: initialSyncEventMatcher
+  },
+  initialSyncSuccessEvent: {
+    matchRegEx: new RegExp(String.raw`initial sync done`),
+    matcher: initialSyncEventMatcher
+  },
+  heartbeatScheduledEvent: {
+    matchRegEx: new RegExp(String.raw`Scheduling heartbeat to (?<node>[\w:-]+) at (?<time>.*)$`),
+    matcher: heartbeatScheduledEventMatcher
+  },
+  heartbeatSentEvent: {
+    matchRegEx: new RegExp(String.raw`Sending heartbeat \(requestId: (?<req_id>\d+)\) to (?<node>[\w:-]+)`),
+    matcher: heartbeatEventMatcher
+  },
+  heartbeatReceivedEvent: {
+    matchRegEx: new RegExp(String.raw`Received response to heartbeat \(requestId: (?<req_id>\d+)\) from (?<node>[\w:-]+)`),
+    matcher: heartbeatEventMatcher
+  },
 
   // For Warning, Error and Fatal Events, check severity
-}
+  fixtureFatalEvent: { matcher: fixtureEventMatcher },
+  fixtureWarningEvent: { matcher: fixtureEventMatcher },
+  fixtureErrorEvent: { matcher: fixtureEventMatcher }
+};
 
 // Note: title in original code is set as 'FixtureLogEvent' for every event type
 function initiateLogEvent(type: String, ts: Date, logLine: MongoLine): LogEvent {
@@ -58,14 +103,16 @@ function initiateLogEvent(type: String, ts: Date, logLine: MongoLine): LogEvent 
   });
 }
 
-function serverStartEventMatcher(logLine: MongoLine): ?ServerStartEvent {
+// Matcher functions
+function serverStartEventMatcher(logLine: MongoLine): ?LogEvent {
   const ssEvent = initiateLogEvent('ServerStartEvent', logLine.ts, logLine);
-  const match = eventMatcherList[serverStartEvent].matchRegEx[0].exec(logLine.messages[0]);
+  let match = eventMatcherList[serverStartEvent].matchRegEx[0].exec(logLine.messages[0]);
   if (match) {
     ssEvent.port = match.groups.port;
     ssEvent.pid = match.group.pid;
     return ssEvent;
-  } else if (match = eventMatcherList[serverStartEvent].matchRegEx[1].exec(logLine.messages[0])) {
+  }
+  if (match = eventMatcherList[serverStartEvent].matchRegEx[1].exec(logLine.messages[0])) {
     ssEvent.port = match.groups.port;
     return ssEvent;
   }
@@ -80,37 +127,172 @@ function serverStartEventMatcher(logLine: MongoLine): ?ServerStartEvent {
   return null;
 }
 
-function getGitVersion(line: string): string {
-  const gitVersionStr = 'git version: ';
-  const gitVersionPos = line.indexOf(gitVersionStr);
-  if (gitVersionPos !== -1) {
-    return line.substr(gitVersionPos + gitVersionStr.length);
+function serverShutdownEventMatcher(logLine: MongoLine): ?LogEvent {
+  let match = eventMatcherList[serverShutdownStartEvent].matchRegEx.exec(logLine.messages[0]);
+  const ssEvent = initiateLogEvent('ServerShutdownStartEvent', logLine.ts, logLine);
+  if (match) {
+    ssEvent.signal = match.groups.signal;
+    ssEvent.signalStr = match.groups.signal_str;
+    return ssEvent;
   }
-  return 'master';
+  if (match = eventMatcherList[serverShutdownCompleteEvent].matchRegEx.exec(logLine.messages[0])) {
+    ssEvent.type = 'ServerShutdownCompleteEvent';
+    return ssEvent;
+  }
+  return null;
+}
+
+function replicasetReconfigEventMatcher(logLine: MongoLine): ?LogEvent {
+  const match = eventMatcherList[replicasetReconfigEvent].matchRegEx.exec(logLine.messages[0]);
+  if (match) {
+    const rsEvent = initiateLogEvent('ReplicasetReconfigEvent', logLine.ts, logLine);
+    rsEvent.config = match.groups.config;
+    return rsEvent;
+  }
+  return null;
+}
+
+function transitionEventMatcher(logLine: MongoLine): ?LogEvent {
+  if (logLine.logComponent === 'REPL') {
+    return null;
+  }
+  const match = eventMatcherList[transitionEvent].matchRegEx.exec(logLine.messages[0]);
+  if (match) {
+    const tEvent = initiateLogEvent('TransitionEvent', logLine.ts, logLine);
+    tEvent.state = match.groups.state;
+    return tEvent;
+  }
+  return null;
+}
+
+function stepDownEventMatcher(logLine: MongoLine): ?LogEvent {
+  const match = eventMatcherList[stepDownEvent].matchRegEx.exec(logLine.messages[0]);
+  if (match) {
+    const sdEvent = initiateLogEvent('StepDownEvent', logLine.ts, logLine);
+    return sdEvent;
+  }
+  return null;
+}
+
+function electionDryRunEventMatcher(logLine: MongoLine): ?LogEvent {
+  let match = eventMatcherList[electionDryRunEvent].matchRegEx.exec(logLine.messages[0]);
+  const edrEvent = initiateLogEvent('ElectionDryRunEvent', logLine.ts, logLine);
+  if (match) {
+    return edrEvent;
+  }
+  match = eventMatcherList[electionDryRunFailEvent].matchRegEx.exec(logLine.messages[0]);
+  if (match) {
+    edrEvent.type = 'electionDryRunFailEvent';
+    return edrEvent;
+  }
+  return null;
+}
+
+function electionStartEventMatcher(logLine: MongoLine): ?LogEvent {
+  if (!logLine.messages) {
+    return null;
+  }
+  const match0 = eventMatcherList[electionStartEvent].matchRegEx[0].exec(logLine.messages[0]);
+  const match1 = eventMatcherList[electionStartEvent].matchRegExp[1].exec(logLine.messages[1]);
+  if (match0 || match1) {
+    const esEvent = initiateLogEvent('ElectionStartEvent', logLine.ts, logLine);
+    return esEvent;
+  }
+  return null;
+}
+
+function electionEventMatcher(logLine: MongoLine): ?LogEvent {
+  let match = eventMatcherList[electionVoteEvent].matchRegEx.exec(logLine.messages[0]);
+  const eEvent = initiateLogEvent('ElectionVoteEvent', logLine.ts, logLine);
+  if (match) {
+    return eEvent;
+  }
+  match = eventMatcherList[electionFailEvent].matchRegEx.exec(logLine.messages[0]);
+  if (match) {
+    eEvent.type = 'ElectionFailEvent';
+    return eEvent;
+  }
+  match = event;
+  return null;
+}
+
+function electionSuccessEventMatcher(logLine: MongoLine): ?LogEvent {
+  const match = eventMatcherList[electionSuccessEvent].matchRegEx.exec(logLine.messages[0]);
+  if (match) {
+    const esEvent = initiateLogEvent('ElectionSuccessEvent', logLine.ts, logLine);
+    esEvent.startEvent = null;
+    esEvent.voteEvents = [];
+    return esEvent;
+  }
+  return null;
+}
+
+function initialSyncEventMatcher(logLine: MongoLine): ?LogEvent {
+  let match = eventMatcherList[initialSyncStartEvent].matchRegEx.exec(logLine.messages[0]);
+  const isEvent = initiateLogEvent('InitialSyncStartEvent', logLine.ts, logLine);
+  if (match) {
+    return isEvent;
+  }
+  match = eventMatcherList[initialSyncSuccessEvent].matchRegEx.exec(logLine.messages[0]);
+  if (match) {
+    isEvent.type = 'InitialSyncSuccessEvent';
+    return isEvent;
+  }
+  return null;
+}
+
+function heartbeatScheduledEventMatcher(logLine: MongoLine): ?LogEvent {
+  const match = eventMatcherList[heartbeatScheduledEvent].matchRegEx.exec(logLine.messages[0]);
+  if (match) {
+    const hsEvent = initiateLogEvent('HeartBeatScheduledEvent', logLine.ts, logLine);
+    hsEvent.node = match.groups.node;
+    hsEvent.time = match.groups.time;
+    return hsEvent;
+  }
+  return null;
+}
+
+function heartbeatEventMatcher(logLine: MongoLine): ?LogEvent {
+  let match = eventMatcherList[heartbeatSentEvent].matchRegEx.exec(logLine.messages[0]);
+  if (match) {
+    const hsEvent = initiateLogEvent('HeartbeatSentEvent', logLine.ts, logLine);
+    hsEvent.requestId = match.groups.requestId;
+    hsEvent.node = match.groups.node;
+    return hsEvent;
+  }
+  match = eventMatcherList[heartbeatReceivedEvent].matchRegEx.exec(logLine.messages[0]);
+  if (match) {
+    const hrEvent = initiateLogEvent('HeartbeatReceivedEvent', logLine.ts, logLine);
+    hrEvent.requestId = match.groups.requestId;
+    hrEvent.node = match.groups.node;
+    return hrEvent;
+  }
+  return null;
+}
+
+function fixtureEventMatcher(logLine: MongoLine): ?LogEvent {
+  if (logLine.severity === 'F') {
+    return initiateLogEvent('FixtureFatalEvent', logLine.ts, logLine);
+  }
+  if (logLine.severity === 'W') {
+    return initiateLogEvent('FixtureWarningEvent', logLine.ts, logLine);
+  }
+  if (logLine.severity === 'E') {
+    return initiateLogEvent('FixtureErrorEvent', logLine.ts, logLine);
+  }
+  return null;
 }
 
 // Create an event for given logline if it corresponds to one
-function getEvent(logLine: MongoLine, matcher: RegExp): Event{
+function getEvent(logLine: MongoLine): Event {
   const events = eventMatcherList.keys();
   for (let i = 0; i < events.length; i++) {
-    let currEvent = events[i];
-    if (currEvent === 'serverStartEvent') {
-      for (let j = 0; j < eventMatcherList[currEvent].length; j++) {
-        let match = eventMatcherList[currEvent][j].exec(logLine.messages[0]);
-        if (match) {
-          return ()
-        }
-      }
+    const currEvent = eventMatcherList[events[i]].matcher(logLine);
+    if (currEvent) {
+      return currEvent;
     }
   }
-}
-
-function getFullGitRef(fileLine: ?string, gitVersion: string): ?string {
-  if (!fileLine) {
-    return null;
-  }
-  const gitPrefix = 'https://github.com/mongodb/mongo/blob/';
-  return gitPrefix + gitVersion + '/' + fileLine;
+  return null;
 }
 
 function parseMongoTs(line: string): Date {
@@ -152,21 +334,17 @@ function updateTimeRange(fll: FixtureLogList, ts: Date): FixtureLogList {
   return ({ logStart: logStart, logEnd: logEnd });
 }
 
-// TODO fix addEvent to include getEvent (in loglists/fixture.py)
-function addEvent(logLine: MongoLine): MongoLine {
+function addEvent(logLine: MongoLine, events: LogEvent[]): LogEvent[] {
   if (logLine === null) {
     return null;
   }
-  const event =
+  const event = getEvent(logLine);
   if (event) {
-    const events = event.slice();
-    events.push({
-      type: type,
-      start: start,
-      end: end
-    });
-    return events;
+    const newEvents = events.slice();
+    newEvents.push(event);
+    return newEvents;
   }
+  return null;
 }
 
 function returnMongoLine(ts: Date, line: string): MongoLine {
@@ -271,6 +449,23 @@ function parseTestLog(processed) {
     }
   }
   return fixtureLogLists;
+}
+
+function getGitVersion(line: string): string {
+  const gitVersionStr = 'git version: ';
+  const gitVersionPos = line.indexOf(gitVersionStr);
+  if (gitVersionPos !== -1) {
+    return line.substr(gitVersionPos + gitVersionStr.length);
+  }
+  return 'master';
+}
+
+function getFullGitRef(fileLine: ?string, gitVersion: string): ?string {
+  if (!fileLine) {
+    return null;
+  }
+  const gitPrefix = 'https://github.com/mongodb/mongo/blob/';
+  return gitPrefix + gitVersion + '/' + fileLine;
 }
 
 export default function(response: string): Log {
