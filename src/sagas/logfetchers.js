@@ -67,7 +67,6 @@ export function* evergreenLoadData(action: actions.EvergreenLoadData): Saga<void
     return;
   }
   try {
-    // $FlowFixMe
     const resp = yield call(fetchEvergreen, action.payload);
     if (resp.status !== 200) {
       throw resp;
