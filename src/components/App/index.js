@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import { Switch, Route, BrowserRouter, Redirect, type ContextRouter } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import './style.css';
 import About from '../About';
@@ -11,8 +11,15 @@ import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
 import { Nav, NavItem } from 'react-bootstrap';
 import CacheModal from './CacheModal';
 import LogDrop from '../LogDrop';
+import queryString from '../../thirdparty/query-string';
 
-const logdrop = (props) => (<LogDrop {...props} />);
+const logdrop = (props: ContextRouter) => {
+  const parsed = queryString.parse(props.location.search);
+  if ('url' in parsed && 'server' in parsed) {
+    return (<Redirect to={`/lobster/logdrop?${queryString.stringify(parsed)}`} />);
+  }
+  return (<LogDrop {...props} />);
+};
 const logviewer = (props) => (<Fetch {...props} />);
 const evergreenLogviewer = (props) => (<EvergreenLogViewer {...props} />);
 const about = (props) => (<About {...props} />);

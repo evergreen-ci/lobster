@@ -155,6 +155,9 @@ export class Fetch extends React.Component {
     if (this.state.server) {
       parsed.server = this.state.server;
     }
+    if (this.state.url) {
+      parsed.url = this.state.url;
+    }
     window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));
   }
 
