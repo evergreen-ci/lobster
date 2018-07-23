@@ -2,12 +2,20 @@
 
 import type { Log, Event, FixtureLogList, MongoLine, LogEvent } from '../../models';
 
-const LOG = 'Log';
 const RESMOKE_LOGGING_PREFIX = new RegExp('\[.*?\]');
 const TIME_RE = new RegExp(String.raw`(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})`);
 const MONGO_TS_PREFIX_LENGTH = ('2017-01-23T19:51:55.058').length;
 const DEFAULT_THREAD_ID = '[NO_THREAD]';
 const eventMatcherList = {};
+const SERVER_START = 'ServerStart';
+const SERVER_SHUTDOWN_START = 'ServerShutdownStart';
+const SERVER_SHUTDOWN_COMPLETE = 'ServerShutdownComplete';
+const FATAL = 'Fatal';
+const ERROR = 'Error';
+const WARNING = 'Warning';
+const LOG = 'Log';
+const STATE = 'State';
+const ELECTION_SUCCESS = 'ElectionSuccess';
 
 // Note: title in original code is set as 'FixtureLogEvent' for every event type
 function initiateLogEvent(type: String, ts: Date, logLine: MongoLine): LogEvent {
@@ -249,7 +257,7 @@ eventMatcherList.fixtureErrorEvent = (logLine: MongoLine): ?LogEvent => {
 };
 
 // Create an event for given logline if it corresponds to one
-function getEvent(logLine: MongoLine): Event {
+function getLogEvent(logLine: MongoLine): Event {
   const events = eventMatcherList.keys();
   for (let i = 0; i < events.length; i++) {
     const currEvent = eventMatcherList[events[i]](logLine);
@@ -323,11 +331,11 @@ function updateElectionContext(evt: LogEvent, fll: FixtureLogList): FixtureLogLi
   });
 }
 
-function addEvent(logLine: MongoLine, events: LogEvent[]): LogEvent[] {
+function addLogEvent(logLine: MongoLine, events: LogEvent[]): LogEvent[] {
   if (logLine === null) {
     return null;
   }
-  const evt = getEvent(logLine);
+  const evt = getLogEvent(logLine);
   if (evt) {
     const newEvents = events.slice();
     newEvents.push(evt);
@@ -339,6 +347,7 @@ function addEvent(logLine: MongoLine, events: LogEvent[]): LogEvent[] {
 function returnMongoLine(ts: Date, line: string): MongoLine {
   const components = line.split(' ', 4);
   return ({
+    ts: ts,
     rawTs: components[0], severity: components[1], logComponent: components[2], thread: components[3].substring(1, components[3].length - 1),
     messages: components.length === 5 ? [components[4]] : []
   });
@@ -365,7 +374,7 @@ function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList
     fll.logEnd = updatedTime.logEnd;
     fll.curLogLine = returnMongoLine(ts, line);
     const oldEvents = fll.events;
-    fll.events = addEvent(fll.curLogLine, fll.events, fll);
+    fll.events = addLogEvent(fll.curLogLine, fll.events, fll);
     if (oldEvents.length !== fll.events.length) {
       const updated = updateElectionContext(fll.events[fll.events.length - 1]);
       fll.currentElectionStartEvent = updated.currentElectionStartEvent;
@@ -422,8 +431,32 @@ function presplitLine(line: string) {
   });
 }
 
+function makeEvent(type: string, start: Date, end: Date, fixtureId: string): Event {
+  return ({
+    type: type,
+    start: start.toISOString(),
+    end: end.toISOString(),
+    fixtureId: fixtureId
+  });
+}
+
+function makeEventWithLine(type: string, start: Date, end: Date, fixtureId: string, line: MongoLine): Event {
+  return ({
+    type: type,
+    start: start.toISOString(),
+    end: end.toISOString(),
+    fixtureId: fixtureId,
+    line: line
+  });
+}
+
+function getStateEvent(tmpEvents: {String: Event}, end: Date): Event {
+  const startEvent = tmpEvents[STATE];
+  startEvent.end = end.toISOString();
+  return startEvent;
+}
+
 function parseTestLog(processed) {
-  console.log('Processing test logs');
   const fixtureLogLists = {};
   for (let i = 0; i < processed.length; i++) {
     const line = processed[i];
@@ -450,6 +483,63 @@ function parseTestLog(processed) {
     }
   }
   return fixtureLogLists;
+}
+
+function readTests(processed) {
+  const events = []; // Event[] type
+  const tmpEvents = {};
+  console.log('Processing test logs');
+  const fixtureLogLists = parseTestLog(processed);
+  const fixtureIdList = fixtureLogLists.keys();
+  for (let i = 0; i < fixtureIdList.length; i++) {
+    let fixtureId = fixtureIdList[i];
+    const logList = fixtureLogLists[fixtureId];
+    if (logList.isConfigsvr) {
+      fixtureId = fixtureId + ' - config';
+    } else if (logList.isMongos) {
+      fixtureId = fixtureId + ' - mongos';
+    }
+    console.log('Reading events for fixture ' + fixtureId);
+    // Add event for duration of logs
+    events.push(makeEvent(LOG, logList.start, logList.end, fixtureId));
+    tmpEvents = {};
+    const lastTs = null;
+    for (let j = 0; j < logList.events.length; j++) {
+      const evt = logList.events[j];
+      if (evt.ts === null) {
+        continue;
+      }
+      lastTs = event.ts;
+      if (evt.type === 'ServerStartEvent') {
+        events.push(makeEvent(SERVER_START, evt.ts, evt.ts, fixtureId));
+      } else if (evt.type === 'ServerShutdownStart') {
+        events.push(makeEvent(SERVER_SHUTDOWN_START, evt.ts, evt.ts, fixtureId));
+      } else if (evt.type === 'ServerShutdownComplete') {
+        events.push(makeEvent(SERVER_SHUTDOWN_COMPLETE, evt.ts, evt.ts, fixtureId));
+      } else if (evt.type === 'FixtureFatalEvent') {
+        events.push(makeEventWithLine(FATAL, evt.ts, evt.ts, fixtureId, evt.logLine));
+      } else if (evt.type === 'FixtureErrorEvent') {
+        events.push(makeEventWithLine(ERROR, evt.ts, evt.ts, fixtureId, evt.logLine));
+      } else if (evt.type === 'FixtureWarningEvent') {
+        events.push(makeEventWithLine(WARNING, evt.ts, evt.ts, fixtureId, evt.logLine));
+      } else if (evt.type === 'TransitionEvent') {
+        if (tmpEvents.keys().includes(STATE)) {
+          events.push(getStateEvent(tmpEvents, evt.ts));
+          delete tmpEvents[STATE];
+        }
+        const newEvent = { type: STATE, start: evt.ts.toISOString(),
+          fixtureId: fixtureId, line: evt.logLine, state: evt.state };
+        tmpEvents[STATE] = newEvent;
+      } else if (evt.type === 'ElectionSuccessEvent') {
+        events.push(makeEvent(ELECTION_SUCCESS, evt.ts, evt.ts, fixtureId));
+      }
+    }
+    if (tmpEvents.keys().includes(STATE)) {
+      events.push(getStateEvent(tmpEvents, lastTs));
+      delete tmpEvents[STATE];
+    }
+  }
+  return events;
 }
 
 function getGitVersion(line: string): string {
@@ -540,10 +630,10 @@ export default function(response: string): Log {
       gitRef: gitRef
     });
   }
-  parseTestLog(processed);
   return {
     lines: processed,
     colorMap: colorMap,
-    isDone: true
+    isDone: true,
+    events: readTests(processed)
   };
 }

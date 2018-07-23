@@ -2,6 +2,7 @@
 
 import assert from 'assert';
 import resmoke from './resmoke';
+import fs from 'fs';
 
 const data = () => [
   '[js_test:apply_batch_only_goes_forward] 2017-08-02T00:40:40.067+0000 ReplSetTest Starting....',
@@ -43,5 +44,11 @@ describe('resmoke', function() {
       state.lines[2].gitRef);
     assert.deepEqual(state.colorMap[':primary]'], '#5aae61');
     Object.keys(state.colorMap).forEach((value) => assert.notEqual(value, undefined));
+  });
+
+  test('test-events', function() {
+    const rawFile = fs.readFileSync('./5b4626c2f84ae87f0a04e70c.txt');
+    const state = resmoke(rawFile);
+    console.log(state.events);
   });
 });

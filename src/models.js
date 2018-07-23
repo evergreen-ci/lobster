@@ -15,12 +15,6 @@ export type Log = {|
   +isDone: boolean
 |}
 
-export type Event = {|
-  +type: string,
-  +start: string,
-  +end: string
-|}
-
 export type MongoLine = {|
   +ts: Date,
   +rawTs: string,
@@ -28,6 +22,14 @@ export type MongoLine = {|
   +logcomponent: string,
   +thread: string,
   +message: String[]
+|}
+
+export type Event = {|
+  +type: string,
+  +start: string,
+  +end?: string,
+  +fixtureId?: string,
+  +line?: MongoLine
 |}
 
 export type LogEvent = {|
@@ -60,7 +62,7 @@ export type FixtureLogList = {|
   +curLogLine: MongoLine,
   +events: LogEvent[],
   +currentElectionVoteEvents: LogEvent[], // EletionVoteEvent[]
-  +currentElectionStartEvent: LogEvent, // ElectionStartEvent
+  +currentElectionStartEvent: ?LogEvent, // ElectionStartEvent
   +logStart: Date,
   +logEnd: Date
 |}
