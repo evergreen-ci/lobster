@@ -56,7 +56,26 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
 });
 
+function cors(req, res) {
+  if (req.get('Origin').length !== 0) {
+    res.set({
+      'Access-Control-Allow-Origin': req.get('Origin'),
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS'
+    });
+  }
+}
+
+
+app.options('/api/log', function(req, res, _next) {
+  cors(req, res);
+  res.send();
+});
+
 app.post('/api/log', function(req, res, _next) {
+  cors(req, res);
+
   const logUrl = req.body.url;
   const filter = req.body.filter;
   if (logUrl === undefined) {
