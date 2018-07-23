@@ -44,3 +44,11 @@ export type FixtureLogList = {|
   +logStart: Date,
   +logEnd: Date
 |}
+
+export type LogEvent = {|
+  +type: string,
+  +title: string,
+  +ts: Date,
+  +messages: String[],
+  +st: String[]
+|}

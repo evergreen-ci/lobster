@@ -1,6 +1,6 @@
 // @flow strict
 
-import type { Log, Event, FixtureLogList, MongoLine } from '../../models';
+import type { Log, Event, FixtureLogList, MongoLine, LogEvent } from '../../models';
 
 const LOG = 'Log';
 const RESMOKE_LOGGING_PREFIX = new RegExp('\[.*?\]');
@@ -10,14 +10,26 @@ const DEFAULT_THREAD_ID = '[NO_THREAD]';
 
 const eventMatcherList = {
   // Lifecycle events
-  serverStartEvent: new RegExp(String.raw`MongoDB starting : pid=(?P<pid>\d+) port=(?P<port>\d+)`),
-  serverStartMongosEvent: new RegExp(String.raw`bridge waiting for connections on port (?P<port>\d+)`),
+  serverStartEvent: {
+    matchRegEx: [new RegExp(String.raw`MongoDB starting : pid=(?<pid>\d+) port=(?<port>\d+)`), new RegExp(String.raw`bridge waiting for connections on port (?<port>\d+)`)],
+    matcher: serverStartEventMatcher
+  },
+  serverStartMongosEvent: {
+      matchRegEx: new RegExp(String.raw`mongos version `),
+      matcher: serverStartEventMatcher
+  },
   serverShutdownStartEvent: new RegExp(String.raw`got signal (?P<signal>\d+) \((?P<signal_str>\w+)\)`),
   serverShutdownCompleteEvent: new RegExp(String.raw`dbexit:  rc: \d+`),
 
   // Replica set events
-  replicasetReconfigEvent: new RegExp(String.raw`New replica set config in use: (?P<config>.*)$`),
-  transitionEvent: new RegExp(String.raw`transition to (?P<state>\w*) from`),
+  replicasetReconfigEvent: {
+    matchRegEx: new RegExp(String.raw`New replica set config in use: (?P<config>.*)$`),
+    matcher:
+  },
+  transitionEvent: {
+    matchRegEx: new RegExp(String.raw`transition to (?P<state>\w*) from`),
+    matcher:
+  },
   stepDownEvent: new RegExp(String.raw`Stepping down from primary`),
   electionDryRunEvent: new RegExp(String.raw`conducting a dry run election`),
   electionDryRunFailEvent: new RegExp(String.raw`not running for primary`),
@@ -34,6 +46,40 @@ const eventMatcherList = {
   // For Warning, Error and Fatal Events, check severity
 }
 
+// Note: title in original code is set as 'FixtureLogEvent' for every event type
+function initiateLogEvent(type: String, ts: Date, logLine: MongoLine): LogEvent {
+  return ({
+    type: type,
+    title: 'FixtureLogEvent',
+    ts: ts,
+    messages: [],
+    stacktrace: [],
+    logLine: logLine
+  });
+}
+
+function serverStartEventMatcher(logLine: MongoLine): ?ServerStartEvent {
+  const ssEvent = initiateLogEvent('ServerStartEvent', logLine.ts, logLine);
+  const match = eventMatcherList[serverStartEvent].matchRegEx[0].exec(logLine.messages[0]);
+  if (match) {
+    ssEvent.port = match.groups.port;
+    ssEvent.pid = match.group.pid;
+    return ssEvent;
+  } else if (match = eventMatcherList[serverStartEvent].matchRegEx[1].exec(logLine.messages[0])) {
+    ssEvent.port = match.groups.port;
+    return ssEvent;
+  }
+  if (logLine.thread === 'mongosMain') {
+    match = eventMatcherList[serverStartMongosEvent].matchRegex.exec(logLine.messages[0]);
+    if (match) {
+      ssEvent.port = match.groups.port;
+      ssEvent.pid = match.group.pid;
+      return ssEvent;
+    }
+  }
+  return null;
+}
+
 function getGitVersion(line: string): string {
   const gitVersionStr = 'git version: ';
   const gitVersionPos = line.indexOf(gitVersionStr);
@@ -41,6 +87,22 @@ function getGitVersion(line: string): string {
     return line.substr(gitVersionPos + gitVersionStr.length);
   }
   return 'master';
+}
+
+// Create an event for given logline if it corresponds to one
+function getEvent(logLine: MongoLine, matcher: RegExp): Event{
+  const events = eventMatcherList.keys();
+  for (let i = 0; i < events.length; i++) {
+    let currEvent = events[i];
+    if (currEvent === 'serverStartEvent') {
+      for (let j = 0; j < eventMatcherList[currEvent].length; j++) {
+        let match = eventMatcherList[currEvent][j].exec(logLine.messages[0]);
+        if (match) {
+          return ()
+        }
+      }
+    }
+  }
 }
 
 function getFullGitRef(fileLine: ?string, gitVersion: string): ?string {
@@ -90,8 +152,7 @@ function updateTimeRange(fll: FixtureLogList, ts: Date): FixtureLogList {
   return ({ logStart: logStart, logEnd: logEnd });
 }
 
-function getEventFromLine()
-
+// TODO fix addEvent to include getEvent (in loglists/fixture.py)
 function addEvent(logLine: MongoLine): MongoLine {
   if (logLine === null) {
     return null;
