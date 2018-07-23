@@ -1,6 +1,7 @@
 const app = require('./app');
 const path = require('path');
 const fs = require('fs');
+const yargs = require('yargs');
 
 const PORT = process.env.PORT || 9000;
 
@@ -10,6 +11,8 @@ if (!fs.existsSync(distPath)) {
   process.exit();
 }
 
-app.listen(PORT, '127.0.0.1', () => {
-  console.log('App listening on 127.0.0.1:' + PORT + '!');
+const addr = yargs.argv.bind_address || '127.0.0.1';
+
+app.listen(PORT, addr, () => {
+  console.log('App listening on ' + addr + ':' + PORT + '!');
 });
