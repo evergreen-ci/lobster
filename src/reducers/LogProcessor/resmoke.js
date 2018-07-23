@@ -299,32 +299,38 @@ function updateTimeRange(fll: FixtureLogList, ts: Date): FixtureLogList {
   return ({ logStart: logStart, logEnd: logEnd });
 }
 
-function updateElectionContext(event: LogEvent, fll: FixtureLogList): FixtureLogList {
-  if (event.type === 'ElectionStartEvent') {
-    fll.currentElectionStartEvent = event;
-    fll.currentElectionVoteEvents = [];
-  } else if (event.type === 'ElectionVoteEvent') {
-    const newEvents = fll.currentElectionVoteEvents;
-    newEvents.push(event);
-    fll.currentElectionVoteEvents = newEvents;
-  } else if (event.type === 'ElectionFailEvent') {
-    fll.currentElectionStartEvent = null;
-    fll.currentElectionVoteEvents = null;
-  } else if (event === 'ElectionSuccessEvent') {
-    event.startEvent = fll.currentElectionStartEvent;
-    event.voteEvents = fll.currentElectionVoteEvents;
+function updateElectionContext(evt: LogEvent, fll: FixtureLogList): FixtureLogList {
+  const currentElectionStartEvent = fll.currentElectionStartEvent;
+  const currentElectionVoteEvents = fll.currentElectionVoteEvents;
+  if (evt.type === 'ElectionStartEvent') {
+    currentElectionStartEvent = event;
+    currentElectionVoteEvents = [];
+  } else if (evt.type === 'ElectionVoteEvent') {
+    currentElectionVoteEvents.push(event);
+  } else if (evt.type === 'ElectionFailEvent') {
+    currentElectionStartEvent = null;
+    currentElectionVoteEvents = null;
+  } else if (evt === 'ElectionSuccessEvent') {
+    evt.startEvent = currentElectionStartEvent;
+    evt.voteEvents = currentElectionVoteEvents;
+    currentElectionStartEvent = null;
+    currentElectionVoteEvents = [];
   }
+  return ({
+    currentElectionStartEvent: currentElectionStartEvent,
+    currentElectionVoteEvents: currentElectionVoteEvents,
+    evt: evt
+  });
 }
 
 function addEvent(logLine: MongoLine, events: LogEvent[]): LogEvent[] {
   if (logLine === null) {
     return null;
   }
-  const event = getEvent(logLine);
-  if (event) {
+  const evt = getEvent(logLine);
+  if (evt) {
     const newEvents = events.slice();
-    newEvents.push(event);
-    updateElectionContext(event);
+    newEvents.push(evt);
     return newEvents;
   }
   return null;
@@ -336,6 +342,11 @@ function returnMongoLine(ts: Date, line: string): MongoLine {
     rawTs: components[0], severity: components[1], logComponent: components[2], thread: components[3].substring(1, components[3].length - 1),
     messages: components.length === 5 ? [components[4]] : []
   });
+}
+
+function replaceLastEvent(events: LogEvent[], evt: LogEvent): LogEvent[] {
+  events[events.length - 1] = evt;
+  return events;
 }
 
 function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList {
@@ -353,7 +364,14 @@ function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList
     fll.logStart = updatedTime.logStart;
     fll.logEnd = updatedTime.logEnd;
     fll.curLogLine = returnMongoLine(ts, line);
-    fll.events = addEvent(fll.curLogLine, fll.events);
+    const oldEvents = fll.events;
+    fll.events = addEvent(fll.curLogLine, fll.events, fll);
+    if (oldEvents.length !== fll.events.length) {
+      const updated = updateElectionContext(fll.events[fll.events.length - 1]);
+      fll.currentElectionStartEvent = updated.currentElectionStartEvent;
+      fll.currentElectionVoteEvents = updated.currentElectionVoteEvents;
+      fll.events = replaceLastEvent(fll.events, updated.evt);
+    }
     fll.curThread = fll.curLogLine.thread;
 
     // Add new curLogLine to loglines list corresponding to thread
