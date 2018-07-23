@@ -7,89 +7,7 @@ const RESMOKE_LOGGING_PREFIX = new RegExp('\[.*?\]');
 const TIME_RE = new RegExp(String.raw`(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})`);
 const MONGO_TS_PREFIX_LENGTH = ('2017-01-23T19:51:55.058').length;
 const DEFAULT_THREAD_ID = '[NO_THREAD]';
-
-const eventMatcherList = {
-  // Lifecycle events
-  serverStartEvent: {
-    matchRegEx: [new RegExp(String.raw`MongoDB starting : pid=(?<pid>\d+) port=(?<port>\d+)`), new RegExp(String.raw`bridge waiting for connections on port (?<port>\d+)`)],
-    matcher: serverStartEventMatcher
-  },
-  serverStartMongosEvent: {
-    matchRegEx: new RegExp(String.raw`mongos version `),
-    matcher: serverStartEventMatcher
-  },
-  serverShutdownStartEvent: {
-    matchRegEx: new RegExp(String.raw`got signal (?<signal>\d+) \((?<signal_str>\w+)\)`),
-    matcher: serverShutdownEventMatcher
-  },
-  serverShutdownCompleteEvent: {
-    matchRegEx: new RegExp(String.raw`dbexit:  rc: \d+`),
-    matcher: serverShutdownEventMatcher
-  },
-
-  // Replica set events
-  replicasetReconfigEvent: {
-    matchRegEx: new RegExp(String.raw`New replica set config in use: (?<config>.*)$`),
-    matcher: replicasetReconfigEventMatcher
-  },
-  transitionEvent: {
-    matchRegEx: new RegExp(String.raw`transition to (?P<state>\w*) from`),
-    matcher: transitionEventMatcher
-  },
-  stepDownEvent: {
-    matchRegEx: new RegExp(String.raw`Stepping down from primary`),
-    matcher: stepDownEventMatcher
-  },
-  electionDryRunEvent: {
-    matchRegEx: new RegExp(String.raw`conducting a dry run election`),
-    matcher: electionDryRunEventMatcher
-  },
-  electionDryRunFailEvent: {
-    matchRegEx: new RegExp(String.raw`not running for primary`),
-    matcher: electionDryRunEventMatcher
-  },
-  electionStartEvent: {
-    matchRegEx: [new RegExp(String.raw`dry election run succeeded, running for election`), new RegExp(String.raw`running for election; slept last election`)],
-    matcher: electionStartEventMatcher
-  },
-  electionFailEvent: {
-    matchRegEx: new RegExp(String.raw`couldn't elect self`),
-    matcher: electionEventMatcher
-  },
-  electionVoteEvent: {
-    matchRegEx: new RegExp(String.raw`VoteRequester`),
-    matcher: electionEventMatcher
-  },
-  electionSuccessEvent: {
-    matchRegEx: new RegExp(String.raw`election succeeded`),
-    matcher: electionSuccessEventMatcher
-  },
-  initialSyncStartEvent: {
-    matchRegEx: new RegExp(String.raw`initial sync pending`),
-    matcher: initialSyncEventMatcher
-  },
-  initialSyncSuccessEvent: {
-    matchRegEx: new RegExp(String.raw`initial sync done`),
-    matcher: initialSyncEventMatcher
-  },
-  heartbeatScheduledEvent: {
-    matchRegEx: new RegExp(String.raw`Scheduling heartbeat to (?<node>[\w:-]+) at (?<time>.*)$`),
-    matcher: heartbeatScheduledEventMatcher
-  },
-  heartbeatSentEvent: {
-    matchRegEx: new RegExp(String.raw`Sending heartbeat \(requestId: (?<req_id>\d+)\) to (?<node>[\w:-]+)`),
-    matcher: heartbeatEventMatcher
-  },
-  heartbeatReceivedEvent: {
-    matchRegEx: new RegExp(String.raw`Received response to heartbeat \(requestId: (?<req_id>\d+)\) from (?<node>[\w:-]+)`),
-    matcher: heartbeatEventMatcher
-  },
-
-  // For Warning, Error and Fatal Events, check severity
-  fixtureFatalEvent: { matcher: fixtureEventMatcher },
-  fixtureWarningEvent: { matcher: fixtureEventMatcher },
-  fixtureErrorEvent: { matcher: fixtureEventMatcher }
-};
+const eventMatcherList = {};
 
 // Note: title in original code is set as 'FixtureLogEvent' for every event type
 function initiateLogEvent(type: String, ts: Date, logLine: MongoLine): LogEvent {
@@ -103,21 +21,27 @@ function initiateLogEvent(type: String, ts: Date, logLine: MongoLine): LogEvent 
   });
 }
 
-// Matcher functions
-function serverStartEventMatcher(logLine: MongoLine): ?LogEvent {
+// // Lifecycle event matcher functions
+eventMatcherList.serverStartEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = [
+    new RegExp(String.raw`MongoDB starting : pid=(?<pid>\d+) port=(?<port>\d+)`),
+    new RegExp(String.raw`bridge waiting for connections on port (?<port>\d+)`),
+    new RegExp(String.raw`mongos version `)
+  ];
   const ssEvent = initiateLogEvent('ServerStartEvent', logLine.ts, logLine);
-  let match = eventMatcherList[serverStartEvent].matchRegEx[0].exec(logLine.messages[0]);
+  let match = matchRegEx[0].exec(logLine.messages[0]);
   if (match) {
     ssEvent.port = match.groups.port;
     ssEvent.pid = match.group.pid;
     return ssEvent;
   }
-  if (match = eventMatcherList[serverStartEvent].matchRegEx[1].exec(logLine.messages[0])) {
+  match = matchRegEx[1].exec(logLine.messages[0]);
+  if (match) {
     ssEvent.port = match.groups.port;
     return ssEvent;
   }
   if (logLine.thread === 'mongosMain') {
-    match = eventMatcherList[serverStartMongosEvent].matchRegex.exec(logLine.messages[0]);
+    match = matchRegEx[2].exec(logLine.messages[0]);
     if (match) {
       ssEvent.port = match.groups.port;
       ssEvent.pid = match.group.pid;
@@ -125,99 +49,121 @@ function serverStartEventMatcher(logLine: MongoLine): ?LogEvent {
     }
   }
   return null;
-}
+};
 
-function serverShutdownEventMatcher(logLine: MongoLine): ?LogEvent {
-  let match = eventMatcherList[serverShutdownStartEvent].matchRegEx.exec(logLine.messages[0]);
+eventMatcherList.serverShutdownStartEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = [
+    new RegExp(String.raw`got signal (?<signal>\d+) \((?<signal_str>\w+)\)`),
+    new RegExp(String.raw`dbexit:  rc: \d+`)
+  ];
+  let match = matchRegEx[0].exec(logLine.messages[0]);
   const ssEvent = initiateLogEvent('ServerShutdownStartEvent', logLine.ts, logLine);
   if (match) {
     ssEvent.signal = match.groups.signal;
     ssEvent.signalStr = match.groups.signal_str;
     return ssEvent;
   }
-  if (match = eventMatcherList[serverShutdownCompleteEvent].matchRegEx.exec(logLine.messages[0])) {
+  match = matchRegEx[1].exec(logLine.messages[0]);
+  if (match) {
     ssEvent.type = 'ServerShutdownCompleteEvent';
     return ssEvent;
   }
   return null;
-}
+};
 
-function replicasetReconfigEventMatcher(logLine: MongoLine): ?LogEvent {
-  const match = eventMatcherList[replicasetReconfigEvent].matchRegEx.exec(logLine.messages[0]);
+eventMatcherList.serverShutdownCompleteEvent = eventMatcherList.serverShutdownStartEvent;
+
+// Replica set event matcher functions
+eventMatcherList.replicasetReconfigEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = new RegExp(String.raw`New replica set config in use: (?<config>.*)$`);
+  const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
     const rsEvent = initiateLogEvent('ReplicasetReconfigEvent', logLine.ts, logLine);
     rsEvent.config = match.groups.config;
     return rsEvent;
   }
   return null;
-}
+};
 
-function transitionEventMatcher(logLine: MongoLine): ?LogEvent {
+eventMatcherList.transitionEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = new RegExp(String.raw`transition to (?P<state>\w*) from`);
   if (logLine.logComponent === 'REPL') {
     return null;
   }
-  const match = eventMatcherList[transitionEvent].matchRegEx.exec(logLine.messages[0]);
+  const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
     const tEvent = initiateLogEvent('TransitionEvent', logLine.ts, logLine);
     tEvent.state = match.groups.state;
     return tEvent;
   }
   return null;
-}
+};
 
-function stepDownEventMatcher(logLine: MongoLine): ?LogEvent {
-  const match = eventMatcherList[stepDownEvent].matchRegEx.exec(logLine.messages[0]);
+eventMatcherList.stepDownEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = new RegExp(String.raw`Stepping down from primary`);
+  const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
     const sdEvent = initiateLogEvent('StepDownEvent', logLine.ts, logLine);
     return sdEvent;
   }
   return null;
-}
+};
 
-function electionDryRunEventMatcher(logLine: MongoLine): ?LogEvent {
-  let match = eventMatcherList[electionDryRunEvent].matchRegEx.exec(logLine.messages[0]);
+eventMatcherList.electionDryRunEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = [
+    new RegExp(String.raw`conducting a dry run election`),
+    new RegExp(String.raw`not running for primary`)
+  ];
+  let match = matchRegEx[0].exec(logLine.messages[0]);
   const edrEvent = initiateLogEvent('ElectionDryRunEvent', logLine.ts, logLine);
   if (match) {
     return edrEvent;
   }
-  match = eventMatcherList[electionDryRunFailEvent].matchRegEx.exec(logLine.messages[0]);
+  match = matchRegEx[1].exec(logLine.messages[0]);
   if (match) {
-    edrEvent.type = 'electionDryRunFailEvent';
+    edrEvent.type = 'ElectionDryRunFailEvent';
     return edrEvent;
   }
   return null;
-}
+};
 
-function electionStartEventMatcher(logLine: MongoLine): ?LogEvent {
+eventMatcherList.electionDryRunFailEvent = eventMatcherList.electionDryRunEvent;
+
+eventMatcherList.electionStartEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = [new RegExp(String.raw`dry election run succeeded, running for election`), new RegExp(String.raw`running for election; slept last election`)];
   if (!logLine.messages) {
     return null;
   }
-  const match0 = eventMatcherList[electionStartEvent].matchRegEx[0].exec(logLine.messages[0]);
-  const match1 = eventMatcherList[electionStartEvent].matchRegExp[1].exec(logLine.messages[1]);
+  const match0 = matchRegEx[0].exec(logLine.messages[0]);
+  const match1 = matchRegEx[1].exec(logLine.messages[1]);
   if (match0 || match1) {
     const esEvent = initiateLogEvent('ElectionStartEvent', logLine.ts, logLine);
     return esEvent;
   }
   return null;
-}
+};
 
-function electionEventMatcher(logLine: MongoLine): ?LogEvent {
-  let match = eventMatcherList[electionVoteEvent].matchRegEx.exec(logLine.messages[0]);
+eventMatcherList.electionVoteEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = [new RegExp(String.raw`VoteRequester`), new RegExp(String.raw`couldn't elect self`)];
+  let match = matchRegEx[0].exec(logLine.messages[0]);
   const eEvent = initiateLogEvent('ElectionVoteEvent', logLine.ts, logLine);
   if (match) {
     return eEvent;
   }
-  match = eventMatcherList[electionFailEvent].matchRegEx.exec(logLine.messages[0]);
+  match = matchRegEx[1].exec(logLine.messages[0]);
   if (match) {
     eEvent.type = 'ElectionFailEvent';
     return eEvent;
   }
   match = event;
   return null;
-}
+};
 
-function electionSuccessEventMatcher(logLine: MongoLine): ?LogEvent {
-  const match = eventMatcherList[electionSuccessEvent].matchRegEx.exec(logLine.messages[0]);
+eventMatcherList.electionFailEvent = eventMatcherList.electionVoteEvent;
+
+eventMatcherList.electionSuccessEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = new RegExp(String.raw`election succeeded`);
+  const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
     const esEvent = initiateLogEvent('ElectionSuccessEvent', logLine.ts, logLine);
     esEvent.startEvent = null;
@@ -225,24 +171,28 @@ function electionSuccessEventMatcher(logLine: MongoLine): ?LogEvent {
     return esEvent;
   }
   return null;
-}
+};
 
-function initialSyncEventMatcher(logLine: MongoLine): ?LogEvent {
-  let match = eventMatcherList[initialSyncStartEvent].matchRegEx.exec(logLine.messages[0]);
+eventMatcherList.initialSyncStartEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = [new RegExp(String.raw`initial sync pending`), new RegExp(String.raw`initial sync done`)];
+  let match = matchRegEx[0].exec(logLine.messages[0]);
   const isEvent = initiateLogEvent('InitialSyncStartEvent', logLine.ts, logLine);
   if (match) {
     return isEvent;
   }
-  match = eventMatcherList[initialSyncSuccessEvent].matchRegEx.exec(logLine.messages[0]);
+  match = matchRegEx[1].exec(logLine.messages[0]);
   if (match) {
     isEvent.type = 'InitialSyncSuccessEvent';
     return isEvent;
   }
   return null;
-}
+};
 
-function heartbeatScheduledEventMatcher(logLine: MongoLine): ?LogEvent {
-  const match = eventMatcherList[heartbeatScheduledEvent].matchRegEx.exec(logLine.messages[0]);
+eventMatcherList.initialSyncSuccessEvent = eventMatcherList.initialSyncStartEvent;
+
+eventMatcherList.heartbeatScheduledEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = new RegExp(String.raw`Scheduling heartbeat to (?<node>[\w:-]+) at (?<time>.*)$`);
+  const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
     const hsEvent = initiateLogEvent('HeartBeatScheduledEvent', logLine.ts, logLine);
     hsEvent.node = match.groups.node;
@@ -250,17 +200,21 @@ function heartbeatScheduledEventMatcher(logLine: MongoLine): ?LogEvent {
     return hsEvent;
   }
   return null;
-}
+};
 
-function heartbeatEventMatcher(logLine: MongoLine): ?LogEvent {
-  let match = eventMatcherList[heartbeatSentEvent].matchRegEx.exec(logLine.messages[0]);
+eventMatcherList.heartbeatSentEvent = (logLine: MongoLine): ?LogEvent => {
+  const matchRegEx = [
+    new RegExp(String.raw`Sending heartbeat \(requestId: (?<req_id>\d+)\) to (?<node>[\w:-]+)`),
+    new RegExp(String.raw`Received response to heartbeat \(requestId: (?<req_id>\d+)\) from (?<node>[\w:-]+)`)
+  ];
+  let match = matchRegEx[0].exec(logLine.messages[0]);
   if (match) {
     const hsEvent = initiateLogEvent('HeartbeatSentEvent', logLine.ts, logLine);
     hsEvent.requestId = match.groups.requestId;
     hsEvent.node = match.groups.node;
     return hsEvent;
   }
-  match = eventMatcherList[heartbeatReceivedEvent].matchRegEx.exec(logLine.messages[0]);
+  match = matchRegEx[1].exec(logLine.messages[0]);
   if (match) {
     const hrEvent = initiateLogEvent('HeartbeatReceivedEvent', logLine.ts, logLine);
     hrEvent.requestId = match.groups.requestId;
@@ -268,26 +222,37 @@ function heartbeatEventMatcher(logLine: MongoLine): ?LogEvent {
     return hrEvent;
   }
   return null;
-}
+};
 
-function fixtureEventMatcher(logLine: MongoLine): ?LogEvent {
+eventMatcherList.heartbeatReceivedEvent = eventMatcherList.heartbeatSentEvent;
+
+// Severity check matcher functions
+eventMatcherList.fixtureFatalEvent = (logLine: MongoLine): ?LogEvent => {
   if (logLine.severity === 'F') {
     return initiateLogEvent('FixtureFatalEvent', logLine.ts, logLine);
   }
-  if (logLine.severity === 'W') {
+  return null;
+};
+
+eventMatcherList.fixtureWarningEvent = (logLine: MongoLine): ?LogEvent => {
+  if (logLine.severity === 'F') {
     return initiateLogEvent('FixtureWarningEvent', logLine.ts, logLine);
   }
-  if (logLine.severity === 'E') {
+  return null;
+};
+
+eventMatcherList.fixtureErrorEvent = (logLine: MongoLine): ?LogEvent => {
+  if (logLine.severity === 'F') {
     return initiateLogEvent('FixtureErrorEvent', logLine.ts, logLine);
   }
   return null;
-}
+};
 
 // Create an event for given logline if it corresponds to one
 function getEvent(logLine: MongoLine): Event {
   const events = eventMatcherList.keys();
   for (let i = 0; i < events.length; i++) {
-    const currEvent = eventMatcherList[events[i]].matcher(logLine);
+    const currEvent = eventMatcherList[events[i]](logLine);
     if (currEvent) {
       return currEvent;
     }
@@ -315,7 +280,7 @@ function initiateFixtureLogList(): FixtureLogList {
     curLogLine: null, // type is MongoLine
     events: [],
     currentElectionStartEvent: null,
-    currentElectionVoteEvent: [],
+    currentElectionVoteEvents: [],
     logStart: null,
     logEnd: null,
     logLines: {} // type this dictionary Dict{string, MongoLine[]}
@@ -334,6 +299,23 @@ function updateTimeRange(fll: FixtureLogList, ts: Date): FixtureLogList {
   return ({ logStart: logStart, logEnd: logEnd });
 }
 
+function updateElectionContext(event: LogEvent, fll: FixtureLogList): FixtureLogList {
+  if (event.type === 'ElectionStartEvent') {
+    fll.currentElectionStartEvent = event;
+    fll.currentElectionVoteEvents = [];
+  } else if (event.type === 'ElectionVoteEvent') {
+    const newEvents = fll.currentElectionVoteEvents;
+    newEvents.push(event);
+    fll.currentElectionVoteEvents = newEvents;
+  } else if (event.type === 'ElectionFailEvent') {
+    fll.currentElectionStartEvent = null;
+    fll.currentElectionVoteEvents = null;
+  } else if (event === 'ElectionSuccessEvent') {
+    event.startEvent = fll.currentElectionStartEvent;
+    event.voteEvents = fll.currentElectionVoteEvents;
+  }
+}
+
 function addEvent(logLine: MongoLine, events: LogEvent[]): LogEvent[] {
   if (logLine === null) {
     return null;
@@ -342,6 +324,7 @@ function addEvent(logLine: MongoLine, events: LogEvent[]): LogEvent[] {
   if (event) {
     const newEvents = events.slice();
     newEvents.push(event);
+    updateElectionContext(event);
     return newEvents;
   }
   return null;
@@ -369,8 +352,8 @@ function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList
     const updatedTime = updateTimeRange(fll, ts);
     fll.logStart = updatedTime.logStart;
     fll.logEnd = updatedTime.logEnd;
-    addEvent(); // TODO check out events/event factory
     fll.curLogLine = returnMongoLine(ts, line);
+    fll.events = addEvent(fll.curLogLine, fll.events);
     fll.curThread = fll.curLogLine.thread;
 
     // Add new curLogLine to loglines list corresponding to thread

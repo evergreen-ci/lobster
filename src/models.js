@@ -59,7 +59,7 @@ export type FixtureLogList = {|
   +curThread: string,
   +curLogLine: MongoLine,
   +events: LogEvent[],
-  +currentElectionVoteEvent: LogEvent[], // EletionVoteEvent[]
+  +currentElectionVoteEvents: LogEvent[], // EletionVoteEvent[]
   +currentElectionStartEvent: LogEvent, // ElectionStartEvent
   +logStart: Date,
   +logEnd: Date
