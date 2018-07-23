@@ -414,7 +414,7 @@ function loggingPrefix(rawPrefix: string): string {
 
 function presplitLine(line: string) {
   let splits = line.split(' ', 1);
-  if (!splits || !RESMOKE_LOGGING_PREFIX.match(splits[0])) {
+  if (!splits || !splits[0].match(RESMOKE_LOGGING_PREFIX)) {
     return ({ prefix: null, body: line });
   }
   let body = '';
@@ -459,8 +459,11 @@ function getStateEvent(tmpEvents: {String: Event}, end: Date): Event {
 function parseTestLog(processed) {
   const fixtureLogLists = {};
   for (let i = 0; i < processed.length; i++) {
-    const line = processed[i];
+    const line = processed[i].text;
     const presplit = presplitLine(line);
+    if (!presplit.prefix) {
+      continue;
+    }
     if (presplit.prefix.isFixture) {
       const prefix = presplit.prefix;
       if (prefix.fixtureId in fixtureLogLists) {

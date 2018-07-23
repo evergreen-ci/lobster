@@ -21,7 +21,7 @@ export type MongoLine = {|
   +severity: string,
   +logcomponent: string,
   +thread: string,
-  +message: String[]
+  +message: string[]
 |}
 
 export type Event = {|
@@ -29,15 +29,16 @@ export type Event = {|
   +start: string,
   +end?: string,
   +fixtureId?: string,
-  +line?: MongoLine
+  +line?: MongoLine,
+  +state?: string
 |}
 
 export type LogEvent = {|
   +type: string,
   +title: string,
   +ts: Date,
-  +messages: String[],
-  +st: String[],
+  +messages: string[],
+  +st: string[],
   +logLine: MongoLine,
   +port?: string,
   +pid?: string,

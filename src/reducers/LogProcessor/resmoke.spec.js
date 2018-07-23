@@ -49,6 +49,6 @@ describe('resmoke', function() {
   test('test-events', function() {
     const rawFile = fs.readFileSync('./5b4626c2f84ae87f0a04e70c.txt');
     const state = resmoke(rawFile);
-    console.log(state.events);
+    console.log(state.events.length);
   });
 });
