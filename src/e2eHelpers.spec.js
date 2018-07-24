@@ -21,7 +21,7 @@ export const capabilities = (browser) => {
   const chromeCapabilities = Capabilities.chrome();
   const chromeOptions = {};
   if (process.env.CI === 'true') {
-    chromeOptions.args = ['--disable-gpu', '--headless', '', '--disable-dev-shm-usage'];
+    chromeOptions.args = ['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter'];
   }
   chromeCapabilities.set('chromeOptions', chromeOptions);
 
@@ -39,7 +39,7 @@ test('capabilities', function() {
   process.env.CI = 'true';
   c = capabilities('chrome');
   expect(c.getBrowserName()).toBe('chrome');
-  expect(c.get('chromeOptions')).toMatchObject({ 'args': ['--disable-gpu', '--headless', '--disable-dev-shm-usage'] });
+  expect(c.get('chromeOptions')).toMatchObject({ 'args': ['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost'] });
 
   process.env.CI = oldProcess;
 });
