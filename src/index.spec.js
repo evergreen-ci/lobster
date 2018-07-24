@@ -1,7 +1,4 @@
-import assert from 'assert';
-import {Builder, By, Key, until, error} from 'selenium-webdriver';
-
-// XXX: please don't use these as an example of what e2e tests should look like
+import {Capabilities, Builder, By, Key, until, error} from 'selenium-webdriver';
 
 const caseToggleXPath = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]/label[1]';
 const cacheNever = '//*[@id="root"]/div/div/div/div/div/div[3]/button[1]';
@@ -13,6 +10,22 @@ const highlightLine = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/div[2]
 const lines = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div';
 const logicToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[3]';
 const caseToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]';
+
+const capabilities = (browser) => {
+  // TODO support firefox
+  if (browser !== 'chrome') {
+    throw new TypeError('expected browser to be chrome');
+  }
+  const chromeCapabilities = Capabilities.chrome();
+  const chromeOptions = {
+  };
+  if (process.env.CI === 'true') {
+    chromeOptions['args'] = ['--disable-gpu', '--headless'];
+  }
+  chromeCapabilities.set('chromeOptions', chromeOptions);
+
+  return chromeCapabilities;
+}
 
 class Lobster {
   constructor(driver) {
@@ -101,7 +114,7 @@ class Lobster {
 }
 
 e2e('index-find-with-enter', async (done) => {
-  let driver = await new Builder().forBrowser('chrome').build();
+  const driver = await new Builder().withCapabilities(capabilities('chrome')).build();
   try {
     const l = new Lobster(driver);
     await l.init()
@@ -110,7 +123,7 @@ e2e('index-find-with-enter', async (done) => {
     await l.search(Key.ENTER);
 
     let results = await l.searchAndWordHighlights();
-    assert.equal(results.length, 5);
+    expect(results.length).toBe(5);
 
     await l.showDetails();
     await l.caseToggle();
@@ -118,17 +131,17 @@ e2e('index-find-with-enter', async (done) => {
 
     // assert no search results
     results = await l.searchAndWordHighlights();
-    assert.strictEqual(results.length, 0);
+    expect(results.length).toBe(0);
 
     await driver.wait(until.elementLocated(By.xpath(notFound)));
     done();
   } finally {
-    driver.quit();
+    await driver.quit();
   }
-}, 10000);
+}, 30000);
 
 e2e('highlight', async (done) => {
-  let driver = await new Builder().forBrowser('chrome').build();
+  const driver = await new Builder().withCapabilities(capabilities('chrome')).build();
   try {
     const l = new Lobster(driver);
     await l.init()
@@ -137,7 +150,7 @@ e2e('highlight', async (done) => {
     await l.search(Key.ENTER);
 
     let results = await l.searchAndWordHighlights();
-    assert.equal(results.length, 5);
+    expect(results.length).toBe(5);
 
     // Add a highlight
     await l.addHighlight();
@@ -150,15 +163,15 @@ e2e('highlight', async (done) => {
     const divs = await l.highlightedLines();
     const line6 = await driver.wait(until.elementLocated(By.xpath(lines + `/div[7]`)))
     const line6Classes = await line6.getAttribute('class');
-    assert.equal(line6Classes.split(' ').includes('filtered'), false);
+    expect(line6Classes.split(' ').includes('filtered')).toBe(false);
     results = await l.searchAndWordHighlights();
-    assert.equal(results.length, 0);
+    expect(results.length).toBe(0);
 
     await l.showDetails();
     await l.caseToggle();
     await l.showDetails();
 
-    assert.strictEqual((await l.highlightedLines()).length, 0);
+    expect((await l.highlightedLines()).length).toBe(0);
 
     done();
   } catch(err) {
@@ -166,10 +179,10 @@ e2e('highlight', async (done) => {
   } finally {
     driver.quit();
   }
-}, 10000);
+}, 30000);
 
 e2e('filter', async (done) => {
-  let driver = await new Builder().forBrowser('chrome').build();
+  const driver = await new Builder().withCapabilities(capabilities('chrome')).build();
   try {
     const l = new Lobster(driver);
     await l.init()
@@ -180,14 +193,14 @@ e2e('filter', async (done) => {
     await l.addFilter();
 
     let divs = await l.lines();
-    assert.strictEqual(divs.length, 6);
+    expect(divs.length).toBe(6);
 
     await l.showDetails();
     await l.caseToggle();
     await l.showDetails();
 
     divs = await l.lines();
-    assert.strictEqual(divs.length, 2);
+    expect(divs.length).toBe(2);
 
     await l.search('2');
     await l.search(Key.ENTER);
@@ -199,14 +212,14 @@ e2e('filter', async (done) => {
     await l.showDetails();
 
     divs = await l.lines();
-    assert.strictEqual(divs.length, 6);
+    expect(divs.length).toBe(6);
 
     await l.showDetails();
     await l.logicToggle();
     await l.showDetails();
 
     divs = await l.lines();
-    assert.strictEqual(divs.length, 3);
+    expect(divs.length).toBe(3);
 
     done();
   } catch(err) {
@@ -214,4 +227,4 @@ e2e('filter', async (done) => {
   } finally {
     driver.quit();
   }
-}, 10000);
+}, 30000);
