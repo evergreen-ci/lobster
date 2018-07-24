@@ -44,6 +44,9 @@ module.exports = {
         'no-debugger': ENABLE_NO_DEBUGGER,
         'react/jsx-key': 0,
         'react/jsx-no-bind': 0
+      },
+      'globals': {
+        'e2e': true
       }
     },
     {
