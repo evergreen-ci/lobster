@@ -60,12 +60,16 @@ export class Lobster {
 
     // Click the never button the cache
     const never = await this._driver.wait(until.elementLocated(By.xpath(cacheNever)));
-    await never.click();
+    try {
+      await never.click();
+    } catch(err) {
+      console.log(err);
+    }
   }
 
   async search(text) {
     const find = this._driver.findElement(By.id('findInput'));
-    return find.sendKeys(text);
+    await find.sendKeys(text);
   }
 
   async searchAndWordHighlights() {
@@ -119,13 +123,13 @@ export class Lobster {
   }
 
   async line(x) {
-    const l = await this._driver.lines();
+    const l = await this.lines();
     return l[x];
   }
 
   async highlightedLines() {
     const logContainer = await this._driver.wait(until.elementLocated(By.xpath(lines)));
-    const divs = logContainer.findElements(By.xpath('.//div'));
+    const divs = await logContainer.findElements(By.xpath('.//div'));
 
     const out = [];
     for (let i = 0; i < divs.length; ++i) {
