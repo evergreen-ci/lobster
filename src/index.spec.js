@@ -1,5 +1,5 @@
 import { Builder, Key } from 'selenium-webdriver';
-import { capabilities, Lobster } from './e2eHelpers.spec';
+import { capabilities, Lobster, lobsterURL } from './e2eHelpers.spec';
 
 describe('e2e', function() {
   const self = this;
@@ -13,7 +13,7 @@ describe('e2e', function() {
   });
   e2e('search', async (done) => {
     try {
-      const l = new Lobster(this.driver);
+      const l = new Lobster(self.driver);
       await l.init();
       await l.search('Line ');
       await l.search(Key.ENTER);
@@ -39,7 +39,7 @@ describe('e2e', function() {
 
   e2e('highlight', async (done) => {
     try {
-      const l = new Lobster(this.driver);
+      const l = new Lobster(self.driver);
       await l.init();
 
       await l.search('Line ');
@@ -80,7 +80,7 @@ describe('e2e', function() {
 
   e2e('filter', async (done) => {
     try {
-      const l = new Lobster(this.driver);
+      const l = new Lobster(self.driver);
       await l.init();
 
       await l.search('Line ');
