@@ -33,6 +33,7 @@ describe('e2e', function() {
 
       done();
     } catch (err) {
+      console.log(err);
       expect(err).toBe(null);
     }
   }, 30000);
@@ -74,6 +75,7 @@ describe('e2e', function() {
 
       done();
     } catch (err) {
+      console.log(err);
       expect(err).toBe(null);
     }
   }, 30000);
@@ -119,6 +121,7 @@ describe('e2e', function() {
 
       done();
     } catch (err) {
+      console.log(err);
       expect(err).toBe(null);
     }
   }, 30000);
