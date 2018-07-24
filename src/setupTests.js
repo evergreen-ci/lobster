@@ -1,9 +1,13 @@
 // This file is automagically executed before every test
 
-// Enzyme boilerplate for react
-import Adapter from 'enzyme-adapter-react-15';
-import Enzyme from 'enzyme';
-Enzyme.configure({ adapter: new Adapter() });
+/* global process:{} */
+
+if (process.env.LOBSTER_E2E_SERVER_PORT == null) {
+  // Enzyme boilerplate for react
+  import Adapter from 'enzyme-adapter-react-15';
+  import Enzyme from 'enzyme';
+  Enzyme.configure({ adapter: new Adapter() });
+}
 
 // Polyfills
 import 'babel-polyfill';
@@ -12,7 +16,6 @@ import { LocalStorage } from 'node-localstorage';
 import 'url-search-params-polyfill';
 
 // Prevent us from hitting production
-/* global process:{} */
 process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';
 process.env.REACT_APP_EVERGREEN_BASE = 'http://domain.invalid';
 

@@ -9,6 +9,7 @@ describe('e2e', function() {
   afterEach(async () => {
     if (self.driver != null) {
       expect(self.driver.quit()).resolves.toBe(undefined);
+      delete(self, 'driver');
     }
   });
   e2e('search', async (done) => {
