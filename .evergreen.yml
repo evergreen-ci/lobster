@@ -140,7 +140,7 @@ tasks:
           script: |
             mkdir chromedriver
             cd chromedriver
-            curl -o chromedriver.zip https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip
+            curl -o chromedriver.zip https://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
             unzip chromedriver.zip
             rm chromedriver.zip
             cd ../lobster

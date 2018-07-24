@@ -1,20 +1,19 @@
 import { Builder, Key } from 'selenium-webdriver';
-import { capabilities, Lobster, lobsterURL } from './e2eHelpers.spec';
+import { capabilities, Lobster } from './e2eHelpers.spec';
+
+const makeDriver = async (done, browser) => {
+  try {
+    return await new Builder().withCapabilities(capabilities(browser)).build();
+  } catch (err) {
+    done.fail(err);
+  }
+};
 
 describe('e2e', function() {
-  const self = this;
-  beforeEach(async () => {
-    self.driver = await new Builder().withCapabilities(capabilities('chrome')).build();
-  });
-  afterEach(async () => {
-    if (self.driver != null) {
-      expect(self.driver.quit()).resolves.toBe(undefined);
-      delete(self, 'driver');
-    }
-  });
   e2e('search', async (done) => {
+    const driver = await makeDriver(done, 'chrome');
     try {
-      const l = new Lobster(self.driver);
+      const l = new Lobster(driver);
       await l.init();
       await l.search('Line ');
       await l.search(Key.ENTER);
@@ -40,8 +39,9 @@ describe('e2e', function() {
   }, 30000);
 
   e2e('highlight', async (done) => {
+    const driver = await makeDriver(done, 'chrome');
     try {
-      const l = new Lobster(self.driver);
+      const l = new Lobster(driver);
       await l.init();
 
       await l.search('Line ');
@@ -82,8 +82,9 @@ describe('e2e', function() {
   }, 30000);
 
   e2e('filter', async (done) => {
+    const driver = await makeDriver(done, 'chrome');
     try {
-      const l = new Lobster(self.driver);
+      const l = new Lobster(driver);
       await l.init();
 
       await l.search('Line ');
