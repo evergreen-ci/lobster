@@ -34,6 +34,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "test:ci": "react-scripts test --testResultsProcessor=jest-junit --env=jsdom",
+    "test:e2e": "./.e2e.sh",
+    "test:raw:e2e": "npm run build && react-scripts test --env=webdriver",
+    "test:ci:e2e": "react-scripts test --testResultsProcessor=jest-junit --env=webdriver",
     "flow": "flow",
     "lint": "eslint --ext .js,.jsx -- .",
     "eslint": "eslint --ext .js,.jsx",
@@ -52,9 +55,11 @@
     "eslint-plugin-react": "^7.8.2",
     "idb.filesystem.js": "0.0.8",
     "flow-bin": "^0.74.0",
+    "jest-environment-webdriver": "^0.2.0",
     "jest-junit": "^3.7.0",
     "node-localstorage": "^1.3.1",
     "react-test-renderer": "^15.5.0",
+    "selenium-webdriver": "^4.0.0-alpha.1",
     "sinon": "^6.0.0"
   },
   "jest-junit": {

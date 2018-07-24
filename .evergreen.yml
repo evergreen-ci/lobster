@@ -131,6 +131,37 @@ tasks:
           files:
             - lobster/build/.tasks.json
 
+  - name: e2e
+    depends_on: "dist"
+    commands:
+      - func: preamble
+      - command: shell.exec
+        params:
+          shell: bash
+          script: |
+            mkdir chromedriver
+            cd chromedriver
+            curl -o chromedriver.zip https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip
+            unzip chromedriver.zip
+            rm chromedriver.zip
+            cd ../lobster
+            export PATH="/opt/google/chrome:$PWD:$PATH"
+            export PATH="${workdir}/nodejs/bin:$PATH"
+            export CI=true
+            export NPM_CONFIG_CACHE="./.node_cache"
+            npm run build
+
+      - command: shell.exec
+        params:
+          working_dir: lobster
+          shell: bash
+          script: |
+            export PATH="/opt/google/chrome:$PWD:$PATH"
+            export PATH="${workdir}/nodejs/bin:$PATH"
+            export CI=true
+            export NPM_CONFIG_CACHE="./.node_cache"
+            ./.e2e.sh
+
 
 buildvariants:
   - name: ubuntu1604
@@ -144,3 +175,12 @@ buildvariants:
       - name: "lint"
       - name: "generate-tests"
       - name: "flow"
+
+  - name: rhel70
+    display_name: RHEL 7.0
+    expansions:
+      <<: *node
+    run_on:
+      - rhel70
+    tasks:
+      - name: "e2e"
