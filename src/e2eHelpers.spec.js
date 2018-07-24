@@ -13,22 +13,6 @@ const lines = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div';
 const logicToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[3]';
 const caseToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]';
 
-test('capabilities', function() {
-  const oldProcess = process.env.CI;
-  process.env.CI = undefined;
-  expect(() => capabilities('firefox')).toThrow(TypeError);
-  let c = capabilities('chrome');
-  expect(c.getBrowserName()).toBe('chrome');
-  expect(c.get('chromeOptions')).toEqual({});
-
-  process.env.CI = 'true';
-  c = capabilities('chrome');
-  expect(c.getBrowserName()).toBe('chrome');
-  expect(c.get('chromeOptions')).toMatchObject({ 'args': ['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost'] });
-
-  process.env.CI = oldProcess;
-});
-
 const lobsterURL = (file = 'simple.log') => {
   return `http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}/lobster?server=localhost:${process.env.LOBSTER_E2E_SERVER_PORT}%2Fapi%2Flog&url=${file}`;
 };
@@ -140,7 +124,7 @@ const capabilities = (browser) => {
   const chromeCapabilities = Capabilities.chrome();
   const chromeOptions = { 'args': [] };
   if (process.env.CI === 'true') {
-    chromeOptions.args.push(['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter']);
+    chromeOptions.args.push(...['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter']);
   }
   chromeCapabilities.set('chromeOptions', chromeOptions);
 
@@ -155,3 +139,18 @@ export const makeDriver = async (done, browser) => {
   }
 };
 
+test('capabilities', function() {
+  const oldProcess = process.env.CI;
+  process.env.CI = undefined;
+  expect(() => capabilities('firefox')).toThrow(TypeError);
+  let c = capabilities('chrome');
+  expect(c.getBrowserName()).toBe('chrome');
+  expect(c.get('chromeOptions')).toEqual({});
+
+  process.env.CI = 'true';
+  c = capabilities('chrome');
+  expect(c.getBrowserName()).toBe('chrome');
+  expect(c.get('chromeOptions')).toMatchObject({ 'args': ['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost'] });
+
+  process.env.CI = oldProcess;
+});
