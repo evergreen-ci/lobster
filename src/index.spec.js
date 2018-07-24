@@ -1,4 +1,4 @@
-import { Builder, Key } from 'selenium-webdriver';
+import { Key } from 'selenium-webdriver';
 import { Lobster, makeDriver } from './e2eHelpers.spec';
 
 describe('e2e', function() {

@@ -1,4 +1,4 @@
-import { Capabilities, By, until } from 'selenium-webdriver';
+import { Builder, Capabilities, By, until } from 'selenium-webdriver';
 
 /* global process:{} */
 
