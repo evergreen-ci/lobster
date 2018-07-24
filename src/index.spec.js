@@ -1,13 +1,5 @@
 import { Builder, Key } from 'selenium-webdriver';
-import { capabilities, Lobster } from './e2eHelpers.spec';
-
-const makeDriver = async (done, browser) => {
-  try {
-    return await new Builder().withCapabilities(capabilities(browser)).build();
-  } catch (err) {
-    done.fail(err);
-  }
-};
+import { Lobster, makeDriver } from './e2eHelpers.spec';
 
 describe('e2e', function() {
   e2e('search', async (done) => {

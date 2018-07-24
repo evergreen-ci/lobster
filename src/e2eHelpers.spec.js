@@ -13,21 +13,6 @@ const lines = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div';
 const logicToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[3]';
 const caseToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]';
 
-export const capabilities = (browser) => {
-  // TODO support firefox
-  if (browser !== 'chrome') {
-    throw new TypeError('expected browser to be chrome');
-  }
-  const chromeCapabilities = Capabilities.chrome();
-  const chromeOptions = {};
-  if (process.env.CI === 'true') {
-    chromeOptions.args = ['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter'];
-  }
-  chromeCapabilities.set('chromeOptions', chromeOptions);
-
-  return chromeCapabilities;
-};
-
 test('capabilities', function() {
   const oldProcess = process.env.CI;
   process.env.CI = undefined;
@@ -146,3 +131,27 @@ export class Lobster {
     return await this._driver.wait(until.elementLocated(By.xpath(notFound)));
   }
 }
+
+const capabilities = (browser) => {
+  // TODO support firefox
+  if (browser !== 'chrome') {
+    throw new TypeError('expected browser to be chrome');
+  }
+  const chromeCapabilities = Capabilities.chrome();
+  const chromeOptions = { 'args': [] };
+  if (process.env.CI === 'true') {
+    chromeOptions.args.push(['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter']);
+  }
+  chromeCapabilities.set('chromeOptions', chromeOptions);
+
+  return chromeCapabilities;
+};
+
+export const makeDriver = async (done, browser) => {
+  try {
+    return await new Builder().withCapabilities(capabilities(browser)).build();
+  } catch (err) {
+    done.fail(err);
+  }
+};
+
