@@ -62,7 +62,7 @@ export class Lobster {
     const never = await this._driver.wait(until.elementLocated(By.xpath(cacheNever)));
     try {
       await never.click();
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   }

@@ -2,13 +2,13 @@ import { Builder, Key } from 'selenium-webdriver';
 import { capabilities, Lobster } from './e2eHelpers.spec';
 
 describe('e2e', function() {
-  beforeEach(async () => {
+  beforeEach(async() => {
     this.driver = await new Builder().withCapabilities(capabilities('chrome')).build();
-  })
-  afterEach(async () => {
+  });
+  afterEach(async() => {
     expect(this.driver.quit()).resolves.toBe(undefined);
-  })
-  e2e('index-find-with-enter', async (done) => {
+  });
+  e2e('index-find-with-enter', async(done) => {
     try {
       const l = new Lobster(this.driver);
       await l.init();
@@ -29,7 +29,7 @@ describe('e2e', function() {
       await l.notFound();
 
       done();
-    } catch(err) {
+    } catch (err) {
       expect(err).toBe(null);
     }
   }, 30000);
@@ -70,13 +70,12 @@ describe('e2e', function() {
       expect(highlighted).toHaveLength(0);
 
       done();
-    } catch(err) {
+    } catch (err) {
       expect(err).toBe(null);
     }
   }, 30000);
 
   e2e('filter', async(done) => {
-    const driver = await new Builder().withCapabilities(capabilities('chrome')).build();
     try {
       const l = new Lobster(this.driver);
       await l.init();
@@ -116,7 +115,7 @@ describe('e2e', function() {
       expect(divs).toHaveLength(3);
 
       done();
-    } catch(err) {
+    } catch (err) {
       expect(err).toBe(null);
     }
   }, 30000);
