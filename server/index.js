@@ -4,11 +4,11 @@ const fs = require('fs');
 const yargs = require('yargs');
 
 const PORT = (() => {
-  const p = process.env.PORT || parseInt(yargs.argv.port, 10);
+  const p = parseInt(process.env.PORT, 10) || parseInt(yargs.argv.port, 10);
   if (p === 0) {
     return 0;
   }
-  return 9000;
+  return p || 9000;
 })();
 
 const distPath = path.resolve(__dirname, '..', 'build', 'index.html');

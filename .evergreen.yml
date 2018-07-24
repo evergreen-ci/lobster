@@ -132,7 +132,6 @@ tasks:
             - lobster/build/.tasks.json
 
   - name: e2e
-    depends_on: "dist"
     commands:
       - func: preamble
       - command: shell.exec
@@ -149,18 +148,20 @@ tasks:
             export PATH="${workdir}/nodejs/bin:$PATH"
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
-            npm run build
 
       - command: shell.exec
         params:
           working_dir: lobster
           shell: bash
           script: |
+            pushd ../chromedriver
             export PATH="/opt/google/chrome:$PWD:$PATH"
+            popd
             export PATH="${workdir}/nodejs/bin:$PATH"
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
             ./.e2e.sh
+            mv e2e_srv.log ./.node_cache/_logs
 
 
 buildvariants:

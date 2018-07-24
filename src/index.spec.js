@@ -1,3 +1,217 @@
-e2e('index', function() {
-  console.log("wooo");
-})
+import assert from 'assert';
+import {Builder, By, Key, until, error} from 'selenium-webdriver';
+
+// XXX: please don't use these as an example of what e2e tests should look like
+
+const caseToggleXPath = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]/label[1]';
+const cacheNever = '//*[@id="root"]/div/div/div/div/div/div[3]/button[1]';
+const showDetails = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/button[4]';
+const notFound = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/label';
+const addFilter = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/button[2]';
+const addHighlight = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/button[3]';
+const highlightLine = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/div[2]/div/div/div[2]/label[2]';
+const lines = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div';
+const logicToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[3]';
+const caseToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]';
+
+class Lobster {
+  constructor(driver) {
+    this._driver = driver;
+    this._showdetails = false;
+  }
+
+  async init() {
+    await this._driver.get(`http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}/lobster?server=localhost:${process.env.LOBSTER_E2E_SERVER_PORT}%2Fapi%2Flog&url=simple.log`);
+    await this._driver.wait(until.elementLocated(By.id('root')));
+
+    // Click the never button the cache
+    const never = await this._driver.wait(until.elementLocated(By.xpath(cacheNever)));
+    await never.click();
+  }
+
+  async search(text) {
+    const find = this._driver.findElement(By.id('findInput'));
+    return find.sendKeys(text);
+  }
+
+  async searchAndWordHighlights() {
+    return this._driver.findElements(By.xpath('//mark'));
+  }
+
+  async showDetails() {
+    const details = await this._driver.wait(until.elementLocated(By.xpath(showDetails)));
+    await details.click();
+    const caseToggle = await this._driver.wait(until.elementLocated(By.xpath(caseToggleXPath)));
+    if (this._showdetails) {
+      await this._driver.wait(until.elementIsNotVisible(caseToggle));
+    }else {
+      await this._driver.wait(until.elementIsVisible(caseToggle));
+    }
+
+    this._showdetails = !this._showdetails;
+  }
+
+  async caseToggle() {
+    const group = await this._driver.wait(until.elementLocated(By.xpath(caseToggleGroup)));
+    const button = await group.findElement(By.xpath('.//label[not(contains(@class, " active"))]'));
+    await button.click();
+  }
+
+  async logicToggle() {
+    const lgroup = await this._driver.wait(until.elementLocated(By.xpath(logicToggleGroup)));
+    const button = await lgroup.findElement(By.xpath('.//label[not(contains(@class, " active"))]'));
+    await button.click();
+  }
+
+  async highlightLine() {
+    const highlightLineButton = await this._driver.wait(until.elementLocated(By.xpath(highlightLine)));
+    await this._driver.wait(until.elementIsVisible(highlightLineButton));
+    await highlightLineButton.click();
+  }
+
+  async addHighlight() {
+    const highlight = await this._driver.wait(until.elementLocated(By.xpath(addHighlight)));
+    await highlight.click();
+  }
+
+  async addFilter() {
+    const filter = await this._driver.wait(until.elementLocated(By.xpath(addFilter)));
+    await filter.click();
+  }
+
+  async lines() {
+    const logContainer = await this._driver.wait(until.elementLocated(By.xpath(lines)));
+    return await logContainer.findElements(By.xpath(`.//div`));
+  }
+
+  async highlightedLines() {
+    const logContainer = await this._driver.wait(until.elementLocated(By.xpath(lines)));
+    const divs = logContainer.findElements(By.xpath(`.//div`));
+
+    const out = [];
+    for (let i = 0; i < divs.length; ++i) {
+      const classes = await divs[i].getAttribute('class');
+      if(classes.split(' ').includes('filtered')) {
+        out.push(divs[i])
+      }
+    }
+
+    return out;
+  }
+}
+
+e2e('index-find-with-enter', async (done) => {
+  let driver = await new Builder().forBrowser('chrome').build();
+  try {
+    const l = new Lobster(driver);
+    await l.init()
+
+    await l.search('Line ');
+    await l.search(Key.ENTER);
+
+    let results = await l.searchAndWordHighlights();
+    assert.equal(results.length, 5);
+
+    await l.showDetails();
+    await l.caseToggle();
+    await l.showDetails();
+
+    // assert no search results
+    results = await l.searchAndWordHighlights();
+    assert.strictEqual(results.length, 0);
+
+    await driver.wait(until.elementLocated(By.xpath(notFound)));
+    done();
+  } finally {
+    driver.quit();
+  }
+}, 10000);
+
+e2e('highlight', async (done) => {
+  let driver = await new Builder().forBrowser('chrome').build();
+  try {
+    const l = new Lobster(driver);
+    await l.init()
+
+    await l.search('Line ');
+    await l.search(Key.ENTER);
+
+    let results = await l.searchAndWordHighlights();
+    assert.equal(results.length, 5);
+
+    // Add a highlight
+    await l.addHighlight();
+
+    await l.showDetails();
+    await l.highlightLine();
+    await l.showDetails();
+
+    // Assert that the lines are highlighted
+    const divs = await l.highlightedLines();
+    const line6 = await driver.wait(until.elementLocated(By.xpath(lines + `/div[7]`)))
+    const line6Classes = await line6.getAttribute('class');
+    assert.equal(line6Classes.split(' ').includes('filtered'), false);
+    results = await l.searchAndWordHighlights();
+    assert.equal(results.length, 0);
+
+    await l.showDetails();
+    await l.caseToggle();
+    await l.showDetails();
+
+    assert.strictEqual((await l.highlightedLines()).length, 0);
+
+    done();
+  } catch(err) {
+    console.error(err);
+  } finally {
+    driver.quit();
+  }
+}, 10000);
+
+e2e('filter', async (done) => {
+  let driver = await new Builder().forBrowser('chrome').build();
+  try {
+    const l = new Lobster(driver);
+    await l.init()
+
+    await l.search('Line ');
+    await l.search(Key.ENTER);
+
+    await l.addFilter();
+
+    let divs = await l.lines();
+    assert.strictEqual(divs.length, 6);
+
+    await l.showDetails();
+    await l.caseToggle();
+    await l.showDetails();
+
+    divs = await l.lines();
+    assert.strictEqual(divs.length, 2);
+
+    await l.search('2');
+    await l.search(Key.ENTER);
+
+    await l.addFilter();
+
+    await l.showDetails();
+    await l.caseToggle();
+    await l.showDetails();
+
+    divs = await l.lines();
+    assert.strictEqual(divs.length, 6);
+
+    await l.showDetails();
+    await l.logicToggle();
+    await l.showDetails();
+
+    divs = await l.lines();
+    assert.strictEqual(divs.length, 3);
+
+    done();
+  } catch(err) {
+    console.error(err);
+  } finally {
+    driver.quit();
+  }
+}, 10000);

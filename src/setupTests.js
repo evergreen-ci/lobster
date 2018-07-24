@@ -27,5 +27,7 @@ if (global.window && !global.window.localStorage) {
 global.e2e = test.skip;
 if (process.env.LOBSTER_E2E_SERVER_PORT) {
   process.env.LOBSTER_E2E_SERVER_PORT = parseInt(process.env.LOBSTER_E2E_SERVER_PORT, 10);
-  global.e2e = test;
+  global.e2e = (name, ...rest) => {
+    return test(`e2e-${name}`, ...rest);
+  };
 }

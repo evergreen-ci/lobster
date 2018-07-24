@@ -1,3 +1,4 @@
+npm run build
 node server --logs ./e2e > e2e_srv.log &
 sleep 5
 export LOBSTER_E2E_SERVER_PORT=$(cat e2e_srv.log | tail -n 1 | sed 's/App listening on 127.0.0.1:\([0-9]*\)!/\1/')

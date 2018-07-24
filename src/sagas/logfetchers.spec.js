@@ -8,7 +8,7 @@ import * as sagas from './logfetchers';
 describe('lobsterLoadData', function() {
   afterEach(() => sinon.restore());
 
-  test('resolve', function() {
+  test('resolve', function(done) {
     sinon.replace(api, 'fetchLobster', sinon.stub().resolves(new Response('lobster')));
 
     const action = actions.lobsterLoadData('localhost:9001', 'a.log');
@@ -36,10 +36,11 @@ describe('lobsterLoadData', function() {
       assert.strictEqual(dispatch.firstCall.args[0].payload.data, 'lobster');
       assert.strictEqual(dispatch.firstCall.args[0].error, false);
       assert.strictEqual(dispatch.lastCall.args[0].payload.isDone, true);
+      done();
     });
   });
 
-  test('fail', function() {
+  test('fail', function(done) {
     sinon.replace(api, 'fetchLobster', sinon.stub().rejects('error'));
 
     const action = actions.lobsterLoadData('localhost:9001', 'a.log');
@@ -53,6 +54,7 @@ describe('lobsterLoadData', function() {
       assert.strictEqual(dispatch.callCount, 1);
       assert.strictEqual(dispatch.firstCall.args[0].type, actions.PROCESS_RESPONSE);
       assert.strictEqual(dispatch.firstCall.args[0].error, true);
+      done();
     });
   });
 });
@@ -60,7 +62,7 @@ describe('lobsterLoadData', function() {
 describe('logkeeperLoadData', function() {
   afterEach(() => sinon.restore());
 
-  test('resolve', function() {
+  test('resolve', function(done) {
     sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves(new Response('logkeeper')));
 
     const action = actions.logkeeperLoadData('build0', 'test0');
@@ -83,10 +85,11 @@ describe('logkeeperLoadData', function() {
       assert.strictEqual(dispatch.firstCall.args[0].payload.data, 'logkeeper');
       assert.strictEqual(dispatch.firstCall.args[0].error, false);
       assert.strictEqual(dispatch.lastCall.args[0].payload.isDone, true);
+      done();
     });
   });
 
-  test('resolve-error', function() {
+  test('resolve-error', function(done) {
     sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves(new Response('nope logkeeper', { status: 500 })));
 
     const action = actions.logkeeperLoadData('build0');
@@ -106,11 +109,11 @@ describe('logkeeperLoadData', function() {
       assert.strictEqual(dispatch.callCount, 1);
       assert.strictEqual(dispatch.firstCall.args.length, 1);
       assert.strictEqual(dispatch.firstCall.args[0].type, actions.PROCESS_RESPONSE);
-
+      assert.strictEqual(dispatch.firstCall.args[0].error, true);
       dispatch.firstCall.args[0].payload.data.text().then(function(text) {
         assert.strictEqual(text, 'nope logkeeper');
+        done();
       });
-      assert.strictEqual(dispatch.firstCall.args[0].error, true);
     });
   });
 
