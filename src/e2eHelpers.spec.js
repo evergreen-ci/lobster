@@ -126,6 +126,9 @@ const capabilities = (browser) => {
   if (process.env.CI === 'true') {
     chromeOptions.args.push(...['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter']);
   }
+  if (chromeOptions.args.length === 0) {
+    delete chromeOptions.args;
+  }
   chromeCapabilities.set('chromeOptions', chromeOptions);
 
   return chromeCapabilities;
@@ -150,7 +153,7 @@ test('capabilities', function() {
   process.env.CI = 'true';
   c = capabilities('chrome');
   expect(c.getBrowserName()).toBe('chrome');
-  expect(c.get('chromeOptions')).toMatchObject({ 'args': ['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost'] });
+  expect(c.get('chromeOptions')).toMatchObject({ 'args': ['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter'] });
 
   process.env.CI = oldProcess;
 });
