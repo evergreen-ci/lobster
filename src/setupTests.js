@@ -2,12 +2,10 @@
 
 /* global process:{} */
 
-if (process.env.LOBSTER_E2E_SERVER_PORT == null) {
-  // Enzyme boilerplate for react
-  import Adapter from 'enzyme-adapter-react-15';
-  import Enzyme from 'enzyme';
-  Enzyme.configure({ adapter: new Adapter() });
-}
+// Enzyme boilerplate for react
+import Adapter from 'enzyme-adapter-react-15';
+import Enzyme from 'enzyme';
+Enzyme.configure({ adapter: new Adapter() });
 
 // Polyfills
 import 'babel-polyfill';
