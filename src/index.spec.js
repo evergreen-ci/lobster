@@ -1,5 +1,5 @@
 import { Builder, Key } from 'selenium-webdriver';
-import { capabilities, Lobster } from './e2eHelpers.spec';
+import { capabilities, Lobster, lobsterURL } from './e2eHelpers.spec';
 
 describe('e2e', function() {
   const self = this;
@@ -13,103 +13,118 @@ describe('e2e', function() {
     }
   });
   e2e('search', async (done) => {
-    const l = new Lobster(self.driver);
-    await l.init();
-    await l.search('Line ');
-    await l.search(Key.ENTER);
+    try {
+      const l = new Lobster(self.driver);
+      await l.init();
+      await l.search('Line ');
+      await l.search(Key.ENTER);
 
-    let results = await l.searchAndWordHighlights();
-    expect(results).toHaveLength(5);
+      let results = await l.searchAndWordHighlights();
+      expect(results).toHaveLength(5);
 
-    await l.showDetails();
-    await l.caseToggle();
-    await l.showDetails();
+      await l.showDetails();
+      await l.caseToggle();
+      await l.showDetails();
 
-    // assert no search results
-    results = await l.searchAndWordHighlights();
-    expect(results).toHaveLength(0);
+      // assert no search results
+      results = await l.searchAndWordHighlights();
+      expect(results).toHaveLength(0);
 
-    await l.notFound();
+      await l.notFound();
 
-    done();
+      done();
+    } catch (err) {
+      console.log(err);
+      expect(err).toBe(null);
+    }
   }, 30000);
 
   e2e('highlight', async (done) => {
-    const l = new Lobster(self.driver);
-    await l.init();
+    try {
+      const l = new Lobster(self.driver);
+      await l.init();
 
-    await l.search('Line ');
-    await l.search(Key.ENTER);
+      await l.search('Line ');
+      await l.search(Key.ENTER);
 
-    let results = await l.searchAndWordHighlights();
-    expect(results).toHaveLength(5);
+      let results = await l.searchAndWordHighlights();
+      expect(results).toHaveLength(5);
 
-    // Add a highlight
-    await l.addHighlight();
+      // Add a highlight
+      await l.addHighlight();
 
-    await l.showDetails();
-    await l.highlightLine();
-    await l.showDetails();
+      await l.showDetails();
+      await l.highlightLine();
+      await l.showDetails();
 
-    // Assert that the lines are highlighted
-    const divs = await l.highlightedLines();
-    expect(divs).toHaveLength(5);
+      // Assert that the lines are highlighted
+      const divs = await l.highlightedLines();
+      expect(divs).toHaveLength(5);
 
-    const line6 = await l.line(6);
-    const line6Classes = await line6.getAttribute('class');
-    expect(line6Classes.split(' ').includes('filtered')).toBe(false);
-    results = await l.searchAndWordHighlights();
-    expect(results).toHaveLength(0);
+      const line6 = await l.line(6);
+      const line6Classes = await line6.getAttribute('class');
+      expect(line6Classes.split(' ').includes('filtered')).toBe(false);
+      results = await l.searchAndWordHighlights();
+      expect(results).toHaveLength(0);
 
-    await l.showDetails();
-    await l.caseToggle();
-    await l.showDetails();
+      await l.showDetails();
+      await l.caseToggle();
+      await l.showDetails();
 
-    const highlighted = await l.highlightedLines();
-    expect(highlighted).toHaveLength(0);
+      const highlighted = await l.highlightedLines();
+      expect(highlighted).toHaveLength(0);
 
-    done();
+      done();
+    } catch (err) {
+      console.log(err);
+      expect(err).toBe(null);
+    }
   }, 30000);
 
   e2e('filter', async (done) => {
-    const l = new Lobster(self.driver);
-    await l.init();
+    try {
+      const l = new Lobster(self.driver);
+      await l.init();
 
-    await l.search('Line ');
-    await l.search(Key.ENTER);
+      await l.search('Line ');
+      await l.search(Key.ENTER);
 
-    await l.addFilter();
+      await l.addFilter();
 
-    let divs = await l.lines();
-    expect(divs).toHaveLength(6);
+      let divs = await l.lines();
+      expect(divs).toHaveLength(6);
 
-    await l.showDetails();
-    await l.caseToggle();
-    await l.showDetails();
+      await l.showDetails();
+      await l.caseToggle();
+      await l.showDetails();
 
-    divs = await l.lines();
-    expect(divs).toHaveLength(2);
+      divs = await l.lines();
+      expect(divs).toHaveLength(2);
 
-    await l.search('2');
-    await l.search(Key.ENTER);
+      await l.search('2');
+      await l.search(Key.ENTER);
 
-    await l.addFilter();
+      await l.addFilter();
 
-    await l.showDetails();
-    await l.caseToggle();
-    await l.showDetails();
+      await l.showDetails();
+      await l.caseToggle();
+      await l.showDetails();
 
-    divs = await l.lines();
-    expect(divs).toHaveLength(6);
+      divs = await l.lines();
+      expect(divs).toHaveLength(6);
 
-    await l.showDetails();
-    await l.logicToggle();
-    await l.showDetails();
+      await l.showDetails();
+      await l.logicToggle();
+      await l.showDetails();
 
-    divs = await l.lines();
-    expect(divs).toHaveLength(3);
+      divs = await l.lines();
+      expect(divs).toHaveLength(3);
 
-    done();
+      done();
+    } catch (err) {
+      console.log(err);
+      expect(err).toBe(null);
+    }
   }, 30000);
 });
 
