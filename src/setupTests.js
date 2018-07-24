@@ -16,7 +16,9 @@ import 'url-search-params-polyfill';
 process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';
 process.env.REACT_APP_EVERGREEN_BASE = 'http://domain.invalid';
 
-if (global.window && !global.window.localStorage) {
+if (!global.window) {
+  global.window = {};
+} else if (!global.window.localStorage) {
   /* global global:{} */
   global.localStorage = new LocalStorage('./build/localStorageTemp');
   global.window.localStorage = global.localStorage;

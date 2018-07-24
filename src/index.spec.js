@@ -2,13 +2,16 @@ import { Builder, Key } from 'selenium-webdriver';
 import { capabilities, Lobster } from './e2eHelpers.spec';
 
 describe('e2e', function() {
+  const self = this;
   beforeEach(async () => {
-    this.driver = await new Builder().withCapabilities(capabilities('chrome')).build();
+    self.driver = await new Builder().withCapabilities(capabilities('chrome')).build();
   });
   afterEach(async () => {
-    expect(this.driver.quit()).resolves.toBe(undefined);
+    if (self.driver != null) {
+      expect(self.driver.quit()).resolves.toBe(undefined);
+    }
   });
-  e2e('index-find-with-enter', async (done) => {
+  e2e('search', async (done) => {
     try {
       const l = new Lobster(this.driver);
       await l.init();
