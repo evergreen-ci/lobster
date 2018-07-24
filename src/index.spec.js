@@ -1,4 +1,4 @@
-import {Capabilities, Builder, By, Key, until, error} from 'selenium-webdriver';
+import { Capabilities, Builder, By, Key, until, error } from 'selenium-webdriver';
 
 const caseToggleXPath = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]/label[1]';
 const cacheNever = '//*[@id="root"]/div/div/div/div/div/div[3]/button[1]';
@@ -17,8 +17,7 @@ const capabilities = (browser) => {
     throw new TypeError('expected browser to be chrome');
   }
   const chromeCapabilities = Capabilities.chrome();
-  const chromeOptions = {
-  };
+  const chromeOptions = {};
   if (process.env.CI === 'true') {
     chromeOptions['args'] = ['--disable-gpu', '--headless'];
   }
@@ -136,7 +135,7 @@ e2e('index-find-with-enter', async (done) => {
     await driver.wait(until.elementLocated(By.xpath(notFound)));
     done();
   } finally {
-    await driver.quit();
+    expect(driver.quit()).resolves.toBe(undefined);
   }
 }, 30000);
 
@@ -177,7 +176,7 @@ e2e('highlight', async (done) => {
   } catch(err) {
     console.error(err);
   } finally {
-    driver.quit();
+    expect(driver.quit()).resolves.toBe(undefined);
   }
 }, 30000);
 
@@ -225,6 +224,6 @@ e2e('filter', async (done) => {
   } catch(err) {
     console.error(err);
   } finally {
-    driver.quit();
+    expect(driver.quit()).resolves.toBe(undefined);
   }
 }, 30000);
