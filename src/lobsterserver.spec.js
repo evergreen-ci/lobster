@@ -28,16 +28,17 @@ function startServer(args) {
   }
 }
 
+if (process.env.CI !== 'true') {
+  describe = describe.skip;
+}
+
 describe('lobsterserver', function() {
-  let tf = test;
   beforeAll(() => {
-    if (process.env.CI !== 'true') {
-      tf = test.skip;
-      return;
+    if (process.env.CI === 'true') {
+      spawnSync('npm', ['run', 'build'], {
+        'stdio': 'inherit'
+      });
     }
-    spawnSync('npm', ['run', 'build'], {
-      'stdio': 'inherit'
-    });
   });
 
   let c;
