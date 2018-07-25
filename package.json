@@ -34,7 +34,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "test:ci": "react-scripts test --testResultsProcessor=./ciReporter --env=jsdom",
-    "test:e2e": "./e2e.js",
+    "test:e2e": "node ./e2e.js",
     "flow": "flow",
     "lint": "eslint --ext .js,.jsx -- .",
     "eslint": "eslint --ext .js,.jsx",
