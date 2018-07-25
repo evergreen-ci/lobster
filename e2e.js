@@ -4,9 +4,16 @@ const path = require('path');
 
 const e2eLogPath = path.resolve('.') + '/e2e';
 
-app.makeListener(undefined, 9000, e2eLogPath, undefined, (listener) => {
+app.makeListener(undefined, 0, e2eLogPath, undefined, (listener) => {
   console.log(`Spawning e2e process with lobster server on port: ${listener.address().port}`);
-  const e2e = child.spawnSync('npm', ['run', 'test', '--', '-t', 'e2e.*'], {
+  process.on('SIGINT', () => {
+    console.log('Received SIGINT');
+    listener.close();
+    process.exit(130);
+  });
+
+  const ci = process.env.CI === 'true' ? ':ci' : 'ci';
+  const e2e = child.spawn('npm', ['run', `test${ci}`, '--', '-t', 'e2e.*'], {
     'env': {
       ...process.env,
       CI: 'true',
@@ -15,12 +22,8 @@ app.makeListener(undefined, 9000, e2eLogPath, undefined, (listener) => {
     stdio: 'inherit'
   });
 
-  process.on('SIGINT', () => {
-    console.log('Received SIGINT');
+  e2e.on('close', function(code) {
     listener.close();
-    process.exit(130);
+    process.exit(code);
   });
-
-  listener.close();
-  process.exit(e2e);
 });
