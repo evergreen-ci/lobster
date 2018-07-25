@@ -472,7 +472,7 @@ function loggingPrefix(rawPrefix: string): string {
     jobNum: prefixes[1],
     isFixture: prefixes[0].endsWith('Fixture'),
     isShell: isShell,
-    fixtureId: fixtureId
+    fixture_id: fixtureId
   });
 }
 
@@ -500,7 +500,7 @@ function makeEvent(type: string, start: Date, end: Date, fixtureId: string): Eve
     type: type,
     start: dateToString(start),
     end: dateToString(end),
-    fixtureId: fixtureId
+    fixture_id: fixtureId
   });
 }
 
@@ -509,14 +509,14 @@ function makeEventWithLine(type: string, start: Date, end: Date, fixtureId: stri
     type: type,
     start: dateToString(start),
     end: dateToString(end),
-    fixtureId: fixtureId,
+    fixture_id: fixtureId,
     line: logEventToString(line)
   });
 }
 
 function getStateEvent(tmpEvents: {string: Event}, end: Date): Event {
   const startEvent = tmpEvents[STATE];
-  startEvent.end = end.toISOString();
+  startEvent.end = dateToString(end);
   return startEvent;
 }
 
@@ -631,14 +631,14 @@ function parseTestLog(processed: Iterable<string>): {string: FixtureLogList} {
       sll = hso.sll;
     } else if (presplit.prefix.isFixture) {
       const prefix = presplit.prefix;
-      if (prefix.fixtureId in fixtureLogLists) {
-        let modifyBodyList = fixtureLogLists[prefix.fixtureId];
+      if (prefix.fixture_id in fixtureLogLists) {
+        let modifyBodyList = fixtureLogLists[prefix.fixture_id];
         modifyBodyList = appendFixtureLogList(modifyBodyList, presplit.body);
-        fixtureLogLists[prefix.fixtureId] = modifyBodyList;
+        fixtureLogLists[prefix.fixture_id] = modifyBodyList;
       } else {
         let newBodyList = initiateFixtureLogList();
         newBodyList = appendFixtureLogList(newBodyList, presplit.body);
-        fixtureLogLists[prefix.fixtureId] = newBodyList;
+        fixtureLogLists[prefix.fixture_id] = newBodyList;
       }
     }
   }
@@ -683,9 +683,9 @@ function readTests(processed: Iterable<string>): Event[] {
       lastTs = evt.ts;
       if (evt.type === 'ServerStartEvent') {
         events.push(makeEvent(SERVER_START, evt.ts, evt.ts, fixtureId));
-      } else if (evt.type === 'ServerShutdownStart') {
+      } else if (evt.type === 'ServerShutdownStartEvent') {
         events.push(makeEvent(SERVER_SHUTDOWN_START, evt.ts, evt.ts, fixtureId));
-      } else if (evt.type === 'ServerShutdownComplete') {
+      } else if (evt.type === 'ServerShutdownCompleteEvent') {
         events.push(makeEvent(SERVER_SHUTDOWN_COMPLETE, evt.ts, evt.ts, fixtureId));
       } else if (evt.type === 'FixtureFatalEvent') {
         events.push(makeEventWithLine(FATAL, evt.ts, evt.ts, fixtureId, evt));
@@ -699,8 +699,8 @@ function readTests(processed: Iterable<string>): Event[] {
           events.push(getStateEvent(tmpEvents, evt.ts));
           delete tmpEvents[STATE];
         }
-        const newEvent = { type: STATE, start: evt.ts.toISOString(),
-          fixtureId: fixtureId, line: logEventToString(evt), state: evt.state };
+        const newEvent = { type: STATE, start: dateToString(evt.ts),
+          fixture_id: fixtureId, line: logEventToString(evt), state: evt.state };
         tmpEvents[STATE] = newEvent;
       } else if (evt.type === 'ElectionSuccessEvent') {
         events.push(makeEvent(ELECTION_SUCCESS, evt.ts, evt.ts, fixtureId));
@@ -711,7 +711,6 @@ function readTests(processed: Iterable<string>): Event[] {
       delete tmpEvents[STATE];
     }
   }
-  console.log(events);
   return events;
 }
 

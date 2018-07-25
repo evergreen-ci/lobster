@@ -28,7 +28,7 @@ export type Event = {|
   +type: string,
   +start: string,
   +end?: string,
-  +fixtureId?: string,
+  +fixture_id?: string,
   +line?: MongoLine,
   +state?: string
 |}
