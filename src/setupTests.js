@@ -12,6 +12,9 @@ import 'babel-polyfill';
 import 'url-search-params-polyfill';
 import { LocalStorage } from 'node-localstorage';
 import 'url-search-params-polyfill';
+import localStorageMemory from 'localstorage-memory'
+
+import fs from 'fs';
 
 // Prevent us from hitting production
 process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';
@@ -20,8 +23,12 @@ process.env.REACT_APP_EVERGREEN_BASE = 'http://domain.invalid';
 if (!global.window) {
   global.window = {};
 } else if (!global.window.localStorage) {
+  if (!fs.existsSync(__dirname + '/build')) {
+    fs.mkdirSync(__dirname + '/build');
+    fs.mkdirSync(__dirname + '/build/localStorageTemp');
+  }
   /* global global:{} */
-  global.localStorage = new LocalStorage('./build/localStorageTemp');
+  global.localStorage = localStorageMemory;
   global.window.localStorage = global.localStorage;
   global.window.localStorage.clear();
 }

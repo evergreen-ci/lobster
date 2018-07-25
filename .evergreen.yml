@@ -160,8 +160,8 @@ tasks:
             export PATH="${workdir}/nodejs/bin:$PATH"
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
-            ./.e2e.sh
-            mv e2e_srv.log ./.node_cache/_logs
+            node ./.e2e.js
+            mv e2e_srv.log ./.node_cache/_logs || true
 
 
 buildvariants:

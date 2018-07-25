@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { tmpdir } from 'os';
-import { spawn } from 'child_process';
+import { spawn, spawnSync } from 'child_process';
 import path from 'path';
 import fetch from 'node-fetch';
 
@@ -27,6 +27,12 @@ function startServer(args) {
 }
 
 describe('lobsterserver', function() {
+  beforeAll(() => {
+    spawnSync('npm', ['run', 'build'], {
+      'stdio': 'inherit',
+    });
+  });
+
   let c;
   afterEach(() => {
     if (fs.existsSync('/tmp/lobster.txt')) {
