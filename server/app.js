@@ -4,11 +4,10 @@ const path = require('path');
 const needle = require('needle');
 const bodyParser = require('body-parser');
 const hash = require('string-hash');
-const yargs = require('yargs');
 
 const app = express();
 
-console.log('Starting server to support lobster log viewer.\nOptions:\n  --cache   Cache files after download in the provided directory. Note! All directory content will be deleted on the server start up! [optional]\n  --logs  An absolute path to log files that will be available to server [optional]\n  --bind_address  Specify the address lobster should bind to. Defaults to 127.0.0.1 [optional]');
+console.log('Starting server to support lobster log viewer.\nOptions:\n  --cache   Cache files after download in the provided directory. Note! All directory content will be deleted on the server start up! [optional]\n  --logs  An absolute path to log files that will be available to server [optional]\n  --bind_address  Specify the address lobster should bind to. Defaults to 127.0.0.1 [optional]\n  --port specify the port number. Defaults to 9000 [optional]');
 
 function isValidURL(str) {
   const expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
@@ -17,23 +16,8 @@ function isValidURL(str) {
   return str.match(regex);
 }
 
-let myCache;
-const cache = yargs.argv.cache;
-if (cache) {
-  myCache = require('./local_cache')(cache);
-} else {
-  myCache = require('./dummy_cache')();
-}
-
-const logsDir = (() => {
-  const dir = require('yargs').argv.logs;
-  if (dir) {
-    const absPath = path.resolve(dir);
-    console.log('Serving local logs from directory: ' + absPath);
-    return absPath;
-  }
-  return undefined;
-})();
+let myCache = require('./dummy_cache')();
+let logsDir = undefined;
 
 // Setup logger
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
@@ -58,16 +42,17 @@ app.get('*', (req, res) => {
 });
 
 function cors(req, res) {
-  if (req.get('Origin').length !== 0) {
+  if (!req) return;
+  const origin = req.get('Origin');
+  if (origin) {
     res.set({
-      'Access-Control-Allow-Origin': req.get('Origin'),
+      'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Credentials': 'true',
       'Access-Control-Allow-Headers': 'Content-Type',
       'Access-Control-Allow-Methods': 'POST, OPTIONS'
     });
   }
 }
-
 
 app.options('/api/log', function(req, res, _next) {
   cors(req, res);
@@ -132,10 +117,38 @@ app.post('/api/log', function(req, res, _next) {
       return;
     }
 
-    res.sendFile(reqPath);
+    res.sendFile(reqPath, function(e) {
+      if (e && e.code === 'ENOENT') {
+        res.status(404).send('log not found').end();
+      } else {
+        res.status(500).send(e).end();
+      }
+    });
   } else {
     console.log('Must provide the --logs argument to handle local files');
+    res.status(400).end();
   }
 });
 
-module.exports = app;
+const makeListener = (addr = '127.0.0.1', port = 9000, logsPath, cache, callback) => {
+  if (cache != null) {
+    myCache = require('./local_cache')(cache);
+  }
+  if (logsPath != null) {
+    const absPath = path.resolve(logsPath);
+    console.log('Serving local logs from directory: ' + absPath);
+    logsDir = absPath;
+  }
+
+  const listener = app.listen(port, addr, () => {
+    if (callback != null) {
+      callback(listener);
+    }
+  });
+  return;
+};
+
+module.exports = {
+  app: app,
+  makeListener: makeListener
+};
