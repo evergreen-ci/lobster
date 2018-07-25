@@ -121,13 +121,14 @@ app.post('/api/log', function(req, res, _next) {
   }
 });
 
-const makeListener = (addr = '127.0.0.1', port = 9000, logsDir, cache, callback) => {
+const makeListener = (addr = '127.0.0.1', port = 9000, logsPath, cache, callback) => {
   if (cache != null) {
     myCache = require('./local_cache')(cache);
   }
-  if (logsDir != null) {
-    const absPath = path.resolve(logsDir);
+  if (logsPath != null) {
+    const absPath = path.resolve(logsPath);
     console.log('Serving local logs from directory: ' + absPath);
+    logsDir = absPath
   }
 
   const listener = app.listen(port, addr, () => {
