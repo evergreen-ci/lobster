@@ -28,7 +28,7 @@ describe('e2e', function() {
       console.log(err);
       expect(err).toBe(null);
     }
-  }, 30000);
+  }, 60000);
 
   e2e('highlight', async (done) => {
     const driver = await makeDriver(done, 'chrome');
@@ -71,7 +71,7 @@ describe('e2e', function() {
       console.log(err);
       expect(err).toBe(null);
     }
-  }, 30000);
+  }, 60000);
 
   e2e('filter', async (done) => {
     const driver = await makeDriver(done, 'chrome');
@@ -118,6 +118,6 @@ describe('e2e', function() {
       console.log(err);
       expect(err).toBe(null);
     }
-  }, 30000);
+  }, 60000);
 });
 
