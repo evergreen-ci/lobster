@@ -2,7 +2,8 @@
 
 import type { Log, Event, FixtureLogList, MongoLine, LogEvent } from '../../models';
 
-const RESMOKE_LOGGING_PREFIX = new RegExp('\[.*?\]');
+const RESMOKE_LOGGING_PREFIX = /\[.*?\]/;
+const SHELL_LINE_REGEX = new RegExp(String.raw`([a-z]+)([0-9]+)\|\s(.*)`);
 const TIME_RE = new RegExp(String.raw`(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})`);
 const MONGO_TS_PREFIX_LENGTH = ('2017-01-23T19:51:55.058').length;
 const DEFAULT_THREAD_ID = '[NO_THREAD]';
@@ -16,9 +17,68 @@ const WARNING = 'Warning';
 const LOG = 'Log';
 const STATE = 'State';
 const ELECTION_SUCCESS = 'ElectionSuccess';
+const JS_STACK_REGEX = new RegExp(String.raw`(\S*)@(\S+\.js)(.*)`);
+
+function dateToString(date: Date): string {
+  let newDate = date.toISOString();
+  newDate = newDate.substring(0, newDate.length - 1) + '000';
+  return newDate;
+}
+
+function formatLine(line: string): string {
+  return line.length > 200 ? line.substring(0, 200) + '...' : line;
+}
+
+function logEventToString(logEvent: LogEvent): string {
+  let message = '';
+  const type = logEvent.type;
+  const logComponent = logEvent.logLine.logComponent;
+  const thread = logEvent.logLine.thread;
+  const severity = logEvent.logLine.severity;
+  let ts = dateToString(logEvent.ts);
+  ts = ts.slice(0, ts.length - 3) + '+0' + ts.slice(ts.length - 3);
+  if (type === 'TransitionEvent') {
+    const state = logEvent.state;
+    const initialState = logEvent.initialState;
+    message = `${ts} ${severity} ${logComponent} [${thread}] transition to ${state} from ${initialState}`;
+  } else if (type === 'HeartBeatScheduledEvent') {
+    const node = logEvent.node;
+    const time = logEvent.time;
+    message = `${ts} Heartbeat to ${node} scheduled at ${time}`;
+  } else if (type === 'HeartbeatSentEvent') {
+    const requestId = logEvent.requestId;
+    const node = logEvent.node;
+    message = `${ts} Heartbeat sent (requestId: ${requestId}) to ${node}`;
+  } else if (type === 'HeartbeatReceivedEvent') {
+    const requestId = logEvent.requestId;
+    const node = logEvent.node;
+    message = `${ts} Heartbeat response received (requestId: ${requestId}) from ${node}`;
+  } else if (type === 'FixtureFatalEvent') {
+    const fatalMessage = logEvent.logLine.messages.join('\n');
+    message = formatLine(`${ts} F ${logComponent} [${thread}] ${fatalMessage}`);
+  } else if (type === 'FixtureWarningEvent') {
+    const warningMessage = logEvent.logLine.messages.join('\n');
+    message = formatLine(`${ts} W ${logComponent} [${thread}] ${warningMessage}`);
+  } else if (type === 'FixtureErrorEvent') {
+    const errorMessage = logEvent.logLine.messages.join('\n');
+    message = formatLine(`${ts} E ${logComponent} [${thread}] ${errorMessage}`);
+  } else {
+    message = `${ts} ${type}`;
+  }
+  return message;
+}
+
+// function for splitting string with limits
+function split(inputLine: string, separator: string, limit: number): string[] {
+  const line = inputLine.replace(/  +/g, ' ');
+  const firstSplit = line.split(separator);
+  const remainingSplits = firstSplit.slice(0, limit);
+  remainingSplits.push(firstSplit.slice(limit).join(separator));
+  return remainingSplits;
+}
 
 // Note: title in original code is set as 'FixtureLogEvent' for every event type
-function initiateLogEvent(type: String, ts: Date, logLine: MongoLine): LogEvent {
+function initiateLogEvent(type: string, ts: Date, logLine: MongoLine): LogEvent {
   return ({
     type: type,
     title: 'FixtureLogEvent',
@@ -32,27 +92,25 @@ function initiateLogEvent(type: String, ts: Date, logLine: MongoLine): LogEvent 
 // // Lifecycle event matcher functions
 eventMatcherList.serverStartEvent = (logLine: MongoLine): ?LogEvent => {
   const matchRegEx = [
-    new RegExp(String.raw`MongoDB starting : pid=(?<pid>\d+) port=(?<port>\d+)`),
-    new RegExp(String.raw`bridge waiting for connections on port (?<port>\d+)`),
+    new RegExp(String.raw`MongoDB starting : pid=(\d+) port=(\d+)`),
+    new RegExp(String.raw`bridge waiting for connections on port (\d+)`),
     new RegExp(String.raw`mongos version `)
   ];
   const ssEvent = initiateLogEvent('ServerStartEvent', logLine.ts, logLine);
   let match = matchRegEx[0].exec(logLine.messages[0]);
   if (match) {
-    ssEvent.port = match.groups.port;
-    ssEvent.pid = match.group.pid;
+    ssEvent.port = match[2];
+    ssEvent.pid = match[1];
     return ssEvent;
   }
   match = matchRegEx[1].exec(logLine.messages[0]);
   if (match) {
-    ssEvent.port = match.groups.port;
+    ssEvent.port = match[1];
     return ssEvent;
   }
   if (logLine.thread === 'mongosMain') {
     match = matchRegEx[2].exec(logLine.messages[0]);
     if (match) {
-      ssEvent.port = match.groups.port;
-      ssEvent.pid = match.group.pid;
       return ssEvent;
     }
   }
@@ -61,14 +119,14 @@ eventMatcherList.serverStartEvent = (logLine: MongoLine): ?LogEvent => {
 
 eventMatcherList.serverShutdownStartEvent = (logLine: MongoLine): ?LogEvent => {
   const matchRegEx = [
-    new RegExp(String.raw`got signal (?<signal>\d+) \((?<signal_str>\w+)\)`),
+    new RegExp(String.raw`got signal (\d+) \((\w+)\)`),
     new RegExp(String.raw`dbexit:  rc: \d+`)
   ];
   let match = matchRegEx[0].exec(logLine.messages[0]);
   const ssEvent = initiateLogEvent('ServerShutdownStartEvent', logLine.ts, logLine);
   if (match) {
-    ssEvent.signal = match.groups.signal;
-    ssEvent.signalStr = match.groups.signal_str;
+    ssEvent.signal = match[1];
+    ssEvent.signalStr = match[2];
     return ssEvent;
   }
   match = matchRegEx[1].exec(logLine.messages[0]);
@@ -83,25 +141,28 @@ eventMatcherList.serverShutdownCompleteEvent = eventMatcherList.serverShutdownSt
 
 // Replica set event matcher functions
 eventMatcherList.replicasetReconfigEvent = (logLine: MongoLine): ?LogEvent => {
-  const matchRegEx = new RegExp(String.raw`New replica set config in use: (?<config>.*)$`);
+  const matchRegEx = new RegExp(String.raw`New replica set config in use: (.*)$`);
   const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
     const rsEvent = initiateLogEvent('ReplicasetReconfigEvent', logLine.ts, logLine);
-    rsEvent.config = match.groups.config;
+    rsEvent.config = match[1];
     return rsEvent;
   }
   return null;
 };
 
 eventMatcherList.transitionEvent = (logLine: MongoLine): ?LogEvent => {
-  const matchRegEx = new RegExp(String.raw`transition to (?P<state>\w*) from`);
+  const matchRegEx = new RegExp(String.raw`transition to (\w*) from (\w*)`);
+  /*
   if (logLine.logComponent === 'REPL') {
     return null;
   }
+  */
   const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
     const tEvent = initiateLogEvent('TransitionEvent', logLine.ts, logLine);
-    tEvent.state = match.groups.state;
+    tEvent.state = match[1];
+    tEvent.initialState = match[2];
     return tEvent;
   }
   return null;
@@ -163,7 +224,6 @@ eventMatcherList.electionVoteEvent = (logLine: MongoLine): ?LogEvent => {
     eEvent.type = 'ElectionFailEvent';
     return eEvent;
   }
-  match = event;
   return null;
 };
 
@@ -199,12 +259,12 @@ eventMatcherList.initialSyncStartEvent = (logLine: MongoLine): ?LogEvent => {
 eventMatcherList.initialSyncSuccessEvent = eventMatcherList.initialSyncStartEvent;
 
 eventMatcherList.heartbeatScheduledEvent = (logLine: MongoLine): ?LogEvent => {
-  const matchRegEx = new RegExp(String.raw`Scheduling heartbeat to (?<node>[\w:-]+) at (?<time>.*)$`);
+  const matchRegEx = new RegExp(String.raw`Scheduling heartbeat to ([\w:-]+) at (.*)$`);
   const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
     const hsEvent = initiateLogEvent('HeartBeatScheduledEvent', logLine.ts, logLine);
-    hsEvent.node = match.groups.node;
-    hsEvent.time = match.groups.time;
+    hsEvent.node = match[1];
+    hsEvent.time = match[2];
     return hsEvent;
   }
   return null;
@@ -212,21 +272,21 @@ eventMatcherList.heartbeatScheduledEvent = (logLine: MongoLine): ?LogEvent => {
 
 eventMatcherList.heartbeatSentEvent = (logLine: MongoLine): ?LogEvent => {
   const matchRegEx = [
-    new RegExp(String.raw`Sending heartbeat \(requestId: (?<req_id>\d+)\) to (?<node>[\w:-]+)`),
-    new RegExp(String.raw`Received response to heartbeat \(requestId: (?<req_id>\d+)\) from (?<node>[\w:-]+)`)
+    new RegExp(String.raw`Sending heartbeat \(requestId: (\d+)\) to ([\w:-]+)`),
+    new RegExp(String.raw`Received response to heartbeat \(requestId: (\d+)\) from ([\w:-]+)`)
   ];
   let match = matchRegEx[0].exec(logLine.messages[0]);
   if (match) {
     const hsEvent = initiateLogEvent('HeartbeatSentEvent', logLine.ts, logLine);
-    hsEvent.requestId = match.groups.requestId;
-    hsEvent.node = match.groups.node;
+    hsEvent.requestId = match[1];
+    hsEvent.node = match[2];
     return hsEvent;
   }
   match = matchRegEx[1].exec(logLine.messages[0]);
   if (match) {
     const hrEvent = initiateLogEvent('HeartbeatReceivedEvent', logLine.ts, logLine);
-    hrEvent.requestId = match.groups.requestId;
-    hrEvent.node = match.groups.node;
+    hrEvent.requestId = match[1];
+    hrEvent.node = match.groups[2];
     return hrEvent;
   }
   return null;
@@ -243,14 +303,14 @@ eventMatcherList.fixtureFatalEvent = (logLine: MongoLine): ?LogEvent => {
 };
 
 eventMatcherList.fixtureWarningEvent = (logLine: MongoLine): ?LogEvent => {
-  if (logLine.severity === 'F') {
+  if (logLine.severity === 'W') {
     return initiateLogEvent('FixtureWarningEvent', logLine.ts, logLine);
   }
   return null;
 };
 
 eventMatcherList.fixtureErrorEvent = (logLine: MongoLine): ?LogEvent => {
-  if (logLine.severity === 'F') {
+  if (logLine.severity === 'E') {
     return initiateLogEvent('FixtureErrorEvent', logLine.ts, logLine);
   }
   return null;
@@ -258,7 +318,7 @@ eventMatcherList.fixtureErrorEvent = (logLine: MongoLine): ?LogEvent => {
 
 // Create an event for given logline if it corresponds to one
 function getLogEvent(logLine: MongoLine): Event {
-  const events = eventMatcherList.keys();
+  const events = Object.keys(eventMatcherList);
   for (let i = 0; i < events.length; i++) {
     const currEvent = eventMatcherList[events[i]](logLine);
     if (currEvent) {
@@ -273,10 +333,11 @@ function parseMongoTs(line: string): Date {
   if (!match) {
     return null;
   }
-  return new Date(match[0], match[1], match[2], match[3], match[4], match[5], match[6] * 1000);
+  return new Date(match[1], match[2] - 1, match[3], match[4] - 4, match[5], match[6], match[7]);
 }
 
 function initiateFixtureLogList(): FixtureLogList {
+  const startupLogLine = { ts: null, rawTs: 'N/A', severity: 'N/A', logComponent: 'N/A', thread: DEFAULT_THREAD_ID, messages: [] };
   return ({
     isResmoke: false,
     isConfigsvr: false,
@@ -291,13 +352,13 @@ function initiateFixtureLogList(): FixtureLogList {
     currentElectionVoteEvents: [],
     logStart: null,
     logEnd: null,
-    logLines: {} // type this dictionary Dict{string, MongoLine[]}
+    logLines: { '[NO_THREAD]': [startupLogLine] } // type this dictionary Dict{string, MongoLine[]}
   });
 }
 
 function updateTimeRange(fll: FixtureLogList, ts: Date): FixtureLogList {
-  const logStart = fll.logStart;
-  const logEnd = fll.logEnd;
+  let logStart = fll.logStart;
+  let logEnd = fll.logEnd;
   if (fll.logStart === null || ts < fll.logStart) {
     logStart = ts;
   }
@@ -308,13 +369,13 @@ function updateTimeRange(fll: FixtureLogList, ts: Date): FixtureLogList {
 }
 
 function updateElectionContext(evt: LogEvent, fll: FixtureLogList): FixtureLogList {
-  const currentElectionStartEvent = fll.currentElectionStartEvent;
-  const currentElectionVoteEvents = fll.currentElectionVoteEvents;
+  let currentElectionStartEvent = fll.currentElectionStartEvent;
+  let currentElectionVoteEvents = fll.currentElectionVoteEvents;
   if (evt.type === 'ElectionStartEvent') {
-    currentElectionStartEvent = event;
+    currentElectionStartEvent = evt;
     currentElectionVoteEvents = [];
   } else if (evt.type === 'ElectionVoteEvent') {
-    currentElectionVoteEvents.push(event);
+    currentElectionVoteEvents.push(evt);
   } else if (evt.type === 'ElectionFailEvent') {
     currentElectionStartEvent = null;
     currentElectionVoteEvents = null;
@@ -333,7 +394,7 @@ function updateElectionContext(evt: LogEvent, fll: FixtureLogList): FixtureLogLi
 
 function addLogEvent(logLine: MongoLine, events: LogEvent[]): LogEvent[] {
   if (logLine === null) {
-    return null;
+    return events;
   }
   const evt = getLogEvent(logLine);
   if (evt) {
@@ -341,11 +402,11 @@ function addLogEvent(logLine: MongoLine, events: LogEvent[]): LogEvent[] {
     newEvents.push(evt);
     return newEvents;
   }
-  return null;
+  return events;
 }
 
 function returnMongoLine(ts: Date, line: string): MongoLine {
-  const components = line.split(' ', 4);
+  const components = split(line, ' ', 4);
   return ({
     ts: ts,
     rawTs: components[0], severity: components[1], logComponent: components[2], thread: components[3].substring(1, components[3].length - 1),
@@ -374,9 +435,9 @@ function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList
     fll.logEnd = updatedTime.logEnd;
     fll.curLogLine = returnMongoLine(ts, line);
     const oldEvents = fll.events;
-    fll.events = addLogEvent(fll.curLogLine, fll.events, fll);
+    fll.events = addLogEvent(fll.curLogLine, fll.events);
     if (oldEvents.length !== fll.events.length) {
-      const updated = updateElectionContext(fll.events[fll.events.length - 1]);
+      const updated = updateElectionContext(fll.events[fll.events.length - 1], fll);
       fll.currentElectionStartEvent = updated.currentElectionStartEvent;
       fll.currentElectionVoteEvents = updated.currentElectionVoteEvents;
       fll.events = replaceLastEvent(fll.events, updated.evt);
@@ -384,6 +445,9 @@ function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList
     fll.curThread = fll.curLogLine.thread;
 
     // Add new curLogLine to loglines list corresponding to thread
+    if (!Object.keys(fll.logLines).includes(fll.curThread)) {
+      fll.logLines[fll.curThread] = []; // initiate new MongoLine[]
+    }
     const mongoLinesList = fll.logLines[fll.curThread];
     mongoLinesList.push(fll.curLogLine);
     fll.logLines[fll.curThread] = mongoLinesList;
@@ -393,9 +457,9 @@ function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList
 
 function loggingPrefix(rawPrefix: string): string {
   const shellPrefixes = ['js_test', 'BackgroundInitialSync', 'CheckReplDBHash', 'CheckReplOplogs', 'CleanEveryN', 'IntermediateInitialSync', 'PeriodicKillSecondaries', 'ValidateCollections'];
-  const prefixes = rawPrefix.substring(1, rawPrefix.length - 1).split(':', 2);
+  const prefixes = split(rawPrefix.substring(1, rawPrefix.length - 1), ':', 2);
   const isShell = shellPrefixes.includes(prefixes[0]);
-  const fixtureId = '';
+  let fixtureId = '';
   if (isShell) {
     if (prefixes.length === 2) {
       fixtureId = 'standalone_mongod';
@@ -413,14 +477,14 @@ function loggingPrefix(rawPrefix: string): string {
 }
 
 function presplitLine(line: string) {
-  let splits = line.split(' ', 1);
-  if (!splits || !splits[0].match(RESMOKE_LOGGING_PREFIX)) {
+  let splits = split(line, ' ', 1);
+  if (!splits || !RESMOKE_LOGGING_PREFIX.test(splits[0])) {
     return ({ prefix: null, body: line });
   }
   let body = '';
   const prefix = loggingPrefix(splits[0]);
   if (prefix.isShell) {
-    splits = line.split(' ', 2);
+    splits = split(line, ' ', 2);
     body = splits.length > 2 ? splits[2].trim() : '';
   } else {
     body = splits.length > 1 ? splits[1].trim() : '';
@@ -434,66 +498,170 @@ function presplitLine(line: string) {
 function makeEvent(type: string, start: Date, end: Date, fixtureId: string): Event {
   return ({
     type: type,
-    start: start.toISOString(),
-    end: end.toISOString(),
+    start: dateToString(start),
+    end: dateToString(end),
     fixtureId: fixtureId
   });
 }
 
-function makeEventWithLine(type: string, start: Date, end: Date, fixtureId: string, line: MongoLine): Event {
+function makeEventWithLine(type: string, start: Date, end: Date, fixtureId: string, line: LogEvent): Event {
   return ({
     type: type,
-    start: start.toISOString(),
-    end: end.toISOString(),
+    start: dateToString(start),
+    end: dateToString(end),
     fixtureId: fixtureId,
-    line: line
+    line: logEventToString(line)
   });
 }
 
-function getStateEvent(tmpEvents: {String: Event}, end: Date): Event {
+function getStateEvent(tmpEvents: {string: Event}, end: Date): Event {
   const startEvent = tmpEvents[STATE];
   startEvent.end = end.toISOString();
   return startEvent;
 }
 
-function parseTestLog(processed) {
-  const fixtureLogLists = {};
+function returnShellLogLine(line: string): ShellLogLine {
+  const ts = parseMongoTs(line);
+  if (ts) {
+    const components = split(line, ' ', 4);
+    return ({ severity: components[1], component: components[2], thread: components[3], message: components[4] });
+  }
+  return ({ ts: null, severity: null, component: null, thread: null, message: line });
+}
+
+function formatMessages(messages: string[]): string[] {
+  let curIndent = '';
+  const newMessages = [];
+  for (let i = 0; i < messages.length; i++) {
+    const newMessage = curIndent + messages[i];
+    if (newMessage.endsWith('{')) {
+      curIndent += ' ';
+    } else if (newMessage.endsWith('}')) {
+      curIndent = curIndent.substring(2, curIndent.length);
+    }
+  }
+  return newMessages;
+}
+
+function makeJSStackTraceEvent(logLines: ShellLogLine[]): LogEvent {
+  const stacktrace = [];
+  let messages = [];
+  let ts = null;
+
+  for (let i = 0; i < logLines.length; i++) {
+    const line = logLines[i];
+    const message = line.message;
+    const match = JS_STACK_REGEX.test(message);
+    if (match) {
+      stacktrace.unshift(message); // adds to front of array
+    } else if (message.trim().length !== 0) {
+      messages.unshift(message);
+    }
+    if (line.ts) {
+      ts = line.ts;
+      break;
+    }
+  }
+  messages = formatMessages(messages);
+  return ({
+    type: 'JSStackTraceEvent',
+    title: 'Javascript StackTrace',
+    ts: ts,
+    messages: messages,
+    stacktrace: stacktrace
+  });
+}
+
+function initiateShellLogList(): ShellLogList {
+  return ({
+    shellLogLines: [],
+    fatalStackTrace: null,
+    curTs: null,
+    startupLogLine: { ts: null, rawTs: 'N/A', severity: 'N/A', logComponent: 'N/A', thread: DEFAULT_THREAD_ID, messages: [] }
+  });
+}
+
+function appendShellLogList(line: string, sll: ShellLogList) {
+  const logLine = returnShellLogLine(line);
+  const newMessages = sll.startupLogLine.messages;
+  newMessages.push(logLine.message);
+  sll.startupLogLine.messages = newMessages;
+  if (line.startsWith('failed to load')) {
+    sll.fatalStackTrace = makeJSStackTraceEvent(sll.shellLogLines);
+  }
+  sll.shellLogLines.push(logLine);
+  return sll;
+}
+
+function handleShellOutput(body: string, sll: ShellLogList[], fll: {string: FixtureLogList}) {
+  const shellPrefix = SHELL_LINE_REGEX.exec(body);
+  const newFll = fll;
+  if (shellPrefix !== null && ['b', 'c', 'd', 's'].includes(shellPrefix[1])) {
+    const type = shellPrefix[1];
+    const port = shellPrefix[2];
+    const procBody = shellPrefix[3];
+    if (!newFll[port]) {
+      newFll[port] = initiateFixtureLogList();
+    }
+    const addToFll = appendFixtureLogList(newFll[port], procBody);
+    newFll[port] = addToFll;
+    if (type === 'c') {
+      newFll[port].isConfigsvr = true;
+    } else if (type === 's') {
+      newFll[port].isMongos = true;
+    }
+  }
+  return ({
+    sll: shellPrefix ? sll : appendShellLogList(body, sll),
+    fll: newFll
+  });
+}
+
+function parseTestLog(processed: Iterable<string>): {string: FixtureLogList} {
+  let fixtureLogLists = {};
+  let sll = initiateShellLogList();
   for (let i = 0; i < processed.length; i++) {
     const line = processed[i].text;
     const presplit = presplitLine(line);
     if (!presplit.prefix) {
       continue;
-    }
-    if (presplit.prefix.isFixture) {
+    } else if (presplit.prefix.isShell) {
+      const hso = handleShellOutput(presplit.body, sll, fixtureLogLists);
+      fixtureLogLists = hso.fll;
+      sll = hso.sll;
+    } else if (presplit.prefix.isFixture) {
       const prefix = presplit.prefix;
       if (prefix.fixtureId in fixtureLogLists) {
-        const modifyBodyList = fixtureLogLists[prefix.fixtureId];
+        let modifyBodyList = fixtureLogLists[prefix.fixtureId];
         modifyBodyList = appendFixtureLogList(modifyBodyList, presplit.body);
         fixtureLogLists[prefix.fixtureId] = modifyBodyList;
       } else {
-        const newBodyList = initiateFixtureLogList();
+        let newBodyList = initiateFixtureLogList();
         newBodyList = appendFixtureLogList(newBodyList, presplit.body);
         fixtureLogLists[prefix.fixtureId] = newBodyList;
       }
     }
   }
-  const fixtureIdList = fixtureLogLists.keys();
-  for (let j = 0; j < fixtureIdList.length; j++) {
-    const fixtureId = fixtureIdList[j];
-    const fixtureLogList = fixtureLogLists.get(fixtureId);
-    if (typeof fixtureId !== 'number') {
-      fixtureLogList.isResmoke = true;
+  const keys = fixtureLogLists ? Object.keys(fixtureLogLists) : [];
+  if (keys.length > 0) {
+    const fixtureIdList = keys;
+    for (let j = 0; j < fixtureIdList.length; j++) {
+      const fixtureId = fixtureIdList[j];
+      const fixtureLogList = fixtureLogLists[fixtureId];
+      if (typeof fixtureId !== 'number') {
+        fixtureLogList.isResmoke = true;
+      }
     }
+    return fixtureLogLists;
   }
-  return fixtureLogLists;
 }
 
-function readTests(processed) {
+function readTests(processed: Iterable<string>): Event[] {
   const events = []; // Event[] type
-  const tmpEvents = {};
+  let tmpEvents = {};
   console.log('Processing test logs');
   const fixtureLogLists = parseTestLog(processed);
-  const fixtureIdList = fixtureLogLists.keys();
+  const fixtureIdList = fixtureLogLists ? Object.keys(fixtureLogLists) : [];
   for (let i = 0; i < fixtureIdList.length; i++) {
     let fixtureId = fixtureIdList[i];
     const logList = fixtureLogLists[fixtureId];
@@ -504,15 +672,15 @@ function readTests(processed) {
     }
     console.log('Reading events for fixture ' + fixtureId);
     // Add event for duration of logs
-    events.push(makeEvent(LOG, logList.start, logList.end, fixtureId));
+    events.push(makeEvent(LOG, logList.logStart, logList.logEnd, fixtureId));
     tmpEvents = {};
-    const lastTs = null;
+    let lastTs = null;
     for (let j = 0; j < logList.events.length; j++) {
       const evt = logList.events[j];
       if (evt.ts === null) {
         continue;
       }
-      lastTs = event.ts;
+      lastTs = evt.ts;
       if (evt.type === 'ServerStartEvent') {
         events.push(makeEvent(SERVER_START, evt.ts, evt.ts, fixtureId));
       } else if (evt.type === 'ServerShutdownStart') {
@@ -520,28 +688,30 @@ function readTests(processed) {
       } else if (evt.type === 'ServerShutdownComplete') {
         events.push(makeEvent(SERVER_SHUTDOWN_COMPLETE, evt.ts, evt.ts, fixtureId));
       } else if (evt.type === 'FixtureFatalEvent') {
-        events.push(makeEventWithLine(FATAL, evt.ts, evt.ts, fixtureId, evt.logLine));
+        events.push(makeEventWithLine(FATAL, evt.ts, evt.ts, fixtureId, evt));
       } else if (evt.type === 'FixtureErrorEvent') {
-        events.push(makeEventWithLine(ERROR, evt.ts, evt.ts, fixtureId, evt.logLine));
+        events.push(makeEventWithLine(ERROR, evt.ts, evt.ts, fixtureId, evt));
       } else if (evt.type === 'FixtureWarningEvent') {
-        events.push(makeEventWithLine(WARNING, evt.ts, evt.ts, fixtureId, evt.logLine));
+        events.push(makeEventWithLine(WARNING, evt.ts, evt.ts, fixtureId, evt));
       } else if (evt.type === 'TransitionEvent') {
-        if (tmpEvents.keys().includes(STATE)) {
+        if (Object.keys(tmpEvents).includes(STATE)) {
+          // console.log(tmpEvents);
           events.push(getStateEvent(tmpEvents, evt.ts));
           delete tmpEvents[STATE];
         }
         const newEvent = { type: STATE, start: evt.ts.toISOString(),
-          fixtureId: fixtureId, line: evt.logLine, state: evt.state };
+          fixtureId: fixtureId, line: logEventToString(evt), state: evt.state };
         tmpEvents[STATE] = newEvent;
       } else if (evt.type === 'ElectionSuccessEvent') {
         events.push(makeEvent(ELECTION_SUCCESS, evt.ts, evt.ts, fixtureId));
       }
     }
-    if (tmpEvents.keys().includes(STATE)) {
+    if (Object.keys(tmpEvents).includes(STATE)) {
       events.push(getStateEvent(tmpEvents, lastTs));
       delete tmpEvents[STATE];
     }
   }
+  console.log(events);
   return events;
 }
 
@@ -565,7 +735,6 @@ function getFullGitRef(fileLine: ?string, gitVersion: string): ?string {
 export default function(response: string): Log {
   // set the url to the url we requested
   const lines = response.split('\n');
-
   const processed = [];
   const gitPrefix = '{githash:';
   const gitPrefixLen = gitPrefix.length + 2;

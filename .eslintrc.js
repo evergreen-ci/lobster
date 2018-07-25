@@ -43,7 +43,8 @@ module.exports = {
       'rules': {
         'no-debugger': ENABLE_NO_DEBUGGER,
         'react/jsx-key': 0,
-        'react/jsx-no-bind': 0
+        'react/jsx-no-bind': 0,
+        'no-sync': 0
       }
     },
     {

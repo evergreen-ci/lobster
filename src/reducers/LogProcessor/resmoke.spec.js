@@ -2,6 +2,7 @@
 
 import assert from 'assert';
 import resmoke from './resmoke';
+import path from 'path';
 import fs from 'fs';
 
 const data = () => [
@@ -47,7 +48,9 @@ describe('resmoke', function() {
   });
 
   test('test-events', function() {
-    const rawFile = fs.readFileSync('./5b4626c2f84ae87f0a04e70c.txt');
+    console.log('testing events');
+    const rawFilePath = path.resolve('.') + '/src/reducers/LogProcessor/5b4626c2f84ae87f0a04e70c.txt';
+    const rawFile = fs.readFileSync(rawFilePath).toString();
     const state = resmoke(rawFile);
     console.log(state.events.length);
   });
