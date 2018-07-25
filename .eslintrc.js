@@ -43,14 +43,16 @@ module.exports = {
       'rules': {
         'no-debugger': ENABLE_NO_DEBUGGER,
         'react/jsx-key': 0,
-        'react/jsx-no-bind': 0
+        'react/jsx-no-bind': 0,
+        'no-sync': 0
       },
       'globals': {
-        'e2e': true
+        'e2e': true,
+        '__dirname': true
       }
     },
     {
-      'files': ['server/**/*.js', 'generate-tasks.js', 'e2e.js', '.eslintrc.js'],
+      'files': ['server/**/*.js', 'generate-tasks.js', 'e2e.js', 'ciReporter.js', '.eslintrc.js'],
       'env': {
         'node': true,
         'parserOptions': {
@@ -59,6 +61,9 @@ module.exports = {
       },
       'rules': {
         'no-sync': 0
+      },
+      'globals': {
+        '__dirname': true
       }
     }
   ],

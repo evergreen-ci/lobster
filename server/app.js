@@ -120,7 +120,7 @@ app.post('/api/log', function(req, res, _next) {
     res.sendFile(reqPath, function(e) {
       if (e && e.code === 'ENOENT') {
         res.status(404).send('log not found').end();
-      }else {
+      } else {
         res.status(500).send(e).end();
       }
     });
@@ -137,7 +137,7 @@ const makeListener = (addr = '127.0.0.1', port = 9000, logsPath, cache, callback
   if (logsPath != null) {
     const absPath = path.resolve(logsPath);
     console.log('Serving local logs from directory: ' + absPath);
-    logsDir = absPath
+    logsDir = absPath;
   }
 
   const listener = app.listen(port, addr, () => {
@@ -145,7 +145,8 @@ const makeListener = (addr = '127.0.0.1', port = 9000, logsPath, cache, callback
       callback(listener);
     }
   });
-}
+  return;
+};
 
 module.exports = {
   app: app,

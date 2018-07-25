@@ -1,12 +1,12 @@
 const app = require('./server/app');
-const child_process = require('child_process');
+const child = require('child_process');
 const path = require('path');
 
 const e2eLogPath = path.resolve('.') + '/e2e';
 
 app.makeListener(undefined, 9000, e2eLogPath, undefined, (listener) => {
   console.log(`Spawning e2e process with lobster server on port: ${listener.address().port}`);
-  const e2e = child_process.spawnSync('npm', ['run', 'test', '--', '-t', 'e2e.*'], {
+  const e2e = child.spawnSync('npm', ['run', 'test', '--', '-t', 'e2e.*'], {
     'env': {
       ...process.env,
       CI: 'true',
