@@ -7,7 +7,7 @@ const hash = require('string-hash');
 
 const app = express();
 
-console.log('Starting server to support lobster log viewer.\nOptions:\n  --cache   Cache files after download in the provided directory. Note! All directory content will be deleted on the server start up! [optional]\n  --logs  An absolute path to log files that will be available to server [optional]\n  --bind_address  Specify the address lobster should bind to. Defaults to 127.0.0.1 [optional]');
+console.log('Starting server to support lobster log viewer.\nOptions:\n  --cache   Cache files after download in the provided directory. Note! All directory content will be deleted on the server start up! [optional]\n  --logs  An absolute path to log files that will be available to server [optional]\n  --bind_address  Specify the address lobster should bind to. Defaults to 127.0.0.1 [optional]\n  --port specify the port number. Defaults to 9000 [optional]');
 
 function isValidURL(str) {
   const expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
@@ -42,9 +42,11 @@ app.get('*', (req, res) => {
 });
 
 function cors(req, res) {
-  if (req.get('Origin').length !== 0) {
+  if (!req) return;
+  const origin = req.get('Origin');
+  if (origin) {
     res.set({
-      'Access-Control-Allow-Origin': req.get('Origin'),
+      'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Credentials': 'true',
       'Access-Control-Allow-Headers': 'Content-Type',
       'Access-Control-Allow-Methods': 'POST, OPTIONS'
@@ -115,9 +117,16 @@ app.post('/api/log', function(req, res, _next) {
       return;
     }
 
-    res.sendFile(reqPath);
+    res.sendFile(reqPath, function(e) {
+      if (e && e.code === 'ENOENT') {
+        res.status(404).send('log not found').end();
+      }else {
+        res.status(500).send(e).end();
+      }
+    });
   } else {
     console.log('Must provide the --logs argument to handle local files');
+    res.status(400).end();
   }
 });
 
