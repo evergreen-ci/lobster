@@ -28,11 +28,9 @@ function startServer(args) {
   }
 }
 
-if (process.env.CI !== 'true') {
-  describe = describe.skip;
-}
+const df = process.env.CI === 'true' ? describe : describe.skip;
 
-describe('lobsterserver', function() {
+df('lobsterserver', function() {
   beforeAll(() => {
     if (process.env.CI === 'true') {
       spawnSync('npm', ['run', 'build'], {
@@ -52,7 +50,7 @@ describe('lobsterserver', function() {
     }
   });
 
-  tf('fetch-ok', (done) => {
+  test('fetch-ok', (done) => {
     c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
     setTimeout(function() {
       lobster().then((resp) => {
@@ -67,7 +65,7 @@ describe('lobsterserver', function() {
     }, 5000);
   }, 10000);
 
-  tf('fetch-notexist', (done) => {
+  test('fetch-notexist', (done) => {
     c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
     setTimeout(function() {
       lobster(undefined, '___notexist.log').then((resp) => {
@@ -80,7 +78,7 @@ describe('lobsterserver', function() {
     }, 5000);
   }, 10000);
 
-  tf('fetch-insecure-path', (done) => {
+  test('fetch-insecure-path', (done) => {
     fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
     c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
     setTimeout(function() {
