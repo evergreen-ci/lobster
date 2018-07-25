@@ -50,7 +50,7 @@ module.exports = {
       }
     },
     {
-      'files': ['server/**/*.js', 'generate-tasks.js', '.eslintrc.js'],
+      'files': ['server/**/*.js', 'generate-tasks.js', 'e2e.js', '.eslintrc.js'],
       'env': {
         'node': true,
         'parserOptions': {

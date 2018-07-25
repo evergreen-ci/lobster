@@ -4,7 +4,6 @@ const path = require('path');
 const needle = require('needle');
 const bodyParser = require('body-parser');
 const hash = require('string-hash');
-const yargs = require('yargs');
 
 const app = express();
 
@@ -17,23 +16,8 @@ function isValidURL(str) {
   return str.match(regex);
 }
 
-let myCache;
-const cache = yargs.argv.cache;
-if (cache) {
-  myCache = require('./local_cache')(cache);
-} else {
-  myCache = require('./dummy_cache')();
-}
-
-const logsDir = (() => {
-  const dir = require('yargs').argv.logs;
-  if (dir) {
-    const absPath = path.resolve(dir);
-    console.log('Serving local logs from directory: ' + absPath);
-    return absPath;
-  }
-  return undefined;
-})();
+let myCache = require('./dummy_cache')();
+let logsDir = undefined;
 
 // Setup logger
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
@@ -67,7 +51,6 @@ function cors(req, res) {
     });
   }
 }
-
 
 app.options('/api/log', function(req, res, _next) {
   cors(req, res);
@@ -138,4 +121,23 @@ app.post('/api/log', function(req, res, _next) {
   }
 });
 
-module.exports = app;
+const makeListener = (addr = '127.0.0.1', port = 9000, logsDir, cache, callback) => {
+  if (cache != null) {
+    myCache = require('./local_cache')(cache);
+  }
+  if (logsDir != null) {
+    const absPath = path.resolve(logsDir);
+    console.log('Serving local logs from directory: ' + absPath);
+  }
+
+  const listener = app.listen(port, addr, () => {
+    if (callback != null) {
+      callback(listener);
+    }
+  });
+}
+
+module.exports = {
+  app: app,
+  makeListener: makeListener
+};

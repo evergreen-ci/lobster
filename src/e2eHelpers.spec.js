@@ -122,7 +122,7 @@ const capabilities = (browser) => {
     throw new TypeError('expected browser to be chrome');
   }
   const chromeCapabilities = Capabilities.chrome();
-  const chromeOptions = { 'args': [] };
+  const chromeOptions = { 'args': ['--disable-device-discovery-notifications'] };
   if (process.env.CI === 'true') {
     chromeOptions.args.push(...['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter']);
   }
@@ -148,12 +148,12 @@ test('capabilities', function() {
   expect(() => capabilities('firefox')).toThrow(TypeError);
   let c = capabilities('chrome');
   expect(c.getBrowserName()).toBe('chrome');
-  expect(c.get('chromeOptions')).toEqual({});
+  expect(c.get('chromeOptions')).toEqual({ 'args': ['--disable-device-discovery-notifications'] });
 
   process.env.CI = 'true';
   c = capabilities('chrome');
   expect(c.getBrowserName()).toBe('chrome');
-  expect(c.get('chromeOptions')).toMatchObject({ 'args': ['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter'] });
+  expect(c.get('chromeOptions')).toMatchObject({ 'args': ['--disable-device-discovery-notifications', '--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter'] });
 
   process.env.CI = oldProcess;
 });
