@@ -1,6 +1,8 @@
 // This file is automagically executed before every test
 
 /* global process:{} */
+import fs from 'fs';
+import path from 'path';
 
 // Enzyme boilerplate for react
 import Adapter from 'enzyme-adapter-react-15';
@@ -10,11 +12,7 @@ Enzyme.configure({ adapter: new Adapter() });
 // Polyfills
 import 'babel-polyfill';
 import 'url-search-params-polyfill';
-import { LocalStorage } from 'node-localstorage';
-import 'url-search-params-polyfill';
-import localStorageMemory from 'localstorage-memory'
-
-import fs from 'fs';
+import localStorageMemory from 'localstorage-memory';
 
 // Prevent us from hitting production
 process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';
@@ -23,9 +21,9 @@ process.env.REACT_APP_EVERGREEN_BASE = 'http://domain.invalid';
 if (!global.window) {
   global.window = {};
 } else if (!global.window.localStorage) {
-  if (!fs.existsSync(__dirname + '/build')) {
-    fs.mkdirSync(__dirname + '/build');
-    fs.mkdirSync(__dirname + '/build/localStorageTemp');
+  if (!fs.existsSync(path.join(__dirname, '/build'))) {
+    fs.mkdirSync(path.join(__dirname, '/build'));
+    fs.mkdirSync(path.join(__dirname, '/build/localStorageTemp'));
   }
   /* global global:{} */
   global.localStorage = localStorageMemory;

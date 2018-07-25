@@ -1,3 +1,5 @@
+/* global process:{} */
+
 import fs from 'fs';
 import { tmpdir } from 'os';
 import { spawn, spawnSync } from 'child_process';
@@ -27,9 +29,14 @@ function startServer(args) {
 }
 
 describe('lobsterserver', function() {
+  let tf = test;
   beforeAll(() => {
+    if (process.env.CI !== 'true') {
+      tf = test.skip;
+      return;
+    }
     spawnSync('npm', ['run', 'build'], {
-      'stdio': 'inherit',
+      'stdio': 'inherit'
     });
   });
 
@@ -44,7 +51,7 @@ describe('lobsterserver', function() {
     }
   });
 
-  test('fetch-ok', (done) => {
+  tf('fetch-ok', (done) => {
     c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
     setTimeout(function() {
       lobster().then((resp) => {
@@ -59,7 +66,7 @@ describe('lobsterserver', function() {
     }, 5000);
   }, 10000);
 
-  test('fetch-notexist', (done) => {
+  tf('fetch-notexist', (done) => {
     c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
     setTimeout(function() {
       lobster(undefined, '___notexist.log').then((resp) => {
@@ -72,7 +79,7 @@ describe('lobsterserver', function() {
     }, 5000);
   }, 10000);
 
-  test('fetch-insecure-path', (done) => {
+  tf('fetch-insecure-path', (done) => {
     fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
     c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
     setTimeout(function() {
