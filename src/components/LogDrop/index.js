@@ -3,12 +3,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
-import {Button} from 'react-bootstrap';
+import { type LogType, logTypes } from '../../models';
+import { Button } from 'react-bootstrap';
 import type { ContextRouter } from 'react-router-dom';
 import './style.css';
 
 type Props = {|
-  processLog: (data: string, type: actions.LogType) => void,
+  processLog: (data: string, type: LogType) => void,
 |} & ContextRouter
 
 type State = {|
@@ -35,7 +36,7 @@ export class LogDrop extends React.PureComponent<Props, State> {
     e.preventDefault();
     if (e.type === 'drop') {
       if (e.dataTransfer != null) {
-        this.setState({files: e.dataTransfer.files});
+        this.setState({ files: e.dataTransfer.files });
       }
     }
   }
@@ -68,10 +69,10 @@ export class LogDrop extends React.PureComponent<Props, State> {
     };
 
     reader.onerror = function(err: Error) {
-      self.setState({error: String(err)});
+      self.setState({ error: String(err) });
     };
     reader.readAsText(f);
-    this.setState({processing: true});
+    this.setState({ processing: true });
   }
 
   render() {
@@ -102,7 +103,7 @@ export class LogDrop extends React.PureComponent<Props, State> {
               Process {this.state.files[0].name} as
               <select ref={this.selectCallback}>
                 {
-                  actions.logTypes().map((v) => (
+                  logTypes().map((v) => (
                     <option key={v} value={v}>{v}</option>
                   ))
                 }

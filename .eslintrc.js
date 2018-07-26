@@ -45,10 +45,14 @@ module.exports = {
         'react/jsx-key': 0,
         'react/jsx-no-bind': 0,
         'no-sync': 0
+      },
+      'globals': {
+        'e2e': true,
+        '__dirname': true
       }
     },
     {
-      'files': ['server/**/*.js', 'generate-tasks.js', '.eslintrc.js'],
+      'files': ['server/**/*.js', 'generate-tasks.js', 'e2e.js', 'reporter.js', '.eslintrc.js'],
       'env': {
         'node': true,
         'parserOptions': {
@@ -57,6 +61,9 @@ module.exports = {
       },
       'rules': {
         'no-sync': 0
+      },
+      'globals': {
+        '__dirname': true
       }
     }
   ],
@@ -68,6 +75,11 @@ module.exports = {
     'object-curly-spacing': ['error', 'always'],
     'space-in-parens': ['error', 'never'],
     'no-param-reassign': 2,
+    'space-before-function-paren': ['error', {
+      'anonymous': 'never',
+      'named': 'never',
+      'asyncArrow': 'always'
+    }],
 
     'dependencies/case-sensitive': 2,
     'dependencies/no-unresolved': 2,
@@ -84,7 +96,6 @@ module.exports = {
     // 'flowtype/require-return-type': 2,
     // 'flowtype/require-parameter-type': [2, {'excludeArrowFunctions': 'expressionsOnly'}],
     // 'flowtype/require-return-type': [2, {'excludeArrowFunctions': 'expressionsOnly'}],
-    // Maybe one day this can be always
     'flowtype/require-valid-file-annotation': [2, 'never', { 'annotationStyle': 'line' }],
 
     // Enable a more strict set of react lints
@@ -109,7 +120,6 @@ module.exports = {
     // 'react/sort-prop-types': 0,
     // 'react/sort-comp': 0,
 
-    // Appropriate only if we migrate to redux/use a proper flux model
     'react/no-set-state': 0,
 
     // might hurt development performance
@@ -132,9 +142,12 @@ module.exports = {
     'react/jsx-curly-brace-presence': 0,
     // non-obvious terseness
     'react/jsx-boolean-value': 0,
-    // Facebook discourages use of the .jsx extension, for better or for worse
+    // Facebook discourages the use of .jsx. While questionable, as long
+    // as we're using create-react-app/react-scripts, sticking to this might be
+    // a good call
     'react/jsx-filename-extension': [2, { 'extensions': ['.js'] }],
-    // Prevents us from setting classes on buttons
+    // Prevents us from setting classes on buttons. TODO actually do CSS
+    // properly
     'react/forbid-component-props': 0
   },
   'settings': {

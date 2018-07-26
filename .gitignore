@@ -20,3 +20,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .node_cache
+
+logs/
+e2e_srv.log

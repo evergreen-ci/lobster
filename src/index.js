@@ -12,7 +12,7 @@ import './index.css';
 import 'babel-polyfill';
 import 'url-search-params-polyfill';
 import 'whatwg-fetch';
-// TODO: Firefox support
+// TODO: maybe Firefox support?
 // import '../node_modules/idb.filesystem.js/dist/idb.filesystem.min.js';
 
 const saga = createSagaMiddleware();

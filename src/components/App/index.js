@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react';
-import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import { Switch, Route, BrowserRouter, Redirect, type ContextRouter } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
 import './style.css';
 import About from '../About';
 import NotFound from '../NotFound';
@@ -10,44 +11,52 @@ import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
 import { Nav, NavItem } from 'react-bootstrap';
 import CacheModal from './CacheModal';
 import LogDrop from '../LogDrop';
+import queryString from '../../thirdparty/query-string';
 
-const logdrop = (props) => (<LogDrop {...props} />);
+const logdrop = (props: ContextRouter) => {
+  const parsed = queryString.parse(props.location.search);
+  if ('url' in parsed && 'server' in parsed) {
+    return (<Redirect to={`/lobster/logdrop?${queryString.stringify(parsed)}`} />);
+  }
+  return (<LogDrop {...props} />);
+};
 const logviewer = (props) => (<Fetch {...props} />);
 const evergreenLogviewer = (props) => (<EvergreenLogViewer {...props} />);
+const about = (props) => (<About {...props} />);
+const notfound = (props) => (<NotFound {...props} />);
 
 const Main = () => (
-  <main>
+  <main className="lobster">
     <Switch>
-      <Route exact path="/lobster/about" component={About} />
+      <Route exact path="/lobster/about" render={about} />
       <Route path="/lobster/build/:build/test/:test" render={logviewer} />
       <Route path="/lobster/build/:build/all" render={logviewer} />
       <Route exact path="/lobster/evergreen/task/:id/:execution/:type" render={evergreenLogviewer} />
       <Route exact path="/lobster/evergreen/test/:id" render={evergreenLogviewer} />
       <Route path="/lobster/logdrop" render={logviewer} />
       <Route path="/lobster" render={logdrop} />
-      <Route path="*" component={NotFound} />
+      <Route path="*" render={notfound} />
     </Switch>
   </main>
 );
 
 // The Header creates links that can be used to navigate
 // between routes.
+const never = () => false;
+
 const Header = () => (
   <header className="head">
     <Nav bsStyle="pills">
-      <NavItem eventKey={1} href="/lobster/about">About</NavItem>
-      <NavItem eventKey={2} href="/lobster">Viewer</NavItem>
+      <LinkContainer to="/lobster/about" isActive={never}>
+        <NavItem>About</NavItem>
+      </LinkContainer>
+      <LinkContainer to="/lobster" isActive={never}>
+        <NavItem>Viewer</NavItem>
+      </LinkContainer>
     </Nav>
   </header>
 );
 
-/*
-  <Grid>
-    <Row className="show-grid">
-        <Col md={12}><Header /></Col>
-    </Row>
-  </Grid>
- */
 const App = () => (
   <BrowserRouter>
     <div>

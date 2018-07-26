@@ -1,7 +1,7 @@
 // @flow strict
 
 import type { Action as LogviewerAction } from './logviewer';
-import type { Log } from '../models';
+import type { Log, LogType } from '../models';
 
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
@@ -26,15 +26,6 @@ export type LobsterLoadData = {|
     +server: string
   |}
 |}
-
-const logTypes_ = {
-  'resmoke': '',
-  'raw': ''
-};
-
-export const logTypes = (): string[] => Object.keys(logTypes_);
-
-export type LogType = $Keys<typeof logTypes_>
 
 export type ProcessResponse = {|
   +type: 'process-response',
@@ -163,22 +154,22 @@ export function stringToEvergreenTaskLogType(a: string): ?EvergreenTaskLogType {
   return a;
 }
 
-export type EvergreenTaskLog = {|
+export type EvergreenTaskLog = $Exact<$ReadOnly<{
   type: 'task',
   id: string,
   execution: number,
   log: EvergreenTaskLogType
-|};
+}>>
 
-export type EvergreenTestLog = {|
+export type EvergreenTestLog = $Exact<$ReadOnly<{
   type: 'test',
   id: string,
-|};
+}>>
 
-export type EvergreenLoadData = {|
+export type EvergreenLoadData = $Exact<$ReadOnly<{
   +type: 'evergreen:load-data',
   +payload: EvergreenTaskLog | EvergreenTestLog
-|}
+}>>
 
 export function evergreenLoadTaskLog(id: string, execution: number, log: EvergreenTaskLogType): EvergreenLoadData {
   return {
