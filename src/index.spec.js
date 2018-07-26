@@ -3,7 +3,7 @@ import { Lobster, makeDriver } from './e2eHelpers.spec';
 
 describe('e2e', function() {
   e2e('search', async (done) => {
-    const driver = await makeDriver(done, 'chrome');
+    const driver = await makeDriver(done);
     try {
       const l = new Lobster(driver);
       await l.init();
@@ -31,7 +31,7 @@ describe('e2e', function() {
   }, 60000);
 
   e2e('highlight', async (done) => {
-    const driver = await makeDriver(done, 'chrome');
+    const driver = await makeDriver(done);
     try {
       const l = new Lobster(driver);
       await l.init();
@@ -74,7 +74,7 @@ describe('e2e', function() {
   }, 60000);
 
   e2e('filter', async (done) => {
-    const driver = await makeDriver(done, 'chrome');
+    const driver = await makeDriver(done);
     try {
       const l = new Lobster(driver);
       await l.init();

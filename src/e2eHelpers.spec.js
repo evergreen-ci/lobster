@@ -116,48 +116,85 @@ export class Lobster {
   }
 }
 
-const capabilities = (browser) => {
-  let useBrowser = browser;
-  if (process.env.LOBSTER_E2E_BROWSER != null) {
-    useBrowser = process.env.LOBSTER_E2E_BROWSER;
-  }
-  // TODO support firefox
-  if (useBrowser !== 'chrome') {
-    throw new TypeError('expected browser to be chrome');
-  }
-  const chromeCapabilities = Capabilities.chrome();
-  const chromeOptions = { 'args': ['--disable-device-discovery-notifications'] };
+const chromeCapabilities= () => {
+  const capabilities = Capabilities.chrome();
+  const options = { 'args': ['--disable-device-discovery-notifications'] };
   if (process.env.CI === 'true') {
-    chromeOptions.args.push(...['--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter']);
+    options.args.push(...['--headless']);
   }
-  if (chromeOptions.args.length === 0) {
-    delete chromeOptions.args;
+  // Disable sandboxing, GPU, shared memory in VMs
+  if (process.env.IS_VM === 'true') {
+    options.args.push(...['--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter']);
   }
-  chromeCapabilities.set('chromeOptions', chromeOptions);
-
-  return chromeCapabilities;
+  capabilities.set('chromeOptions', options);
+  return capabilities;
 };
 
-export const makeDriver = async (done, browser) => {
+const firefoxCapabilities= () => {
+  const capabilities = Capabilities.firefox();
+  const options = { 'args': [] };
+  if (process.env.CI === 'true') {
+    options.args.push(...['--headless']);
+  }
+  if (options.args === []) {
+    delete options.args;
+  }
+  capabilities.set('moz:firefoxOptions', options);
+  return capabilities;
+};
+
+const capabilities = () => {
+  const useBrowser = process.env.LOBSTER_E2E_BROWSER || 'chrome';
+
+  if (useBrowser === 'chrome') {
+    return chromeCapabilities();
+  }else if (useBrowser === 'firefox') {
+    return firefoxCapabilities();
+  }
+
+  throw new TypeError(`expected browser to be 'chrome' or 'firefox', got ${useBrowser}`);
+};
+
+export const makeDriver = async (done) => {
   try {
-    return await new Builder().withCapabilities(capabilities(browser)).build();
+    return await new Builder().withCapabilities(capabilities()).build();
   } catch (err) {
     done.fail(err);
   }
 };
 
-test('capabilities', function() {
-  const oldProcess = process.env.CI;
-  process.env.CI = undefined;
-  expect(() => capabilities('firefox')).toThrow(TypeError);
-  let c = capabilities('chrome');
-  expect(c.getBrowserName()).toBe('chrome');
-  expect(c.get('chromeOptions')).toEqual({ 'args': ['--disable-device-discovery-notifications'] });
+describe('capabilities', function() {
+  test('chrome', function() {
+    const oldEnv = Object.assign({}, process.env);
+    delete process.env.CI;
+    delete process.env.LOBSTER_E2E_BROWSER;
+    delete process.env.IS_VM;
 
-  process.env.CI = 'true';
-  c = capabilities('chrome');
-  expect(c.getBrowserName()).toBe('chrome');
-  expect(c.get('chromeOptions')).toMatchObject({ 'args': ['--disable-device-discovery-notifications', '--disable-gpu', '--headless', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter'] });
+    let c = capabilities();
+    expect(c.getBrowserName()).toBe('chrome');
+    expect(c.get('chromeOptions')).toEqual({ 'args': ['--disable-device-discovery-notifications'] });
 
-  process.env.CI = oldProcess;
+    process.env.CI = 'true';
+    process.env.IS_VM = 'true';
+    c = capabilities();
+    expect(c.getBrowserName()).toBe('chrome');
+    expect(c.get('chromeOptions')).toMatchObject({ 'args': ['--disable-device-discovery-notifications', '--headless', '--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter'] });
+
+    process.env = oldEnv;
+  });
+
+  test('firefox', function() {
+    const oldEnv = Object.assign({}, process.env);
+    delete process.env.CI;
+    delete process.env.LOBSTER_E2E_BROWSER;
+    delete process.env.IS_VM;
+
+    process.env.CI = 'true';
+    process.env.LOBSTER_E2E_BROWSER = 'firefox';
+    const c = capabilities();
+    expect(c.getBrowserName()).toBe('firefox');
+    expect(c.get('moz:firefoxOptions')).toMatchObject({ 'args': ['--headless'] });
+
+    process.env = oldEnv;
+  });
 });
