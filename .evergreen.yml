@@ -95,7 +95,7 @@ functions:
         which chrome
         mkdir driver
         cd driver
-        curl -L -o chromedriver.zip ${CHROMEDRIVER_URL} --retry 3
+        curl --silent --show-error --fail --location -o chromedriver.zip ${CHROMEDRIVER_URL} --retry 3
         unzip chromedriver.zip
         rm chromedriver.zip
 
@@ -109,7 +109,7 @@ functions:
         which firefox
         mkdir driver
         cd driver
-        curl -L -o geckodriver.tar.gz ${GECKODRIVER_URL} --retry 3
+        curl -L --silent --show-error --fail --location -o geckodriver.tar.gz ${GECKODRIVER_URL} --retry 3
         tar xf geckodriver.tar.gz
         rm geckodriver.tar.gz
 
