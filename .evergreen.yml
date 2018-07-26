@@ -82,6 +82,30 @@ functions:
       silent: true
       script: rm build/*-junit.xml
 
+  chromedriver:
+    command: shell.exec
+    params:
+      shell: bash
+      script: |
+        set -ex
+        mkdir driver
+        cd driver
+        curl -o chromedriver.zip https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip --retry 3
+        unzip chromedriver.zip
+        rm chromedriver.zip
+
+  geckodriver:
+    command: shell.exec
+    params:
+      shell: bash
+      script: |
+        set -ex
+        mkdir driver
+        cd driver
+        curl -L -o geckodriver.tar.gz https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz --retry 3
+        tar xf geckodriver.tar.gz
+        rm geckodriver.tar.gz
+
 
 post:
   - command: shell.exec
@@ -131,36 +155,43 @@ tasks:
           files:
             - lobster/build/.tasks.json
 
-  - name: e2e
+  - name: e2e-chrome
     commands:
       - func: preamble
-      - command: shell.exec
-        params:
-          shell: bash
-          script: |
-            mkdir chromedriver
-            cd chromedriver
-            curl -o chromedriver.zip https://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
-            unzip chromedriver.zip
-            rm chromedriver.zip
-            cd ../lobster
-            export PATH="/opt/google/chrome:$PWD:$PATH"
-            export PATH="${workdir}/nodejs/bin:$PATH"
-            export CI=true
-            export NPM_CONFIG_CACHE="./.node_cache"
-
+      - func: chromedriver
       - command: shell.exec
         params:
           working_dir: lobster
           shell: bash
           script: |
-            pushd ../chromedriver
-            export PATH="/opt/google/chrome:$PWD:$PATH"
+            set -ex
+            pushd ../driver
+            export PATH="/opt/google/chrome:$PWD:${workdir}/nodejs/bin:$PATH"
             popd
             export PATH="${workdir}/nodejs/bin:$PATH"
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
-            node ./.e2e.js
+            export LOBSTER_E2E_BROWSER="chrome"
+            npm run test:e2e
+            mv e2e_srv.log ./.node_cache/_logs || true
+
+  - name: e2e-firefox
+    commands:
+      - func: preamble
+      - func: geckodriver
+      - command: shell.exec
+        params:
+          working_dir: lobster
+          shell: bash
+          script: |
+            set -ex
+            pushd ../driver
+            export PATH="$PWD:${workdir}/nodejs/bin:$PATH"
+            popd
+            export CI=true
+            export NPM_CONFIG_CACHE="./.node_cache"
+            export LOBSTER_E2E_BROWSER="firefox"
+            npm run test:e2e
             mv e2e_srv.log ./.node_cache/_logs || true
 
 
@@ -177,11 +208,12 @@ buildvariants:
       - name: "generate-tests"
       - name: "flow"
 
-  - name: rhel70
-    display_name: RHEL 7.0
+  - name: ubuntu1804
+    display_name: Ubuntu 18.04
     expansions:
       <<: *node
     run_on:
-      - rhel70
+      - ubuntu1804-test
     tasks:
-      - name: "e2e"
+      - name: "e2e-chrome"
+      - name: "e2e-firefox"

@@ -117,8 +117,12 @@ export class Lobster {
 }
 
 const capabilities = (browser) => {
+  let useBrowser = browser;
+  if (process.env.LOBSTER_E2E_BROWSER != null) {
+    useBrowser = process.env.LOBSTER_E2E_BROWSER;
+  }
   // TODO support firefox
-  if (browser !== 'chrome') {
+  if (useBrowser !== 'chrome') {
     throw new TypeError('expected browser to be chrome');
   }
   const chromeCapabilities = Capabilities.chrome();
