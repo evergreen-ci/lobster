@@ -11,11 +11,9 @@ app.makeListener(undefined, 0, e2eLogPath, undefined, (listener) => {
     process.exit(130);
   });
 
-  const ci = process.env.CI === 'true' ? ':ci' : 'ci';
-  const e2e = child.spawn('npm', ['run', `test${ci}`, '--', '-t', 'e2e.*'], {
+  const e2e = child.spawn('npm', ['run', 'test', '--', '-t', 'e2e.*'], {
     'env': {
       ...process.env,
-      CI: 'true',
       LOBSTER_E2E_SERVER_PORT: listener.address().port
     },
     stdio: 'inherit'
