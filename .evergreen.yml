@@ -86,10 +86,13 @@ functions:
 
   chromedriver:
     command: shell.exec
+    type: setup
     params:
       shell: bash
       script: |
         set -ex
+        export PATH="/opt/google/chrome:$PWD:${workdir}/nodejs/bin:$PATH"
+        which chrome
         mkdir driver
         cd driver
         curl -L -o chromedriver.zip ${CHROMEDRIVER_URL} --retry 3
@@ -98,10 +101,12 @@ functions:
 
   geckodriver:
     command: shell.exec
+    type: setup
     params:
       shell: bash
       script: |
         set -ex
+        which firefox
         mkdir driver
         cd driver
         curl -L -o geckodriver.tar.gz ${GECKODRIVER_URL} --retry 3
