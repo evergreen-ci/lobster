@@ -9,12 +9,6 @@ export type Line = $Exact<$ReadOnly<{
 
 export type ColorMap = $ReadOnly<{ [string]: string }>
 
-export type Log = {|
-  +lines: Line[],
-  +colorMap: ColorMap,
-  +isDone: boolean
-|}
-
 export type MongoLine = {|
   +ts: Date,
   +rawTs: string,
