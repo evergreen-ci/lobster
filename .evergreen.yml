@@ -180,9 +180,8 @@ tasks:
             popd
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
-            export LOBSTER_E2E_BROWSER="chrome"
-            export IS_VM =true
-            npm run test:e2e
+            export IS_VM=true
+            npm run test:e2e chrome
             mv e2e_srv.log ./.node_cache/_logs || true
 
   - name: e2e-firefox
@@ -203,9 +202,8 @@ tasks:
             popd
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
-            export LOBSTER_E2E_BROWSER="firefox"
             export IS_VM=true
-            npm run test:e2e
+            npm run test:e2e firefox
             mv e2e_srv.log ./.node_cache/_logs || true
 
 
