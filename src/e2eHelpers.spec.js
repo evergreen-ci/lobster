@@ -17,6 +17,9 @@ const lobsterURL = (file = 'simple.log') => {
   return `http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}/lobster?server=localhost:${process.env.LOBSTER_E2E_SERVER_PORT}%2Fapi%2Flog&url=${file}`;
 };
 
+const browserHasFilesystemAPI = (driver) => {
+}
+
 export class Lobster {
   constructor(driver) {
     this._driver = driver;
@@ -27,13 +30,22 @@ export class Lobster {
     await this._driver.get(lobsterURL());
     await this._driver.wait(until.elementLocated(By.id('root')));
 
-    // Click the never button the cache
-    const never = await this._driver.wait(until.elementLocated(By.xpath(cacheNever)));
-    try {
-      await never.click();
-    } catch (err) {
-      console.log(err);
+    const browserHasFilesystemAPI = await this.browserHasFilesystemAPI();
+    if (browserHasFilesystemAPI) {
+      // Click the never button the cache
+      const never = await this._driver.wait(until.elementLocated(By.xpath(cacheNever)));
+      try {
+        await never.click();
+      } catch (err) {
+        console.log(err);
+      }
     }
+  }
+
+  async browserHasFilesystemAPI() {
+    const res = await this._driver.executeScript(
+    'return window.requestFileSystem != null');
+    return res === true;
   }
 
   async search(text) {
