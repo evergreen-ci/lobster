@@ -2,7 +2,7 @@ const app = require('./server/app');
 const child = require('child_process');
 const path = require('path');
 
-const e2eLogPath = path.resolve('.') + '/e2e';
+const e2eLogPath = path.join(path.resolve('.'), '/e2e');
 
 app.makeListener(undefined, 0, e2eLogPath, undefined, (listener) => {
   console.log(`Spawning e2e process with lobster server on port: ${listener.address().port}`);

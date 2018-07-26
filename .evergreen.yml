@@ -172,6 +172,7 @@ tasks:
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
             export LOBSTER_E2E_BROWSER="chrome"
+            npm run build
             npm run test:e2e
             mv e2e_srv.log ./.node_cache/_logs || true
 
@@ -191,6 +192,7 @@ tasks:
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
             export LOBSTER_E2E_BROWSER="firefox"
+            npm run build
             npm run test:e2e
             mv e2e_srv.log ./.node_cache/_logs || true
 
