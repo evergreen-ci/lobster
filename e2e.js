@@ -4,10 +4,6 @@ const path = require('path');
 
 const e2eLogPath = path.join(path.resolve('.'), '/e2e');
 
-if (process.argv.length === 3) {
-  process.env.LOBSTER_E2E_BROWSER = process.argv[2];
-}
-
 app.makeListener(undefined, 0, e2eLogPath, undefined, (listener) => {
   console.log(`Spawning e2e process with lobster server on port: ${listener.address().port}`);
   process.on('SIGINT', () => {
@@ -18,7 +14,8 @@ app.makeListener(undefined, 0, e2eLogPath, undefined, (listener) => {
   const e2e = child.spawn('npm', ['run', 'test', '--', '-t', 'e2e.*'], {
     'env': {
       ...process.env,
-      LOBSTER_E2E_SERVER_PORT: listener.address().port
+      LOBSTER_E2E_SERVER_PORT: listener.address().port,
+      LOBSTER_E2E_BROWSER: process.argv[2] || 'chrome'
     },
     stdio: 'inherit'
   });
