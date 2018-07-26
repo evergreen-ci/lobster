@@ -82,6 +82,18 @@ functions:
       silent: true
       script: rm build/*-junit.xml
 
+  chromedriver:
+    command: shell.exec
+    params:
+      shell: bash
+      script: |
+        set -ex
+        mkdir chromedriver
+        cd chromedriver
+        curl -o chromedriver.zip https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip --retry 3
+        unzip chromedriver.zip
+        rm chromedriver.zip
+
 
 post:
   - command: shell.exec
@@ -134,17 +146,7 @@ tasks:
   - name: e2e
     commands:
       - func: preamble
-      - command: shell.exec
-        params:
-          shell: bash
-          script: |
-            set -ex
-            mkdir chromedriver
-            cd chromedriver
-            curl -o chromedriver.zip https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip
-            unzip chromedriver.zip
-            rm chromedriver.zip
-
+      - func: chromedriver
       - command: shell.exec
         params:
           working_dir: lobster
@@ -174,11 +176,11 @@ buildvariants:
       - name: "generate-tests"
       - name: "flow"
 
-  - name: rhel70
-    display_name: RHEL 7.0
+  - name: ubuntu1804
+    display_name: Ubuntu 18.04
     expansions:
       <<: *node
     run_on:
-      - rhel70
+      - ubuntu1804-test
     tasks:
       - name: "e2e"
