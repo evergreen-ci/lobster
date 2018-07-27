@@ -19,7 +19,8 @@ export default function(delimiter: string) {
         };
       }),
       colorMap: {},
-      isDone: true
+      isDone: true,
+      events: []
     };
   };
 }

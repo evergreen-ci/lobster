@@ -1,9 +1,12 @@
 // @flow strict
 
-import type { Log, Event, FixtureLogList, MongoLine, LogEvent } from '../../models';
+import type { Log, Event, FixtureLogList, MongoLine, LogEvent,
+  ShellLogLine, ShellLogList, Prefix, Processed, ElectionUpdate } from '../../models';
 
 const RESMOKE_LOGGING_PREFIX = /\[.*?\]/;
+// $FlowFixMe
 const SHELL_LINE_REGEX = new RegExp(String.raw`([a-z]+)([0-9]+)\|\s(.*)`);
+// $FlowFixMe
 const TIME_RE = new RegExp(String.raw`(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})`);
 const MONGO_TS_PREFIX_LENGTH = ('2017-01-23T19:51:55.058').length;
 const DEFAULT_THREAD_ID = '[NO_THREAD]';
@@ -17,12 +20,16 @@ const WARNING = 'Warning';
 const LOG = 'Log';
 const STATE = 'State';
 const ELECTION_SUCCESS = 'ElectionSuccess';
+// $FlowFixMe
 const JS_STACK_REGEX = new RegExp(String.raw`(\S*)@(\S+\.js)(.*)`);
 
-function dateToString(date: Date): string {
-  let newDate = date.toISOString();
-  newDate = newDate.substring(0, newDate.length - 1) + '000';
-  return newDate;
+function dateToString(date: ?Date): string {
+  if (date) {
+    let newDate = date.toISOString();
+    newDate = newDate.substring(0, newDate.length - 1) + '000';
+    return newDate;
+  }
+  return '';
 }
 
 function formatLine(line: string): string {
@@ -32,35 +39,35 @@ function formatLine(line: string): string {
 function logEventToString(logEvent: LogEvent): string {
   let message = '';
   const type = logEvent.type;
-  const logComponent = logEvent.logLine.logComponent;
-  const thread = logEvent.logLine.thread;
-  const severity = logEvent.logLine.severity;
+  const logComponent = logEvent.logLine ? logEvent.logLine.logComponent : '';
+  const thread = logEvent.logLine ? (logEvent.logLine.thread ? logEvent.logLine.thread : '') : '';
+  const severity = logEvent.logLine ? logEvent.logLine.severity : '';
   let ts = dateToString(logEvent.ts);
   ts = ts.slice(0, ts.length - 3) + '+0' + ts.slice(ts.length - 3);
   if (type === 'TransitionEvent') {
-    const state = logEvent.state;
-    const initialState = logEvent.initialState;
+    const state = logEvent.state ? logEvent.state : '';
+    const initialState = logEvent.initialState ? logEvent.initialState : '';
     message = `${ts} ${severity} ${logComponent} [${thread}] transition to ${state} from ${initialState}`;
   } else if (type === 'HeartBeatScheduledEvent') {
-    const node = logEvent.node;
-    const time = logEvent.time;
+    const node = logEvent.node ? logEvent.node : '';
+    const time = logEvent.time ? logEvent.time : '';
     message = `${ts} Heartbeat to ${node} scheduled at ${time}`;
   } else if (type === 'HeartbeatSentEvent') {
-    const requestId = logEvent.requestId;
-    const node = logEvent.node;
+    const requestId = logEvent.requestId ? logEvent.requestId : '';
+    const node = logEvent.node ? logEvent.node : '';
     message = `${ts} Heartbeat sent (requestId: ${requestId}) to ${node}`;
   } else if (type === 'HeartbeatReceivedEvent') {
-    const requestId = logEvent.requestId;
-    const node = logEvent.node;
+    const requestId = logEvent.requestId ? logEvent.requestId : '';
+    const node = logEvent.node ? logEvent.node : '';
     message = `${ts} Heartbeat response received (requestId: ${requestId}) from ${node}`;
   } else if (type === 'FixtureFatalEvent') {
-    const fatalMessage = logEvent.logLine.messages.join('\n');
+    const fatalMessage = logEvent.logLine ? logEvent.logLine.messages.join('\n') : '';
     message = formatLine(`${ts} F ${logComponent} [${thread}] ${fatalMessage}`);
   } else if (type === 'FixtureWarningEvent') {
-    const warningMessage = logEvent.logLine.messages.join('\n');
+    const warningMessage = logEvent.logLine ? logEvent.logLine.messages.join('\n') : '';
     message = formatLine(`${ts} W ${logComponent} [${thread}] ${warningMessage}`);
   } else if (type === 'FixtureErrorEvent') {
-    const errorMessage = logEvent.logLine.messages.join('\n');
+    const errorMessage = logEvent.logLine ? logEvent.logLine.messages.join('\n') : '';
     message = formatLine(`${ts} E ${logComponent} [${thread}] ${errorMessage}`);
   } else {
     message = `${ts} ${type}`;
@@ -78,7 +85,7 @@ function split(inputLine: string, separator: string, limit: number): string[] {
 }
 
 // Note: title in original code is set as 'FixtureLogEvent' for every event type
-function initiateLogEvent(type: string, ts: Date, logLine: MongoLine): LogEvent {
+function initiateLogEvent(type: string, ts: ?Date, logLine: MongoLine): LogEvent {
   return ({
     type: type,
     title: 'FixtureLogEvent',
@@ -92,8 +99,11 @@ function initiateLogEvent(type: string, ts: Date, logLine: MongoLine): LogEvent 
 // // Lifecycle event matcher functions
 eventMatcherList.serverStartEvent = (logLine: MongoLine): ?LogEvent => {
   const matchRegEx = [
+    // $FlowFixMe
     new RegExp(String.raw`MongoDB starting : pid=(\d+) port=(\d+)`),
+    // $FlowFixMe
     new RegExp(String.raw`bridge waiting for connections on port (\d+)`),
+    // $FlowFixMe
     new RegExp(String.raw`mongos version `)
   ];
   const ssEvent = initiateLogEvent('ServerStartEvent', logLine.ts, logLine);
@@ -119,7 +129,9 @@ eventMatcherList.serverStartEvent = (logLine: MongoLine): ?LogEvent => {
 
 eventMatcherList.serverShutdownStartEvent = (logLine: MongoLine): ?LogEvent => {
   const matchRegEx = [
+    // $FlowFixMe
     new RegExp(String.raw`got signal (\d+) \((\w+)\)`),
+    // $FlowFixMe
     new RegExp(String.raw`dbexit:  rc: \d+`)
   ];
   let match = matchRegEx[0].exec(logLine.messages[0]);
@@ -141,6 +153,7 @@ eventMatcherList.serverShutdownCompleteEvent = eventMatcherList.serverShutdownSt
 
 // Replica set event matcher functions
 eventMatcherList.replicasetReconfigEvent = (logLine: MongoLine): ?LogEvent => {
+  // $FlowFixMe
   const matchRegEx = new RegExp(String.raw`New replica set config in use: (.*)$`);
   const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
@@ -152,6 +165,7 @@ eventMatcherList.replicasetReconfigEvent = (logLine: MongoLine): ?LogEvent => {
 };
 
 eventMatcherList.transitionEvent = (logLine: MongoLine): ?LogEvent => {
+  // $FlowFixMe
   const matchRegEx = new RegExp(String.raw`transition to (\w*) from (\w*)`);
   /*
   if (logLine.logComponent === 'REPL') {
@@ -169,6 +183,7 @@ eventMatcherList.transitionEvent = (logLine: MongoLine): ?LogEvent => {
 };
 
 eventMatcherList.stepDownEvent = (logLine: MongoLine): ?LogEvent => {
+  // $FlowFixMe
   const matchRegEx = new RegExp(String.raw`Stepping down from primary`);
   const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
@@ -180,7 +195,9 @@ eventMatcherList.stepDownEvent = (logLine: MongoLine): ?LogEvent => {
 
 eventMatcherList.electionDryRunEvent = (logLine: MongoLine): ?LogEvent => {
   const matchRegEx = [
+    // $FlowFixMe
     new RegExp(String.raw`conducting a dry run election`),
+    // $FlowFixMe
     new RegExp(String.raw`not running for primary`)
   ];
   let match = matchRegEx[0].exec(logLine.messages[0]);
@@ -199,6 +216,7 @@ eventMatcherList.electionDryRunEvent = (logLine: MongoLine): ?LogEvent => {
 eventMatcherList.electionDryRunFailEvent = eventMatcherList.electionDryRunEvent;
 
 eventMatcherList.electionStartEvent = (logLine: MongoLine): ?LogEvent => {
+  // $FlowFixMe
   const matchRegEx = [new RegExp(String.raw`dry election run succeeded, running for election`), new RegExp(String.raw`running for election; slept last election`)];
   if (!logLine.messages) {
     return null;
@@ -213,6 +231,7 @@ eventMatcherList.electionStartEvent = (logLine: MongoLine): ?LogEvent => {
 };
 
 eventMatcherList.electionVoteEvent = (logLine: MongoLine): ?LogEvent => {
+  // $FlowFixMe
   const matchRegEx = [new RegExp(String.raw`VoteRequester`), new RegExp(String.raw`couldn't elect self`)];
   let match = matchRegEx[0].exec(logLine.messages[0]);
   const eEvent = initiateLogEvent('ElectionVoteEvent', logLine.ts, logLine);
@@ -230,6 +249,7 @@ eventMatcherList.electionVoteEvent = (logLine: MongoLine): ?LogEvent => {
 eventMatcherList.electionFailEvent = eventMatcherList.electionVoteEvent;
 
 eventMatcherList.electionSuccessEvent = (logLine: MongoLine): ?LogEvent => {
+  // $FlowFixMe
   const matchRegEx = new RegExp(String.raw`election succeeded`);
   const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
@@ -242,6 +262,7 @@ eventMatcherList.electionSuccessEvent = (logLine: MongoLine): ?LogEvent => {
 };
 
 eventMatcherList.initialSyncStartEvent = (logLine: MongoLine): ?LogEvent => {
+  // $FlowFixMe
   const matchRegEx = [new RegExp(String.raw`initial sync pending`), new RegExp(String.raw`initial sync done`)];
   let match = matchRegEx[0].exec(logLine.messages[0]);
   const isEvent = initiateLogEvent('InitialSyncStartEvent', logLine.ts, logLine);
@@ -259,6 +280,7 @@ eventMatcherList.initialSyncStartEvent = (logLine: MongoLine): ?LogEvent => {
 eventMatcherList.initialSyncSuccessEvent = eventMatcherList.initialSyncStartEvent;
 
 eventMatcherList.heartbeatScheduledEvent = (logLine: MongoLine): ?LogEvent => {
+  // $FlowFixMe
   const matchRegEx = new RegExp(String.raw`Scheduling heartbeat to ([\w:-]+) at (.*)$`);
   const match = matchRegEx.exec(logLine.messages[0]);
   if (match) {
@@ -272,7 +294,9 @@ eventMatcherList.heartbeatScheduledEvent = (logLine: MongoLine): ?LogEvent => {
 
 eventMatcherList.heartbeatSentEvent = (logLine: MongoLine): ?LogEvent => {
   const matchRegEx = [
+    // $FlowFixMe
     new RegExp(String.raw`Sending heartbeat \(requestId: (\d+)\) to ([\w:-]+)`),
+    // $FlowFixMe
     new RegExp(String.raw`Received response to heartbeat \(requestId: (\d+)\) from ([\w:-]+)`)
   ];
   let match = matchRegEx[0].exec(logLine.messages[0]);
@@ -317,7 +341,7 @@ eventMatcherList.fixtureErrorEvent = (logLine: MongoLine): ?LogEvent => {
 };
 
 // Create an event for given logline if it corresponds to one
-function getLogEvent(logLine: MongoLine): Event {
+function getLogEvent(logLine: MongoLine): ?LogEvent {
   const events = Object.keys(eventMatcherList);
   for (let i = 0; i < events.length; i++) {
     const currEvent = eventMatcherList[events[i]](logLine);
@@ -328,7 +352,7 @@ function getLogEvent(logLine: MongoLine): Event {
   return null;
 }
 
-function parseMongoTs(line: string): Date {
+function parseMongoTs(line: string): ?Date {
   const match = TIME_RE.exec(line.substring(0, MONGO_TS_PREFIX_LENGTH));
   if (!match) {
     return null;
@@ -343,7 +367,6 @@ function initiateFixtureLogList(): FixtureLogList {
     isConfigsvr: false,
     isMongos: false,
     isShard: false,
-    isBridge: false,
     isMongoProcess: false,
     curThread: '',
     curLogLine: null, // type is MongoLine
@@ -356,26 +379,28 @@ function initiateFixtureLogList(): FixtureLogList {
   });
 }
 
-function updateTimeRange(fll: FixtureLogList, ts: Date): FixtureLogList {
+function updateTimeRange(fll: FixtureLogList, ts: Date): {[key: string]: ?Date} {
   let logStart = fll.logStart;
   let logEnd = fll.logEnd;
-  if (fll.logStart === null || ts < fll.logStart) {
+  if (logStart == null || ts < logStart) {
     logStart = ts;
   }
-  if (fll.logEnd === null || ts > fll.logEnd) {
+  if (logEnd == null || ts > logEnd) {
     logEnd = ts;
   }
   return ({ logStart: logStart, logEnd: logEnd });
 }
 
-function updateElectionContext(evt: LogEvent, fll: FixtureLogList): FixtureLogList {
+function updateElectionContext(evt: LogEvent, fll: FixtureLogList): ElectionUpdate {
   let currentElectionStartEvent = fll.currentElectionStartEvent;
   let currentElectionVoteEvents = fll.currentElectionVoteEvents;
   if (evt.type === 'ElectionStartEvent') {
     currentElectionStartEvent = evt;
     currentElectionVoteEvents = [];
   } else if (evt.type === 'ElectionVoteEvent') {
-    currentElectionVoteEvents.push(evt);
+    if (currentElectionVoteEvents) {
+      currentElectionVoteEvents.push(evt);
+    }
   } else if (evt.type === 'ElectionFailEvent') {
     currentElectionStartEvent = null;
     currentElectionVoteEvents = null;
@@ -427,8 +452,10 @@ function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList
       fll.curThread = DEFAULT_THREAD_ID;
     }
     const curLogLine = fll.curLogLine;
-    curLogLine.messages.push(line);
-    fll.curLogLine = curLogLine;
+    if (curLogLine) {
+      curLogLine.messages.push(line);
+      fll.curLogLine = curLogLine;
+    }
   } else {
     const updatedTime = updateTimeRange(fll, ts);
     fll.logStart = updatedTime.logStart;
@@ -442,20 +469,26 @@ function appendFixtureLogList(fll: FixtureLogList, line: string): FixtureLogList
       fll.currentElectionVoteEvents = updated.currentElectionVoteEvents;
       fll.events = replaceLastEvent(fll.events, updated.evt);
     }
-    fll.curThread = fll.curLogLine.thread;
+    if (fll.curLogLine) {
+      fll.curThread = fll.curLogLine.thread;
+    }
 
     // Add new curLogLine to loglines list corresponding to thread
     if (!Object.keys(fll.logLines).includes(fll.curThread)) {
       fll.logLines[fll.curThread] = []; // initiate new MongoLine[]
     }
-    const mongoLinesList = fll.logLines[fll.curThread];
-    mongoLinesList.push(fll.curLogLine);
-    fll.logLines[fll.curThread] = mongoLinesList;
+    if (fll.curThread !== null) {
+      const mongoLinesList = fll.logLines[fll.curThread];
+      if (fll.curLogLine) {
+        mongoLinesList.push(fll.curLogLine);
+        fll.logLines[fll.curThread] = mongoLinesList;
+      }
+    }
   }
   return fll;
 }
 
-function loggingPrefix(rawPrefix: string): string {
+function loggingPrefix(rawPrefix: string): Prefix {
   const shellPrefixes = ['js_test', 'BackgroundInitialSync', 'CheckReplDBHash', 'CheckReplOplogs', 'CleanEveryN', 'IntermediateInitialSync', 'PeriodicKillSecondaries', 'ValidateCollections'];
   const prefixes = split(rawPrefix.substring(1, rawPrefix.length - 1), ':', 2);
   const isShell = shellPrefixes.includes(prefixes[0]);
@@ -495,7 +528,7 @@ function presplitLine(line: string) {
   });
 }
 
-function makeEvent(type: string, start: Date, end: Date, fixtureId: string): Event {
+function makeEvent(type: string, start: ?Date, end: ?Date, fixtureId: string): Event {
   return ({
     type: type,
     start: dateToString(start),
@@ -504,7 +537,7 @@ function makeEvent(type: string, start: Date, end: Date, fixtureId: string): Eve
   });
 }
 
-function makeEventWithLine(type: string, start: Date, end: Date, fixtureId: string, line: LogEvent): Event {
+function makeEventWithLine(type: string, start: ?Date, end: ?Date, fixtureId: string, line: LogEvent): Event {
   return ({
     type: type,
     start: dateToString(start),
@@ -514,7 +547,7 @@ function makeEventWithLine(type: string, start: Date, end: Date, fixtureId: stri
   });
 }
 
-function getStateEvent(tmpEvents: {string: Event}, end: Date): Event {
+function getStateEvent(tmpEvents: {[key: string]: Event}, end: ?Date): Event {
   const startEvent = tmpEvents[STATE];
   startEvent.end = dateToString(end);
   return startEvent;
@@ -524,7 +557,7 @@ function returnShellLogLine(line: string): ShellLogLine {
   const ts = parseMongoTs(line);
   if (ts) {
     const components = split(line, ' ', 4);
-    return ({ severity: components[1], component: components[2], thread: components[3], message: components[4] });
+    return ({ ts: ts, severity: components[1], component: components[2], thread: components[3], message: components[4] });
   }
   return ({ ts: null, severity: null, component: null, thread: null, message: line });
 }
@@ -593,7 +626,7 @@ function appendShellLogList(line: string, sll: ShellLogList) {
   return sll;
 }
 
-function handleShellOutput(body: string, sll: ShellLogList[], fll: {string: FixtureLogList}) {
+function handleShellOutput(body: string, sll: ShellLogList, fll: {[key: string]: FixtureLogList}) {
   const shellPrefix = SHELL_LINE_REGEX.exec(body);
   const newFll = fll;
   if (shellPrefix !== null && ['b', 'c', 'd', 's'].includes(shellPrefix[1])) {
@@ -617,7 +650,7 @@ function handleShellOutput(body: string, sll: ShellLogList[], fll: {string: Fixt
   });
 }
 
-function parseTestLog(processed: Iterable<string>): {string: FixtureLogList} {
+function parseTestLog(processed: Processed[]): {[key: string]: FixtureLogList} {
   let fixtureLogLists = {};
   let sll = initiateShellLogList();
   for (let i = 0; i < processed.length; i++) {
@@ -652,11 +685,11 @@ function parseTestLog(processed: Iterable<string>): {string: FixtureLogList} {
         fixtureLogList.isResmoke = true;
       }
     }
-    return fixtureLogLists;
   }
+  return fixtureLogLists;
 }
 
-function readTests(processed: Iterable<string>): Event[] {
+function readTests(processed: Processed[]): Event[] {
   const events = []; // Event[] type
   let tmpEvents = {};
   console.log('Processing test logs');

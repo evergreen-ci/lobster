@@ -8,7 +8,8 @@ import * as LogProcessor from './LogProcessor';
 const initialState: Log = {
   lines: [],
   colorMap: new Map(),
-  isDone: false
+  isDone: false,
+  events: []
 };
 
 type ProcessorFunc = (string) => Log
