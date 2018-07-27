@@ -17,9 +17,6 @@ const lobsterURL = (file = 'simple.log') => {
   return `http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}/lobster?server=localhost:${process.env.LOBSTER_E2E_SERVER_PORT}%2Fapi%2Flog&url=${file}`;
 };
 
-const browserHasFilesystemAPI = (driver) => {
-}
-
 export class Lobster {
   constructor(driver) {
     this._driver = driver;
@@ -44,7 +41,7 @@ export class Lobster {
 
   async browserHasFilesystemAPI() {
     const res = await this._driver.executeScript(
-    'return window.requestFileSystem != null');
+      'return window.requestFileSystem != null');
     return res === true;
   }
 
@@ -128,7 +125,7 @@ export class Lobster {
   }
 }
 
-const chromeCapabilities= () => {
+const chromeCapabilities = () => {
   const capabilities = Capabilities.chrome();
   const options = { 'args': ['--disable-device-discovery-notifications'] };
   if (process.env.CI === 'true') {
@@ -142,7 +139,7 @@ const chromeCapabilities= () => {
   return capabilities;
 };
 
-const firefoxCapabilities= () => {
+const firefoxCapabilities = () => {
   const capabilities = Capabilities.firefox();
   const options = { 'args': [] };
   if (process.env.CI === 'true') {
@@ -160,7 +157,7 @@ const capabilities = () => {
 
   if (useBrowser === 'chrome') {
     return chromeCapabilities();
-  }else if (useBrowser === 'firefox') {
+  } else if (useBrowser === 'firefox') {
     return firefoxCapabilities();
   }
 
