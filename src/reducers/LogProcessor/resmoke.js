@@ -357,7 +357,7 @@ function parseMongoTs(line: string): ?Date {
   if (!match) {
     return null;
   }
-  return new Date(match[1], match[2] - 1, match[3], match[4] - 4, match[5], match[6], match[7]);
+  return new Date(Date.UTC(match[1], match[2] - 1, match[3], match[4], match[5], match[6], match[7]));
 }
 
 function initiateFixtureLogList(): FixtureLogList {
