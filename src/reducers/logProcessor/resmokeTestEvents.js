@@ -697,7 +697,6 @@ export default function(processed: Processed[]): Event[] {
   const fixtureIdList = fixtureLogLists ? Object.keys(fixtureLogLists) : [];
   for (let i = 0; i < fixtureIdList.length; i++) {
     let fixtureId = fixtureIdList[i];
-    console.log(fixtureId);
     const logList = fixtureLogLists[fixtureId];
     if (logList.isConfigsvr) {
       fixtureId = fixtureId + ' - config';
