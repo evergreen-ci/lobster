@@ -3,7 +3,7 @@
 import type { Log } from '../models';
 import type { Action, EvergreenTaskLogType } from '../actions';
 import { PROCESS_RESPONSE, LOAD_CACHED_DATA } from '../actions';
-import * as LogProcessor from './LogProcessor';
+import * as LogProcessor from './logProcessor';
 
 const initialState: Log = {
   lines: [],
