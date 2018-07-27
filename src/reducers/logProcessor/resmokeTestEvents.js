@@ -491,8 +491,9 @@ function loggingPrefix(rawPrefix: string): Prefix {
   const shellPrefixes = ['js_test', 'BackgroundInitialSync', 'CheckReplDBHash', 'CheckReplOplogs', 'CleanEveryN', 'IntermediateInitialSync', 'PeriodicKillSecondaries', 'ValidateCollections'];
   const prefixes = split(rawPrefix.substring(1, rawPrefix.length - 1), ':', 2);
   const isShell = shellPrefixes.includes(prefixes[0]);
+  const isFixture = prefixes[0].endsWith('Fixture');
   let fixtureId = '';
-  if (isShell) {
+  if (isFixture) {
     if (prefixes.length === 2) {
       fixtureId = 'standalone_mongod';
     } else {
@@ -502,7 +503,7 @@ function loggingPrefix(rawPrefix: string): Prefix {
   return ({
     prefixes: prefixes,
     jobNum: prefixes[1],
-    isFixture: prefixes[0].endsWith('Fixture'),
+    isFixture: isFixture,
     isShell: isShell,
     fixture_id: fixtureId
   });
@@ -696,6 +697,7 @@ export default function(processed: Processed[]): Event[] {
   const fixtureIdList = fixtureLogLists ? Object.keys(fixtureLogLists) : [];
   for (let i = 0; i < fixtureIdList.length; i++) {
     let fixtureId = fixtureIdList[i];
+    console.log(fixtureId);
     const logList = fixtureLogLists[fixtureId];
     if (logList.isConfigsvr) {
       fixtureId = fixtureId + ' - config';
