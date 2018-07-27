@@ -14,7 +14,8 @@ app.makeListener(undefined, 0, e2eLogPath, undefined, (listener) => {
   const e2e = child.spawn('npm', ['run', 'test', '--', '-t', 'e2e.*'], {
     'env': {
       ...process.env,
-      LOBSTER_E2E_SERVER_PORT: listener.address().port
+      LOBSTER_E2E_SERVER_PORT: listener.address().port,
+      LOBSTER_E2E_BROWSER: process.argv[2] || 'chrome'
     },
     stdio: 'inherit'
   });

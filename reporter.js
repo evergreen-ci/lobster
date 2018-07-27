@@ -3,7 +3,7 @@ const base = path.resolve(__dirname);
 
 module.exports = function() {
   const jest = require(base + '/node_modules/jest-util/build/formatTestResults').apply(this, arguments);
-  if (process.env.CI === 'true') {
+  if (process.env.CI !== 'true') {
     return jest;
   }
 
