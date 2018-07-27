@@ -7,7 +7,9 @@ ignore:
 variables:
   - &node
     NODEJS_VERSION: 8.9.3
-
+  - &drivers
+    CHROMEDRIVER_URL: https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip
+    GECKODRIVER_URL: https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz
 
 functions:
   preamble:
@@ -84,25 +86,30 @@ functions:
 
   chromedriver:
     command: shell.exec
+    type: setup
     params:
       shell: bash
       script: |
         set -ex
+        export PATH="/opt/google/chrome:$PWD:${workdir}/nodejs/bin:$PATH"
+        which chrome
         mkdir driver
         cd driver
-        curl -o chromedriver.zip https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip --retry 3
+        curl --silent --show-error --fail --location -o chromedriver.zip ${CHROMEDRIVER_URL} --retry 3
         unzip chromedriver.zip
         rm chromedriver.zip
 
   geckodriver:
     command: shell.exec
+    type: setup
     params:
       shell: bash
       script: |
         set -ex
+        which firefox
         mkdir driver
         cd driver
-        curl -L -o geckodriver.tar.gz https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz --retry 3
+        curl -L --silent --show-error --fail --location -o geckodriver.tar.gz ${GECKODRIVER_URL} --retry 3
         tar xf geckodriver.tar.gz
         rm geckodriver.tar.gz
 
@@ -159,6 +166,9 @@ tasks:
     commands:
       - func: preamble
       - func: chromedriver
+      - func: npm
+        vars:
+          cmd: run-script build
       - command: shell.exec
         params:
           working_dir: lobster
@@ -168,18 +178,19 @@ tasks:
             pushd ../driver
             export PATH="/opt/google/chrome:$PWD:${workdir}/nodejs/bin:$PATH"
             popd
-            export PATH="${workdir}/nodejs/bin:$PATH"
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
-            export LOBSTER_E2E_BROWSER="chrome"
-            npm run build
-            npm run test:e2e
+            export IS_VM=true
+            npm run test:e2e chrome
             mv e2e_srv.log ./.node_cache/_logs || true
 
   - name: e2e-firefox
     commands:
       - func: preamble
       - func: geckodriver
+      - func: npm
+        vars:
+          cmd: run-script build
       - command: shell.exec
         params:
           working_dir: lobster
@@ -191,9 +202,8 @@ tasks:
             popd
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
-            export LOBSTER_E2E_BROWSER="firefox"
-            npm run build
-            npm run test:e2e
+            export IS_VM=true
+            npm run test:e2e firefox
             mv e2e_srv.log ./.node_cache/_logs || true
 
 
@@ -211,9 +221,10 @@ buildvariants:
       - name: "flow"
 
   - name: ubuntu1804
-    display_name: Ubuntu 18.04
+    display_name: Ubuntu 18.04 (e2e)
     expansions:
       <<: *node
+      <<: *drivers
     run_on:
       - ubuntu1804-test
     tasks:
