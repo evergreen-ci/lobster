@@ -2,8 +2,6 @@
 
 import assert from 'assert';
 import resmoke from './resmoke';
-import path from 'path';
-import fs from 'fs';
 
 const data = () => [
   '[js_test:apply_batch_only_goes_forward] 2017-08-02T00:40:40.067+0000 ReplSetTest Starting....',
@@ -45,17 +43,5 @@ describe('resmoke', function() {
       state.lines[2].gitRef);
     assert.deepEqual(state.colorMap[':primary]'], '#5aae61');
     Object.keys(state.colorMap).forEach((value) => assert.notEqual(value, undefined));
-  });
-
-  test('test-events', function() {
-    console.log('testing events');
-    const rawFilePath = path.resolve('.') + '/src/reducers/LogProcessor/5b4626c2f84ae87f0a04e70c.txt';
-    const rawFile = fs.readFileSync(rawFilePath).toString();
-    const state = resmoke(rawFile);
-    const comparisonPath = path.resolve('.' + '/src/reducers/LogProcessor/comparison.json');
-    const comparisonFile = fs.readFileSync(comparisonPath, 'utf8');
-    const comparisonJSON = JSON.parse(comparisonFile);
-    expect(state.events).toEqual(comparisonJSON);
-    assert.equal(state.events.length, comparisonJSON.length);
   });
 });
