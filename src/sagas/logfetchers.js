@@ -96,7 +96,6 @@ export default function*(action: actions.LoadLog): Saga<void> {
       yield call(logkeeperLoadData, identity);
       break;
 
-    default:
-      console.error(`unknown type: ${identity.type}`);
+    // no default
   }
 }
