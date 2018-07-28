@@ -84,7 +84,6 @@ export class Fetch extends React.Component {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     }
     if (this.props.logIdentity) {
-      console.log(this.props.logIdentity);
       this.props.loadLogByIdentity(this.props.logIdentity);
     }
   }
