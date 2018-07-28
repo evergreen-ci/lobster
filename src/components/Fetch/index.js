@@ -11,8 +11,6 @@ import Toolbar from './Toolbar';
 
 export class Fetch extends React.Component {
   static propTypes = {
-    action: PropTypes.func,
-    dispatch: PropTypes.func,
     log: PropTypes.shape({
       lines: PropTypes.array,
       colorMap: PropTypes.object,
@@ -28,6 +26,7 @@ export class Fetch extends React.Component {
         test: PropTypes.string
       })
     }),
+    loadLogByIdentity: PropTypes.func,
     history: PropTypes.object,
     lobsterLoadData: PropTypes.func.isRequired,
     logkeeperLoadData: PropTypes.func.isRequired,
@@ -85,12 +84,13 @@ export class Fetch extends React.Component {
     if (locationSearch !== '') {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     }
+    console.log(this.props.logIdentity);
     if (this.state.url) {
       this.props.lobsterLoadData(this.state.server, this.state.url);
     } else if (this.state.build) {
       this.props.logkeeperLoadData(this.state.build, this.state.test);
-    } else if (this.props.action) {
-      this.props.dispatch(this.props.action());
+    } else if (this.props.logIdentity) {
+      this.props.loadLogByIdentity(this.props.logIdentity);
     }
   }
 
@@ -529,7 +529,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     toggleBookmark: (lineNumArray) => dispatch(logviewerActions.toggleBookmark(lineNumArray)),
     ensureBookmark: (lineNum) => dispatch(logviewerActions.ensureBookmark(lineNum)),
     changeSearch: (text) => dispatch(logviewerActions.changeSearch(text)),
-    dispatch: dispatch,
+    loadLogByIdentity: (identity) => dispatch(actions.loadLog(identity)),
     ...ownProps
   };
 }

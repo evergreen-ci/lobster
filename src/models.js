@@ -34,12 +34,15 @@ const evergreenTaskLogTypes: { [string]: string } = {
 
 export type EvergreenTaskLogType = $Keys<typeof evergreenTaskLogTypes>;
 
-export function stringToInteralEvergreenTaskLogType(a: string): ?string {
+export function stringToInteralEvergreenTaskLogType(a: ?string): ?string {
+  if(a == null) {
+    return null;
+  }
   return evergreenTaskLogTypes[a];
 }
 
-export function stringToEvergreenTaskLogType(a: string): ?EvergreenTaskLogType {
-  if (!evergreenTaskLogTypes[a]) {
+export function stringToEvergreenTaskLogType(a: ?string): ?EvergreenTaskLogType {
+  if(a == null || !(a in evergreenTaskLogTypes)) {
     return null;
   }
 
@@ -47,14 +50,14 @@ export function stringToEvergreenTaskLogType(a: string): ?EvergreenTaskLogType {
 }
 
 export type EvergreenTaskLog = $Exact<$ReadOnly<{
-  type: 'task',
+  type: 'evergreen-task',
   id: string,
   execution: number,
   log: EvergreenTaskLogType
 }>>
 
 export type EvergreenTestLog = $Exact<$ReadOnly<{
-  type: 'test',
+  type: 'evergreen-test',
   id: string
 }>>
 

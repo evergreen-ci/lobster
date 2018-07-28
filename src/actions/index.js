@@ -1,11 +1,12 @@
 // @flow strict
 
 import type { Action as LogviewerAction } from './logviewer';
-import type { Log, LogProcessor, EvergreenTaskLog, EvergreenTestLog, EvergreenTaskLogType } from '../models';
+import type { Log, LogIdentity, LogProcessor, EvergreenTaskLog, EvergreenTestLog, EvergreenTaskLogType } from '../models';
 
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const PROCESS_RESPONSE = 'process-response';
+export const LOAD_LOG = 'load-log-by-identity';
 export const LOAD_CACHED_DATA = 'load-cached-data';
 export const EVERGREEN_LOAD_DATA = 'evergreen:load-data';
 export const SETUP_CACHE = 'setup-cache';
@@ -141,7 +142,7 @@ export function evergreenLoadTaskLog(id: string, execution: number, log: Evergre
   return {
     type: 'evergreen:load-data',
     payload: {
-      type: 'task',
+      type: 'evergreen-task',
       id: id,
       execution: execution,
       log: log
@@ -153,7 +154,7 @@ export function evergreenLoadTestLog(id: string): EvergreenLoadData {
   return {
     type: 'evergreen:load-data',
     payload: {
-      type: 'test',
+      type: 'evergreen-test',
       id: id
     }
   };
@@ -183,6 +184,23 @@ export function fromFileFromCache(f: string): WipeCache {
     }
   };
 }
+
+export type LoadLog = $Exact<{
+  type: 'load-log-by-identity',
+  payload: $Exact<$ReadOnly<{
+    identity: LogIdentity
+  }>>
+}>
+
+export function loadLog(identity: LogIdentity): LoadLog {
+  return {
+    type: LOAD_LOG,
+    payload: {
+      identity: identity
+    }
+  };
+}
+
 export type Action = ProcessResponse
   | LoadCachedData
   | WipeCache
@@ -190,3 +208,4 @@ export type Action = ProcessResponse
   | LobsterLoadData
   | EvergreenLoadData
   | LogviewerAction
+  | LoadLog

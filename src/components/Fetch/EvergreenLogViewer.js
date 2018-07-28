@@ -3,20 +3,33 @@
 import React from 'react';
 import Fetch from '.';
 import * as actions from '../../actions';
-import { stringToEvergreenTaskLogType } from '../../models';
+import { stringToEvergreenTaskLogType, type LogIdentity } from '../../models';
+import type { ContextRouter } from 'react-router-dom';
 
-type Props = {
-  match: {
-    params: {
-      id?: ?string,
-      execution?: ?string,
-      type?: ?string,
-      [key: string]: ?string
-    }
-  },
-  location: {
-    hash: string
+type Props = ContextRouter
+
+function makeEvergreenLogID(id: ?string, type: ?string, execution: ?string): ?LogIdentity {
+  if (id == null) {
+    return null;
   }
+
+  if (type != null) {
+    const logType = stringToEvergreenTaskLogType(type);
+    if (logType == null) {
+      return null;
+    }
+    return {
+      type: 'evergreen-task',
+      id: id,
+      execution: parseInt(execution, 10) || 0,
+      log: logType
+    };
+  }
+
+  return {
+    type: 'evergreen-test',
+    id: id
+  };
 }
 
 const EvergreenLogViewer = (props: Props) => {
@@ -30,19 +43,10 @@ const EvergreenLogViewer = (props: Props) => {
       hash: `#scroll=${line}&bookmarks=${line}`
     };
   }
-  const { id, execution, type } = props.match.params;
-  let action;
-  if (id) {
-    if (execution != null && type != null) {
-      const logType = stringToEvergreenTaskLogType(type);
-      if (logType) {
-        action = () => actions.evergreenLoadTaskLog(id, parseInt(execution, 10), logType);
-      }
-    } else {
-      action = () => actions.evergreenLoadTestLog(id);
-    }
-  }
-  return (<Fetch {...props} {...newProps} action={action} />);
+  const { id, type, execution } = props.match.params;
+  const logID = makeEvergreenLogID(id, type, execution);
+
+  return (<Fetch {...props} {...newProps} logIdentity={logID} />);
 };
 
 export default EvergreenLogViewer;
