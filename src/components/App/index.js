@@ -6,8 +6,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 import './style.css';
 import About from '../About';
 import NotFound from '../NotFound';
-import Fetch from '../Fetch';
 import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
+import LogkeeperLogViewer from '../Fetch/LogkeeperLogviewer';
 import { Nav, NavItem } from 'react-bootstrap';
 import CacheModal from './CacheModal';
 import LogDrop from '../LogDrop';
@@ -20,7 +20,7 @@ const logdrop = (props: ContextRouter) => {
   }
   return (<LogDrop {...props} />);
 };
-const logviewer = (props) => (<Fetch {...props} />);
+const logviewer = (props) => (<LogkeeperLogViewer {...props} />);
 const evergreenLogviewer = (props) => (<EvergreenLogViewer {...props} />);
 const about = (props) => (<About {...props} />);
 const notfound = (props) => (<NotFound {...props} />);

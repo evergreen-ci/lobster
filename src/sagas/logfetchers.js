@@ -83,20 +83,20 @@ export function* evergreenLoadData(identity: EvergreenLog): Saga<void> {
 export default function*(action: actions.LoadLog): Saga<void> {
   const { identity } = action.payload;
   switch (identity.type) {
-  case 'evergreen-test':
-  case 'evergreen-task':
-    yield call(evergreenLoadData, identity);
-    break;
+    case 'evergreen-test':
+    case 'evergreen-task':
+      yield call(evergreenLoadData, identity);
+      break;
 
-  case 'lobster':
-    yield call(lobsterLoadData, identity);
-    break;
+    case 'lobster':
+      yield call(lobsterLoadData, identity);
+      break;
 
-  case 'logkeeper':
-    yield call(logkeeperLoadData, identity);
-    break;
+    case 'logkeeper':
+      yield call(logkeeperLoadData, identity);
+      break;
 
-  default:
-    console.error(`unknown type: ${identity.type}`);
+    default:
+      console.error(`unknown type: ${identity.type}`);
   }
 }

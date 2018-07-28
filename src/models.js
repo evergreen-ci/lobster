@@ -35,14 +35,14 @@ const evergreenTaskLogTypes: { [string]: string } = {
 export type EvergreenTaskLogType = $Keys<typeof evergreenTaskLogTypes>;
 
 export function stringToInteralEvergreenTaskLogType(a: ?string): ?string {
-  if(a == null) {
+  if (a == null) {
     return null;
   }
   return evergreenTaskLogTypes[a];
 }
 
 export function stringToEvergreenTaskLogType(a: ?string): ?EvergreenTaskLogType {
-  if(a == null || !(a in evergreenTaskLogTypes)) {
+  if (a == null || !(a in evergreenTaskLogTypes)) {
     return null;
   }
 

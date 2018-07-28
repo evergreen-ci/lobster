@@ -1,30 +1,24 @@
 import sinon from 'sinon';
-import assert from 'assert';
-import { runSaga } from 'redux-saga';
-import { call } from 'redux-saga/effects';
-import { expectSaga, testSaga } from 'redux-saga-test-plan';
+import { expectSaga } from 'redux-saga-test-plan';
 import * as api from '../api/logkeeper';
-import * as evergreenApi from '../api/evergreen';
 import * as actions from '../actions';
-import * as matchers from 'redux-saga-test-plan/matchers';
 import logfetchers from './logfetchers';
-import { evergreenLoadData, lobsterLoadData, logkeeperLoadData } from './logfetchers';
 
 describe('logfetchers', function() {
   afterEach(() => sinon.restore());
 
   test('fetchLobster-resolves-200', function(done) {
-    const resp = new Response(new Blob(['lobster']), {status: 200});
+    const resp = new Response(new Blob(['lobster']), { status: 200 });
     const mock = sinon.stub().resolves(resp);
     sinon.replace(api, 'fetchLobster', mock);
 
     const action = actions.loadLog({
       type: 'lobster',
       server: 'domain.invalid',
-      file: "simple.log"
-    })
+      file: 'simple.log'
+    });
     const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
-    const saga = expectSaga(logfetchers, action)
+    expectSaga(logfetchers, action)
       .run()
       .then((result) => {
         const { effects } = result;
@@ -39,6 +33,7 @@ describe('logfetchers', function() {
         expect(v.payload.isDone).toBe(true);
 
         expect(effects.call).toHaveLength(3);
+        expect(effects.call[0].CALL.args).toEqual([identity]);
 
         expect(result.toJSON()).toMatchSnapshot();
 
@@ -47,17 +42,17 @@ describe('logfetchers', function() {
   });
 
   test('fetchLobster-resolves-404', function(done) {
-    const resp = new Response(new Blob(['errol']), {status: 404});
+    const resp = new Response(new Blob(['errol']), { status: 404 });
     const mock = sinon.stub().resolves(resp);
     sinon.replace(api, 'fetchLobster', mock);
 
     const action = actions.loadLog({
       type: 'lobster',
       server: 'domain.invalid',
-      file: "simple.log"
-    })
+      file: 'simple.log'
+    });
     const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
-    const saga = expectSaga(logfetchers, action)
+    expectSaga(logfetchers, action)
       .run()
       .then((result) => {
         const { effects } = result;
@@ -72,11 +67,11 @@ describe('logfetchers', function() {
         expect(v.payload.isDone).toBe(true);
 
         expect(effects.call).toHaveLength(3);
+        expect(effects.call[0].CALL.args).toEqual([identity]);
         expect(result.toJSON()).toMatchSnapshot();
 
         done();
       });
   });
-
 });
 

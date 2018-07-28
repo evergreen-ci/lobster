@@ -171,7 +171,7 @@ export function* boil(action: actions.WipeCache): Saga<void> {
   try {
     const { file } = action.payload;
     if (file == null) {
-      console.log("Attempting to clear lobster local cache");
+      console.log('Attempting to clear lobster local cache');
       window.localStorage.clear();
       yield wipeCache();
     } else {
