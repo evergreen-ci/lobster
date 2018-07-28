@@ -3,6 +3,7 @@
 import React from 'react';
 import Fetch from '.';
 import * as actions from '../../actions';
+import { stringToEvergreenTaskLogType } from '../../models';
 
 type Props = {
   match: {
@@ -33,7 +34,7 @@ const EvergreenLogViewer = (props: Props) => {
   let action;
   if (id) {
     if (execution != null && type != null) {
-      const logType = actions.stringToEvergreenTaskLogType(type);
+      const logType = stringToEvergreenTaskLogType(type);
       if (logType) {
         action = () => actions.evergreenLoadTaskLog(id, parseInt(execution, 10), logType);
       }

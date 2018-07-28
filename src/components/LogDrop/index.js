@@ -3,13 +3,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
-import { type LogType, logTypes } from '../../models';
+import { type LogProcessor, logProcessors } from '../../models';
 import { Button } from 'react-bootstrap';
 import type { ContextRouter } from 'react-router-dom';
 import './style.css';
 
 type Props = {|
-  processLog: (data: string, type: LogType) => void,
+  processLog: (string, LogProcessor) => void,
 |} & ContextRouter
 
 type State = {|
@@ -103,7 +103,7 @@ export class LogDrop extends React.PureComponent<Props, State> {
               Process {this.state.files[0].name} as
               <select ref={this.selectCallback}>
                 {
-                  logTypes().map((v) => (
+                  logProcessors().map((v) => (
                     <option key={v} value={v}>{v}</option>
                   ))
                 }

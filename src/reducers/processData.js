@@ -1,7 +1,7 @@
 // @flow strict
 
-import type { Log } from '../models';
-import type { Action, EvergreenTaskLogType } from '../actions';
+import type { Log, EvergreenTaskLogType } from '../models';
+import type { Action } from '../actions';
 import { PROCESS_RESPONSE, LOAD_CACHED_DATA } from '../actions';
 import * as LogProcessor from './LogProcessor';
 

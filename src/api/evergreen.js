@@ -1,8 +1,8 @@
 // @flow strict
 
-import type { EvergreenTestLog, EvergreenTaskLogType, EvergreenTaskLog } from '../actions';
+import type { EvergreenTestLog, EvergreenTaskLogType, EvergreenTaskLog } from '../models';
 import { EVERGREEN_BASE } from '../config';
-import { stringToInteralEvergreenTaskLogType } from '../actions';
+import { stringToInteralEvergreenTaskLogType } from '../models';
 
 function taskLogURL(id: string, execution: number, type: EvergreenTaskLogType): string {
   const logType = stringToInteralEvergreenTaskLogType(type) || 'all';

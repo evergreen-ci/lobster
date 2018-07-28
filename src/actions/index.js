@@ -1,7 +1,7 @@
 // @flow strict
 
 import type { Action as LogviewerAction } from './logviewer';
-import type { Log, LogType } from '../models';
+import type { Log, LogProcessor, EvergreenTaskLog, EvergreenTestLog, EvergreenTaskLogType } from '../models';
 
 export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
 export const LOBSTER_LOAD_DATA = 'lobster:load-data';
@@ -30,7 +30,7 @@ export type LobsterLoadData = {|
 export type ProcessResponse = {|
   +type: 'process-response',
   +payload: {|
-    +type: LogType,
+    +type: LogProcessor,
     +data: string,
     +isDone: boolean
   |},
@@ -58,11 +58,11 @@ export function lobsterLoadData(server: string, url: string): LobsterLoadData {
   };
 }
 
-export function processData(data: string, type: LogType, isDone?: boolean): ProcessResponse {
+export function processData(data: string, processor: LogProcessor, isDone?: boolean): ProcessResponse {
   return {
     type: PROCESS_RESPONSE,
     payload: {
-      type: type,
+      type: processor,
       data: data,
       isDone: isDone || false
     },
@@ -70,11 +70,11 @@ export function processData(data: string, type: LogType, isDone?: boolean): Proc
   };
 }
 
-export function processLocalData(data: string, type: LogType): ProcessResponse {
+export function processLocalData(data: string, processor: LogProcessor): ProcessResponse {
   return {
     type: PROCESS_RESPONSE,
     payload: {
-      type: type,
+      type: processor,
       data: data,
       isDone: true
     },
@@ -131,40 +131,6 @@ export function setCache(status: CacheStatus, size: number): SetupCache {
     error: false
   };
 }
-
-const evergreenTaskLogTypes: { [string]: string } = {
-  'all': 'ALL',
-  'task': 'T',
-  'agent': 'A',
-  'system': 'S'
-  // 'event': 'E' // Not actually supported by the api
-};
-
-export type EvergreenTaskLogType = $Keys<typeof evergreenTaskLogTypes>;
-
-export function stringToInteralEvergreenTaskLogType(a: string): ?string {
-  return evergreenTaskLogTypes[a];
-}
-
-export function stringToEvergreenTaskLogType(a: string): ?EvergreenTaskLogType {
-  if (!evergreenTaskLogTypes[a]) {
-    return null;
-  }
-
-  return a;
-}
-
-export type EvergreenTaskLog = $Exact<$ReadOnly<{
-  type: 'task',
-  id: string,
-  execution: number,
-  log: EvergreenTaskLogType
-}>>
-
-export type EvergreenTestLog = $Exact<$ReadOnly<{
-  type: 'test',
-  id: string,
-}>>
 
 export type EvergreenLoadData = $Exact<$ReadOnly<{
   +type: 'evergreen:load-data',

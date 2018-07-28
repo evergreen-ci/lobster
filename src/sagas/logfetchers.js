@@ -2,14 +2,14 @@
 
 import { put, call, takeEvery } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
-import type { LogType } from '../models';
+import type { LogProcessor } from '../models';
 import * as actions from '../actions';
 import * as api from '../api';
 import { fetchEvergreen } from '../api/evergreen';
 import { writeToCache, readFromCache } from './lobstercage';
 
 // $FlowFixMe
-function* cacheFetch(f: string, type: LogType, ...args: any[]): Saga<void> {
+function* cacheFetch(f: string, processor: LogProcessor, ...args: any[]): Saga<void> {
   try {
     try {
       const log = yield call(readFromCache, f);
@@ -23,7 +23,7 @@ function* cacheFetch(f: string, type: LogType, ...args: any[]): Saga<void> {
       }
 
       const data = yield resp.text();
-      yield put.resolve(actions.processData(data, type, true));
+      yield put.resolve(actions.processData(data, processor, true));
       try {
         yield call(writeToCache, f);
       } catch (err) {
