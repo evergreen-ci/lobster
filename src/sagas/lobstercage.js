@@ -168,12 +168,15 @@ function* wipeFileFromCache(f: string): Saga<void> {
 }
 
 export function* boil(action: actions.WipeCache): Saga<void> {
-  window.localStorage.clear();
   try {
-    if (action.payload.file == null) {
+    const { file } = action.payload;
+    if (file == null) {
+      console.log("Attempting to clear lobster local cache");
+      window.localStorage.clear();
       yield wipeCache();
     } else {
-      yield wipeFileFromCache(action.payload.file);
+      console.log(`Attempting to remove '${file}'lobster local cache`);
+      yield wipeFileFromCache(file);
     }
     window.location.reload();
   } catch (err) {

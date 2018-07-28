@@ -1,0 +1,132 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`logfetchers fetchLobster-resolves-200 1`] = `
+Object {
+  "call": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "file": "simple.log",
+            "server": "domain.invalid",
+            "type": "lobster",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/lobsterLoadData",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "domain.invalid",
+          "simple.log",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/proxy",
+      },
+    },
+  ],
+  "put": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "error": false,
+          "payload": Object {
+            "data": "lobster",
+            "isDone": true,
+            "type": "resmoke",
+          },
+          "type": "process-response",
+        },
+        "channel": null,
+      },
+    },
+  ],
+}
+`;
+
+exports[`logfetchers fetchLobster-resolves-404 1`] = `
+Object {
+  "call": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "file": "simple.log",
+            "server": "domain.invalid",
+            "type": "lobster",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/lobsterLoadData",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "domain.invalid",
+          "simple.log",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/proxy",
+      },
+    },
+  ],
+  "put": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "error": true,
+          "payload": Object {
+            "data": Object {
+              "_bodyBlob": Object {},
+              "_bodyInit": Object {},
+              "headers": Object {
+                "map": Object {},
+              },
+              "ok": false,
+              "status": 404,
+              "statusText": "OK",
+              "type": "default",
+              "url": "",
+            },
+            "isDone": true,
+            "type": "resmoke",
+          },
+          "type": "process-response",
+        },
+        "channel": null,
+      },
+    },
+  ],
+}
+`;

@@ -61,7 +61,11 @@ export type EvergreenTestLog = $Exact<$ReadOnly<{
   id: string
 }>>
 
-export type LobsterServer = $Exact<$ReadOnly<{
+export type EvergreenLog = EvergreenTaskLog
+  | EvergreenTestLog
+
+export type LobsterLog = $Exact<$ReadOnly<{
+  type: 'lobster',
   server: string,
   file: string
 }>>
@@ -69,10 +73,9 @@ export type LobsterServer = $Exact<$ReadOnly<{
 export type LogkeeperLog = $Exact<$ReadOnly<{
   type: 'logkeeper',
   build: string,
-  test?: string,
-  lobsterServer?: LobsterServer
+  test?: string
 }>>
 
 export type LogIdentity = LogkeeperLog
-  | EvergreenTaskLog
-  | EvergreenTestLog
+  | LobsterLog
+  | EvergreenLog

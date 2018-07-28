@@ -1,6 +1,6 @@
 // @flow strict
 
-import type { EvergreenTestLog, EvergreenTaskLogType, EvergreenTaskLog } from '../models';
+import type { EvergreenLog, EvergreenTaskLogType } from '../models';
 import { EVERGREEN_BASE } from '../config';
 import { stringToInteralEvergreenTaskLogType } from '../models';
 
@@ -13,7 +13,7 @@ function testLogURL(id: string): string {
   return `${EVERGREEN_BASE}/test_log/${id}?raw=1`;
 }
 
-export function fetchEvergreen(log: EvergreenTaskLog | EvergreenTestLog): Promise<Response> {
+export function fetchEvergreen(log: EvergreenLog): Promise<Response> {
   const init = { method: 'GET', credentials: 'include' };
   let req;
   if (log.type === 'evergreen-task') {

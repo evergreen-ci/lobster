@@ -84,12 +84,12 @@ export class Fetch extends React.Component {
     if (locationSearch !== '') {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     }
-    console.log(this.props.logIdentity);
     if (this.state.url) {
       this.props.lobsterLoadData(this.state.server, this.state.url);
     } else if (this.state.build) {
       this.props.logkeeperLoadData(this.state.build, this.state.test);
     } else if (this.props.logIdentity) {
+      console.log(this.props.logIdentity);
       this.props.loadLogByIdentity(this.props.logIdentity);
     }
   }

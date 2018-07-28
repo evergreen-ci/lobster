@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Fetch from '.';
-import * as actions from '../../actions';
 import { stringToEvergreenTaskLogType, type LogIdentity } from '../../models';
 import type { ContextRouter } from 'react-router-dom';
 

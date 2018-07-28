@@ -32,6 +32,8 @@ const df = process.env.CI === 'true' ? describe : describe.skip;
 
 df('lobsterserver', function() {
   beforeAll(() => {
+    // XXX: there is a jest bug in the old version that we're using, so
+    // this check is required to prevent npm build from being run
     if (process.env.CI === 'true') {
       spawnSync('npm', ['run', 'build'], {
         'stdio': 'inherit'
