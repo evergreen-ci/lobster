@@ -56,6 +56,7 @@
     "localstorage-memory": "^1.0.2",
     "node-fetch": "^2.2.0",
     "react-test-renderer": "^15.5.0",
+    "redux-saga-test-plan": "^3.7.0",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "sinon": "^6.0.0"
   },
