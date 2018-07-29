@@ -57,7 +57,7 @@ function build(env, callback) {
     stdio: 'inherit'
   });
 
-  buildProcess.on('close', callback.call(env));
+  buildProcess.on('close', callback);
 }
 
 function run(l) {
@@ -76,7 +76,7 @@ function run(l) {
   if (argv.no_build) {
     return test.call(env);
   }
-  return build(env, test);
+  return build(env, test.bind(env));
 }
 
 if (argv.no_server === true) {
