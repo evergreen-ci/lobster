@@ -36,10 +36,10 @@ function makeLogkeeperLogID(build: ?string, test: ?string, server: ?string, file
 }
 
 const LogkeeperLogViewer = (props: Props) => {
-  const parsed = queryString.parse(props.location.search === '' ? props.location.hash : props.location.search);
+  const { server, url } = queryString.parse(props.location.search === '' ? props.location.hash : props.location.search);
 
   const { build, test } = props.match.params;
-  const logID = makeLogkeeperLogID(build, test, parsed.server, parsed.url);
+  const logID = makeLogkeeperLogID(build, test, server, url);
 
   return (<Fetch {...props} logIdentity={logID} />);
 };

@@ -142,7 +142,7 @@ const makeListener = (addr = '127.0.0.1', port = 9000, logsPath, cache, callback
 
   const listener = app.listen(port, addr, () => {
     if (callback != null) {
-      callback(listener);
+      return callback(listener);
     }
   });
   return;

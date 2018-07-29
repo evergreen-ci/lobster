@@ -277,5 +277,4 @@ describe('fetchEvergreen', function() {
         done();
       });
   });
-
 });

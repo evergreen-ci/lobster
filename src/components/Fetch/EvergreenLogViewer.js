@@ -32,7 +32,7 @@ function makeEvergreenLogID(id: ?string, type: ?string, execution: ?string): ?Lo
 }
 
 const EvergreenLogViewer = (props: Props) => {
-  const lineRegex = new RegExp('#L([0-9]+)$');
+  const lineRegex = new RegExp('#L([0-9]+)');
 
   const newProps = {};
   const matches = lineRegex.exec(props.location.hash);

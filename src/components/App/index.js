@@ -7,7 +7,7 @@ import './style.css';
 import About from '../About';
 import NotFound from '../NotFound';
 import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
-import LogkeeperLogViewer from '../Fetch/LogkeeperLogviewer';
+import LogkeeperLogViewer from '../Fetch/LogkeeperLogViewer';
 import { Nav, NavItem } from 'react-bootstrap';
 import CacheModal from './CacheModal';
 import LogDrop from '../LogDrop';
