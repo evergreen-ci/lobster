@@ -163,6 +163,9 @@ tasks:
             - lobster/build/.tasks.json
 
   - name: e2e-chrome
+    depends_on:
+      - name: dist
+        variant: ubuntu1604
     commands:
       - func: preamble
       - func: chromedriver
@@ -184,6 +187,9 @@ tasks:
             npm run test:e2e chrome
 
   - name: e2e-firefox
+    depends_on:
+      - name: dist
+        variant: ubuntu1604
     commands:
       - func: preamble
       - func: geckodriver
