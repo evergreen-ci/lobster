@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { wipeCache } from '../../actions';
 import * as actions from '../../actions/logviewer';
 import type { Highlight, Filter } from '../../actions/logviewer';
+import type { LogIdentity } from '../../models';
 
 type Props = {
   setFormRef: (?HTMLInputElement) => void,
@@ -52,7 +53,8 @@ type Props = {
   changeFindIdx: (number) => void,
   changeSearch: (string) => void,
   nextFind: () => void,
-  prevFind: () => void
+  prevFind: () => void,
+  logIdentity: ?LogIdentity
 };
 
 export class Toolbar extends React.Component<Props> {
@@ -129,6 +131,7 @@ export class Toolbar extends React.Component<Props> {
             highlightList={this.props.highlightList}
             filterList={this.props.filterList}
             wipeCache={this.props.wipeCache}
+            logIdentity={this.props.logIdentity}
           />
         </div>
       </Col>

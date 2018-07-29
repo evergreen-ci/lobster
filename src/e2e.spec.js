@@ -143,5 +143,5 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 15000);
+  }, 60000);
 });

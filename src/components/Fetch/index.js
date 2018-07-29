@@ -496,6 +496,7 @@ export class Fetch extends React.Component {
             findResults={this.state.findResults}
             nextFind={this.nextFind}
             prevFind={this.prevFind}
+            logIdentity={this.props.logIdentity}
           />
           <div className="log-list">
             {this.showLines()}

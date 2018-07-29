@@ -33,6 +33,10 @@ const wrapper = Enzyme.mount(
     build={'4191390ec6c7ee9bdea4e45f9cc94d31'}
     setURLRef={sinon.fake()}
     valueJIRA={'{noformat}↵[cpp_integration_test:connection_pool_asio_integration_test] 2018-05-09T17:20:31.322+0000 Starting C++ integration test build/integration_tests/connection_pool_asio_integration_test...↵...↵↵{noformat}'}
+    logIdentity={{
+      type: 'logkeeper',
+      build: '4191390ec6c7ee9bdea4e45f9cc94d31'
+    }}
   />
 );
 

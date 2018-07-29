@@ -49,32 +49,32 @@ export function stringToEvergreenTaskLogType(a: ?string): ?EvergreenTaskLogType 
   return a;
 }
 
-export type EvergreenTaskLog = $Exact<$ReadOnly<{
+export type EvergreenTaskLog = $ReadOnly<{
   type: 'evergreen-task',
   id: string,
   execution: number,
   log: EvergreenTaskLogType
-}>>
+}>
 
-export type EvergreenTestLog = $Exact<$ReadOnly<{
+export type EvergreenTestLog = $ReadOnly<{
   type: 'evergreen-test',
   id: string
-}>>
+}>
 
 export type EvergreenLog = EvergreenTaskLog
   | EvergreenTestLog
 
-export type LobsterLog = $Exact<$ReadOnly<{
+export type LobsterLog = $ReadOnly<{
   type: 'lobster',
   server: string,
   file: string
-}>>
+}>
 
-export type LogkeeperLog = $Exact<$ReadOnly<{
+export type LogkeeperLog = $ReadOnly<{
   type: 'logkeeper',
   build: string,
   test?: string
-}>>
+}>
 
 export type LogIdentity = LogkeeperLog
   | LobsterLog
