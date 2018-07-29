@@ -169,8 +169,8 @@ describe('e2e', function() {
 
 // Test that each logviewer page can actually download logs
 [
-  ['/lobster/evergreen/test/testid1234', 12],
-  ['/lobster/evergreen/task/taskid1234/1234/all', 14],
+  ['/lobster/evergreen/test/testid1234', 13],
+  ['/lobster/evergreen/task/taskid1234/1234/all', 15],
   ['/lobster/build/build1234/all', 14],
   ['/lobster/build/build1234/test/test1234', 15]
 ].forEach((table) => {

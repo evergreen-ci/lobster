@@ -36,7 +36,7 @@ if (process.env.LOBSTER_E2E_SERVER_PORT) {
     return test(`e2e-${name}`, ...rest);
   };
 
-  if (process.env.LOBSTER_E2E_BROWSER === 'chrome' || !process.env.LOBSTER_E2E_BROWSER) {
+  if (process.env.LOBSTER_E2E_BROWSER === 'chrome' || process.env.LOBSTER_E2E_BROWSER === undefined) {
     global.e2eChrome = (name, ...rest) => {
       return test(`e2e-${name}`, ...rest);
     };

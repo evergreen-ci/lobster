@@ -10,8 +10,8 @@ function cors(req, res) {
   }
 }
 
-let enumerate = 0;
-function makeLines(res) {
+let enumerate = {};
+function makeLines(req, res) {
   for (let i = 0; i < 10; ++i) {
     res.write('line ' + i);
     res.write('\n');
@@ -19,8 +19,13 @@ function makeLines(res) {
   res.write('something else');
   res.write('\n');
   res.write('enumerate: ');
-  res.write(enumerate.toString());
-  ++enumerate;
+
+  const e = JSON.stringify(req.params);
+  if (enumerate[e] === undefined) {
+    enumerate[e] = 0;
+  }
+  res.write(enumerate[e].toString());
+  ++enumerate[e];
   res.write('\n');
   res.end();
 }
@@ -38,7 +43,7 @@ function logkeeper(req, res) {
     res.write(req.params.test);
     res.write('\n');
   }
-  makeLines(res);
+  makeLines(req, res);
 }
 
 function evergreen(req, res) {
@@ -58,7 +63,7 @@ function evergreen(req, res) {
     res.write(req.query.type);
     res.write('\n');
   }
-  makeLines(res);
+  makeLines(req, res);
 }
 
 function e2e(app) {

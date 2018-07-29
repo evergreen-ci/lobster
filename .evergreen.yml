@@ -184,7 +184,7 @@ tasks:
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
             export IS_VM=true
-            npm run test:e2e chrome
+            npm run test:e2e -- --browser chrome
 
   - name: e2e-firefox
     depends_on:
@@ -208,7 +208,7 @@ tasks:
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
             export IS_VM=true
-            npm run test:e2e firefox
+            npm run test:e2e -- --browser firefox
 
 
 buildvariants:

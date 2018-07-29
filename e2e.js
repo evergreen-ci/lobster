@@ -5,17 +5,18 @@ const yargs = require('yargs');
 
 const argv = yargs
   .usage('Usage: $0 [browser]')
+  .help('help')
+  .alias('help', 'h')
   .option('headless', {
-    description: 'forcefully enable headless mode',
+    description: 'forcefully enable headless mode when CI === true',
     default: false,
     type: 'boolean'
   })
   .option('no_headless', {
-    description: 'forcefully disable headless mode ',
+    description: 'forcefully disable headless mode when CI != true ',
     default: false,
     type: 'boolean'
   })
-  // .conflicts('headless', 'no_headless')
   .option('no_build', {
     description: 'do not run `npm run build` before running tests',
     default: false,
@@ -29,12 +30,17 @@ const argv = yargs
     default: 9000,
     type: 'number'
   })
+  .option('browser', {
+    default: 'chrome',
+    type: 'string'
+  })
+  .nargs('browser', 1)
   .option('t', {
     default: 'e2e.*',
     type: 'string'
   })
+  .nargs('t', 1)
   .argv;
-argv.browser = argv._[0];
 
 let listener;
 process.on('SIGINT', () => {
@@ -45,7 +51,7 @@ process.on('SIGINT', () => {
 });
 
 function test() {
-  const e2eProcess = child.spawn('npm', ['run', 'test', '--', '-t', argv.t], {
+  const e2eProcess = child.spawn('npm', ['run', 'test', '--', '-t', argv.t, ...argv._], {
     'env': {
       ...process.env,
       ...this
@@ -79,11 +85,11 @@ function run(l) {
   console.log(`Testing lobster server on port: ${port}`);
   const uiBase = `http://localhost:${port}`;
 
-  const headless = process.env.CI === 'true' ? argv.headless : !argv.no_headless;
+  const headless = process.env.CI === 'true' ? !argv.headless : !argv.no_headless;
 
   const env = {
     LOBSTER_E2E_SERVER_PORT: port,
-    LOBSTER_E2E_BROWSER: argv.browser || 'chrome',
+    LOBSTER_E2E_BROWSER: argv.browser,
     LOBSTER_E2E_HEADLESS: headless,
     REACT_APP_LOGKEEPER_BASE: `${uiBase}/logkeeper`,
     REACT_APP_EVERGREEN_BASE: `${uiBase}/evergreen`
