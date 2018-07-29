@@ -116,6 +116,23 @@ describe('e2e', function() {
       await driver.quit();
     }
   }, 60000);
+
+  e2e('logdrop', async (done) => {
+    const driver = await makeDriver(done);
+    try {
+      const l = new Lobster(driver);
+      await l.init('/lobster');
+
+      await l.dropFile('./e2e/simple.log');
+
+      const divs = await l.lines();
+      expect(divs).toHaveLength(7);
+
+      done();
+    } finally {
+      await driver.quit();
+    }
+  }, 15000);
 });
 
 [

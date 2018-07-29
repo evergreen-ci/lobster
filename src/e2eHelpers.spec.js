@@ -1,4 +1,6 @@
-import { Builder, Capabilities, By, until } from 'selenium-webdriver';
+import { Builder, Capabilities, By, until, Condition } from 'selenium-webdriver';
+import path from 'path';
+import { existsSync } from 'fs';
 
 /* global process:{} */
 
@@ -12,6 +14,8 @@ const highlightLine = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/div[2]
 const lines = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div';
 const logicToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[3]';
 const caseToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]';
+const dropArea = '//*[@id="root"]/div/main/div/div';
+const processLogButton = '//*[@id="root"]/div/main/div/div/p[2]/button';
 
 const lobsterURL = (file = 'simple.log') => {
   return `http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}/lobster?server=localhost:${process.env.LOBSTER_E2E_SERVER_PORT}%2Fapi%2Flog&url=${file}`;
@@ -29,7 +33,14 @@ export class Lobster {
     } else {
       await this._driver.get(`http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}${url}`);
     }
-    await this._driver.wait(until.elementLocated(By.id('root')));
+    // Wait until document is ready
+    await this._driver.wait(
+      new Condition('document is ready', (driver) => {
+        return driver.executeScript('return document.readyState').then((val) => {
+          return val === 'complete';
+        });
+      })
+    );
 
     const browserHasFilesystemAPI = await this.browserHasFilesystemAPI();
     if (browserHasFilesystemAPI) {
@@ -126,6 +137,51 @@ export class Lobster {
 
   async notFound() {
     return await this._driver.wait(until.elementLocated(By.xpath(notFound)));
+  }
+
+  async dropFile(file) {
+    const absPath = path.resolve(file);
+    const fileExists = existsSync(absPath);
+    if (!fileExists) {
+      throw 'erro';
+    }
+
+    const dropzone = await this._driver.wait(until.elementLocated(By.xpath(dropArea)));
+
+    // JS from https://sqa.stackexchange.com/a/22199
+    const js =
+      'var target = arguments[0],' +
+      '    offsetX = arguments[1],' +
+      '    offsetY = arguments[2],' +
+      '    document = target.ownerDocument || document,' +
+      '    window = document.defaultView || window;' +
+      '' +
+      "var input = document.createElement('INPUT');" +
+      "input.type = 'file';" +
+      "input.style.display = 'none';" +
+      'input.onchange = function () {' +
+      '  var rect = target.getBoundingClientRect(),' +
+      '      x = rect.left + (offsetX || (rect.width >> 1)),' +
+      '      y = rect.top + (offsetY || (rect.height >> 1)),' +
+      '      dataTransfer = { files: this.files };' +
+      '' +
+      "  ['dragenter', 'dragover', 'drop'].forEach(function (name) {" +
+      "    var evt = document.createEvent('MouseEvent');" +
+      '    evt.initMouseEvent(name, !0, !0, window, 0, 0, 0, x, y, !1, !1, !1, !1, 0, null);' +
+      '    evt.dataTransfer = dataTransfer;' +
+      '    target.dispatchEvent(evt);' +
+      '  });' +
+      '' +
+      '  setTimeout(function () { document.body.removeChild(input); }, 25);' +
+      '};' +
+      'document.body.appendChild(input);' +
+      'return input;';
+
+    const input = await this._driver.executeScript(js, dropzone, 0, 0);
+    await input.sendKeys(absPath.toString());
+    await this._driver.wait(until.stalenessOf(input));
+    const button = await this._driver.wait(until.elementLocated(By.xpath(processLogButton)));
+    await button.click();
   }
 }
 
