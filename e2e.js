@@ -1,29 +1,77 @@
 const app = require('./server/app');
 const child = require('child_process');
 const path = require('path');
+const yargs = require('yargs');
 
 const e2eLogPath = path.join(path.resolve('.'), '/e2e');
 
-app.makeListener(undefined, 0, e2eLogPath, undefined, (listener) => {
-  console.log(`Spawning e2e process with lobster server on port: ${listener.address().port}`);
+const argv = yargs
+  .option('no_server', {
+    default: false,
+    type: 'boolean'
+  })
+  .option('port', {
+    default: 9000,
+    type: 'number'
+  })
+  .option('t', {
+    default: 'e2e.*',
+    type: 'string'
+  })
+  .argv;
+
+function run(listener) {
+  const port = !listener ? argv.port : listener.address().port;
+
+  console.log(`Spawning e2e process with lobster server on port: ${port}`);
   process.on('SIGINT', () => {
-    listener.close();
+    if (listener) {
+      listener.close();
+    }
     process.exit(130);
   });
 
-  const e2e = child.spawn('npm', ['run', 'test', '--', '-t', 'e2e.*'], {
+  const uiBase = `http://localhost:${port}`;
+
+  const build = child.spawn('npm', ['run', 'build'], {
     'env': {
       ...process.env,
-      LOBSTER_E2E_SERVER_PORT: listener.address().port,
-      LOBSTER_E2E_BROWSER: process.argv[2] || 'chrome',
-      REACT_APP_LOGKEEPER_BASE: `http://localhost:${listener.address().port}/logkeeper`,
-      REACT_APP_EVERGREEN_BASE: `http://localhost:${listener.address().port}/evergreen`
+      LOBSTER_E2E_SERVER_PORT: port,
+      LOBSTER_E2E_BROWSER: argv._ || 'chrome',
+      REACT_APP_LOGKEEPER_BASE: `${uiBase}/logkeeper`,
+      REACT_APP_EVERGREEN_BASE: `${uiBase}/evergreen`
     },
     stdio: 'inherit'
   });
 
-  e2e.on('close', function(code) {
-    listener.close();
-    process.exit(code);
+  build.on('close', (code) => {
+    if (code !== 0) {
+      if (listener) {
+        listener.close();
+      }
+      process.exit(code);
+    }
+    const e2e = child.spawn('npm', ['run', 'test', '--', '-t', argv.t], {
+      'env': {
+        ...process.env,
+        LOBSTER_E2E_SERVER_PORT: port,
+        LOBSTER_E2E_BROWSER: argv._ || 'chrome'
+      },
+      stdio: 'inherit'
+    });
+
+    e2e.on('close', function(code2) {
+      if (listener) {
+        listener.close();
+      }
+      process.exit(code2);
+    });
   });
-}, true);
+}
+
+
+if (argv.no_server === true) {
+  run(null);
+} else {
+  app.makeListener(undefined, 0, e2eLogPath, undefined, run, true);
+}

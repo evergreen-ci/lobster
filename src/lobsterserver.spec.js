@@ -1,8 +1,6 @@
-/* global process:{} */
-
 import fs from 'fs';
 import { tmpdir } from 'os';
-import { spawn, spawnSync } from 'child_process';
+import { spawn } from 'child_process';
 import path from 'path';
 import fetch from 'node-fetch';
 import * as api from './api';
@@ -31,16 +29,6 @@ function startServer(args) {
 }
 
 describe('lobsterserver', function() {
-  beforeAll(() => {
-    // XXX: there is a jest bug in the old version that we're using, so
-    // this check is required to prevent npm build from being run
-    if (process.env.CI === 'true') {
-      spawnSync('npm', ['run', 'build'], {
-        'stdio': 'inherit'
-      });
-    }
-  });
-
   beforeEach(() => {
     window.fetch = function(req) {
       console.log(req.url);

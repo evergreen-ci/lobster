@@ -182,7 +182,6 @@ tasks:
             export NPM_CONFIG_CACHE="./.node_cache"
             export IS_VM=true
             npm run test:e2e chrome
-            mv e2e_srv.log ./.node_cache/_logs || true
 
   - name: e2e-firefox
     commands:
@@ -204,7 +203,6 @@ tasks:
             export NPM_CONFIG_CACHE="./.node_cache"
             export IS_VM=true
             npm run test:e2e firefox
-            mv e2e_srv.log ./.node_cache/_logs || true
 
 
 buildvariants:

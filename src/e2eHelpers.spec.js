@@ -2,7 +2,7 @@ import { Builder, Capabilities, By, until } from 'selenium-webdriver';
 
 /* global process:{} */
 
-const caseToggleXPath = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]/label[1]';
+const caseToggleXPath = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div/div[1]/div[2]';
 const cacheNever = '//*[@id="root"]/div/div/div/div/div/div[3]/button[1]';
 const showDetails = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/button[4]';
 const notFound = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/label';
@@ -23,8 +23,12 @@ export class Lobster {
     this._showdetails = false;
   }
 
-  async init() {
-    await this._driver.get(lobsterURL());
+  async init(url) {
+    if (url === undefined) {
+      await this._driver.get(lobsterURL());
+    } else {
+      await this._driver.get(`http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}${url}`);
+    }
     await this._driver.wait(until.elementLocated(By.id('root')));
 
     const browserHasFilesystemAPI = await this.browserHasFilesystemAPI();
