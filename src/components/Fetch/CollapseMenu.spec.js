@@ -7,36 +7,36 @@ import Button from 'react-bootstrap/lib/Button';
 import sinon from 'sinon';
 
 function makeWrapper(id) {
-return Enzyme.mount(
-  <CollapseMenu
-    settings={{ caseSensitive: false, wrap: false, filterIntersection: false }}
-    filterActions={{
-      removeFilter: sinon.fake(),
-      toggleFilter: sinon.fake(),
-      toggleFilterInverse: sinon.fake()
-    }}
-    highlightActions={{
-      removeHighlight: sinon.fake(),
-      toggleHighlight: sinon.fake(),
-      toggleHighlightLine: sinon.fake()
-    }}
-    toggleSettings={{
-      toggleWrap: sinon.fake(),
-      toggleCaseSensitive: sinon.fake(),
-      toggleFilterIntersection: sinon.fake()
-    }}
-    filterList={[]}
-    highlightList={[]}
-    server={null}
-    url={null}
-    detailsOpen={true}
-    handleSubmit={sinon.fake()}
-    build={'4191390ec6c7ee9bdea4e45f9cc94d31'}
-    setURLRef={sinon.fake()}
-    valueJIRA={'{noformat}↵[cpp_integration_test:connection_pool_asio_integration_test] 2018-05-09T17:20:31.322+0000 Starting C++ integration test build/integration_tests/connection_pool_asio_integration_test...↵...↵↵{noformat}'}
-    logIdentity={id}
-  />
-);
+  return Enzyme.mount(
+    <CollapseMenu
+      settings={{ caseSensitive: false, wrap: false, filterIntersection: false }}
+      filterActions={{
+        removeFilter: sinon.fake(),
+        toggleFilter: sinon.fake(),
+        toggleFilterInverse: sinon.fake()
+      }}
+      highlightActions={{
+        removeHighlight: sinon.fake(),
+        toggleHighlight: sinon.fake(),
+        toggleHighlightLine: sinon.fake()
+      }}
+      toggleSettings={{
+        toggleWrap: sinon.fake(),
+        toggleCaseSensitive: sinon.fake(),
+        toggleFilterIntersection: sinon.fake()
+      }}
+      filterList={[]}
+      highlightList={[]}
+      server={null}
+      url={null}
+      detailsOpen={true}
+      handleSubmit={sinon.fake()}
+      build={'4191390ec6c7ee9bdea4e45f9cc94d31'}
+      setURLRef={sinon.fake()}
+      valueJIRA={'{noformat}↵[cpp_integration_test:connection_pool_asio_integration_test] 2018-05-09T17:20:31.322+0000 Starting C++ integration test build/integration_tests/connection_pool_asio_integration_test...↵...↵↵{noformat}'}
+      logIdentity={id}
+    />
+  );
 }
 
 describe('CollapseMenu', () => {
@@ -58,16 +58,16 @@ describe('CollapseMenu', () => {
     assert.equal(toggleButtons.length, 3);
     assert.ok(wrapper.containsAllMatchingElements([
       <ToggleButtonGroup name={'wrap-on-off'}>
-      <ToggleButton value={true}>on</ToggleButton>
-      <ToggleButton value={false}>off</ToggleButton>
+        <ToggleButton value={true}>on</ToggleButton>
+        <ToggleButton value={false}>off</ToggleButton>
       </ToggleButtonGroup>,
       <ToggleButtonGroup name={'case-sensitive-on-off'}>
-      <ToggleButton value={true}>on</ToggleButton>
-      <ToggleButton value={false}>off</ToggleButton>
+        <ToggleButton value={true}>on</ToggleButton>
+        <ToggleButton value={false}>off</ToggleButton>
       </ToggleButtonGroup>,
       <ToggleButtonGroup name={'filter-intersection-and-or'}>
-      <ToggleButton value={true}>and</ToggleButton>
-      <ToggleButton value={false}>or</ToggleButton>
+        <ToggleButton value={true}>and</ToggleButton>
+        <ToggleButton value={false}>or</ToggleButton>
       </ToggleButtonGroup>
     ]));
 
