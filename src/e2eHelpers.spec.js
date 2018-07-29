@@ -58,14 +58,14 @@ export class Lobster {
 
     const browserHasFilesystemAPI = await this.browserHasFilesystemAPI();
     if (browserHasFilesystemAPI) {
-      if(options.cache === true) {
+      if (options.cache === true) {
         const button = await this._driver.wait(until.elementLocated(By.xpath(cacheYes)));
         try {
           await button.click();
         } catch (err) {
           console.log(err);
         }
-      }else {
+      } else {
         // Click the never button the cache
         const never = await this._driver.wait(until.elementLocated(By.xpath(cacheNever)));
         try {

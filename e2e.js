@@ -4,7 +4,7 @@ const path = require('path');
 const yargs = require('yargs');
 
 const argv = yargs
-  .usage("Usage: $0 [browser]")
+  .usage('Usage: $0 [browser]')
   .option('headless', {
     description: 'forcefully enable headless mode',
     default: false,
@@ -15,7 +15,7 @@ const argv = yargs
     default: false,
     type: 'boolean'
   })
-  //.conflicts('headless', 'no_headless')
+  // .conflicts('headless', 'no_headless')
   .option('no_build', {
     description: 'do not run `npm run build` before running tests',
     default: false,
@@ -79,7 +79,7 @@ function run(l) {
   console.log(`Testing lobster server on port: ${port}`);
   const uiBase = `http://localhost:${port}`;
 
-  const headless = process.env.CI === 'true' ? argv.headless : !argv.no_headless
+  const headless = process.env.CI === 'true' ? argv.headless : !argv.no_headless;
 
   const env = {
     LOBSTER_E2E_SERVER_PORT: port,

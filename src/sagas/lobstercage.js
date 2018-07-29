@@ -38,7 +38,7 @@ function fsUp(size: number) {
       }
     });
   });
-};
+}
 
 const write = (fs: DOMFileSystem, f: string, blob: Blob) => {
   return new Promise(function(resolve, reject) {

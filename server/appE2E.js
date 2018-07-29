@@ -11,7 +11,7 @@ function cors(req, res) {
 }
 
 let enumerate = 0;
-function makeLines(res, e) {
+function makeLines(res) {
   for (let i = 0; i < 10; ++i) {
     res.write('line ' + i);
     res.write('\n');
@@ -38,7 +38,7 @@ function logkeeper(req, res) {
     res.write(req.params.test);
     res.write('\n');
   }
-  makeLines(res, req.query.enumerate === '1');
+  makeLines(res);
 }
 
 function evergreen(req, res) {
@@ -58,7 +58,7 @@ function evergreen(req, res) {
     res.write(req.query.type);
     res.write('\n');
   }
-  makeLines(res, req.query.enumerate === '1');
+  makeLines(res);
 }
 
 function e2e(app) {

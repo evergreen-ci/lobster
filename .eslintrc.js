@@ -48,6 +48,7 @@ module.exports = {
       },
       'globals': {
         'e2e': true,
+        'e2eChrome': true,
         '__dirname': true
       }
     },

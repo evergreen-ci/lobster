@@ -134,12 +134,7 @@ describe('e2e', function() {
     }
   }, 15000);
 
-  e2e('lobstercage', async (done) => {
-    if (process.env.LOBSTER_E2E_BROWSER !== 'chrome') {
-      console.log('only chrome supports caching');
-      done();
-      return;
-    }
+  e2eChrome('lobstercage', async (done) => {
     const driver = await makeDriver(done);
     try {
       const l = new Lobster(driver);
