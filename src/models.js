@@ -18,12 +18,6 @@ export const logProcessors = (): string[] => Object.keys(logProcessors_);
 
 export type LogProcessor = $Keys<typeof logProcessors_>
 
-export type Log = $Exact<$ReadOnly<{
-  lines: Line[],
-  colorMap: ColorMap,
-  isDone: boolean
-}>>
-
 const evergreenTaskLogTypes: { [string]: string } = {
   'all': 'ALL',
   'task': 'T',
@@ -79,3 +73,11 @@ export type LogkeeperLog = $ReadOnly<{
 export type LogIdentity = LogkeeperLog
   | LobsterLog
   | EvergreenLog
+
+export type Log = $Exact<$ReadOnly<{
+  identity: ?LogIdentity,
+  lines: Line[],
+  colorMap: ColorMap,
+  isDone: boolean
+}>>
+
