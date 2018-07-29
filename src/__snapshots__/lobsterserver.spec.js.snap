@@ -15,7 +15,7 @@ line 7
 line 8
 line 9
 something else
-enumerate: 9
+enumerate: 13
 "
 `;
 
@@ -32,7 +32,7 @@ line 7
 line 8
 line 9
 something else
-enumerate: 8
+enumerate: 12
 "
 `;
 
@@ -50,6 +50,6 @@ line 7
 line 8
 line 9
 something else
-enumerate: 10
+enumerate: 14
 "
 `;

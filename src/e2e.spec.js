@@ -143,7 +143,10 @@ describe('e2e', function() {
       const divs0 = await l.lines();
       expect(divs0).toHaveLength(15);
       const l13 = await divs0[13].getText();
-      expect(l13).toBe('enumerate: 0');
+      const r = new RegExp('^enumerate: ([0-9]+)$');
+      const matches = r.exec(l13);
+      expect(matches).toHaveLength(2);
+      const expected = `enumerate: ${parseInt(matches[1], 10) + 1}`;
 
       for (let i = 0; i < 5; ++i) {
         await l.refresh();
@@ -152,7 +155,7 @@ describe('e2e', function() {
         const divs1 = await l.lines();
         expect(divs1).toHaveLength(15);
         const l13Refresh = await divs1[13].getText();
-        expect(l13Refresh).toBe('enumerate: 1');
+        expect(l13Refresh).toBe(expected);
       }
 
       done();
@@ -164,6 +167,7 @@ describe('e2e', function() {
   }, 15000);
 });
 
+// Test that each logviewer page can actually download logs
 [
   ['/lobster/evergreen/test/testid1234', 12],
   ['/lobster/evergreen/task/taskid1234/1234/all', 14],

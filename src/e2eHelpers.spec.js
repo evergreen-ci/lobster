@@ -47,7 +47,7 @@ export class Lobster {
     );
   }
 
-  async init(url, options) {
+  async init(url, options = {}) {
     if (url === undefined) {
       await this._driver.get(lobsterURL());
     } else {
@@ -273,13 +273,13 @@ describe('capabilities', function() {
 
     let c = capabilities();
     expect(c.getBrowserName()).toBe('chrome');
-    expect(c.get('chromeOptions')).toEqual({ 'args': ['--disable-device-discovery-notifications'] });
+    expect(c.get('chromeOptions')).toMatchSnapshot('capabilities-chrome-noenv')
 
     process.env.CI = 'true';
     process.env.IS_VM = 'true';
     c = capabilities();
     expect(c.getBrowserName()).toBe('chrome');
-    expect(c.get('chromeOptions')).toMatchObject({ 'args': ['--disable-device-discovery-notifications', '--headless', '--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter'] });
+    expect(c.get('chromeOptions')).toMatchSnapshot('capabilities-chrome-ci-is_vm')
 
     process.env = oldEnv;
   });
@@ -294,7 +294,7 @@ describe('capabilities', function() {
     process.env.LOBSTER_E2E_BROWSER = 'firefox';
     const c = capabilities();
     expect(c.getBrowserName()).toBe('firefox');
-    expect(c.get('moz:firefoxOptions')).toMatchObject({ 'args': ['--headless'] });
+    expect(c.get('moz:firefoxOptions')).toMatchSnapshot();
 
     process.env = oldEnv;
   });
