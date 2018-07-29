@@ -43,7 +43,7 @@ describe('resmoke', function() {
     };
     const state = resmoke(inState, data().join('\n'));
 
-    expect(state.lines.length).toBe(25);
+    expect(state.lines).toHaveLength(25);
     expect(state.lines[0].gitRef).toBe(undefined);
     expect(state.lines[1].gitRef).toBe(undefined);
     expect(state.lines[2].lineNumber).toBe(2);

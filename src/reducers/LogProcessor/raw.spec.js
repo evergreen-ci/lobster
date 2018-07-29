@@ -19,7 +19,7 @@ describe('raw', function() {
     ];
     const state = raw('\n')(inState, lines.join('\n'));
     expect(state.colorMap).toEqual({});
-    expect(state.lines.length).toBe(3);
+    expect(state.lines).toHaveLength(3);
 
     expect(state.lines[0].lineNumber).toBe(0);
     expect(state.lines[0].text).toBe('line0');
@@ -32,9 +32,9 @@ describe('raw', function() {
     expect(state.lines[1].gitRef).toBe(null);
 
     expect(state.lines[2].lineNumber).toBe(2);
-    expect(state.lines[2].text.toBe('line1');
-    expect(state.lines[2].port.toBe(null);
-    expect(state.lines[2].gitRef.toBe(null);
+    expect(state.lines[2].text).toBe('line1');
+    expect(state.lines[2].port).toBe(null);
+    expect(state.lines[2].gitRef).toBe(null);
 
     expect(state.identity).toBe(inState.identity);
   });

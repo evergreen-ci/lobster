@@ -146,7 +146,8 @@ function mapStateToProps(state, ownProps) {
     filterList: state.filters,
     highlightList: state.highlights,
     findIdx: state.find.findIdx,
-    searchRegex: state.find.searchRegex
+    searchRegex: state.find.searchRegex,
+    logIdentity: state.log.identity
   };
 }
 

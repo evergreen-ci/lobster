@@ -1,7 +1,7 @@
 // @flow strict
 
 import type { Action as LogviewerAction } from './logviewer';
-import type { Log, LogIdentity, LogProcessor, EvergreenTaskLog, EvergreenTestLog, EvergreenTaskLogType } from '../models';
+import type { Log, LogIdentity, LogProcessor } from '../models';
 
 export const PROCESS_RESPONSE = 'process-response';
 export const LOAD_LOG = 'load-log-by-identity';
