@@ -5,6 +5,7 @@ const needle = require('needle');
 const bodyParser = require('body-parser');
 const hash = require('string-hash');
 
+const appE2E = require('./appE2E');
 const dummyCache = require('./dummy_cache');
 const localCache = require('./local_cache');
 
@@ -18,7 +19,7 @@ function isValidURL(str) {
   return str.match(regex);
 }
 
-function makeApp(logsPath, cache) {
+function makeApp(logsPath, cache, isE2E) {
   const logsDir = logsPath === undefined ? undefined : path.resolve(logsPath);
   if (logsDir) {
     console.log('Serving local logs from directory: ' + logsDir);
@@ -41,11 +42,6 @@ function makeApp(logsPath, cache) {
     }
     res.status(500);
     res.render('error', { error: err });
-  });
-
-  // Always return the main index.html, so react-router render the route in the client
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
   });
 
   function cors(req, res) {
@@ -137,11 +133,21 @@ function makeApp(logsPath, cache) {
     }
   });
 
+  if (isE2E) {
+    console.log('e2e routes are active');
+    appE2E(app);
+  }
+
+  // Always return the main index.html, so react-router render the route in the client
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
+  });
+
   return app;
 }
 
-const makeListener = (addr = '127.0.0.1', port = 9000, logsPath, cache, callback) => {
-  const listener = makeApp(logsPath, cache).listen(port, addr, () => {
+const makeListener = (addr = '127.0.0.1', port = 9000, logsPath, cache, callback, isE2E) => {
+  const listener = makeApp(logsPath, cache, isE2E).listen(port, addr, () => {
     if (callback != null) {
       return callback(listener);
     }

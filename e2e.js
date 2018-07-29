@@ -15,7 +15,9 @@ app.makeListener(undefined, 0, e2eLogPath, undefined, (listener) => {
     'env': {
       ...process.env,
       LOBSTER_E2E_SERVER_PORT: listener.address().port,
-      LOBSTER_E2E_BROWSER: process.argv[2] || 'chrome'
+      LOBSTER_E2E_BROWSER: process.argv[2] || 'chrome',
+      REACT_APP_LOGKEEPER_BASE: `http://localhost:${listener.address().port}/logkeeper`,
+      REACT_APP_EVERGREEN_BASE: `http://localhost:${listener.address().port}/evergreen`
     },
     stdio: 'inherit'
   });
@@ -24,4 +26,4 @@ app.makeListener(undefined, 0, e2eLogPath, undefined, (listener) => {
     listener.close();
     process.exit(code);
   });
-});
+}, true);

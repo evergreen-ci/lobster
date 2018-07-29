@@ -21,4 +21,4 @@ if (!fs.existsSync(distPath)) {
 app.makeListener(yargs.argv.bind_address, PORT, yargs.argv.logs, yargs.argv.cache, (listener) => {
   const address = `${listener.address().address}:${listener.address().port}`;
   console.log('App listening on ' + address + '!');
-});
+}, 'e2e' in yargs.argv);

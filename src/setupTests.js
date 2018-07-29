@@ -14,10 +14,6 @@ import 'babel-polyfill';
 import 'url-search-params-polyfill';
 import localStorageMemory from 'localstorage-memory';
 
-// Prevent us from hitting production
-process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';
-process.env.REACT_APP_EVERGREEN_BASE = 'http://domain.invalid';
-
 if (!global.window) {
   global.window = {};
 } else if (!global.window.localStorage) {
@@ -38,4 +34,8 @@ if (process.env.LOBSTER_E2E_SERVER_PORT) {
   global.e2e = (name, ...rest) => {
     return test(`e2e-${name}`, ...rest);
   };
+} else {
+  // Prevent us from hitting production
+  process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';
+  process.env.REACT_APP_EVERGREEN_BASE = 'http://domain.invalid';
 }
