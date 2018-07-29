@@ -8,6 +8,7 @@ import { Filters } from './Filters';
 import { Highlights } from './Highlights';
 import type { Highlight, Filter } from '../../actions/logviewer';
 import type { LogIdentity } from '../../models';
+import * as api from '../../api';
 
 type Props = {
   settings: {
@@ -83,6 +84,17 @@ function showDetailButtons(id: ?LogIdentity, clearCache: ?() => void): ?ReactNod
         <Col key={2} lg={1}><Button href={`/build/${build}/test/${test}?html=1`}>HTML</Button></Col>
       ]);
     }
+  } else if (id.type === 'evergreen-task') {
+    buttons.push(...[
+      <Col key={0} lg={1}><Button href={api.taskURL(id.id, id.execution)}>Task</Button></Col>,
+      <Col key={1} lg={1}><Button href={api.taskLogRawURL(id.id, id.execution, id.log)}>Raw</Button></Col>,
+      <Col key={2} lg={1}><Button href={api.taskLogURL(id.id, id.execution, id.log)}>HTML</Button></Col>
+    ]);
+  } else if (id.type === 'evergreen-test') {
+    buttons.push(...[
+      <Col key={1} lg={1}><Button href={api.testLogRawURL(id.id)}>Raw</Button></Col>,
+      <Col key={2} lg={1}><Button href={api.testLogURL(id.id)}>HTML</Button></Col>
+    ]);
   }
   if (clearCache != null) {
     buttons.push(<Col key={3} lg={1}><Button bsStyle="danger" onClick={clearCache}>Clear Cache</Button></Col>);

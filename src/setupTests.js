@@ -37,5 +37,5 @@ if (process.env.LOBSTER_E2E_SERVER_PORT) {
 } else {
   // Prevent us from hitting production
   process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';
-  process.env.REACT_APP_EVERGREEN_BASE = 'http://domain.invalid';
+  process.env.REACT_APP_EVERGREEN_BASE = 'http://evergreen.invalid';
 }
