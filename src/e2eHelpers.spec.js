@@ -143,7 +143,7 @@ export class Lobster {
     const absPath = path.resolve(file);
     const fileExists = existsSync(absPath);
     if (!fileExists) {
-      throw 'erro';
+      throw new `file '${absPath}' does not exist`;
     }
 
     const dropzone = await this._driver.wait(until.elementLocated(By.xpath(dropArea)));
