@@ -9,9 +9,6 @@ const appE2E = require('./appE2E');
 const dummyCache = require('./dummy_cache');
 const localCache = require('./local_cache');
 
-
-console.log('Starting server to support lobster log viewer.\nOptions:\n  --cache   Cache files after download in the provided directory. Note! All directory content will be deleted on the server start up! [optional]\n  --logs  An absolute path to log files that will be available to server [optional]\n  --bind_address  Specify the address lobster should bind to. Defaults to 127.0.0.1 [optional]\n  --port specify the port number. Defaults to 9000 [optional]');
-
 function isValidURL(str) {
   const expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
   const regex = new RegExp(expression);
@@ -146,8 +143,8 @@ function makeApp(logsPath, cache, isE2E) {
   return app;
 }
 
-const makeListener = (addr = '127.0.0.1', port = 9000, logsPath, cache, callback, isE2E) => {
-  const listener = makeApp(logsPath, cache, isE2E).listen(port, addr, () => {
+const makeListener = (options, callback) => {
+  const listener = makeApp(options.logs, options.cache, options.e2e).listen(options.port, options.bind_address, () => {
     if (callback != null) {
       return callback(listener);
     }

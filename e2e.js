@@ -69,7 +69,6 @@ function run(listener) {
   });
 }
 
-
 if (argv.no_server === true) {
   run(null);
 } else {
