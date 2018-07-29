@@ -6,6 +6,7 @@ import { existsSync } from 'fs';
 
 const caseToggleXPath = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div/div[1]/div[2]';
 const cacheNever = '//*[@id="root"]/div/div/div/div/div/div[3]/button[1]';
+const cacheYes = '//*[@id="root"]/div/div/div/div/div/div[3]/button[3]';
 const showDetails = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/button[4]';
 const notFound = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/label';
 const addFilter = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/button[2]';
@@ -27,12 +28,15 @@ export class Lobster {
     this._showdetails = false;
   }
 
-  async init(url) {
-    if (url === undefined) {
-      await this._driver.get(lobsterURL());
-    } else {
-      await this._driver.get(`http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}${url}`);
-    }
+  async refresh() {
+    await this._driver.navigate().refresh();
+  }
+
+  async disableFetch() {
+    await this._driver.executeScript('window.fetch = undefined');
+  }
+
+  async waitUntilDocumentReady() {
     // Wait until document is ready
     await this._driver.wait(
       new Condition('document is ready', (driver) => {
@@ -41,15 +45,34 @@ export class Lobster {
         });
       })
     );
+  }
+
+  async init(url, options) {
+    if (url === undefined) {
+      await this._driver.get(lobsterURL());
+    } else {
+      await this._driver.get(`http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}${url}`);
+    }
+
+    await this.waitUntilDocumentReady();
 
     const browserHasFilesystemAPI = await this.browserHasFilesystemAPI();
     if (browserHasFilesystemAPI) {
-      // Click the never button the cache
-      const never = await this._driver.wait(until.elementLocated(By.xpath(cacheNever)));
-      try {
-        await never.click();
-      } catch (err) {
-        console.log(err);
+      if(options.cache === true) {
+        const button = await this._driver.wait(until.elementLocated(By.xpath(cacheYes)));
+        try {
+          await button.click();
+        } catch (err) {
+          console.log(err);
+        }
+      }else {
+        // Click the never button the cache
+        const never = await this._driver.wait(until.elementLocated(By.xpath(cacheNever)));
+        try {
+          await never.click();
+        } catch (err) {
+          console.log(err);
+        }
       }
     }
   }
@@ -185,10 +208,19 @@ export class Lobster {
   }
 }
 
+const isHeadless = () => {
+  if (process.env.CI === 'true' && process.env.LOBSTER_E2E_HEADLESS !== 'false') {
+    return true;
+  } else if (process.env.CI !== 'true' && process.env.LOBSTER_E2E_HEADLESS === 'true') {
+    return true;
+  }
+  return false;
+};
+
 const chromeCapabilities = () => {
   const capabilities = Capabilities.chrome();
-  const options = { 'args': ['--disable-device-discovery-notifications'] };
-  if (process.env.CI === 'true') {
+  const options = { 'args': ['--disable-device-discovery-notifications', '--unlimited-storage'] };
+  if (isHeadless()) {
     options.args.push(...['--headless']);
   }
   // Disable sandboxing, GPU, shared memory in VMs
@@ -202,7 +234,7 @@ const chromeCapabilities = () => {
 const firefoxCapabilities = () => {
   const capabilities = Capabilities.firefox();
   const options = { 'args': [] };
-  if (process.env.CI === 'true') {
+  if (isHeadless()) {
     options.args.push(...['--headless']);
   }
   if (options.args === []) {

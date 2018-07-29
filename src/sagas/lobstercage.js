@@ -16,7 +16,7 @@ function fsUp(size: number) {
     const errh = (e) => reject(e);
     const fsh = (fs) => resolve(fs);
 
-    if (window.requestFileSystem == undefined) {
+    if (window.requestFileSystem == null) {
       reject();
       return;
     }
@@ -42,6 +42,8 @@ function fsUp(size: number) {
 
 const write = (fs: DOMFileSystem, f: string, blob: Blob) => {
   return new Promise(function(resolve, reject) {
+    const errh = (e) => reject(e);
+
     fs.root.getFile(f, { create: true }, function(fileEntry) {
       fileEntry.createWriter(function(fileWriter) {
         fileWriter.onwriteend = function() {
@@ -54,8 +56,8 @@ const write = (fs: DOMFileSystem, f: string, blob: Blob) => {
         };
 
         fileWriter.write(blob);
-      }, (e) => reject(e));
-    }, (e) => reject(e));
+      }, errh);
+    }, errh);
   });
 };
 
@@ -82,8 +84,9 @@ const fsReadPromise = (fs: DOMFileSystem, f: string) => {
   return new Promise(function(resolve, reject) {
     if (!fs) {
       reject();
+      return;
     }
-    fs.root.getFile(f, function(fileEntry) {
+    fs.root.getFile(f, {}, function(fileEntry) {
       fileEntry.file(function(file) {
         const reader = new FileReader();
 
@@ -141,7 +144,7 @@ export function* wipeCache(): Saga<void> {
 
 function remove(fs: DOMFileSystem, f: string) {
   return new Promise(function(resolve, reject) {
-    fs.root.getFile(f, (fileEntry) => {
+    fs.root.getFile(f, {}, (fileEntry) => {
       entryPromise(fileEntry)
         .then(() => resolve())
         .catch((e) => reject(e));

@@ -29,11 +29,18 @@ if (!global.window) {
 
 // Skip end-to-end tests by default
 global.e2e = test.skip;
+global.e2eChrome = test.skip;
 if (process.env.LOBSTER_E2E_SERVER_PORT) {
   process.env.LOBSTER_E2E_SERVER_PORT = parseInt(process.env.LOBSTER_E2E_SERVER_PORT, 10);
   global.e2e = (name, ...rest) => {
     return test(`e2e-${name}`, ...rest);
   };
+
+  if (process.env.LOBSTER_E2E_BROWSER === 'chrome' || !process.env.LOBSTER_E2E_BROWSER) {
+    global.e2eChrome = (name, ...rest) => {
+      return test(`e2e-${name}`, ...rest);
+    };
+  }
 } else {
   // Prevent us from hitting production
   process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';

@@ -133,13 +133,47 @@ describe('e2e', function() {
       await driver.quit();
     }
   }, 15000);
+
+  e2e('lobstercage', async (done) => {
+    if (process.env.LOBSTER_E2E_BROWSER !== 'chrome') {
+      console.log('only chrome supports caching');
+      done();
+      return;
+    }
+    const driver = await makeDriver(done);
+    try {
+      const l = new Lobster(driver);
+      await l.init('/lobster/build/build1234/test/test1234', { cache: true });
+
+      const divs0 = await l.lines();
+      expect(divs0).toHaveLength(15);
+      const l13 = await divs0[13].getText();
+      expect(l13).toBe('enumerate: 0');
+
+      for (let i = 0; i < 5; ++i) {
+        await l.refresh();
+        await l.waitUntilDocumentReady();
+
+        const divs1 = await l.lines();
+        expect(divs1).toHaveLength(15);
+        const l13Refresh = await divs1[13].getText();
+        expect(l13Refresh).toBe('enumerate: 1');
+      }
+
+      done();
+    } catch (e) {
+      done.fail(e);
+    } finally {
+      await driver.quit();
+    }
+  }, 15000);
 });
 
 [
   ['/lobster/evergreen/test/testid1234', 12],
   ['/lobster/evergreen/task/taskid1234/1234/all', 14],
-  ['/lobster/build/build1234/all', 13],
-  ['/lobster/build/build1234/test/test1234', 14]
+  ['/lobster/build/build1234/all', 14],
+  ['/lobster/build/build1234/test/test1234', 15]
 ].forEach((table) => {
   e2e(`search-${table[0]}`, async (done) => {
     const driver = await makeDriver(done);

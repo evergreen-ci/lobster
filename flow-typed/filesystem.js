@@ -8,13 +8,9 @@ declare class Metadata {
   size: number
 };
 declare type DOMFileSystem$errorHandler = ((err: FileError) => void);
-declare type DOMFileSystem$getFile = {
-  (path: string, successCallback?: ((FileSystemFileEntry) => void), errorCallback?: DOMFileSystem$errorHandler): void,
-  (path: string, options?: FileSystemFlags, successCallback?: (FileSystemFileEntry) => void, errorCallback?: DOMFileSystem$errorHandler): void
-};
+declare type DOMFileSystem$getFile = (path: string, options: FileSystemFlags, successCallback: (FileSystemFileEntry) => void, errorCallback?: DOMFileSystem$errorHandler) => void;
 
-declare type DOMFileSystem$getDirectory = (path: string, successCallback?: (FileSystemDirectoryEntry) => void, errorCallback?: DOMFileSystem$errorHandler) => void
-  | (path: string, options?: FileSystemFlags, successCallback?: ((FileSystemDirectoryEntry) => void), errorCallback?: DOMFileSystem$errorHandler) => void;
+declare type DOMFileSystem$getDirectory = (path: string, options: FileSystemFlags, successCallback: ((FileSystemDirectoryEntry) => void), errorCallback?: DOMFileSystem$errorHandler) => void;
 
 declare var window: any & {
   TEMPORARY: 0,

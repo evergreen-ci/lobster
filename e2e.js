@@ -4,6 +4,18 @@ const path = require('path');
 const yargs = require('yargs');
 
 const argv = yargs
+  .usage("Usage: $0 [browser]")
+  .option('headless', {
+    description: 'forcefully enable headless mode',
+    default: false,
+    type: 'boolean'
+  })
+  .option('no_headless', {
+    description: 'forcefully disable headless mode ',
+    default: false,
+    type: 'boolean'
+  })
+  //.conflicts('headless', 'no_headless')
   .option('no_build', {
     description: 'do not run `npm run build` before running tests',
     default: false,
@@ -22,6 +34,7 @@ const argv = yargs
     type: 'string'
   })
   .argv;
+argv.browser = argv._[0];
 
 let listener;
 process.on('SIGINT', () => {
@@ -66,9 +79,12 @@ function run(l) {
   console.log(`Testing lobster server on port: ${port}`);
   const uiBase = `http://localhost:${port}`;
 
+  const headless = process.env.CI === 'true' ? argv.headless : !argv.no_headless
+
   const env = {
     LOBSTER_E2E_SERVER_PORT: port,
-    LOBSTER_E2E_BROWSER: argv._ || 'chrome',
+    LOBSTER_E2E_BROWSER: argv.browser || 'chrome',
+    LOBSTER_E2E_HEADLESS: headless,
     REACT_APP_LOGKEEPER_BASE: `${uiBase}/logkeeper`,
     REACT_APP_EVERGREEN_BASE: `${uiBase}/evergreen`
   };
