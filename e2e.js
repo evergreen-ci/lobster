@@ -32,7 +32,7 @@ process.on('SIGINT', () => {
 });
 
 function test() {
-  const e2e = child.spawn('npm', ['run', 'test', '--', '-t', argv.t], {
+  const e2eProcess = child.spawn('npm', ['run', 'test', '--', '-t', argv.t], {
     'env': {
       ...process.env,
       ...this
@@ -40,7 +40,7 @@ function test() {
     stdio: 'inherit'
   });
 
-  e2e.on('close', function(code2) {
+  e2eProcess.on('close', function(code2) {
     if (listener) {
       listener.close();
     }
@@ -49,7 +49,7 @@ function test() {
 }
 
 function build(env, callback) {
-  const build = child.spawn('npm', ['run', 'build'], {
+  const buildProcess = child.spawn('npm', ['run', 'build'], {
     'env': {
       ...process.env,
       ...env
@@ -57,10 +57,11 @@ function build(env, callback) {
     stdio: 'inherit'
   });
 
-  build.on('close', callback.call(env));
+  buildProcess.on('close', callback.call(env));
 }
 
-function run(listener) {
+function run(l) {
+  listener = l;
   const port = listener ? listener.address().port : argv.port;
   console.log(`Testing lobster server on port: ${port}`);
   const uiBase = `http://localhost:${port}`;
@@ -74,9 +75,8 @@ function run(listener) {
 
   if (argv.no_build) {
     return test.call(env);
-  }else {
-    return build(env, test);
   }
+  return build(env, test);
 }
 
 if (argv.no_server === true) {

@@ -36,6 +36,7 @@
     "test:e2e": "node ./e2e.js",
     "flow": "flow",
     "lint": "eslint --ext .js,.jsx -- .",
+    "lint:fix": "eslint --ext .js,.jsx -- --fix .",
     "eslint": "eslint --ext .js,.jsx",
     "debug": "react-scripts --inspect-brk test --runInBand --env=jsdom",
     "generate-tasks": "node generate-tasks.js"

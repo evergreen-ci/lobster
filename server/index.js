@@ -5,11 +5,11 @@ const yargs = require('yargs');
 
 const envPort = parseInt(process.env.PORT, 10);
 const pathResolve = (p) => {
-  if (p == undefined) {
+  if (p === undefined) {
     return p;
   }
   return path.resolve(p);
-}
+};
 
 if (require.main === module) {
   const argv = yargs
@@ -55,7 +55,6 @@ if (require.main === module) {
     const address = `${listener.address().address}:${listener.address().port}`;
     console.log('App listening on ' + address + '!');
   });
-
-}else {
+} else {
   module.exports = {};
 }

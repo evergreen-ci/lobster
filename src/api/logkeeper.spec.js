@@ -1,4 +1,3 @@
-import assert from 'assert';
 import sinon from 'sinon';
 import * as logkeeper from './logkeeper';
 
@@ -10,7 +9,7 @@ describe('api-logkeeper', function() {
       expect(req.url).toBe('http://localhost:9001');
       expect(req.method).toBe('POST');
       expect(req.headers.map['content-type']).toBe('application/json');
-      expect(req.text()).resolves.toBe('{\"url\":\"a.log\"}')
+      expect(req.text()).resolves.toBe('{\"url\":\"a.log\"}');
       done();
       return Promise.resolve('y');
     });
