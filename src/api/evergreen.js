@@ -37,7 +37,7 @@ export function fetchEvergreen(log: EvergreenLog): Promise<Response> {
   if (log.type === 'evergreen-task') {
     req = new Request(taskLogRawURL(log.id, log.execution, log.log), init);
   } else if (log.type === 'evergreen-test') {
-    req = new Request(testLogURL(log.id), init);
+    req = new Request(testLogRawURL(log.id), init);
   }
 
   return window.fetch(req);
