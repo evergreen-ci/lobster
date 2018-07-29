@@ -273,13 +273,13 @@ describe('capabilities', function() {
 
     let c = capabilities();
     expect(c.getBrowserName()).toBe('chrome');
-    expect(c.get('chromeOptions')).toMatchSnapshot('capabilities-chrome-noenv')
+    expect(c.get('chromeOptions')).toMatchSnapshot('capabilities-chrome-noenv');
 
     process.env.CI = 'true';
     process.env.IS_VM = 'true';
     c = capabilities();
     expect(c.getBrowserName()).toBe('chrome');
-    expect(c.get('chromeOptions')).toMatchSnapshot('capabilities-chrome-ci-is_vm')
+    expect(c.get('chromeOptions')).toMatchSnapshot('capabilities-chrome-ci-is_vm');
 
     process.env = oldEnv;
   });
