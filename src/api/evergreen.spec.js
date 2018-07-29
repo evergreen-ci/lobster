@@ -1,6 +1,9 @@
 import * as api from './evergreen';
+import sinon from 'sinon';
 
 describe('evergreen', () => {
+  afterEach(() => sinon.restore());
+
   test('taskLogURL', () => {
     expect(api.taskLogURL('task0', 123, 'all')).toBe('http://evergreen.invalid/task_log_raw/task0/123?type=ALL');
     expect(api.taskLogRawURL('task0', 123, 'all')).toBe('http://evergreen.invalid/task_log_raw/task0/123?type=ALL&text=true');
@@ -17,10 +20,10 @@ describe('evergreen', () => {
   });
 
   test('fetchEvergreen-task', (done) => {
-    window.fetch = (req) => {
+    sinon.replace(window, 'fetch', (req) => {
       expect(req.url).toBe(api.taskLogRawURL('task0', 123, 'all'));
       done();
-    };
+    });
 
     api.fetchEvergreen({
       type: 'evergreen-task',
@@ -31,10 +34,10 @@ describe('evergreen', () => {
   });
 
   test('fetchEvergreen-test', (done) => {
-    window.fetch = (req) => {
+    sinon.replace(window, 'fetch', (req) => {
       expect(req.url).toBe(api.testLogRawURL('task0'));
       done();
-    };
+    });
 
     api.fetchEvergreen({
       type: 'evergreen-test',
