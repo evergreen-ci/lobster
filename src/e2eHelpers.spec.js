@@ -263,39 +263,3 @@ export const makeDriver = async (done) => {
     done.fail(err);
   }
 };
-
-describe('capabilities', function() {
-  test('chrome', function() {
-    const oldEnv = Object.assign({}, process.env);
-    delete process.env.CI;
-    delete process.env.LOBSTER_E2E_BROWSER;
-    delete process.env.IS_VM;
-
-    let c = capabilities();
-    expect(c.getBrowserName()).toBe('chrome');
-    expect(c.get('chromeOptions')).toMatchSnapshot('capabilities-chrome-noenv');
-
-    process.env.CI = 'true';
-    process.env.IS_VM = 'true';
-    c = capabilities();
-    expect(c.getBrowserName()).toBe('chrome');
-    expect(c.get('chromeOptions')).toMatchSnapshot('capabilities-chrome-ci-is_vm');
-
-    process.env = oldEnv;
-  });
-
-  test('firefox', function() {
-    const oldEnv = Object.assign({}, process.env);
-    delete process.env.CI;
-    delete process.env.LOBSTER_E2E_BROWSER;
-    delete process.env.IS_VM;
-
-    process.env.CI = 'true';
-    process.env.LOBSTER_E2E_BROWSER = 'firefox';
-    const c = capabilities();
-    expect(c.getBrowserName()).toBe('firefox');
-    expect(c.get('moz:firefoxOptions')).toMatchSnapshot();
-
-    process.env = oldEnv;
-  });
-});
