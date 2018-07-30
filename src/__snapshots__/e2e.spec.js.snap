@@ -7,27 +7,3 @@ Object {
   ],
 }
 `;
-
-exports[`capabilities-chrome-ci-is_vm 1`] = `
-Object {
-  "args": Array [
-    "--disable-device-discovery-notifications",
-    "--unlimited-storage",
-    "--headless",
-    "--disable-gpu",
-    "--no-sandbox",
-    "--disable-dev-shm-usage",
-    "--allow-insecure-localhost",
-    "--enable-crash-reporter",
-  ],
-}
-`;
-
-exports[`capabilities-chrome-noenv 1`] = `
-Object {
-  "args": Array [
-    "--disable-device-discovery-notifications",
-    "--unlimited-storage",
-  ],
-}
-`;

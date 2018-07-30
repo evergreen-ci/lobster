@@ -3,8 +3,6 @@
 import * as lobstercage from './lobstercage';
 import { expectSaga } from 'redux-saga-test-plan';
 
-/* eslint-disable flowtype/no-flow-fix-me-comments */
-
 describe('lobstercage', function() {
   // lobstercage is also tested by e2e.spec.js, for testing the caching functionality in chrome
   test('readFromCache-unsupported', function(done) {
