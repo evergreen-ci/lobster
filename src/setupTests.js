@@ -28,8 +28,13 @@ if (!global.window) {
 }
 
 // Skip end-to-end tests by default
-global.e2e = test.skip;
-global.e2eChrome = test.skip;
+
+const skip = (name, ...rest) => {
+  return test.skip(`e2e-${name}`, ...rest);
+}
+
+global.e2e = skip;
+global.e2eChrome = skip;
 if (process.env.LOBSTER_E2E_SERVER_PORT) {
   process.env.LOBSTER_E2E_SERVER_PORT = parseInt(process.env.LOBSTER_E2E_SERVER_PORT, 10);
   global.e2e = (name, ...rest) => {
