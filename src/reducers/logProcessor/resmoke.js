@@ -1,6 +1,7 @@
 // @flow strict
 
 import type { Log } from '../../models';
+import resmokeTestEvents from './resmokeTestEvents';
 
 function getGitVersion(line: string): string {
   const gitVersionStr = 'git version: ';
@@ -22,7 +23,6 @@ function getFullGitRef(fileLine: ?string, gitVersion: string): ?string {
 export default function(response: string): Log {
   // set the url to the url we requested
   const lines = response.split('\n');
-
   const processed = [];
   const gitPrefix = '{githash:';
   const gitPrefixLen = gitPrefix.length + 2;
@@ -90,10 +90,10 @@ export default function(response: string): Log {
       gitRef: gitRef
     });
   }
-
   return {
     lines: processed,
     colorMap: colorMap,
-    isDone: true
+    isDone: true,
+    events: resmokeTestEvents(processed)
   };
 }

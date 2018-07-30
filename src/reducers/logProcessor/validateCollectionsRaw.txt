@@ -1,0 +1,291 @@
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.412+0000 Starting JSTest jstests/hooks/run_validate_collections.js...
+./mongo --eval MongoRunner.dataDir = "/data/db/job3/mongorunner"; TestData = new Object(); TestData.wiredTigerEngineConfigString = ""; TestData.maxPort = 20999; TestData.storageEngineCacheSizeGB = "1"; TestData.setParameters = new Object(); TestData.setParameters.logComponentVerbosity = new Object(); TestData.setParameters.logComponentVerbosity.replication = new Object(); TestData.setParameters.logComponentVerbosity.replication.heartbeats = 2; TestData.setParameters.logComponentVerbosity.replication.rollback = 2; TestData.wiredTigerIndexConfigString = ""; TestData.noJournal = false; TestData.failIfUnterminatedProcesses = true; TestData.transactionLifetimeLimitSeconds = 10800; TestData.isMainTest = true; TestData.serviceExecutor = ""; TestData.storageEngine = "wiredTiger"; TestData.minPort = 20770; TestData.wiredTigerCollectionConfigString = ""; TestData.transportLayer = ""; TestData.numTestClients = 1; TestData.testName = "run_validate_collections"; MongoRunner.dataPath = "/data/db/job3/mongorunner/"; load('jstests/libs/override_methods/validate_collections_on_shutdown.js');; load('jstests/libs/override_methods/check_uuids_consistent_across_cluster.js'); mongodb://localhost:20753 jstests/hooks/run_validate_collections.js
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.438+0000 MongoDB shell version v4.1.1-128-ge491e284e8
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.442+0000 JSTest jstests/hooks/run_validate_collections.js started with pid 20948.
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.498+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:44725 #18 (1 connection now open)
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.501+0000 connecting to: mongodb://localhost:20753
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.502+0000 MongoDB server version: 4.1.1-128-ge491e284e8
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.504+0000 true
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.498+0000 I NETWORK  [conn18] received client metadata from 127.0.0.1:44725 conn18: { application: { name: "MongoDB Shell" }, driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.508+0000 2018-07-27T17:24:58.507+0000 I NETWORK  [js] Starting new replica set monitor for config-rs/localhost:20750
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.508+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:54828 #50 (18 connections now open)
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.510+0000 2018-07-27T17:24:58.508+0000 I NETWORK  [js] Successfully connected to localhost:20750 (1 connections now open to localhost:20750 with a 5 second timeout)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.508+0000 I NETWORK  [conn50] received client metadata from 127.0.0.1:54828 conn50: { driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.509+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:54829 #51 (19 connections now open)
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.514+0000 2018-07-27T17:24:58.512+0000 I NETWORK  [js] Starting new replica set monitor for shard-rs0/localhost:20751
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.515+0000 2018-07-27T17:24:58.513+0000 I NETWORK  [js] Successfully connected to localhost:20751 (1 connections now open to localhost:20751 with a 5 second timeout)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.513+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:47066 #34 (11 connections now open)
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.517+0000 2018-07-27T17:24:58.515+0000 I NETWORK  [js] Starting new replica set monitor for shard-rs1/localhost:20752
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.509+0000 I NETWORK  [conn51] received client metadata from 127.0.0.1:54829 conn51: { application: { name: "MongoDB Shell" }, driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.516+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:58302 #32 (9 connections now open)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.513+0000 I NETWORK  [conn34] received client metadata from 127.0.0.1:47066 conn34: { driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.520+0000 2018-07-27T17:24:58.516+0000 I NETWORK  [js] Successfully connected to localhost:20752 (1 connections now open to localhost:20752 with a 5 second timeout)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.516+0000 I NETWORK  [conn32] received client metadata from 127.0.0.1:58302 conn32: { driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.514+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:47067 #35 (12 connections now open)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.517+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:58303 #33 (10 connections now open)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.517+0000 I NETWORK  [conn33] received client metadata from 127.0.0.1:58303 conn33: { application: { name: "MongoDB Shell" }, driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.514+0000 I NETWORK  [conn35] received client metadata from 127.0.0.1:47067 conn35: { application: { name: "MongoDB Shell" }, driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.576+0000 connecting to: mongodb://localhost:20753
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.576+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:44735 #19 (2 connections now open)
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.576+0000 I NETWORK  [conn19] received client metadata from 127.0.0.1:44735 conn19: { application: { name: "MongoDB Shell" }, driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.578+0000 MongoDB server version: 4.1.1-128-ge491e284e8
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.580+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:54838 #52 (20 connections now open)
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.580+0000 Running validate() on localhost:20750
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.580+0000 I NETWORK  [conn52] received client metadata from 127.0.0.1:54838 conn52: { application: { name: "MongoDB Shell" }, driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.581+0000 connecting to: mongodb://localhost:20753
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.581+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:44737 #20 (3 connections now open)
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.583+0000 MongoDB server version: 4.1.1-128-ge491e284e8
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.581+0000 I NETWORK  [conn20] received client metadata from 127.0.0.1:44737 conn20: { application: { name: "MongoDB Shell" }, driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.584+0000 Running validate() on localhost:20751
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.585+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:47076 #36 (13 connections now open)
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.586+0000 connecting to: mongodb://localhost:20753
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.586+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:44739 #21 (4 connections now open)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.585+0000 I NETWORK  [conn36] received client metadata from 127.0.0.1:47076 conn36: { application: { name: "MongoDB Shell" }, driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.588+0000 I COMMAND  [conn52] CMD: validate admin.system.keys
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.588+0000 MongoDB server version: 4.1.1-128-ge491e284e8
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.590+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:58312 #34 (11 connections now open)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.588+0000 I INDEX    [conn52] validating collection admin.system.keys (UUID: b3db9e48-dda6-4329-97df-2fa05e9b1967)
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.590+0000 Running validate() on localhost:20752
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.591+0000 I COMMAND  [conn36] CMD: validate admin.system.version
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.587+0000 I NETWORK  [conn21] received client metadata from 127.0.0.1:44739 conn21: { application: { name: "MongoDB Shell" }, driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.589+0000 I INDEX    [conn52] validating index admin.system.keys.$_id_
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.591+0000 I INDEX    [conn36] validating collection admin.system.version (UUID: bf2aff6d-f8e5-49d7-a3bb-7824c364ed15)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.590+0000 I NETWORK  [conn34] received client metadata from 127.0.0.1:58312 conn34: { application: { name: "MongoDB Shell" }, driver: { name: "MongoDB Internal Client", version: "4.1.1-128-ge491e284e8" }, os: { type: "Linux", name: "Red Hat Enterprise Linux Server release 6.2 (Santiago)", architecture: "x86_64", version: "Kernel 2.6.32-220.el6.x86_64" } }
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.591+0000 W STORAGE  [conn36] Could not complete validation of table:collection-11-5132522605079828611. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.590+0000 I INDEX    [conn52] validated collection admin.system.keys (UUID: b3db9e48-dda6-4329-97df-2fa05e9b1967)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.591+0000 I INDEX    [conn36] validating index admin.system.version.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.591+0000 I COMMAND  [conn52] CMD: validate admin.system.version
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.595+0000 I COMMAND  [conn34] CMD: validate admin.system.version
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.591+0000 I INDEX    [conn52] validating collection admin.system.version (UUID: f2d7299b-2098-4b50-9c08-dfcadec9fa7b)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.591+0000 W STORAGE  [conn36] Could not complete validation of table:index-12-5132522605079828611. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.595+0000 I INDEX    [conn34] validating collection admin.system.version (UUID: 0605b8a3-979e-4f57-8703-bf2c09c92126)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.592+0000 I INDEX    [conn52] validating index admin.system.version.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.593+0000 I INDEX    [conn52] validated collection admin.system.version (UUID: f2d7299b-2098-4b50-9c08-dfcadec9fa7b)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.595+0000 W STORAGE  [conn34] Could not complete validation of table:collection-11-7878956321649005404. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.591+0000 I INDEX    [conn36] validated collection admin.system.version (UUID: bf2aff6d-f8e5-49d7-a3bb-7824c364ed15)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.596+0000 I INDEX    [conn34] validating index admin.system.version.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.596+0000 I COMMAND  [conn52] CMD: validate config.changelog
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.597+0000 I INDEX    [conn52] validating collection config.changelog (UUID: 7c802c23-e7dc-47ca-80a6-e22fb240e777)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.594+0000 I COMMAND  [conn36] CMD: validate config.cache.chunks.config.system.sessions
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.598+0000 I INDEX    [conn52] validating index config.changelog.$_id_
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.596+0000 W STORAGE  [conn34] Could not complete validation of table:index-12-7878956321649005404. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.599+0000 I INDEX    [conn52] validated collection config.changelog (UUID: 7c802c23-e7dc-47ca-80a6-e22fb240e777)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.594+0000 I INDEX    [conn36] validating collection config.cache.chunks.config.system.sessions (UUID: 7468cf4e-fb26-4aae-8d1e-ce6a0625f768)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.599+0000 I COMMAND  [conn52] CMD: validate config.chunks
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.594+0000 W STORAGE  [conn36] Could not complete validation of table:collection-23-5132522605079828611. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.596+0000 I INDEX    [conn34] validated collection admin.system.version (UUID: 0605b8a3-979e-4f57-8703-bf2c09c92126)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.600+0000 I INDEX    [conn52] validating collection config.chunks (UUID: 365c6ca7-bd2a-48f0-9b0f-f8b22759adab)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.600+0000 I INDEX    [conn52] validating index config.chunks.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.601+0000 I INDEX    [conn52] validating index config.chunks.$ns_1_min_1
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.594+0000 I INDEX    [conn36] validating index config.cache.chunks.config.system.sessions.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.602+0000 I INDEX    [conn52] validating index config.chunks.$ns_1_shard_1_min_1
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.603+0000 I INDEX    [conn52] validating index config.chunks.$ns_1_lastmod_1
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.598+0000 I COMMAND  [conn34] CMD: validate config.cache.databases
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.598+0000 I INDEX    [conn34] validating collection config.cache.databases (UUID: b8b022a8-5d93-4779-bcae-db502d8b8805)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.604+0000 I INDEX    [conn52] validated collection config.chunks (UUID: 365c6ca7-bd2a-48f0-9b0f-f8b22759adab)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.598+0000 W STORAGE  [conn34] Could not complete validation of table:collection-21-7878956321649005404. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.605+0000 I COMMAND  [conn52] CMD: validate config.collections
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.594+0000 W STORAGE  [conn36] Could not complete validation of table:index-24-5132522605079828611. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.598+0000 I INDEX    [conn34] validating index config.cache.databases.$_id_
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.594+0000 I INDEX    [conn36] validating index config.cache.chunks.config.system.sessions.$lastmod_1
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.598+0000 W STORAGE  [conn34] Could not complete validation of table:index-22-7878956321649005404. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.598+0000 I INDEX    [conn34] validated collection config.cache.databases (UUID: b8b022a8-5d93-4779-bcae-db502d8b8805)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.599+0000 I COMMAND  [conn34] CMD: validate config.transactions
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.620+0000 I NETWORK  [conn20] end connection 127.0.0.1:44737 (3 connections now open)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.599+0000 I INDEX    [conn34] validating collection config.transactions (UUID: d4f03286-db80-423d-9206-ea9f000e4c94)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.600+0000 I INDEX    [conn34] validating index config.transactions.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.605+0000 I INDEX    [conn52] validating collection config.collections (UUID: 074ceedf-61bc-4b96-b7b9-c52b28c5e6f9)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.594+0000 W STORAGE  [conn36] Could not complete validation of table:index-25-5132522605079828611. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.601+0000 I INDEX    [conn34] validated collection config.transactions (UUID: d4f03286-db80-423d-9206-ea9f000e4c94)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.603+0000 I COMMAND  [conn34] CMD: validate local.oplog.rs
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.603+0000 I INDEX    [conn34] validating collection local.oplog.rs (UUID: 44e10938-d437-4df6-b2ab-dcab63700699)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.605+0000 W STORAGE  [conn52] Could not complete validation of table:collection-47--686515800040506760. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.594+0000 I INDEX    [conn36] validated collection config.cache.chunks.config.system.sessions (UUID: 7468cf4e-fb26-4aae-8d1e-ce6a0625f768)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.603+0000 W STORAGE  [conn34] Could not complete validation of table:collection-8-7878956321649005404. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.603+0000 I INDEX    [conn34] validated collection local.oplog.rs (UUID: 44e10938-d437-4df6-b2ab-dcab63700699)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.595+0000 I COMMAND  [conn36] CMD: validate config.cache.collections
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.605+0000 I INDEX    [conn52] validating index config.collections.$_id_
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.604+0000 I COMMAND  [conn34] CMD: validate local.replset.election
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.595+0000 I INDEX    [conn36] validating collection config.cache.collections (UUID: 7022856e-5f84-4b2e-a09e-59801989fa9a)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.606+0000 I INDEX    [conn52] validated collection config.collections (UUID: 074ceedf-61bc-4b96-b7b9-c52b28c5e6f9)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.607+0000 I COMMAND  [conn52] CMD: validate config.databases
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.607+0000 I INDEX    [conn52] validating collection config.databases (UUID: aba90770-86d6-40a5-96de-eb07ed085c28)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.604+0000 I INDEX    [conn34] validating collection local.replset.election (UUID: 0281c7f0-aa2d-4724-8e91-c5659605812e)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.605+0000 I INDEX    [conn34] validating index local.replset.election.$_id_
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.606+0000 I INDEX    [conn34] validated collection local.replset.election (UUID: 0281c7f0-aa2d-4724-8e91-c5659605812e)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.606+0000 I COMMAND  [conn34] CMD: validate local.replset.minvalid
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.607+0000 I INDEX    [conn34] validating collection local.replset.minvalid (UUID: 205daf04-312e-4491-bcf5-4b89b8b7263b)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.607+0000 W STORAGE  [conn34] Could not complete validation of table:collection-4-7878956321649005404. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.607+0000 I INDEX    [conn34] validating index local.replset.minvalid.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.607+0000 W STORAGE  [conn52] Could not complete validation of table:collection-51--686515800040506760. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.608+0000 I INDEX    [conn34] validated collection local.replset.minvalid (UUID: 205daf04-312e-4491-bcf5-4b89b8b7263b)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.607+0000 I INDEX    [conn52] validating index config.databases.$_id_
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.595+0000 W STORAGE  [conn36] Could not complete validation of table:collection-21-5132522605079828611. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.608+0000 I COMMAND  [conn34] CMD: validate local.replset.oplogTruncateAfterPoint
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.609+0000 I INDEX    [conn34] validating collection local.replset.oplogTruncateAfterPoint (UUID: c62969c1-6725-4b6a-9e84-0184d513af5f)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.609+0000 I INDEX    [conn34] validating index local.replset.oplogTruncateAfterPoint.$_id_
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.595+0000 I INDEX    [conn36] validating index config.cache.collections.$_id_
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.610+0000 I INDEX    [conn34] validated collection local.replset.oplogTruncateAfterPoint (UUID: c62969c1-6725-4b6a-9e84-0184d513af5f)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.611+0000 I COMMAND  [conn34] CMD: validate local.startup_log
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.607+0000 W STORAGE  [conn52] Could not complete validation of table:index-52--686515800040506760. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.611+0000 I INDEX    [conn34] validating collection local.startup_log (UUID: 6eb47cc8-a004-4966-8e49-342385e49c32)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.612+0000 I INDEX    [conn34] validating index local.startup_log.$_id_
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.595+0000 W STORAGE  [conn36] Could not complete validation of table:index-22-5132522605079828611. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.595+0000 I INDEX    [conn36] validated collection config.cache.collections (UUID: 7022856e-5f84-4b2e-a09e-59801989fa9a)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.614+0000 I INDEX    [conn34] validated collection local.startup_log (UUID: 6eb47cc8-a004-4966-8e49-342385e49c32)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.615+0000 I COMMAND  [conn34] CMD: validate local.system.replset
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.607+0000 I INDEX    [conn52] validated collection config.databases (UUID: aba90770-86d6-40a5-96de-eb07ed085c28)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.596+0000 I COMMAND  [conn36] CMD: validate config.cache.databases
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.608+0000 I COMMAND  [conn52] CMD: validate config.lockpings
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.627+0000 I NETWORK  [conn21] end connection 127.0.0.1:44739 (2 connections now open)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.616+0000 I INDEX    [conn34] validating collection local.system.replset (UUID: 4eace8f5-5b7c-4c61-885f-ad5d96cf5e85)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.617+0000 I INDEX    [conn34] validating index local.system.replset.$_id_
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.596+0000 I INDEX    [conn36] validating collection config.cache.databases (UUID: b8489859-8908-438b-9dfa-6e923ebd53a6)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.618+0000 I INDEX    [conn34] validated collection local.system.replset (UUID: 4eace8f5-5b7c-4c61-885f-ad5d96cf5e85)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.619+0000 I COMMAND  [conn34] CMD: validate local.system.rollback.id
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.619+0000 I INDEX    [conn34] validating collection local.system.rollback.id (UUID: 00f57f13-962e-47f9-9721-b2391870bc5b)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.608+0000 I INDEX    [conn52] validating collection config.lockpings (UUID: 26de2d8c-b279-4935-acb1-92b6a7adb412)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.596+0000 W STORAGE  [conn36] Could not complete validation of table:collection-19-5132522605079828611. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.609+0000 I INDEX    [conn52] validating index config.lockpings.$_id_
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.620+0000 I INDEX    [conn34] validating index local.system.rollback.id.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.610+0000 I INDEX    [conn52] validating index config.lockpings.$ping_1
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.621+0000 I INDEX    [conn34] validated collection local.system.rollback.id (UUID: 00f57f13-962e-47f9-9721-b2391870bc5b)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.596+0000 I INDEX    [conn36] validating index config.cache.databases.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.611+0000 I INDEX    [conn52] validated collection config.lockpings (UUID: 26de2d8c-b279-4935-acb1-92b6a7adb412)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.596+0000 W STORAGE  [conn36] Could not complete validation of table:index-20-5132522605079828611. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.624+0000 I COMMAND  [conn34] CMD: validate test.change_stream_ban_from_views
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.612+0000 I COMMAND  [conn52] CMD: validate config.locks
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.612+0000 I INDEX    [conn52] validating collection config.locks (UUID: 52a093e8-3f99-4697-a993-8864b7616704)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.624+0000 I INDEX    [conn34] validating collection test.change_stream_ban_from_views (UUID: 4d873d9b-32b5-4fcd-b4a5-2a4d5f6d8966)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.612+0000 W STORAGE  [conn52] Could not complete validation of table:collection-26--686515800040506760. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.624+0000 W STORAGE  [conn34] Could not complete validation of table:collection-17-7878956321649005404. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.596+0000 I INDEX    [conn36] validated collection config.cache.databases (UUID: b8489859-8908-438b-9dfa-6e923ebd53a6)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.613+0000 I INDEX    [conn52] validating index config.locks.$_id_
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.624+0000 I INDEX    [conn34] validating index test.change_stream_ban_from_views.$_id_
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.597+0000 I COMMAND  [conn36] CMD: validate config.system.sessions
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.613+0000 W STORAGE  [conn52] Could not complete validation of table:index-27--686515800040506760. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.624+0000 W STORAGE  [conn34] Could not complete validation of table:index-18-7878956321649005404. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.597+0000 I INDEX    [conn36] validating collection config.system.sessions (UUID: e07ad52b-cd73-4f81-9d9a-40617c5e4896)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.613+0000 I INDEX    [conn52] validating index config.locks.$ts_1
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.624+0000 I INDEX    [conn34] validated collection test.change_stream_ban_from_views (UUID: 4d873d9b-32b5-4fcd-b4a5-2a4d5f6d8966)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.598+0000 I INDEX    [conn36] validating index config.system.sessions.$_id_
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.625+0000 I COMMAND  [conn34] CMD: validate test.system.views
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.598+0000 I INDEX    [conn36] validating index config.system.sessions.$lsidTTLIndex
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.625+0000 I INDEX    [conn34] validating collection test.system.views (UUID: 908d29a7-2160-4a03-b9cb-cb1760e0c24a)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.613+0000 W STORAGE  [conn52] Could not complete validation of table:index-28--686515800040506760. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.599+0000 I INDEX    [conn36] validated collection config.system.sessions (UUID: e07ad52b-cd73-4f81-9d9a-40617c5e4896)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.613+0000 I INDEX    [conn52] validating index config.locks.$state_1_process_1
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.613+0000 W STORAGE  [conn52] Could not complete validation of table:index-29--686515800040506760. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.613+0000 I INDEX    [conn52] validated collection config.locks (UUID: 52a093e8-3f99-4697-a993-8864b7616704)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.614+0000 I COMMAND  [conn52] CMD: validate config.migrations
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.614+0000 I INDEX    [conn52] validating collection config.migrations (UUID: 59040c10-09b7-4391-b612-3ab09f80533f)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.615+0000 I INDEX    [conn52] validating index config.migrations.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.616+0000 I INDEX    [conn52] validating index config.migrations.$ns_1_min_1
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.600+0000 I COMMAND  [conn36] CMD: validate config.transactions
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.616+0000 I INDEX    [conn52] validated collection config.migrations (UUID: 59040c10-09b7-4391-b612-3ab09f80533f)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.600+0000 I INDEX    [conn36] validating collection config.transactions (UUID: ac79afa7-abff-49b4-a5fd-843da407ec89)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.625+0000 W STORAGE  [conn34] Could not complete validation of table:collection-19-7878956321649005404. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.625+0000 I INDEX    [conn34] validating index test.system.views.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.617+0000 I COMMAND  [conn52] CMD: validate config.mongos
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.601+0000 I INDEX    [conn36] validating index config.transactions.$_id_
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.625+0000 W STORAGE  [conn34] Could not complete validation of table:index-20-7878956321649005404. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.617+0000 I INDEX    [conn52] validating collection config.mongos (UUID: 5a281d86-38ee-48be-a086-6c738cde0b68)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.601+0000 I INDEX    [conn36] validated collection config.transactions (UUID: ac79afa7-abff-49b4-a5fd-843da407ec89)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.604+0000 I COMMAND  [conn36] CMD: validate local.oplog.rs
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.618+0000 I INDEX    [conn52] validating index config.mongos.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.619+0000 I INDEX    [conn52] validated collection config.mongos (UUID: 5a281d86-38ee-48be-a086-6c738cde0b68)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.620+0000 I COMMAND  [conn52] CMD: validate config.shards
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.620+0000 I INDEX    [conn52] validating collection config.shards (UUID: e671ab8b-d0fa-4f70-8710-4b5e45082215)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.626+0000 I INDEX    [conn34] validated collection test.system.views (UUID: 908d29a7-2160-4a03-b9cb-cb1760e0c24a)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.604+0000 I INDEX    [conn36] validating collection local.oplog.rs (UUID: 4f4d4a0e-7dc3-4cca-a2e2-d266b0780662)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.604+0000 W STORAGE  [conn36] Could not complete validation of table:collection-8-5132522605079828611. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.620+0000 W STORAGE  [conn52] Could not complete validation of table:collection-23--686515800040506760. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.620+0000 I INDEX    [conn52] validating index config.shards.$_id_
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.604+0000 I INDEX    [conn36] validated collection local.oplog.rs (UUID: 4f4d4a0e-7dc3-4cca-a2e2-d266b0780662)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.628+0000 I NETWORK  [conn34] end connection 127.0.0.1:58312 (10 connections now open)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.605+0000 I COMMAND  [conn36] CMD: validate local.replset.election
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.621+0000 I INDEX    [conn52] validating index config.shards.$host_1
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.605+0000 I INDEX    [conn36] validating collection local.replset.election (UUID: e4198a0c-1311-4d1b-8abc-6dde4d43a781)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.622+0000 I INDEX    [conn52] validated collection config.shards (UUID: e671ab8b-d0fa-4f70-8710-4b5e45082215)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.606+0000 I INDEX    [conn36] validating index local.replset.election.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.622+0000 I COMMAND  [conn52] CMD: validate config.system.sessions
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.606+0000 I INDEX    [conn36] validated collection local.replset.election (UUID: e4198a0c-1311-4d1b-8abc-6dde4d43a781)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.607+0000 I COMMAND  [conn36] CMD: validate local.replset.minvalid
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.607+0000 I INDEX    [conn36] validating collection local.replset.minvalid (UUID: 2a836f81-0224-445d-90a3-2c7ac5a7a69c)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.607+0000 W STORAGE  [conn36] Could not complete validation of table:collection-4-5132522605079828611. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.607+0000 I INDEX    [conn36] validating index local.replset.minvalid.$_id_
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.608+0000 I INDEX    [conn36] validated collection local.replset.minvalid (UUID: 2a836f81-0224-445d-90a3-2c7ac5a7a69c)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.609+0000 I COMMAND  [conn36] CMD: validate local.replset.oplogTruncateAfterPoint
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.609+0000 I INDEX    [conn36] validating collection local.replset.oplogTruncateAfterPoint (UUID: b814de32-3dfd-4666-9be7-9b01d116de95)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.609+0000 I INDEX    [conn36] validating index local.replset.oplogTruncateAfterPoint.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.622+0000 I INDEX    [conn52] validating collection config.system.sessions (UUID: 962fac11-2386-4f76-98d3-bc7dbfa36329)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.623+0000 I INDEX    [conn52] validating index config.system.sessions.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.624+0000 I INDEX    [conn52] validated collection config.system.sessions (UUID: 962fac11-2386-4f76-98d3-bc7dbfa36329)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.625+0000 I COMMAND  [conn52] CMD: validate config.tags
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.625+0000 I INDEX    [conn52] validating collection config.tags (UUID: 356c3dc8-0c43-426b-a799-c9496e34ed2c)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.625+0000 I INDEX    [conn52] validating index config.tags.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.626+0000 I INDEX    [conn52] validating index config.tags.$ns_1_min_1
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.626+0000 W STORAGE  [conn52] Could not complete validation of table:index-35--686515800040506760. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.626+0000 I INDEX    [conn52] validating index config.tags.$ns_1_tag_1
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.610+0000 I INDEX    [conn36] validated collection local.replset.oplogTruncateAfterPoint (UUID: b814de32-3dfd-4666-9be7-9b01d116de95)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.627+0000 I INDEX    [conn52] validated collection config.tags (UUID: 356c3dc8-0c43-426b-a799-c9496e34ed2c)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.611+0000 I COMMAND  [conn36] CMD: validate local.startup_log
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.628+0000 I COMMAND  [conn52] CMD: validate config.transactions
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.611+0000 I INDEX    [conn36] validating collection local.startup_log (UUID: f5b85082-d4fc-4106-bba7-b7a4b60b5bc6)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.628+0000 I INDEX    [conn52] validating collection config.transactions (UUID: cf5da921-899f-4f54-b263-d50896e031c0)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.612+0000 I INDEX    [conn36] validating index local.startup_log.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.628+0000 I INDEX    [conn52] validating index config.transactions.$_id_
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.612+0000 I INDEX    [conn36] validated collection local.startup_log (UUID: f5b85082-d4fc-4106-bba7-b7a4b60b5bc6)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.629+0000 I INDEX    [conn52] validated collection config.transactions (UUID: cf5da921-899f-4f54-b263-d50896e031c0)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.613+0000 I COMMAND  [conn36] CMD: validate local.system.replset
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.630+0000 I COMMAND  [conn52] CMD: validate config.version
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.614+0000 I INDEX    [conn36] validating collection local.system.replset (UUID: 83134215-2706-4788-bf52-c538f61e57f5)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.630+0000 I INDEX    [conn52] validating collection config.version (UUID: 412816ed-8345-4ac9-80d4-ee0d1903cefa)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.614+0000 I INDEX    [conn36] validating index local.system.replset.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.631+0000 I INDEX    [conn52] validating index config.version.$_id_
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.615+0000 I INDEX    [conn36] validated collection local.system.replset (UUID: 83134215-2706-4788-bf52-c538f61e57f5)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.632+0000 I INDEX    [conn52] validated collection config.version (UUID: 412816ed-8345-4ac9-80d4-ee0d1903cefa)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.616+0000 I COMMAND  [conn36] CMD: validate local.system.rollback.id
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.634+0000 I COMMAND  [conn52] CMD: validate local.oplog.rs
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.616+0000 I INDEX    [conn36] validating collection local.system.rollback.id (UUID: 1a45d92f-8e3f-403e-ae45-125412da50ae)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.634+0000 I INDEX    [conn52] validating collection local.oplog.rs (UUID: ac7c998a-e1bb-472b-a34b-331c83ba1dba)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.617+0000 I INDEX    [conn36] validating index local.system.rollback.id.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.634+0000 W STORAGE  [conn52] Could not complete validation of table:collection-8--686515800040506760. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.618+0000 I INDEX    [conn36] validated collection local.system.rollback.id (UUID: 1a45d92f-8e3f-403e-ae45-125412da50ae)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.635+0000 I INDEX    [conn52] validated collection local.oplog.rs (UUID: ac7c998a-e1bb-472b-a34b-331c83ba1dba)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.620+0000 I NETWORK  [conn36] end connection 127.0.0.1:47076 (12 connections now open)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.635+0000 I COMMAND  [conn52] CMD: validate local.replset.election
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.636+0000 I INDEX    [conn52] validating collection local.replset.election (UUID: c55c069d-577d-4dcb-8e5e-415e608eb369)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.636+0000 I INDEX    [conn52] validating index local.replset.election.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.637+0000 I INDEX    [conn52] validated collection local.replset.election (UUID: c55c069d-577d-4dcb-8e5e-415e608eb369)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.638+0000 I COMMAND  [conn52] CMD: validate local.replset.minvalid
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.638+0000 I INDEX    [conn52] validating collection local.replset.minvalid (UUID: fd05b962-4dbc-4341-9b89-37036d5cfbfd)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.638+0000 W STORAGE  [conn52] Could not complete validation of table:collection-4--686515800040506760. This is a transient issue as the collection was actively in use by other operations.
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.638+0000 I INDEX    [conn52] validating index local.replset.minvalid.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.639+0000 I INDEX    [conn52] validated collection local.replset.minvalid (UUID: fd05b962-4dbc-4341-9b89-37036d5cfbfd)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.640+0000 I COMMAND  [conn52] CMD: validate local.replset.oplogTruncateAfterPoint
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.640+0000 I INDEX    [conn52] validating collection local.replset.oplogTruncateAfterPoint (UUID: fa4432b6-5386-490c-b1a8-0c01d874c55b)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.640+0000 I INDEX    [conn52] validating index local.replset.oplogTruncateAfterPoint.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.641+0000 I INDEX    [conn52] validated collection local.replset.oplogTruncateAfterPoint (UUID: fa4432b6-5386-490c-b1a8-0c01d874c55b)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.642+0000 I COMMAND  [conn52] CMD: validate local.startup_log
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.642+0000 I INDEX    [conn52] validating collection local.startup_log (UUID: 04d667d2-a953-4f3d-923c-f3d2135d853f)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.643+0000 I INDEX    [conn52] validating index local.startup_log.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.643+0000 I INDEX    [conn52] validated collection local.startup_log (UUID: 04d667d2-a953-4f3d-923c-f3d2135d853f)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.644+0000 I COMMAND  [conn52] CMD: validate local.system.replset
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.644+0000 I INDEX    [conn52] validating collection local.system.replset (UUID: cd46f716-926f-4fbc-a1ee-86f6944c64d5)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.645+0000 I INDEX    [conn52] validating index local.system.replset.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.646+0000 I INDEX    [conn52] validated collection local.system.replset (UUID: cd46f716-926f-4fbc-a1ee-86f6944c64d5)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.646+0000 I COMMAND  [conn52] CMD: validate local.system.rollback.id
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.646+0000 I INDEX    [conn52] validating collection local.system.rollback.id (UUID: d485b5b2-9ce0-4218-92e0-1a74c44d8577)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.647+0000 I INDEX    [conn52] validating index local.system.rollback.id.$_id_
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.648+0000 I INDEX    [conn52] validated collection local.system.rollback.id (UUID: d485b5b2-9ce0-4218-92e0-1a74c44d8577)
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.650+0000 I NETWORK  [conn19] end connection 127.0.0.1:44735 (1 connection now open)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.650+0000 I NETWORK  [conn52] end connection 127.0.0.1:54838 (19 connections now open)
+[ShardedClusterFixture:job3:mongos] 2018-07-27T17:24:58.656+0000 I NETWORK  [conn18] end connection 127.0.0.1:44725 (0 connections now open)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.656+0000 I NETWORK  [conn51] end connection 127.0.0.1:54829 (18 connections now open)
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.656+0000 I NETWORK  [conn35] end connection 127.0.0.1:47067 (11 connections now open)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.657+0000 I NETWORK  [conn33] end connection 127.0.0.1:58303 (9 connections now open)
+[ShardedClusterFixture:job3:shard1:primary] 2018-07-27T17:24:58.663+0000 I NETWORK  [conn32] end connection 127.0.0.1:58302 (8 connections now open)
+[ShardedClusterFixture:job3:configsvr:primary] 2018-07-27T17:24:58.663+0000 I NETWORK  [conn50] end connection 127.0.0.1:54828 (17 connections now open)
+[ValidateCollections:job3:ban_from_views:ValidateCollections] 2018-07-27T17:24:58.664+0000 JSTest jstests/hooks/run_validate_collections.js finished.
+[ShardedClusterFixture:job3:shard0:primary] 2018-07-27T17:24:58.663+0000 I NETWORK  [conn34] end connection 127.0.0.1:47066 (10 connections now open)
