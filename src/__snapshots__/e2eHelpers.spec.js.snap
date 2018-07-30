@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`capabilities firefox 1`] = `
+Object {
+  "args": Array [
+    "--headless",
+  ],
+}
+`;
+
+exports[`capabilities-chrome-ci-is_vm 1`] = `
+Object {
+  "args": Array [
+    "--disable-device-discovery-notifications",
+    "--unlimited-storage",
+    "--headless",
+    "--disable-gpu",
+    "--no-sandbox",
+    "--disable-dev-shm-usage",
+    "--allow-insecure-localhost",
+    "--enable-crash-reporter",
+  ],
+}
+`;
+
+exports[`capabilities-chrome-noenv 1`] = `
+Object {
+  "args": Array [
+    "--disable-device-discovery-notifications",
+    "--unlimited-storage",
+  ],
+}
+`;
