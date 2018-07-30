@@ -218,7 +218,7 @@ const isHeadless = () => {
 };
 
 const chromeCapabilities = () => {
-  const capabilities = Capabilities.chrome();
+  const caps = Capabilities.chrome();
   const options = { 'args': ['--disable-device-discovery-notifications', '--unlimited-storage'] };
   if (isHeadless()) {
     options.args.push(...['--headless']);
@@ -227,12 +227,12 @@ const chromeCapabilities = () => {
   if (process.env.IS_VM === 'true') {
     options.args.push(...['--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--allow-insecure-localhost', '--enable-crash-reporter']);
   }
-  capabilities.set('chromeOptions', options);
-  return capabilities;
+  caps.set('chromeOptions', options);
+  return caps;
 };
 
 const firefoxCapabilities = () => {
-  const capabilities = Capabilities.firefox();
+  const caps = Capabilities.firefox();
   const options = { 'args': [] };
   if (isHeadless()) {
     options.args.push(...['--headless']);
@@ -240,30 +240,100 @@ const firefoxCapabilities = () => {
   if (options.args === []) {
     delete options.args;
   }
-  capabilities.set('moz:firefoxOptions', options);
-  return capabilities;
+  caps.set('moz:firefoxOptions', options);
+  return caps;
 };
 
-const capabilities = () => {
+const capabilities = (opts = {}) => {
   const useBrowser = process.env.LOBSTER_E2E_BROWSER || 'chrome';
 
+  let caps = undefined;
   if (useBrowser === 'chrome') {
-    return chromeCapabilities();
+    caps = chromeCapabilities();
   } else if (useBrowser === 'firefox') {
-    return firefoxCapabilities();
+    caps = firefoxCapabilities();
+  }
+  if (caps === undefined) {
+    throw new TypeError(`expected browser to be 'chrome' or 'firefox', got ${useBrowser}`);
   }
 
-  throw new TypeError(`expected browser to be 'chrome' or 'firefox', got ${useBrowser}`);
+  const browserCaps = opts[useBrowser];
+  if (browserCaps !== undefined) {
+    Object.keys(browserCaps).forEach((key) => {
+      if (!caps.get(key)) {
+        caps.set(key, browserCaps[key]);
+      }
+    });
+  }
+  return caps;
 };
 
-export const makeDriver = async (done) => {
+export const makeDriver = async (done, opts) => {
   try {
-    return await new Builder().withCapabilities(capabilities()).build();
+    return await new Builder().withCapabilities(capabilities(opts)).build();
   } catch (err) {
     done.fail(err);
   }
 };
 
-test('noop', function() {
+describe('capabilities', () => {
+  const env = Object.assign({}, process.env);
 
+  beforeEach(() => {
+    delete(process.env.LOBSTER_E2E_BROWSER);
+    delete(process.env.LOBSTER_E2E_HEADLESS);
+    delete(process.env.IS_VM);
+    delete(process.env.CI);
+  });
+
+  afterEach(() => {
+    process.env = Object.assign({}, env);
+  });
+
+  test('unknown-browser', () => {
+    process.env.LOBSTER_E2E_BROWSER = 'netscape';
+    expect(() => {
+      capabilities();
+    }).toThrow(TypeError);
+  });
+
+  test('custom-options', () => {
+    process.env.LOBSTER_E2E_BROWSER = 'chrome';
+    const opts = {
+      chrome: {
+        custom: 'test',
+        chromeOptions: 'bad'
+      }
+    };
+    const caps = capabilities(opts);
+    expect(caps.get('custom')).toBe('test');
+    expect(caps.get('chromeOptions')).not.toBe('bad');
+  });
+
+  // [true, false].forEach((v) => {
+  //   test(`is-headless-ci-${v}`, () => {
+  //     process.env.CI = JSON.stringify(v);
+
+  //     process.env.LOBSTER_E2E_BROWSER = 'chrome';
+  //     const caps = capabilities();
+  //     console.log('--headless' in caps.get('chromeOptions').args);
+  //     expect('--headless' in caps.get('chromeOptions').args).toBe(v);
+
+  //     process.env.LOBSTER_E2E_BROWSER = 'firefox';
+  //     const ffcaps = capabilities();
+  //     expect('--headless' in ffcaps.get('moz:firefoxOptions').args).toBe(v);
+  //   });
+
+  //   test(`is-headless-headless-false-ci-${v}`, () => {
+  //     process.env.CI = JSON.stringify(v);
+  //     process.env.LOBSTER_E2E_HEADLESS = 'false';
+  //     process.env.LOBSTER_E2E_BROWSER = 'chrome';
+  //     const caps = capabilities();
+  //     expect('--headless' in caps.get('chromeOptions').args).toBe(!v);
+
+  //     process.env.LOBSTER_E2E_BROWSER = 'firefox';
+  //     const ffcaps = capabilities();
+  //     expect('--headless' in ffcaps.get('moz:firefoxOptions').args).toBe(!v);
+  //   });
+  // });
 });

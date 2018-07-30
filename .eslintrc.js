@@ -29,7 +29,7 @@ module.exports = {
       }
     },
     {
-      'files': 'src/setupTests.js',
+      'files': ['src/setupTests.js', 'src/e2eHelpers.spec.js'],
       'rules': {
         'jest/no-disabled-tests': 0
       }
@@ -87,6 +87,7 @@ module.exports = {
       'named': 'never',
       'asyncArrow': 'always'
     }],
+    'no-lonely-if': 0,
 
     'dependencies/case-sensitive': 2,
     'dependencies/no-unresolved': 2,

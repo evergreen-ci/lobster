@@ -8,14 +8,15 @@ const argv = yargs
   .help('help')
   .alias('help', 'h')
   .option('headless', {
-    description: 'forcefully enable headless mode when CI === true',
+    description: 'forcefully enable headless mode',
     default: false,
     type: 'boolean'
   })
   .option('no_headless', {
-    description: 'forcefully disable headless mode when CI != true ',
+    description: 'forcefully disable headless mode',
     default: false,
-    type: 'boolean'
+    type: 'boolean',
+    hidden: true
   })
   .option('no_build', {
     description: 'do not run `npm run build` before running tests',
@@ -23,31 +24,70 @@ const argv = yargs
     type: 'boolean'
   })
   .option('no_server', {
+    description: 'do not run `node server` before running tests',
     default: false,
     type: 'boolean'
   })
   .option('port', {
+    description: 'specify port number to bind e2e server to',
     default: 9000,
     type: 'number'
   })
+  .implies('no_server', 'port')
   .option('browser', {
+    description: 'selenium compatible browser string',
     default: 'chrome',
     type: 'string'
   })
   .nargs('browser', 1)
   .option('t', {
+    description: 'jest test regular expression',
     default: 'e2e.*',
     type: 'string'
   })
   .nargs('t', 1)
+  .check(function(args) {
+    if (args.headless === true && args.no_headless === true) {
+      throw new TypeError('--headless and --no_headless are mutually exclusive');
+    }
+
+    if (process.env.CI === 'true') {
+      if (args.no_headless) {
+        args.headless = false;
+      } else {
+        args.headless = true;
+      }
+    } else {
+      if (args.headless) {
+        args.headless = true;
+      } else {
+        args.headless = false;
+      }
+    }
+
+    return true;
+  })
   .argv;
 
+console.log(argv);
+
 let listener;
-process.on('SIGINT', () => {
+let processes = [];
+const cleanup = () => {
   if (listener) {
     listener.close();
   }
+  processes.forEach((p) => {
+    p.kill('SIGINT');
+  });
+  processes = [];
+};
+process.on('SIGINT', () => {
+  cleanup();
   process.exit(130);
+});
+process.on('exit', () => {
+  cleanup();
 });
 
 function test() {
@@ -58,13 +98,9 @@ function test() {
     },
     stdio: 'inherit'
   });
+  processes.push(e2eProcess);
 
-  e2eProcess.on('close', function(code2) {
-    if (listener) {
-      listener.close();
-    }
-    process.exit(code2);
-  });
+  e2eProcess.on('close', process.exit);
 }
 
 function build(env, callback) {
@@ -75,6 +111,7 @@ function build(env, callback) {
     },
     stdio: 'inherit'
   });
+  processes.push(buildProcess);
 
   buildProcess.on('close', callback);
 }
@@ -85,12 +122,10 @@ function run(l) {
   console.log(`Testing lobster server on port: ${port}`);
   const uiBase = `http://localhost:${port}`;
 
-  const headless = process.env.CI === 'true' ? !argv.headless : !argv.no_headless;
-
   const env = {
     LOBSTER_E2E_SERVER_PORT: port,
     LOBSTER_E2E_BROWSER: argv.browser,
-    LOBSTER_E2E_HEADLESS: headless,
+    LOBSTER_E2E_HEADLESS: argv.headless,
     REACT_APP_LOGKEEPER_BASE: `${uiBase}/logkeeper`,
     REACT_APP_EVERGREEN_BASE: `${uiBase}/evergreen`
   };

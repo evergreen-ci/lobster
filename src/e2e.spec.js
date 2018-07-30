@@ -124,7 +124,13 @@ describe('e2e', function() {
   }, 60000);
 
   e2e('logdrop', async (done) => {
-    const driver = await makeDriver(done);
+    // Allow webdriver to interact with the dropFile elements
+    const opts = {
+      firefox: {
+        'moz:webdriverClick': false
+      }
+    };
+    const driver = await makeDriver(done, opts);
     try {
       const l = new Lobster(driver);
       await l.init('/lobster');
@@ -135,6 +141,8 @@ describe('e2e', function() {
       expect(divs).toHaveLength(7);
 
       done();
+    } catch (err) {
+      done.fail(err);
     } finally {
       await driver.quit();
     }
@@ -196,6 +204,8 @@ describe('e2e', function() {
       expect(results).toHaveLength(10);
 
       done();
+    } catch (err) {
+      done.fail(err);
     } finally {
       await driver.quit();
     }

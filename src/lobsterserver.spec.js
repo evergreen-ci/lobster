@@ -3,6 +3,7 @@ import { tmpdir } from 'os';
 import { spawn } from 'child_process';
 import path from 'path';
 import fetch from 'node-fetch';
+import sinon from 'sinon';
 import * as api from './api';
 
 
@@ -30,14 +31,15 @@ function startServer(args) {
 
 describe('lobsterserver', function() {
   beforeEach(() => {
-    window.fetch = function(req) {
+    sinon.replace(window, 'fetch', function(req) {
       console.log(req.url);
       return fetch(req.url);
-    };
+    });
   });
 
   let c;
   afterEach(() => {
+    sinon.restore();
     if (fs.existsSync('/tmp/lobster.txt')) {
       fs.unlinkSync('/tmp/lobster.txt');
     }
