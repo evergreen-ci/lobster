@@ -197,7 +197,7 @@ export class Lobster {
       '' +
       '  setTimeout(function () { document.body.removeChild(input); }, 25);' +
       '};' +
-      'document.body.appendChild(input);' +
+      'document.getElementById(\'root\').appendChild(input);' +
       'return input;';
 
     const input = await this._driver.executeScript(js, dropzone, 0, 0);
