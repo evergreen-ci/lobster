@@ -7,6 +7,8 @@ import { Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse, Togg
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
 import type { Highlight, Filter } from '../../actions/logviewer';
+import type { LogIdentity } from '../../models';
+import * as api from '../../api';
 
 type Props = {
   settings: {
@@ -38,7 +40,8 @@ type Props = {
   url?: string,
   build: string,
   setURLRef: (?HTMLInputElement) => void,
-  valueJIRA: string
+  valueJIRA: string,
+  logIdentity: ?LogIdentity
 }
 
 function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement) => void): ?ReactNode {
@@ -60,13 +63,37 @@ function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement
   }
 }
 
-function showDetailButtons(server: ?string, build: string, clearCache: ?() => void): ?ReactNode {
+function showDetailButtons(id: ?LogIdentity, clearCache: ?() => void): ?ReactNode {
+  if (!id) {
+    return null;
+  }
   const buttons = [];
-  if (!server) {
+  if (id.type === 'logkeeper') {
+    if (id.test == null) {
+      const { build } = id;
+      buttons.push(...[
+        <Col key={0} lg={1}><Button href={`/build/${build}`}>Job Logs</Button></Col>,
+        <Col key={1} lg={1}><Button href={`/build/${build}/all?raw=1`}>Raw</Button></Col>,
+        <Col key={2} lg={1}><Button href={`/build/${build}/all?html=1`}>HTML</Button></Col>
+      ]);
+    } else {
+      const { build, test } = id;
+      buttons.push(...[
+        <Col key={0} lg={1}><Button href={`/build/${build}`}>Job Logs</Button></Col>,
+        <Col key={1} lg={1}><Button href={`/build/${build}/test/${test}?raw=1`}>Raw</Button></Col>,
+        <Col key={2} lg={1}><Button href={`/build/${build}/test/${test}?html=1`}>HTML</Button></Col>
+      ]);
+    }
+  } else if (id.type === 'evergreen-task') {
     buttons.push(...[
-      <Col key={0} lg={1}><Button href={'/build/' + build}>Job Logs</Button></Col>,
-      <Col key={1} lg={1}><Button href={'/build/' + build + '/all?raw=1'}>Raw</Button></Col>,
-      <Col key={2} lg={1}><Button href={'/build/' + build + '/all?html=1'}>HTML</Button></Col>
+      <Col key={0} lg={1}><Button href={api.taskURL(id.id, id.execution)}>Task</Button></Col>,
+      <Col key={1} lg={1}><Button href={api.taskLogRawURL(id.id, id.execution, id.log)}>Raw</Button></Col>,
+      <Col key={2} lg={1}><Button href={api.taskLogURL(id.id, id.execution, id.log)}>HTML</Button></Col>
+    ]);
+  } else if (id.type === 'evergreen-test') {
+    buttons.push(...[
+      <Col key={1} lg={1}><Button href={api.testLogRawURL(id.id)}>Raw</Button></Col>,
+      <Col key={2} lg={1}><Button href={api.testLogURL(id.id)}>HTML</Button></Col>
     ]);
   }
   if (clearCache != null) {
@@ -120,7 +147,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
               </Col>
               <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
               <Col lg={1}><textarea readOnly className="unmoving" value={this.props.valueJIRA}></textarea></Col>
-              {showDetailButtons(this.props.server, this.props.build, this.props.wipeCache)}
+              {showDetailButtons(this.props.logIdentity, this.props.wipeCache)}
             </FormGroup>
           </Form>
           <Filters

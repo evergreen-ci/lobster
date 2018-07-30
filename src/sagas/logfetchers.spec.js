@@ -1,143 +1,280 @@
 import sinon from 'sinon';
-import assert from 'assert';
-import { runSaga } from 'redux-saga';
+import { expectSaga } from 'redux-saga-test-plan';
 import * as api from '../api/logkeeper';
+import * as evergreenApi from '../api/evergreen';
 import * as actions from '../actions';
-import * as sagas from './logfetchers';
+import logfetchers from './logfetchers';
+import { readFromCache, writeToCache } from './lobstercage';
 
-describe('lobsterLoadData', function() {
+describe('fetchLobster', function() {
   afterEach(() => sinon.restore());
 
-  test('resolve', function(done) {
-    sinon.replace(api, 'fetchLobster', sinon.stub().resolves(new Response('lobster')));
+  test('resolves-200', function(done) {
+    const resp = new Response(new Blob(['lobster']), { status: 200 });
+    const mock = sinon.stub().resolves(resp);
+    sinon.replace(api, 'fetchLobster', mock);
 
-    const action = actions.lobsterLoadData('localhost:9001', 'a.log');
-
-    const dispatch = sinon.fake();
-    const getState = sinon.fake.returns({
-      cache: {
-        size: 123
-      }
+    const action = actions.loadLog({
+      type: 'lobster',
+      server: 'domain.invalid',
+      file: 'simple.log'
     });
-    const options = {
-      dispatch: dispatch,
-      getState: getState
-    };
-    const result = runSaga(options, sagas.lobsterLoadData, action).done;
-    assert.ok(result);
+    const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
+    return expectSaga(logfetchers, action)
+      .run()
+      .then((result) => {
+        const { effects } = result;
+        expect(effects).not.toHaveProperty('take');
+        expect(effects.put).toHaveLength(1);
 
-    result.then(function() {
-      assert.strictEqual(api.fetchLobster.callCount, 1);
-      assert.deepEqual(api.fetchLobster.firstCall.args, ['localhost:9001', 'a.log']);
+        const v = effects.put[0].PUT.action;
+        expect(v.error).toBe(false);
+        expect(v.type).toBe(actions.PROCESS_RESPONSE);
+        expect(v.payload.type).toBe('resmoke');
+        expect(v.payload.data).toBe('lobster');
+        expect(v.payload.isDone).toBe(true);
 
-      assert.strictEqual(dispatch.callCount, 1);
-      assert.strictEqual(dispatch.firstCall.args.length, 1);
-      assert.strictEqual(dispatch.firstCall.args[0].type, actions.PROCESS_RESPONSE);
-      assert.strictEqual(dispatch.firstCall.args[0].payload.data, 'lobster');
-      assert.strictEqual(dispatch.firstCall.args[0].error, false);
-      assert.strictEqual(dispatch.lastCall.args[0].payload.isDone, true);
-      done();
-    });
+        expect(effects.call).toHaveLength(3);
+        expect(effects.call[0].CALL.args).toEqual([identity]);
+
+        expect(result.toJSON()).toMatchSnapshot();
+
+        done();
+      });
   });
 
-  test('fail', function(done) {
-    sinon.replace(api, 'fetchLobster', sinon.stub().rejects('error'));
+  test('resolves-404', function(done) {
+    const resp = new Response(new Blob(['errol']), { status: 404 });
+    const mock = sinon.stub().resolves(resp);
+    sinon.replace(api, 'fetchLobster', mock);
 
-    const action = actions.lobsterLoadData('localhost:9001', 'a.log');
-    const dispatch = sinon.fake();
-    const result = runSaga({ dispatch: dispatch }, sagas.lobsterLoadData, action).done;
-    assert.ok(result);
-    result.then(function() {
-      assert.strictEqual(api.fetchLobster.callCount, 1);
-      assert.deepEqual(api.fetchLobster.firstCall.args, ['localhost:9001', 'a.log']);
-
-      assert.strictEqual(dispatch.callCount, 1);
-      assert.strictEqual(dispatch.firstCall.args[0].type, actions.PROCESS_RESPONSE);
-      assert.strictEqual(dispatch.firstCall.args[0].error, true);
-      done();
+    const action = actions.loadLog({
+      type: 'lobster',
+      server: 'domain.invalid',
+      file: 'simple.log'
     });
+    const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
+    return expectSaga(logfetchers, action)
+      .run()
+      .then((result) => {
+        const { effects } = result;
+        expect(effects).not.toHaveProperty('take');
+        expect(effects.put).toHaveLength(1);
+
+        const v = effects.put[0].PUT.action;
+        expect(v.error).toBe(true);
+        expect(v.type).toBe(actions.PROCESS_RESPONSE);
+        expect(v.payload.type).toBe('resmoke');
+        expect(v.payload.data).not.toEqual(null);
+        expect(v.payload.isDone).toBe(true);
+
+        expect(effects.call).toHaveLength(3);
+        expect(effects.call[0].CALL.args).toEqual([identity]);
+        expect(result.toJSON()).toMatchSnapshot();
+
+        done();
+      });
+  });
+
+  test('rejects', function(done) {
+    const mock = sinon.stub().rejects('error');
+    sinon.replace(api, 'fetchLobster', mock);
+
+    const action = actions.loadLog({
+      type: 'lobster',
+      server: 'domain.invalid',
+      file: 'simple.log'
+    });
+    const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
+    return expectSaga(logfetchers, action)
+      .run()
+      .then((result) => {
+        const { effects } = result;
+        expect(effects).not.toHaveProperty('take');
+        expect(effects.put).toHaveLength(1);
+
+        const v = effects.put[0].PUT.action;
+        expect(v.error).toBe(true);
+        expect(v.type).toBe(actions.PROCESS_RESPONSE);
+        expect(v.payload.type).toBe('resmoke');
+        expect(v.payload.data).not.toEqual(null);
+        expect(v.payload.isDone).toBe(true);
+
+        expect(effects.call).toHaveLength(3);
+        expect(effects.call[0].CALL.args).toEqual([identity]);
+        expect(result.toJSON()).toMatchSnapshot();
+
+        done();
+      });
   });
 });
 
-describe('logkeeperLoadData', function() {
+describe('fetchLogkeeper', function() {
   afterEach(() => sinon.restore());
 
-  test('resolve', function(done) {
-    sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves(new Response('logkeeper')));
+  test('resolves-200', function(done) {
+    const resp = new Response(new Blob(['logkeeper']), { status: 200 });
+    const mock = sinon.stub().resolves(resp);
+    sinon.replace(api, 'fetchLogkeeper', mock);
 
-    const action = actions.logkeeperLoadData('build0', 'test0');
-    const dispatch = sinon.fake();
-    const getState = sinon.fake.returns({
-      cache: {
-        size: 123
-      }
-    });
-    const result = runSaga({ dispatch: dispatch, getState: getState }, sagas.logkeeperLoadData, action).done;
-    assert.ok(result);
+    const identity = {
+      type: 'logkeeper',
+      build: 'build',
+      test: 'test'
+    };
+    const action = actions.loadLog(identity);
+    return expectSaga(logfetchers, action)
+      .withState({
+        cache: {
+          status: 'unsupported'
+        }
+      })
+      .run()
+      .then((result) => {
+        const { effects } = result;
+        expect(effects).not.toHaveProperty('take');
+        expect(effects.put).toHaveLength(1);
 
-    result.then(function() {
-      assert.strictEqual(api.fetchLogkeeper.callCount, 1);
-      assert.deepEqual(api.fetchLogkeeper.firstCall.args, ['build0', 'test0']);
+        const v = effects.put[0].PUT.action;
+        expect(v.error).toBe(false);
+        expect(v.type).toBe(actions.PROCESS_RESPONSE);
+        expect(v.payload.type).toBe('resmoke');
+        expect(v.payload.data).toBe('logkeeper');
+        expect(v.payload.isDone).toBe(true);
 
-      assert.strictEqual(dispatch.callCount, 1);
-      assert.strictEqual(dispatch.firstCall.args.length, 1);
-      assert.strictEqual(dispatch.firstCall.args[0].type, actions.PROCESS_RESPONSE);
-      assert.strictEqual(dispatch.firstCall.args[0].payload.data, 'logkeeper');
-      assert.strictEqual(dispatch.firstCall.args[0].error, false);
-      assert.strictEqual(dispatch.lastCall.args[0].payload.isDone, true);
-      done();
-    });
-  });
+        expect(effects.call).toHaveLength(7);
+        expect(effects.call[0].CALL.args).toEqual([identity]);
+        expect(effects.call[2].CALL.fn).toBe(readFromCache);
+        expect(effects.call[2].CALL.args).toEqual(['fetchLogkeeper-build-test.json']);
+        expect(effects.call[5].CALL.fn).toBe(writeToCache);
+        expect(effects.call[5].CALL.args).toEqual(['fetchLogkeeper-build-test.json']);
 
-  test('resolve-error', function(done) {
-    sinon.replace(api, 'fetchLogkeeper', sinon.stub().resolves(new Response('nope logkeeper', { status: 500 })));
+        expect(result.toJSON()).toMatchSnapshot();
 
-    const action = actions.logkeeperLoadData('build0');
-    const dispatch = sinon.fake();
-    const getState = sinon.fake.returns({
-      cache: {
-        size: 123
-      }
-    });
-    const result = runSaga({ dispatch: dispatch, getState: getState }, sagas.logkeeperLoadData, action).done;
-    assert.ok(result);
-
-    result.then(function() {
-      assert.strictEqual(api.fetchLogkeeper.callCount, 1);
-      assert.deepEqual(api.fetchLogkeeper.firstCall.args, ['build0', undefined]);
-
-      assert.strictEqual(dispatch.callCount, 1);
-      assert.strictEqual(dispatch.firstCall.args.length, 1);
-      assert.strictEqual(dispatch.firstCall.args[0].type, actions.PROCESS_RESPONSE);
-      assert.strictEqual(dispatch.firstCall.args[0].error, true);
-      dispatch.firstCall.args[0].payload.data.text().then(function(text) {
-        assert.strictEqual(text, 'nope logkeeper');
         done();
       });
-    });
   });
 
-  test('reject', function() {
-    sinon.replace(api, 'fetchLogkeeper', sinon.stub().rejects('error'));
+  test('resolves-200-notest', function(done) {
+    const resp = new Response(new Blob(['logkeeper']), { status: 200 });
+    const mock = sinon.stub().resolves(resp);
+    sinon.replace(api, 'fetchLogkeeper', mock);
 
-    const action = actions.logkeeperLoadData('build0', 'test0');
-    const dispatch = sinon.fake();
-    const getState = sinon.fake.returns({
-      cache: {
-        size: 123
-      }
-    });
-    const result = runSaga({ dispatch: dispatch, getState: getState }, sagas.logkeeperLoadData, action).done;
-    assert.ok(result);
+    const identity = {
+      type: 'logkeeper',
+      build: 'build'
+    };
+    const action = actions.loadLog(identity);
+    return expectSaga(logfetchers, action)
+      .withState({
+        cache: {
+          status: 'unsupported'
+        }
+      })
+      .run()
+      .then((result) => {
+        const { effects } = result;
+        expect(effects).not.toHaveProperty('take');
+        expect(effects.put).toHaveLength(1);
 
-    result.then(function() {
-      assert.strictEqual(api.fetchLogkeeper.callCount, 1);
-      assert.deepEqual(api.fetchLogkeeper.firstCall.args, ['build0', 'test0']);
+        const v = effects.put[0].PUT.action;
+        expect(v.error).toBe(false);
+        expect(v.type).toBe(actions.PROCESS_RESPONSE);
+        expect(v.payload.type).toBe('resmoke');
+        expect(v.payload.data).toBe('logkeeper');
+        expect(v.payload.isDone).toBe(true);
 
-      assert.strictEqual(dispatch.callCount, 1);
-      assert.strictEqual(dispatch.firstCall.args.length, 1);
-      assert.strictEqual(dispatch.firstCall.args[0].type, actions.PROCESS_RESPONSE);
-      assert.strictEqual(dispatch.firstCall.args[0].error, true);
-    });
+        expect(effects.call).toHaveLength(7);
+        expect(effects.call[0].CALL.args).toEqual([identity]);
+        expect(effects.call[2].CALL.fn).toBe(readFromCache);
+        expect(effects.call[2].CALL.args).toEqual(['fetchLogkeeper-build-all.json']);
+        expect(effects.call[5].CALL.fn).toBe(writeToCache);
+        expect(effects.call[5].CALL.args).toEqual(['fetchLogkeeper-build-all.json']);
+
+        expect(result.toJSON()).toMatchSnapshot();
+
+        done();
+      });
+  });
+});
+
+describe('fetchEvergreen', function() {
+  afterEach(() => sinon.restore());
+
+  test('resolves-200-test', function(done) {
+    const resp = new Response(new Blob(['evergreen-test']), { status: 200 });
+    const mock = sinon.stub().resolves(resp);
+    sinon.replace(evergreenApi, 'fetchEvergreen', mock);
+
+    const identity = {
+      type: 'evergreen-test',
+      id: 'test'
+    };
+    const action = actions.loadLog(identity);
+    return expectSaga(logfetchers, action)
+      .withState({
+        cache: {
+          status: 'unsupported'
+        }
+      })
+      .run()
+      .then((result) => {
+        const { effects } = result;
+        expect(effects).not.toHaveProperty('take');
+        expect(effects.put).toHaveLength(1);
+
+        const v = effects.put[0].PUT.action;
+        expect(v.error).toBe(false);
+        expect(v.type).toBe(actions.PROCESS_RESPONSE);
+        expect(v.payload.type).toBe('raw');
+        expect(v.payload.data).toBe('evergreen-test');
+        expect(v.payload.isDone).toBe(true);
+
+        expect(effects.call).toHaveLength(7);
+        expect(effects.call[0].CALL.args).toEqual([identity]);
+        expect(effects.call[2].CALL.fn).toBe(readFromCache);
+        expect(effects.call[2].CALL.args).toEqual(['fetchEvergreen-test-test.json']);
+        expect(effects.call[5].CALL.fn).toBe(writeToCache);
+        expect(effects.call[5].CALL.args).toEqual(['fetchEvergreen-test-test.json']);
+
+        expect(result.toJSON()).toMatchSnapshot();
+
+        done();
+      });
+  });
+
+  test('resolves-200-task', function(done) {
+    const resp = new Response(new Blob(['evergreen-task']), { status: 200 });
+    const mock = sinon.stub().resolves(resp);
+    sinon.replace(evergreenApi, 'fetchEvergreen', mock);
+
+    const identity = {
+      type: 'evergreen-task',
+      id: 'task',
+      execution: 0,
+      log: 'all'
+    };
+    const action = actions.loadLog(identity);
+    return expectSaga(logfetchers, action)
+      .run()
+      .then((result) => {
+        const { effects } = result;
+        expect(effects).not.toHaveProperty('take');
+        expect(effects.put).toHaveLength(1);
+
+        const v = effects.put[0].PUT.action;
+        expect(v.error).toBe(false);
+        expect(v.type).toBe(actions.PROCESS_RESPONSE);
+        expect(v.payload.type).toBe('raw');
+        expect(v.payload.data).toBe('evergreen-task');
+        expect(v.payload.isDone).toBe(true);
+
+        expect(effects.call).toHaveLength(3);
+        expect(effects.call[0].CALL.args).toEqual([identity]);
+
+        expect(result.toJSON()).toMatchSnapshot();
+
+        done();
+      });
   });
 });

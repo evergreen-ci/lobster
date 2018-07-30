@@ -1,68 +1,29 @@
 // @flow strict
 
 import type { Action as LogviewerAction } from './logviewer';
-import type { Log, LogType } from '../models';
+import type { Log, LogIdentity, LogProcessor } from '../models';
 
-export const LOGKEEPER_LOAD_DATA = 'logkeeper:load-data';
-export const LOBSTER_LOAD_DATA = 'lobster:load-data';
 export const PROCESS_RESPONSE = 'process-response';
+export const LOAD_LOG = 'load-log-by-identity';
 export const LOAD_CACHED_DATA = 'load-cached-data';
-export const EVERGREEN_LOAD_DATA = 'evergreen:load-data';
 export const SETUP_CACHE = 'setup-cache';
 export const WIPE_CACHE = 'wipe-cache';
 
-export type LogkeeperLoadData = {|
-  +type: 'logkeeper:load-data',
-  +payload: {|
-    +build: string,
-    +test: ?string
-  |}
-|}
+export type ProcessResponse = $Exact<$ReadOnly<{
+  type: 'process-response',
+  payload: $Exact<$ReadOnly<{
+    type: LogProcessor,
+    data: string,
+    isDone: boolean
+  }>>,
+  error: boolean
+}>>
 
-export type LobsterLoadData = {|
-  +type: 'lobster:load-data',
-  +payload: {|
-    +url: string,
-    +server: string
-  |}
-|}
-
-export type ProcessResponse = {|
-  +type: 'process-response',
-  +payload: {|
-    +type: LogType,
-    +data: string,
-    +isDone: boolean
-  |},
-  +error: boolean
-|}
-
-export function logkeeperLoadData(build: string, test: ?string): LogkeeperLoadData {
-  return {
-    type: LOGKEEPER_LOAD_DATA,
-    payload: {
-      build: build,
-      test: test
-    }
-  };
-}
-
-// Load data from the lobster server
-export function lobsterLoadData(server: string, url: string): LobsterLoadData {
-  return {
-    type: LOBSTER_LOAD_DATA,
-    payload: {
-      url: url,
-      server: server
-    }
-  };
-}
-
-export function processData(data: string, type: LogType, isDone?: boolean): ProcessResponse {
+export function processData(data: string, processor: LogProcessor, isDone?: boolean): ProcessResponse {
   return {
     type: PROCESS_RESPONSE,
     payload: {
-      type: type,
+      type: processor,
       data: data,
       isDone: isDone || false
     },
@@ -70,11 +31,11 @@ export function processData(data: string, type: LogType, isDone?: boolean): Proc
   };
 }
 
-export function processLocalData(data: string, type: LogType): ProcessResponse {
+export function processLocalData(data: string, processor: LogProcessor): ProcessResponse {
   return {
     type: PROCESS_RESPONSE,
     payload: {
-      type: type,
+      type: processor,
       data: data,
       isDone: true
     },
@@ -132,67 +93,6 @@ export function setCache(status: CacheStatus, size: number): SetupCache {
   };
 }
 
-const evergreenTaskLogTypes: { [string]: string } = {
-  'all': 'ALL',
-  'task': 'T',
-  'agent': 'A',
-  'system': 'S'
-  // 'event': 'E' // Not actually supported by the api
-};
-
-export type EvergreenTaskLogType = $Keys<typeof evergreenTaskLogTypes>;
-
-export function stringToInteralEvergreenTaskLogType(a: string): ?string {
-  return evergreenTaskLogTypes[a];
-}
-
-export function stringToEvergreenTaskLogType(a: string): ?EvergreenTaskLogType {
-  if (!evergreenTaskLogTypes[a]) {
-    return null;
-  }
-
-  return a;
-}
-
-export type EvergreenTaskLog = $Exact<$ReadOnly<{
-  type: 'task',
-  id: string,
-  execution: number,
-  log: EvergreenTaskLogType
-}>>
-
-export type EvergreenTestLog = $Exact<$ReadOnly<{
-  type: 'test',
-  id: string,
-}>>
-
-export type EvergreenLoadData = $Exact<$ReadOnly<{
-  +type: 'evergreen:load-data',
-  +payload: EvergreenTaskLog | EvergreenTestLog
-}>>
-
-export function evergreenLoadTaskLog(id: string, execution: number, log: EvergreenTaskLogType): EvergreenLoadData {
-  return {
-    type: 'evergreen:load-data',
-    payload: {
-      type: 'task',
-      id: id,
-      execution: execution,
-      log: log
-    }
-  };
-}
-
-export function evergreenLoadTestLog(id: string): EvergreenLoadData {
-  return {
-    type: 'evergreen:load-data',
-    payload: {
-      type: 'test',
-      id: id
-    }
-  };
-}
-
 export type WipeCache = {|
   type: 'wipe-cache',
   payload: {|
@@ -217,10 +117,25 @@ export function fromFileFromCache(f: string): WipeCache {
     }
   };
 }
+
+export type LoadLog = $Exact<{
+  type: 'load-log-by-identity',
+  payload: $Exact<$ReadOnly<{
+    identity: LogIdentity
+  }>>
+}>
+
+export function loadLog(identity: LogIdentity): LoadLog {
+  return {
+    type: LOAD_LOG,
+    payload: {
+      identity: identity
+    }
+  };
+}
+
 export type Action = ProcessResponse
   | LoadCachedData
   | WipeCache
-  | LogkeeperLoadData
-  | LobsterLoadData
-  | EvergreenLoadData
   | LogviewerAction
+  | LoadLog

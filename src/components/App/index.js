@@ -6,21 +6,21 @@ import { LinkContainer } from 'react-router-bootstrap';
 import './style.css';
 import About from '../About';
 import NotFound from '../NotFound';
-import Fetch from '../Fetch';
 import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
+import LogkeeperLogViewer from '../Fetch/LogkeeperLogViewer';
 import { Nav, NavItem } from 'react-bootstrap';
 import CacheModal from './CacheModal';
 import LogDrop from '../LogDrop';
 import queryString from '../../thirdparty/query-string';
 
 const logdrop = (props: ContextRouter) => {
-  const parsed = queryString.parse(props.location.search);
+  const parsed = queryString.parse(props.location.search === '' ? props.location.hash : props.location.search);
   if ('url' in parsed && 'server' in parsed) {
     return (<Redirect to={`/lobster/logdrop?${queryString.stringify(parsed)}`} />);
   }
   return (<LogDrop {...props} />);
 };
-const logviewer = (props) => (<Fetch {...props} />);
+const logviewer = (props) => (<LogkeeperLogViewer {...props} />);
 const evergreenLogviewer = (props) => (<EvergreenLogViewer {...props} />);
 const about = (props) => (<About {...props} />);
 const notfound = (props) => (<NotFound {...props} />);

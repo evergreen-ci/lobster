@@ -20,7 +20,7 @@ function getFullGitRef(fileLine: ?string, gitVersion: string): ?string {
   return gitPrefix + gitVersion + '/' + fileLine;
 }
 
-export default function(response: string): Log {
+export default function(state: Log, response: string): Log {
   // set the url to the url we requested
   const lines = response.split('\n');
   const processed = [];
@@ -91,6 +91,7 @@ export default function(response: string): Log {
     });
   }
   return {
+    identity: state.identity,
     lines: processed,
     colorMap: colorMap,
     isDone: true,

@@ -1,52 +1,50 @@
 // @flow
 
-import sinon from 'sinon';
-import assert from 'assert';
 import * as lobstercage from './lobstercage';
-import { runSaga } from 'redux-saga';
-
-/* eslint-disable flowtype/no-flow-fix-me-comments */
+import { expectSaga } from 'redux-saga-test-plan';
 
 describe('lobstercage', function() {
-  test('readFromCache-unsupported', function() {
-    assert.strictEqual(window.requestFileSystem, undefined);
-    const dispatch = sinon.fake();
-    const getState = sinon.fake.returns({
-      cache: {
-        size: 1234
-      }
-    });
-    const options = {
-      dispatch: dispatch,
-      getState: getState
-    };
-    const result = runSaga(options, lobstercage.readFromCache, 'hello');
-    // $FlowFixMe
-    assert.strictEqual(result.isAborted(), true);
+  // lobstercage is also tested by e2e.spec.js, for testing the caching functionality in chrome
+  test('readFromCache-unsupported', function(done) {
+    expect(window.requestFileSystem).toBe(undefined);
+
+    return expectSaga(lobstercage.readFromCache, 'hello')
+      .withState({
+        cache: {
+          size: 1234
+        }
+      })
+      .run()
+      .then(() => {
+        done.fail();
+      })
+      .catch(() => {
+        done();
+      });
   });
 
-  test('writeToCache-unsupported', function() {
-    assert.strictEqual(window.requestFileSystem, undefined);
-    const dispatch = sinon.fake();
-    const getState = sinon.fake.returns({
-      cache: {
-        size: 1234
-      },
-      log: {
-        lines: [
-          {
-            lineNumber: 0,
-            text: 'hello'
-          }
-        ],
-        colorMap: {}
-      }
-    });
-    const options = {
-      dispatch: dispatch,
-      getState: getState
-    };
-    const result = runSaga(options, lobstercage.writeToCache, 'hello').done;
-    assert.ok(result);
+  test('writeToCache-unsupported', function(done) {
+    expect(window.requestFileSystem).toBe(undefined);
+    return expectSaga(lobstercage.writeToCache, 'hello')
+      .withState({
+        cache: {
+          size: 1234
+        },
+        log: {
+          lines: [
+            {
+              lineNumber: 0,
+              text: 'hello'
+            }
+          ],
+          colorMap: {},
+          isDone: true
+        }
+      })
+      .run()
+      .then((result) => {
+        expect(result.effects.select).toHaveLength(1);
+        done();
+      });
   });
 });

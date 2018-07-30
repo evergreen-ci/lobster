@@ -29,6 +29,12 @@ module.exports = {
       }
     },
     {
+      'files': ['src/setupTests.js', 'src/e2eHelpers.spec.js'],
+      'rules': {
+        'jest/no-disabled-tests': 0
+      }
+    },
+    {
       'files': ['src/**/*.spec.js*', 'src/**/*.test.js*', 'src/setupTests.js'],
       'env': {
         'browser': true
@@ -48,6 +54,7 @@ module.exports = {
       },
       'globals': {
         'e2e': true,
+        'e2eChrome': true,
         '__dirname': true
       }
     },
@@ -80,6 +87,7 @@ module.exports = {
       'named': 'never',
       'asyncArrow': 'always'
     }],
+    'no-lonely-if': 0,
 
     'dependencies/case-sensitive': 2,
     'dependencies/no-unresolved': 2,

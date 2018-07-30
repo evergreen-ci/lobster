@@ -122,5 +122,92 @@ describe('e2e', function() {
       await driver.quit();
     }
   }, 60000);
+
+  e2e('logdrop', async (done) => {
+    // Allow webdriver to interact with the dropFile elements
+    const opts = {
+      firefox: {
+        'moz:webdriverClick': false
+      }
+    };
+    const driver = await makeDriver(done, opts);
+    try {
+      const l = new Lobster(driver);
+      await l.init('/lobster');
+
+      await l.dropFile('./e2e/simple.log');
+
+      const divs = await l.lines();
+      expect(divs).toHaveLength(7);
+
+      done();
+    } catch (err) {
+      done.fail(err);
+    } finally {
+      await driver.quit();
+    }
+  }, 15000);
+
+  e2eChrome('lobstercage', async (done) => {
+    const driver = await makeDriver(done);
+    try {
+      const l = new Lobster(driver);
+      await l.init('/lobster/build/build1234/test/test1234', { cache: true });
+
+      const divs0 = await l.lines();
+      expect(divs0).toHaveLength(15);
+      const l13 = await divs0[13].getText();
+      const r = new RegExp('^enumerate: ([0-9]+)$');
+      const matches = r.exec(l13);
+      expect(matches).toHaveLength(2);
+      const expected = `enumerate: ${parseInt(matches[1], 10) + 1}`;
+
+      for (let i = 0; i < 5; ++i) {
+        await l.refresh();
+        await l.waitUntilDocumentReady();
+
+        const divs1 = await l.lines();
+        expect(divs1).toHaveLength(15);
+        const l13Refresh = await divs1[13].getText();
+        expect(l13Refresh).toBe(expected);
+      }
+
+      done();
+    } catch (e) {
+      done.fail(e);
+    } finally {
+      await driver.quit();
+    }
+  }, 15000);
 });
 
+// Test that each logviewer page can actually download logs
+[
+  ['/lobster/evergreen/test/testid1234', 13],
+  ['/lobster/evergreen/task/taskid1234/1234/all', 15],
+  ['/lobster/build/build1234/all', 14],
+  ['/lobster/build/build1234/test/test1234', 15]
+].forEach((table) => {
+  e2e(`search-${table[0]}`, async (done) => {
+    const driver = await makeDriver(done);
+    try {
+      const l = new Lobster(driver);
+      await l.init(table[0]);
+
+      const lines = await l.lines();
+      expect(lines).toHaveLength(table[1]);
+
+      await l.search('Line ');
+      await l.search(Key.ENTER);
+
+      const results = await l.searchAndWordHighlights();
+      expect(results).toHaveLength(10);
+
+      done();
+    } catch (err) {
+      done.fail(err);
+    } finally {
+      await driver.quit();
+    }
+  }, 60000);
+});

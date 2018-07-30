@@ -1,10 +1,11 @@
-/* global process:{} */
-
 import fs from 'fs';
 import { tmpdir } from 'os';
-import { spawn, spawnSync } from 'child_process';
+import { spawn } from 'child_process';
 import path from 'path';
 import fetch from 'node-fetch';
+import sinon from 'sinon';
+import * as api from './api';
+
 
 function lobster(port = 9000, file = 'simple.log') {
   return fetch(`http://localhost:${port}/api/log`, {
@@ -28,19 +29,17 @@ function startServer(args) {
   }
 }
 
-const df = process.env.CI === 'true' ? describe : describe.skip;
-
-df('lobsterserver', function() {
-  beforeAll(() => {
-    if (process.env.CI === 'true') {
-      spawnSync('npm', ['run', 'build'], {
-        'stdio': 'inherit'
-      });
-    }
+describe('lobsterserver', function() {
+  beforeEach(() => {
+    sinon.replace(window, 'fetch', function(req) {
+      console.log(req.url);
+      return fetch(req.url);
+    });
   });
 
   let c;
   afterEach(() => {
+    sinon.restore();
     if (fs.existsSync('/tmp/lobster.txt')) {
       fs.unlinkSync('/tmp/lobster.txt');
     }
@@ -50,7 +49,7 @@ df('lobsterserver', function() {
     }
   });
 
-  test('fetch-ok', (done) => {
+  e2e('fetch-ok', (done) => {
     c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
     setTimeout(function() {
       lobster().then((resp) => {
@@ -65,7 +64,7 @@ df('lobsterserver', function() {
     }, 5000);
   }, 10000);
 
-  test('fetch-notexist', (done) => {
+  e2e('fetch-notexist', (done) => {
     c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
     setTimeout(function() {
       lobster(undefined, '___notexist.log').then((resp) => {
@@ -78,7 +77,7 @@ df('lobsterserver', function() {
     }, 5000);
   }, 10000);
 
-  test('fetch-insecure-path', (done) => {
+  e2e('fetch-insecure-path', (done) => {
     fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
     c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
     setTimeout(function() {
@@ -92,7 +91,7 @@ df('lobsterserver', function() {
     }, 5000);
   }, 10000);
 
-  test('fetch-logs-disabled', (done) => {
+  e2e('fetch-logs-disabled', (done) => {
     fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
     c = startServer([]);
     setTimeout(function() {
@@ -106,7 +105,7 @@ df('lobsterserver', function() {
     }, 5000);
   }, 10000);
 
-  test('fetch-port', (done) => {
+  e2e('fetch-port', (done) => {
     fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
     c = startServer(['--port', '8999', '--logs', path.dirname(__dirname) + '/e2e']);
     setTimeout(function() {
@@ -116,6 +115,56 @@ df('lobsterserver', function() {
           done();
         }).catch((e) => done.fail(e));
       }).catch((e) => done.fail(e));
+    }, 5000);
+  }, 10000);
+
+  e2e('evergreen-test', (done) => {
+    fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
+    c = startServer(['--e2e']);
+    setTimeout(function() {
+      return api.fetchEvergreen({
+        type: 'evergreen-test',
+        id: 'testid1234'
+      }).then((resp) => {
+        expect(resp.status).toBe(200);
+        return resp.text().then((log) => {
+          expect(log).toMatchSnapshot();
+          done();
+        });
+      });
+    }, 5000);
+  }, 10000);
+
+  e2e('evergreen-task', (done) => {
+    fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
+    c = startServer(['--e2e']);
+    setTimeout(function() {
+      return api.fetchEvergreen({
+        type: 'evergreen-task',
+        id: 'testid1234',
+        execution: 1234
+      }).then((resp) => {
+        expect(resp.status).toBe(200);
+        return resp.text().then((log) => {
+          expect(log).toMatchSnapshot();
+          done();
+        });
+      });
+    }, 5000);
+  }, 10000);
+
+  e2e('logkeeper', (done) => {
+    fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
+    c = startServer(['--e2e']);
+    setTimeout(function() {
+      return api.fetchLogkeeper('build1234', 'test1234')
+        .then((resp) => {
+          expect(resp.status).toBe(200);
+          return resp.text().then((log) => {
+            expect(log).toMatchSnapshot();
+            done();
+          });
+        });
     }, 5000);
   }, 10000);
 });

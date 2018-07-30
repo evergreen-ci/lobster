@@ -11,8 +11,6 @@ import Toolbar from './Toolbar';
 
 export class Fetch extends React.Component {
   static propTypes = {
-    action: PropTypes.func,
-    dispatch: PropTypes.func,
     log: PropTypes.shape({
       lines: PropTypes.array,
       colorMap: PropTypes.object,
@@ -28,9 +26,9 @@ export class Fetch extends React.Component {
         test: PropTypes.string
       })
     }),
+    logIdentity: PropTypes.object,
+    loadLogByIdentity: PropTypes.func,
     history: PropTypes.object,
-    lobsterLoadData: PropTypes.func.isRequired,
-    logkeeperLoadData: PropTypes.func.isRequired,
     settings: PropTypes.shape({
       wrap: PropTypes.bool.isRequired,
       caseSensitive: PropTypes.bool.isRequired,
@@ -85,12 +83,8 @@ export class Fetch extends React.Component {
     if (locationSearch !== '') {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     }
-    if (this.state.url) {
-      this.props.lobsterLoadData(this.state.server, this.state.url);
-    } else if (this.state.build) {
-      this.props.logkeeperLoadData(this.state.build, this.state.test);
-    } else if (this.props.action) {
-      this.props.dispatch(this.props.action());
+    if (this.props.logIdentity) {
+      this.props.loadLogByIdentity(this.props.logIdentity);
     }
   }
 
@@ -176,7 +170,11 @@ export class Fetch extends React.Component {
       this.props.changeFindIdx(-1);
       this.setState({ url: this.urlInput.value, findResults: [] });
       this.props.loadBookmarks([]);
-      this.props.lobsterLoadData(this.state.server, this.state.url);
+      this.props.loadLogByIdentity({
+        type: 'lobster',
+        server: this.state.server,
+        url: this.state.url
+      });
     }
   }
 
@@ -518,8 +516,6 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-    lobsterLoadData: (server, url) => dispatch(actions.lobsterLoadData(server, url)),
-    logkeeperLoadData: (build, test) => dispatch(actions.logkeeperLoadData(build, test)),
     loadInitialFilters: (initialFilters) => dispatch(logviewerActions.loadInitialFilters(initialFilters)),
     loadInitialHighlights: (initialHighlights) => dispatch(logviewerActions.loadInitialHighlights(initialHighlights)),
     addFilter: (text) => dispatch(logviewerActions.addFilter(text)),
@@ -529,7 +525,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     toggleBookmark: (lineNumArray) => dispatch(logviewerActions.toggleBookmark(lineNumArray)),
     ensureBookmark: (lineNum) => dispatch(logviewerActions.ensureBookmark(lineNum)),
     changeSearch: (text) => dispatch(logviewerActions.changeSearch(text)),
-    dispatch: dispatch,
+    loadLogByIdentity: (identity) => dispatch(actions.loadLog(identity)),
     ...ownProps
   };
 }

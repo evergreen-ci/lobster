@@ -1,6 +1,5 @@
 // @flow
 
-import assert from 'assert';
 import resmoke from './resmoke';
 
 const data = () => [
@@ -33,15 +32,25 @@ const data = () => [
 
 describe('resmoke', function() {
   test('store-line-gitref', function() {
-    const state = resmoke(data().join('\n'));
+    const inState = {
+      identity: {
+        type: 'logkeeper',
+        build: 'build1'
+      },
+      lines: [],
+      colorMap: new Map(),
+      isDone: false,
+      events: []
+    };
+    const state = resmoke(inState, data().join('\n'));
 
-    assert.deepEqual(state.lines.length, 25);
-    assert.deepEqual(state.lines[0].gitRef, null);
-    assert.deepEqual(state.lines[1].gitRef, null);
-    assert.deepEqual(state.lines[2].lineNumber, 2);
-    assert.deepEqual('https://github.com/mongodb/mongo/blob/master/src/mongo/shell/shell_utils_launcher.cpp#L447',
-      state.lines[2].gitRef);
-    assert.deepEqual(state.colorMap[':primary]'], '#5aae61');
-    Object.keys(state.colorMap).forEach((value) => assert.notEqual(value, undefined));
+    expect(state.lines).toHaveLength(25);
+    expect(state.lines[0].gitRef).toBe(undefined);
+    expect(state.lines[1].gitRef).toBe(undefined);
+    expect(state.lines[2].lineNumber).toBe(2);
+    expect('https://github.com/mongodb/mongo/blob/master/src/mongo/shell/shell_utils_launcher.cpp#L447').toBe(state.lines[2].gitRef);
+    expect(state.colorMap[':primary]']).toBe('#5aae61');
+    Object.keys(state.colorMap).forEach((value) => expect(value).not.toBe(undefined));
+    expect(state.identity).toBe(inState.identity);
   });
 });
