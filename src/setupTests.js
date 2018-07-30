@@ -31,7 +31,7 @@ if (!global.window) {
 
 const skip = (name, ...rest) => {
   return test.skip(`e2e-${name}`, ...rest);
-}
+};
 
 global.e2e = skip;
 global.e2eChrome = skip;
