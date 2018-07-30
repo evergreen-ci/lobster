@@ -39,7 +39,8 @@ describe('resmoke', function() {
       },
       lines: [],
       colorMap: new Map(),
-      isDone: false
+      isDone: false,
+      events: []
     };
     const state = resmoke(inState, data().join('\n'));
 

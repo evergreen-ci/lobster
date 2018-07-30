@@ -29,6 +29,12 @@ module.exports = {
       }
     },
     {
+      'files': 'src/setupTests.js',
+      'rules': {
+        'jest/no-disabled-tests': 0
+      }
+    },
+    {
       'files': ['src/**/*.spec.js*', 'src/**/*.test.js*', 'src/setupTests.js'],
       'env': {
         'browser': true

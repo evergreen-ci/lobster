@@ -24,6 +24,8 @@ describe('e2e', function() {
       await l.notFound();
 
       done();
+    } catch (err) {
+      done.fail(err);
     } finally {
       await driver.quit();
     }
@@ -66,6 +68,8 @@ describe('e2e', function() {
       expect(highlighted).toHaveLength(0);
 
       done();
+    } catch (err) {
+      done.fail(err);
     } finally {
       await driver.quit();
     }
@@ -112,6 +116,8 @@ describe('e2e', function() {
       expect(divs).toHaveLength(3);
 
       done();
+    } catch (err) {
+      done.fail(err);
     } finally {
       await driver.quit();
     }

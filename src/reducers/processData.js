@@ -3,20 +3,21 @@
 import type { Log, EvergreenTaskLogType } from '../models';
 import type { Action } from '../actions';
 import { PROCESS_RESPONSE, LOAD_CACHED_DATA, LOAD_LOG } from '../actions';
-import * as LogProcessor from './LogProcessor';
+import * as logProcessor from './logProcessor';
 
 const initialState: Log = {
   identity: null,
   lines: [],
   colorMap: new Map(),
-  isDone: false
+  isDone: false,
+  events: []
 };
 
 type ProcessorFunc = (Log, string) => Log
 
 const processors: {[EvergreenTaskLogType]: ProcessorFunc} = {
-  resmoke: LogProcessor.resmoke,
-  raw: LogProcessor.raw('\n')
+  resmoke: logProcessor.resmoke,
+  raw: logProcessor.raw('\n')
 };
 
 export default function(state: Log = initialState, action: Action): Log {
