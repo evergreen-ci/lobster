@@ -23,7 +23,7 @@ describe('events', function() {
     const rawFilePath = path.resolve('.') + '/src/reducers/logProcessor/validateCollectionsRaw.txt';
     const rawFile = fs.readFileSync(rawFilePath).toString();
     const state = resmoke(rawFile);
-    const validateCollectionsPath = path.resolve('.' + '/src/reducers/LogProcessor/validateCollections.json');
+    const validateCollectionsPath = path.resolve('.' + '/src/reducers/logProcessor/validateCollections.json');
     const validateCollectionsFile = fs.readFileSync(validateCollectionsPath, 'utf8');
     const validateCollectionsJSON = JSON.parse(validateCollectionsFile);
     expect(state.events).toEqual(validateCollectionsJSON);

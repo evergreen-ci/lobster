@@ -25,8 +25,7 @@ describe('e2e', function() {
 
       done();
     } catch (err) {
-      console.log(err);
-      expect(err).toBe(null);
+      done.fail(err);
     } finally {
       await driver.quit();
     }
@@ -70,8 +69,7 @@ describe('e2e', function() {
 
       done();
     } catch (err) {
-      console.log(err);
-      expect(err).toBe(null);
+      done.fail(err);
     } finally {
       await driver.quit();
     }
@@ -119,8 +117,7 @@ describe('e2e', function() {
 
       done();
     } catch (err) {
-      console.log(err);
-      expect(err).toBe(null);
+      done.fail(err);
     } finally {
       await driver.quit();
     }
