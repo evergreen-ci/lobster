@@ -1,6 +1,5 @@
 // @flow
 
-import sinon from 'sinon';
 import * as lobstercage from './lobstercage';
 import { expectSaga } from 'redux-saga-test-plan';
 
@@ -21,7 +20,7 @@ describe('lobstercage', function() {
       .then(() => {
         done.fail();
       })
-      .catch((e) => {
+      .catch(() => {
         done();
       });
   });

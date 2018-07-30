@@ -10,7 +10,7 @@ function cors(req, res) {
   }
 }
 
-let enumerate = {};
+const enumerate = {};
 function makeLines(req, res) {
   for (let i = 0; i < 10; ++i) {
     res.write('line ' + i);
@@ -22,6 +22,7 @@ function makeLines(req, res) {
 
   const e = JSON.stringify(req.params);
   if (enumerate[e] === undefined) {
+    enumerate = {};
     enumerate[e] = 0;
   }
   res.write(enumerate[e].toString());
