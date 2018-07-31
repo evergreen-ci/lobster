@@ -90,6 +90,7 @@ export default function(response: string): Log {
       gitRef: gitRef
     });
   }
+  console.log(resmokeTestEvents(processed));
   return {
     lines: processed,
     colorMap: colorMap,

@@ -4,8 +4,8 @@ import React from 'react';
 import type { Node as ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { type Event } from '../../models';
-import { vega } from 'vega';
-import { jQuery } from 'jquery';
+import vegaEmbed from 'vega-embed'; // vegaEmbed.embed(…)
+import jQuery from 'jquery';
 
 type Props = {|
   events: Event[]
@@ -18,6 +18,8 @@ type State = {|
 |}
 
 export class ClusterVisualizer extends React.PureComponent<Props, State> {
+  baseDiv: ?HTMLDivElement
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -29,35 +31,45 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
     };
   }
 
-  componentDidUpdate() {
-    vega.embed('#testGraph', this.state.spec, this.state.opts).then(function(result) {
-      const newViews = this.state.views.slice();
-      newViews.push(result.view);
-      this.setState({ views: newViews });
-      // vegaTooltip.vega(result.view, tooltipOptions);
-    });
+  componentDidUpdate(prevProps) {
+    if (this.props.events !== prevProps.events) {
+      this.withSpec('test.json', this.props.events);
+    }
   }
 
-  withSpec = (filename: string, events: Event[], callback: (string) => ?ReactNode) => {
-    const res = jQuery.getJSON('./' + filename, function(data) {
+  componentDidMount() {
+    this.withSpec('test.json', this.props.events);
+  }
+
+  refCallback = (div: ?HTMLDivElement) => {
+    this.baseDiv = div;
+  }
+
+  withSpec = (filename: string, events: Event[]) => {
+    console.log('withspec');
+    jQuery.getJSON('/' + filename, (data) => {
+      console.log('succeeded in downloading file!');
       data.data[0].values = events;
+      console.log(events);
       this.setState({ spec: data });
-      callback(data);
+      this.graph();
     }).fail(function() { console.log('failed!'); });
-    console.log(res);
   }
 
-  graph = (graphDivId: string): ?ReactNode => {
-    console.log('graph');
-    return (<div id={graphDivId} className="width: 100%"></div>);
+  graph = (): ?ReactNode => {
+    if (this.baseDiv != null) {
+      vegaEmbed('#clusterVis', this.state.spec, this.state.opts).then(function() {
+        console.log('vega embed success!');
+        // vegaTooltip.vega(result.view, tooltipOptions);
+      });
+    }
   }
 
   render() {
     return (
-      this.withSpec('test.json', this.props.events, function() {
-        this.graph('testGraph');
-      })
-    );
+      <div ref={this.refCallback}>
+        <div id="clusterVis" className="width: 100%">asdas</div>
+      </div>);
   }
 }
 
