@@ -61,10 +61,10 @@ module.exports = {
     {
       'files': ['server/**/*.js', 'generate-tasks.js', 'e2e.js', 'reporter.js', '.eslintrc.js'],
       'env': {
-        'node': true,
-        'parserOptions': {
-          'sourceType': 'scripts'
-        }
+        'node': true
+      },
+      'parserOptions': {
+        'sourceType': 'script'
       },
       'rules': {
         'no-sync': 0
