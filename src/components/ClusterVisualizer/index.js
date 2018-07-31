@@ -24,7 +24,32 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
     super(props);
     this.state = {
       opts: {
-        'actions': false
+        actions: { source: false, editor: false, export: false, compiled: false },
+        tooltip: {
+          showAllFields: true,
+          fields: [
+            {
+              'field': 'start',
+              'formatType': 'time',
+              'format': '%H:%M:%S.%L'
+            },
+            {
+              'field': 'end',
+              'formatType': 'time',
+              'format': '%H:%M:%S.%L'
+            },
+            {
+              'field': 'log_start',
+              'formatType': 'time',
+              'format': '%H:%M:%S.%L'
+            },
+            {
+              'field': 'log_end',
+              'formatType': 'time',
+              'format': '%H:%M:%S.%L'
+            }
+          ]
+        }
       },
       views: [],
       spec: {}
@@ -60,7 +85,6 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
     if (this.baseDiv != null) {
       vegaEmbed('#clusterVis', this.state.spec, this.state.opts).then(function() {
         console.log('vega embed success!');
-        // vegaTooltip.vega(result.view, tooltipOptions);
       });
     }
   }
