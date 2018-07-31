@@ -1,0 +1,379 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 1000,
+  "height": 360,
+  "padding": 5,
+
+  "signals": [
+    {
+      "name": "detailDomain"
+    },
+    {
+      "name": "clear", "value": true,
+      "on": [
+        {
+          "events": "mouseup[!event.item]",
+          "update": "true",
+          "force": true
+        }
+      ]
+    },
+    {
+      "name": "shift", "value": false,
+      "on": [
+        {
+          "events": "@legendSymbol:click, @legendLabel:click",
+          "update": "event.shiftKey",
+          "force": true
+        }
+      ]
+    },
+    {
+      "name": "clicked", "value": null,
+      "on": [
+        {
+          "events": "@legendSymbol:click, @legendLabel:click",
+          "update": "{value: datum.value}",
+          "force": true
+        }
+      ]
+    }
+  ],
+
+  "data": [
+    {
+      "name": "test-events",
+      "format": {"type": "json", "parse": {"start": "date", "end": "date"}},
+      "url": ""
+    },
+    {
+      "name": "fixture-errors",
+      "source": "test-events",
+      "transform": [
+        {"type": "filter", "expr": "datum.type === 'Fatal' || datum.type === 'Error' || datum.type === 'Warning'"}
+      ]
+    },
+    {
+      "name": "fixture-events",
+      "source": "test-events",
+      "transform": [
+        {"type": "filter", "expr": "datum.start === datum.end && datum.type !== 'Log'"}
+      ]
+    },
+    {
+      "name": "transition-events",
+      "source": "test-events",
+      "transform": [
+        {"type": "filter", "expr": "datum.type === 'State'"}
+      ]
+    },
+    {
+      "name": "test-duration",
+      "source": "test-events",
+      "transform": [
+        {"type": "filter", "expr": "datum.type === 'Log'"}
+      ]
+    },
+    {
+      "name": "selected",
+      "on": [
+        {"trigger": "clear", "remove": true},
+        {"trigger": "!shift", "remove": true},
+        {"trigger": "!shift && clicked", "insert": "clicked"},
+        {"trigger": "shift && clicked", "toggle": "clicked"}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "colorscale",
+      "type": "ordinal",
+      "range": [
+        "green", "indigo", "black",
+        "grey", "orange", "crimson",
+        "lightgreen", "lightblue", "orange", "peachpuff", "grey",
+        "blue"
+      ],
+      "domain": [
+        "ServerStart", "ServerShutdownStart", "ServerShutdownComplete",
+        "Warning", "Error", "Fatal",
+        "PRIMARY", "SECONDARY", "RECOVERING", "STARTUP2", "ARBITER",
+        "ElectionSuccess"
+      ]
+    },
+    {
+      "name": "symbolscale",
+      "type": "ordinal",
+      "range": ["triangle-right", "triangle-left", "triangle-left", "diamond", "diamond", "diamond", "M0,.5L.6,.8L.5,.1L1,-.3L.3,-.4L0,-1L-.3,-.4L-1,-.3L-.5,.1L-.6,.8L0,.5Z"],
+      "domain": ["ServerStart", "ServerShutdownStart", "ServerShutdownComplete", "Warning", "Error", "Fatal", "ElectionSuccess"]
+    }
+  ],
+
+  "legends": [
+    {
+      "shape": "symbolscale",
+      "fill": "colorscale",
+      "title": "Events",
+      "encode": {
+        "symbols": {
+          "name": "legendSymbol",
+          "interactive": true,
+          "update": {
+            "strokeWidth": {"value": 2},
+            "opacity": [
+              {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 0.7},
+              {"value": 0.15}
+            ],
+            "size": {"value": 64}
+          }
+        },
+        "labels": {
+          "name": "legendLabel",
+          "interactive": true,
+          "update": {
+            "opacity": [
+              {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 1},
+              {"value": 0.25}
+            ]
+          }
+        }
+      }
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "name": "detail",
+      "encode": {
+        "enter": {
+          "height": {"value": 300},
+          "width": {"value": 1000}
+        }
+      },
+      "scales": [
+        {
+          "name": "xDetail",
+          "type": "time",
+          "range": "width",
+          "domain": {"data": "test-events", "fields": ["start", "end"]},
+          "domainRaw": {"signal": "detailDomain"}
+        },
+        {
+          "name": "yDetail",
+          "type": "band",
+          "range": [0, 300],
+          "domain": {"data": "test-events", "field": "fixture_id", "sort": true}
+        }
+      ],
+      "axes": [
+        {"orient": "bottom", "scale": "xDetail"},
+        {"orient": "left", "scale": "yDetail"}
+      ],
+      "marks": [
+        {
+          "type": "group",
+          "encode": {
+            "enter": {
+              "height": {"field": {"group": "height"}},
+              "width": {"field": {"group": "width"}},
+              "clip": {"value": true}
+            }
+          },
+          "marks": [
+            {
+              "type": "rect",
+              "from": {"data": "test-duration"},
+              "encode": {
+                "update": {
+                  "x": {"scale": "xDetail", "field": "start"},
+                  "x2": {"scale": "xDetail", "field": "end"},
+                  "y": {"scale": "yDetail", "field": "fixture_id", "band": 0.5},
+                  "height": {"value": 1},
+                  "fill": {"value": "black"}
+                }
+            }
+          },
+          {
+            "type": "rect",
+            "from": {"data": "transition-events"},
+            "encode": {
+              "update": {
+                "x": {"scale": "xDetail", "field": "start"},
+                "x2": {"scale": "xDetail", "field": "end"},
+                "y": {"scale": "yDetail", "field": "fixture_id", "band": 0.5, "offset": -1},
+                "height": {"value": 3},
+                "fill": {"scale": "colorscale", "field": "state"}
+              }
+            }
+          },
+          {
+            "type": "symbol",
+            "from": {"data": "fixture-events"},
+            "encode": {
+              "enter": {
+                "size": [
+                  {"test": "datum.type == 'ElectionSuccess'", "value": 200},
+                  {"value": 100}
+                ],
+                "shape": {"scale": "symbolscale", "field": "type"}
+              },
+              "update": {
+                "xc": {"scale": "xDetail", "field": "start"},
+                "yc": {"scale": "yDetail", "field": "fixture_id", "band": 0.5},
+                "opacity": [
+                  {"test": "!length(data('selected')) || indata('selected', 'value', datum.type)", "value": 1},
+                  {"value": 0.15}
+                ],
+                "fill": [
+                  {"test": "!length(data('selected')) || indata('selected', 'value', datum.type)", "scale": "colorscale", "field": "type"},
+                  {"value": "#ccc"}
+                ]
+              }
+            }
+          }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "name": "overview",
+      "encode": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": 330},
+          "height": {"value": 70},
+          "width": {"value": 1000},
+          "fill": {"value": "transparent"}
+        }
+      },
+      "signals": [
+        {
+          "name": "brush", "value": 0,
+          "on": [
+            {
+              "events": "@overview:mousedown",
+              "update": "[x(), x()]"
+            },
+            {
+              "events": "[@overview:mousedown, window:mouseup] > window:mousemove!",
+              "update": "[brush[0], clamp(x(), 0, width)]"
+            },
+            {
+              "events": {"signal": "delta"},
+              "update": "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
+            }
+          ]
+        },
+        {
+          "name": "anchor", "value": null,
+          "on": [{"events": "@brush:mousedown", "update": "slice(brush)"}]
+        },
+        {
+          "name": "xdown", "value": 0,
+          "on": [{"events": "@brush:mousedown", "update": "x()"}]
+        },
+        {
+          "name": "delta", "value": 0,
+          "on": [
+            {
+              "events": "[@brush:mousedown, window:mouseup] > window:mousemove!",
+              "update": "x() - xdown"
+            }
+          ]
+        },
+        {
+          "name": "detailDomain",
+          "push": "outer",
+          "on": [
+            {
+              "events": {"signal": "brush"},
+              "update": "span(brush) ? invert('xOverview', brush) : null"
+            }
+          ]
+        }
+      ],
+      "scales": [
+        {
+          "name": "xOverview",
+          "type": "time",
+          "range": "width",
+          "domain": {"data": "test-events", "fields": ["start", "end"]}
+        },
+        {
+          "name": "yOverview",
+          "type": "band",
+          "range": [0, 70],
+          "domain": {"data": "test-events", "field": "fixture_id", "sort": true}
+        }
+      ],
+      "axes": [
+        {"orient": "bottom", "scale": "xOverview"}
+      ],
+      "marks": [
+        {
+          "type": "rect",
+          "interactive": false,
+          "from": {"data": "test-duration"},
+          "encode": {
+            "update": {
+              "x": {"scale": "xOverview", "field": "start"},
+              "x2": {"scale": "xOverview", "field": "end"},
+              "y": {"scale": "yOverview", "field": "fixture_id", "band": 0.5},
+              "height": {"value": 1},
+              "fill": {"value": "black"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "name": "brush",
+          "encode": {
+            "enter": {
+              "y": {"value": 0},
+              "height": {"value": 70},
+              "fill": {"value": "#333"},
+              "fillOpacity": {"value": 0.2}
+            },
+            "update": {
+              "x": {"signal": "brush[0]"},
+              "x2": {"signal": "brush[1]"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "interactive": false,
+          "encode": {
+            "enter": {
+              "y": {"value": 0},
+              "height": {"value": 70},
+              "width": {"value": 1},
+              "fill": {"value": "firebrick"}
+            },
+            "update": {
+              "x": {"signal": "brush[0]"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "interactive": false,
+          "encode": {
+            "enter": {
+              "y": {"value": 0},
+              "height": {"value": 70},
+              "width": {"value": 1},
+              "fill": {"value": "firebrick"}
+            },
+            "update": {
+              "x": {"signal": "brush[1]"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
