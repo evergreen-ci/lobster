@@ -6,17 +6,17 @@ import type { Bookmark } from '../actions/logviewer';
 
 const initialState: Bookmark[] = [];
 
-function findBookmark(bookmarkList, lineNum) {
+function findBookmark(bookmarkList: Bookmark[], lineNum: number): boolean {
   return bookmarkList.findIndex(function(bookmark) {
     return bookmark.lineNumber === lineNum;
   });
 }
 
-function bookmarkSort(b1, b2) {
+function bookmarkSort(b1: number, b2: number): number {
   return b1.lineNumber - b2.lineNumber;
 }
 
-function ensureBookmark(lineNum, bookmarks) {
+function ensureBookmark(lineNum: number, bookmarks: Bookmark[]): Bookmark[] {
   const newBookmarks = bookmarks.slice();
   const i = findBookmark(newBookmarks, lineNum);
   if (i === -1) {
