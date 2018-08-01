@@ -25,7 +25,6 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
   baseDiv: ?HTMLDivElement
 
   constructor(props: Props) {
-    console.log('making cluster viz');
     super(props);
     this.state = {
       opts: {
@@ -82,11 +81,9 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
   }
 
   withSpec = (filename: string, events: Event[]) => {
-    console.log('withspec');
     jQuery.getJSON('/' + filename, (data) => {
       console.log('succeeded in downloading file!');
       data.data[0].values = events;
-      console.log(events);
       this.setState({ spec: data });
       this.graph();
     }).fail(function() { console.log('failed!'); });
