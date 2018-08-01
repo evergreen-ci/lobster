@@ -110,7 +110,7 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
     return (
       <div ref={this.refCallback}>
         <div id="clusterVis" className="width: 100%">asdas</div>
-        <Button onClick={this.handleBack}>Back</Button>
+        <Button onClick={this.handleBack} bsStyle="primary" style={{ marginLeft: '10px' }}>Back</Button>
       </div>);
   }
 }
