@@ -15,6 +15,12 @@ module.exports = {
   'plugins': ['flowtype', 'dependencies'],
   'overrides': [
     {
+      'files': ['src/config.js', 'src/config/**/*.js', 'src/e2eHelpers.spec.js', 'src/setupTests.js'],
+      'globals': {
+        'process': true
+      }
+    },
+    {
       'files': ['src/**/*.js', 'src/**/*.jsx'],
       'excludedFiles': ['src/**/*.spec.js*', 'src/**/*.test.js*', 'src/setupTests.js'],
       'env': {

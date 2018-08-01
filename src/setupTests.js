@@ -1,6 +1,5 @@
 // This file is automagically executed before every test
 
-/* global process:{} */
 import fs from 'fs';
 import path from 'path';
 
