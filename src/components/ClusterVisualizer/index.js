@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import type { Line, Event } from '../../models';
 import vegaEmbed from 'vega-embed'; // vegaEmbed.embed(…)
 import { vega as vegaTooltip } from 'vega-tooltip';
-import jQuery from 'jquery';
 import { Button } from 'react-bootstrap';
 import '../../../node_modules/vega-tooltip/build/vega-tooltip.min.css';
 import type { ContextRouter } from 'react-router-dom';
@@ -85,12 +84,17 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
   }
 
   withSpec = (filename: string, events: Event[]) => {
-    jQuery.getJSON('/' + filename, (data) => {
-      console.log('succeeded in downloading file!');
-      data.data[0].values = events;
-      this.setState({ spec: data });
-      this.graph();
-    }).fail(function() { console.log('failed!'); });
+    const fileRequest = new Request('/' + filename);
+    fetch(fileRequest)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log('succeeded in downloading file!');
+        data.data[0].values = events;
+        this.setState({ spec: data });
+        this.graph();
+      });
   }
 
   graph = (): ?ReactNode => {
