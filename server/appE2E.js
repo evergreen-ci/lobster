@@ -1,14 +1,4 @@
-function cors(req, res) {
-  if (!req) return;
-  const origin = req.get('Origin');
-  if (origin) {
-    console.log(origin);
-    res.set({
-      'Access-Control-Allow-Origin': origin,
-      'Access-Control-Allow-Methods': 'GET, OPTIONS'
-    });
-  }
-}
+const { cors } = require('./util');
 
 let enumerate = {};
 function makeLines(req, res) {
@@ -32,7 +22,6 @@ function makeLines(req, res) {
 }
 
 function logkeeper(req, res) {
-  cors(req, res);
   if (req.query.raw !== '1') {
     return res.status(404).send();
   }
@@ -48,7 +37,6 @@ function logkeeper(req, res) {
 }
 
 function evergreen(req, res) {
-  cors(req, res);
   if (req.params.execution && (req.query.type === undefined || req.query.text !== 'true')) {
     return res.status(404).send();
   } else if (!req.params.execution && req.query.raw !== '1') {
@@ -67,7 +55,33 @@ function evergreen(req, res) {
   makeLines(req, res);
 }
 
+function generatePerfTestLog(lines, res) {
+  res.status(200);
+  res.write('This log is a miniature performance stress test for lobster\n');
+  res.write('Chrome has a limit of about 1.57 million lines\n');
+  res.write('This file allows for testing that\n');
+  for (let i = 0; i < lines; ++i) {
+    res.write(`line ${i}\n`);
+  }
+  res.write('FIND_THIS_TOKEN');
+  res.end();
+}
+
+const perfRegex = new RegExp(/perf-([0-9]+).special.log/);
+
+function logMiddleware(req, res, next) {
+  if (req.body.url) {
+    const matches = perfRegex.exec(req.body.url);
+    if (matches && matches.length === 2) {
+      generatePerfTestLog(parseInt(matches[1], 10), res);
+      return;
+    }
+  }
+  next();
+}
+
 function e2e(app) {
+  app.use('/api/log', cors, logMiddleware);
   app.options('/evergreen/task_log_raw/:id/:execution', cors);
   app.get('/evergreen/task_log_raw/:id/:execution', evergreen);
   app.options('/evergreen/test_log/:id', cors);

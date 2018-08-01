@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`lobsterserver e2e-evergreen-task 1`] = `
+exports[`lobsterserver-default-settings e2e-evergreen-task 1`] = `
 "testid1234
 1234
 ALL
@@ -19,7 +19,7 @@ enumerate: 0
 "
 `;
 
-exports[`lobsterserver e2e-evergreen-test 1`] = `
+exports[`lobsterserver-default-settings e2e-evergreen-test 1`] = `
 "testid1234
 line 0
 line 1
@@ -36,7 +36,7 @@ enumerate: 0
 "
 `;
 
-exports[`lobsterserver e2e-logkeeper 1`] = `
+exports[`lobsterserver-default-settings e2e-logkeeper 1`] = `
 "build1234
 test1234
 line 0

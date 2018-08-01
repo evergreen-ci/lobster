@@ -78,7 +78,7 @@ const cleanup = () => {
     listener.close();
   }
   processes.forEach((p) => {
-    p.kill('SIGINT');
+    p.kill('SIGTERM');
   });
   processes = [];
 };
