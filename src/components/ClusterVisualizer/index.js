@@ -4,7 +4,7 @@ import React from 'react';
 import type { Node as ReactNode } from 'react';
 import resmokeTestEvents from '../../reducers/logProcessor/resmokeTestEvents';
 import { connect } from 'react-redux';
-import { type Line, Event } from '../../models';
+import type { Line, Event } from '../../models';
 import vegaEmbed from 'vega-embed'; // vegaEmbed.embed(…)
 import { vega as vegaTooltip } from 'vega-tooltip';
 import jQuery from 'jquery';
@@ -17,8 +17,8 @@ type Props = {|
 |} & ContextRouter
 
 type State = {|
-  opts: {[key: string]: boolean},
-  views: [],
+  opts: {[key: string]: {[key: string]: boolean}},
+  tooltipsOptions: {},
   spec: {},
   events: Event[],
   loaded: boolean
@@ -58,7 +58,6 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
           }
         ]
       },
-      views: [],
       spec: {},
       events: [],
       loaded: false
@@ -85,12 +84,6 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
     this.baseDiv = div;
   }
 
-  addToViews = (view) => {
-    const newViews = this.state.views.slice();
-    newViews.push(view);
-    this.setState({ views: newViews });
-  }
-
   withSpec = (filename: string, events: Event[]) => {
     jQuery.getJSON('/' + filename, (data) => {
       console.log('succeeded in downloading file!');
@@ -104,7 +97,6 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
     if (this.baseDiv != null) {
       vegaEmbed('#clusterVis', this.state.spec, this.state.opts).then((result) => {
         console.log('vega embed success!');
-        this.addToViews(result.view);
         vegaTooltip(result.view, this.state.tooltipsOptions);
       });
     }
