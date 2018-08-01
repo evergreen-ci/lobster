@@ -18,7 +18,6 @@ function makeLines(req, res) {
   res.write(enumerate[e].toString());
   ++enumerate[e];
   res.write('\n');
-  res.end();
 }
 
 function logkeeper(req, res) {
@@ -64,7 +63,6 @@ function generatePerfTestLog(lines, res) {
     res.write(`line ${i}\n`);
   }
   res.write('FIND_THIS_TOKEN');
-  res.end();
 }
 
 const perfRegex = new RegExp(/perf-([0-9]+).special.log/);

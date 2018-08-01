@@ -37,15 +37,20 @@ describe('lobsterserver-default-args', function() {
       expect(c).not.toEqual(null);
       return setTimeout(resolve, 5000);
     });
+  }, 10000);
 
+  beforeEach(() => {
     sinon.replace(window, 'fetch', function(req) {
       console.log(req.url);
       return fetch(req.url);
     });
-  }, 10000);
+  })
+
+  afterEach(() => {
+    sinon.restore();
+  });
 
   afterAll(() => {
-    sinon.restore();
     if (c) {
       c.kill();
     }
@@ -87,18 +92,20 @@ describe('lobsterserver-default-args', function() {
     }).catch((e) => done.fail(e));
   }, 10000);
 
-  //e2e('evergreen-test', (done) => {
-  //  return api.fetchEvergreen({
-  //    type: 'evergreen-test',
-  //    id: 'testid1234'
-  //  }).then((resp) => {
-  //    expect(resp.status).toBe(200);
-  //    return resp.text().then((log) => {
-  //      expect(log).toMatchSnapshot();
-  //      done();
-  //    });
-  //  });
-  //}, 10000);
+  e2e('evergreen-test', (done) => {
+    return api.fetchEvergreen({
+      type: 'evergreen-test',
+      id: 'testid1234'
+    }).then((resp) => {
+      console.log(resp);
+      expect(resp.status).toBe(200);
+      return resp.text().then((log) => {
+      console.log(log);
+        expect(log).toMatchSnapshot();
+        done();
+      });
+    });
+  }, 10000);
 
   //e2e('evergreen-task', (done) => {
   //  return api.fetchEvergreen({
