@@ -2,8 +2,6 @@ import { Builder, Capabilities, By, until, Condition } from 'selenium-webdriver'
 import path from 'path';
 import { existsSync } from 'fs';
 
-/* global process:{} */
-
 const caseToggleXPath = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div/div[1]/div[2]';
 const cacheNever = '//*[@id="root"]/div/div/div/div/div/div[3]/button[1]';
 const cacheYes = '//*[@id="root"]/div/div/div/div/div/div[3]/button[3]';

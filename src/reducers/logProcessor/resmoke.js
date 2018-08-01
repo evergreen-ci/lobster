@@ -92,6 +92,7 @@ export default function(state: Log, response: string): Log {
   }
   // TODO: properly defer this in the cluster vis
   let events = [];
+  /* global process:{} */
   if (process.env.NODE_ENV !== 'production') {
     events = resmokeTestEvents(processed);
   }
