@@ -20,8 +20,9 @@ describe('events', function() {
     const comparisonPath = path.resolve('.' + '/src/reducers/logProcessor/sharding.json');
     const comparisonFile = fs.readFileSync(comparisonPath, 'utf8');
     const comparisonJSON = JSON.parse(comparisonFile);
-    expect(state.events).toEqual(comparisonJSON);
-    assert.equal(state.events.length, comparisonJSON.length);
+    const comparisonEvents = resmokeTestEvents(state.lines);
+    expect(comparisonEvents).toEqual(comparisonJSON);
+    assert.equal(comparisonEvents.length, comparisonJSON.length);
   });
 
   test('validate-collections', function() {
@@ -37,8 +38,8 @@ describe('events', function() {
     const validateCollectionsPath = path.resolve('.' + '/src/reducers/logProcessor/validateCollections.json');
     const validateCollectionsFile = fs.readFileSync(validateCollectionsPath, 'utf8');
     const validateCollectionsJSON = JSON.parse(validateCollectionsFile);
-    const events = resmokeTestEvents(state.lines);
-    expect(events).toEqual(validateCollectionsJSON);
-    assert.equal(events.length, validateCollectionsJSON.length);
+    const validateCollectionEvents = resmokeTestEvents(state.lines);
+    expect(validateCollectionEvents).toEqual(validateCollectionsJSON);
+    assert.equal(validateCollectionEvents.length, validateCollectionsJSON.length);
   });
 });
