@@ -6,13 +6,13 @@ import type { Bookmark } from '../actions/logviewer';
 
 const initialState: Bookmark[] = [];
 
-function findBookmark(bookmarkList: Bookmark[], lineNum: number): boolean {
+function findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
   return bookmarkList.findIndex(function(bookmark) {
     return bookmark.lineNumber === lineNum;
   });
 }
 
-function bookmarkSort(b1: number, b2: number): number {
+function bookmarkSort(b1: Bookmark, b2: Bookmark): number {
   return b1.lineNumber - b2.lineNumber;
 }
 
