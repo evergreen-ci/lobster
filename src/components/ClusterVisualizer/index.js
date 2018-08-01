@@ -5,8 +5,9 @@ import type { Node as ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { type Event } from '../../models';
 import vegaEmbed from 'vega-embed'; // vegaEmbed.embed(…)
-import vegaTooltip from 'vega-tooltip';
+import { vega as vegaTooltip } from 'vega-tooltip';
 import jQuery from 'jquery';
+import '../../../node_modules/vega-tooltip/build/vega-tooltip.min.css';
 
 type Props = {|
   events: Event[]
@@ -28,7 +29,29 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
         actions: { source: false, editor: false, export: false, compiled: false }
       },
       tooltipsOptions: {
-        sanitize: (value) => 'hello' + String(value)
+        showAllFields: true,
+        fields: [
+          {
+            "field": "start",
+            "formatType": "time",
+            "format": "%H:%M:%S.%L"
+          },
+          {
+            "field": "end",
+            "formatType": "time",
+            "format": "%H:%M:%S.%L"
+          },
+          {
+            "field": "log_start",
+            "formatType": "time",
+            "format": "%H:%M:%S.%L"
+          },
+          {
+            "field": "log_end",
+            "formatType": "time",
+            "format": "%H:%M:%S.%L"
+          }
+        ]
       },
       views: [],
       spec: {}
