@@ -20,8 +20,7 @@ export default function(delimiter: string) {
         };
       }),
       colorMap: {},
-      isDone: true,
-      events: []
+      isDone: true
     };
   };
 }

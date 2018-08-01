@@ -9,8 +9,7 @@ const initialState: Log = {
   identity: null,
   lines: [],
   colorMap: new Map(),
-  isDone: false,
-  events: []
+  isDone: false
 };
 
 type ProcessorFunc = (Log, string) => Log

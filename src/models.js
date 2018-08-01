@@ -171,7 +171,5 @@ export type Log = $Exact<$ReadOnly<{
   identity: ?LogIdentity,
   lines: Line[],
   colorMap: ColorMap,
-  isDone: boolean,
-  events: Event[]
+  isDone: boolean
 }>>
-

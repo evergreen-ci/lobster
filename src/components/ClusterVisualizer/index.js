@@ -2,8 +2,9 @@
 
 import React from 'react';
 import type { Node as ReactNode } from 'react';
+import resmokeTestEvents from '../../reducers/logProcessor/resmokeTestEvents';
 import { connect } from 'react-redux';
-import { type Event } from '../../models';
+import { type Line, Event } from '../../models';
 import vegaEmbed from 'vega-embed'; // vegaEmbed.embed(…)
 import { vega as vegaTooltip } from 'vega-tooltip';
 import jQuery from 'jquery';
@@ -12,13 +13,15 @@ import '../../../node_modules/vega-tooltip/build/vega-tooltip.min.css';
 import type { ContextRouter } from 'react-router-dom';
 
 type Props = {|
-  events: Event[]
+  lines: Line[]
 |} & ContextRouter
 
 type State = {|
   opts: {[key: string]: boolean},
   views: [],
-  spec: {}
+  spec: {},
+  events: Event[],
+  loaded: boolean
 |}
 
 export class ClusterVisualizer extends React.PureComponent<Props, State> {
@@ -56,18 +59,26 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
         ]
       },
       views: [],
-      spec: {}
+      spec: {},
+      events: [],
+      loaded: false
     };
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.events !== prevProps.events) {
-      this.withSpec('test.json', this.props.events);
+  parseEvents() {
+    this.setState({ events: resmokeTestEvents(this.props.lines) });
+  }
+
+  componentDidUpdate() {
+    if (this.props.lines.length !== 0 && this.state.events.length === 0) {
+      this.parseEvents();
+    } else if (!this.state.loaded && this.state.events.length > 0) {
+      this.withSpec('test.json', this.state.events);
     }
   }
 
   componentDidMount() {
-    this.withSpec('test.json', this.props.events);
+    this.withSpec('test.json', this.state.events);
   }
 
   refCallback = (div: ?HTMLDivElement) => {
@@ -97,6 +108,7 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
         vegaTooltip(result.view, this.state.tooltipsOptions);
       });
     }
+    this.setState({ loaded: true });
   }
 
   handleBack = () => {
@@ -106,14 +118,14 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
   render() {
     return (
       <div ref={this.refCallback}>
-        <div id="clusterVis" className="width: 100%">asdas</div>
+        <div id="clusterVis" className="width: 100%"></div>
         <Button onClick={this.handleBack} bsStyle="primary" style={{ marginLeft: '10px' }}>Back</Button>
       </div>);
   }
 }
 
 function mapStateToProps(state, ownProps) {
-  return { ...state, ...ownProps, events: state.log.events };
+  return { ...state, ...ownProps, lines: state.log.lines };
 }
 
 export default connect(mapStateToProps, undefined)(ClusterVisualizer);

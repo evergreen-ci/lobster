@@ -2,6 +2,7 @@
 
 import assert from 'assert';
 import resmoke from './resmoke';
+import resmokeTestEvents from './resmokeTestEvents';
 import path from 'path';
 import fs from 'fs';
 
@@ -9,7 +10,6 @@ describe('events', function() {
   test('sharding-migration-fail', function() {
     const inState = {
       lines: [],
-      events: [],
       identity: null,
       isDone: false,
       colorMap: {}
@@ -27,7 +27,6 @@ describe('events', function() {
   test('validate-collections', function() {
     const inState = {
       lines: [],
-      events: [],
       identity: null,
       isDone: false,
       colorMap: {}
@@ -38,7 +37,8 @@ describe('events', function() {
     const validateCollectionsPath = path.resolve('.' + '/src/reducers/logProcessor/validateCollections.json');
     const validateCollectionsFile = fs.readFileSync(validateCollectionsPath, 'utf8');
     const validateCollectionsJSON = JSON.parse(validateCollectionsFile);
-    expect(state.events).toEqual(validateCollectionsJSON);
-    assert.equal(state.events.length, validateCollectionsJSON.length);
+    const events = resmokeTestEvents(state.lines);
+    expect(events).toEqual(validateCollectionsJSON);
+    assert.equal(events.length, validateCollectionsJSON.length);
   });
 });

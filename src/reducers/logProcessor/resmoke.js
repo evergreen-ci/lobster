@@ -1,7 +1,6 @@
 // @flow strict
 
 import type { Log } from '../../models';
-import resmokeTestEvents from './resmokeTestEvents';
 
 function getGitVersion(line: string): string {
   const gitVersionStr = 'git version: ';
@@ -94,7 +93,6 @@ export default function(state: Log, response: string): Log {
     identity: state.identity,
     lines: processed,
     colorMap: colorMap,
-    isDone: true,
-    events: resmokeTestEvents(processed)
+    isDone: true
   };
 }

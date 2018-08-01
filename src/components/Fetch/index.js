@@ -14,8 +14,7 @@ export class Fetch extends React.Component {
     log: PropTypes.shape({
       lines: PropTypes.array,
       colorMap: PropTypes.object,
-      isDone: PropTypes.bool,
-      events: PropTypes.array
+      isDone: PropTypes.bool
     }),
     location: PropTypes.shape({
       search: PropTypes.string,
