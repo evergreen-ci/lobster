@@ -28,7 +28,7 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
         actions: { source: false, editor: false, export: false, compiled: false }
       },
       tooltipsOptions: {
-        sanitize: (value) => 'hello' + String(value)
+        'sanitize': (value) => 'hello' + String(value)
       },
       views: [],
       spec: {}
@@ -60,18 +60,19 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
     jQuery.getJSON('/' + filename, (data) => {
       console.log('succeeded in downloading file!');
       data.data[0].values = events;
-      console.log(events);
       this.setState({ spec: data });
       this.graph();
     }).fail(function() { console.log('failed!'); });
   }
 
   graph = (): ?ReactNode => {
-    if (this.baseDiv != null) {
-      vegaEmbed('#clusterVis', this.state.spec, this.state.opts).then((result) => {
+    if (this.baseDiv != null && this.props.events.length !== 0) {
+      const handler = new vegaTooltip.Handler(this.state.tooltipsOptions);
+      vegaEmbed('#clusterVis', this.state.spec, { tooltip: handler.call }).then((result) => {
         console.log('vega embed success!');
         this.addToViews(result.view);
-        vegaTooltip(result.view, this.state.tooltipsOptions);
+        console.log(this.state.views);
+        // vegaTooltip(result.view, this.state.tooltipsOptions);
       });
     }
   }
