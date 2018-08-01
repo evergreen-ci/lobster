@@ -90,11 +90,16 @@ export default function(state: Log, response: string): Log {
       gitRef: gitRef
     });
   }
+  // TODO: properly defer this in the cluster vis
+  let events = [];
+  if (process.env.NODE_ENV !== 'production') {
+    events = resmokeTestEvents(processed);
+  }
   return {
     identity: state.identity,
     lines: processed,
     colorMap: colorMap,
     isDone: true,
-    events: resmokeTestEvents(processed)
+    events: events
   };
 }
