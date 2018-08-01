@@ -7,6 +7,7 @@ import './style.css';
 import About from '../About';
 import NotFound from '../NotFound';
 import Fetch from '../Fetch';
+import ClusterVisualizer from '../ClusterVisualizer';
 import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
 import { Nav, NavItem } from 'react-bootstrap';
 import CacheModal from './CacheModal';
@@ -24,11 +25,13 @@ const logviewer = (props) => (<Fetch {...props} />);
 const evergreenLogviewer = (props) => (<EvergreenLogViewer {...props} />);
 const about = (props) => (<About {...props} />);
 const notfound = (props) => (<NotFound {...props} />);
+const visualizer = (props) => (<ClusterVisualizer {...props} />);
 
 const Main = () => (
   <main className="lobster">
     <Switch>
       <Route exact path="/lobster/about" render={about} />
+      <Route exact path="/lobster/visualizer" render={visualizer} />
       <Route path="/lobster/build/:build/test/:test" render={logviewer} />
       <Route path="/lobster/build/:build/all" render={logviewer} />
       <Route exact path="/lobster/evergreen/task/:id/:execution/:type" render={evergreenLogviewer} />
@@ -52,6 +55,9 @@ const Header = () => (
       </LinkContainer>
       <LinkContainer to="/lobster" isActive={never}>
         <NavItem>Viewer</NavItem>
+      </LinkContainer>
+      <LinkContainer to="/lobster/visualizer" isActive={never}>
+        <NavItem>Visualizer</NavItem>
       </LinkContainer>
     </Nav>
   </header>

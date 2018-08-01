@@ -23,6 +23,7 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
   baseDiv: ?HTMLDivElement
 
   constructor(props: Props) {
+    console.log('making cluster viz');
     super(props);
     this.state = {
       opts: {
