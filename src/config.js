@@ -1,7 +1,5 @@
 // @flow strict
 
-/* global process:{} */
-
 const isProd: boolean = process.env.NODE_ENV === 'production';
 
 export const LOGKEEPER_BASE: string = process.env.REACT_APP_LOGKEEPER_BASE || '';
