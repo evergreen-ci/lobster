@@ -2,12 +2,13 @@
 
 import { put, call, select } from 'redux-saga/effects';
 import * as actions from '../actions';
+import type { Saga } from 'redux-saga';
 
 const VERSION = 'v1';
 
 const fname = (f: string) => `${VERSION}-${f}`;
 
-const fsUp = (size: number) => {
+function fsUp(size: number) {
   return new Promise(function(resolve, reject) {
     if (size === 0) {
       reject();
@@ -15,17 +16,16 @@ const fsUp = (size: number) => {
     const errh = (e) => reject(e);
     const fsh = (fs) => resolve(fs);
 
-    if (!('requestFileSystem' in window)) {
+    if (window.requestFileSystem == null) {
       reject();
       return;
     }
 
-    if (!('webkitPersistentStorage' in navigator)) {
+    if (navigator.webkitPersistentStorage == null) {
       window.requestFileSystem(window.PERSISTENT, size, fsh, errh);
       return;
     }
 
-    // $FlowFixMe
     navigator.webkitPersistentStorage.queryUsageAndQuota((_used, limit) => {
       if (limit < size) {
         console.log(`Requesting quota increase to ${limit}`);
@@ -38,11 +38,12 @@ const fsUp = (size: number) => {
       }
     });
   });
-};
+}
 
-// $FlowFixMe
-const write = (fs: any, f: string, blob: Blob) => {
+const write = (fs: DOMFileSystem, f: string, blob: Blob) => {
   return new Promise(function(resolve, reject) {
+    const errh = (e) => reject(e);
+
     fs.root.getFile(f, { create: true }, function(fileEntry) {
       fileEntry.createWriter(function(fileWriter) {
         fileWriter.onwriteend = function() {
@@ -55,12 +56,11 @@ const write = (fs: any, f: string, blob: Blob) => {
         };
 
         fileWriter.write(blob);
-      }, (e) => reject(e));
-    }, (e) => reject(e));
+      }, errh);
+    }, errh);
   });
 };
 
-// $FlowFixMe
 export function* writeToCache(f: string): Saga<void> {
   const state = yield select((s) => s.cache);
   if (state.status !== 'ok') {
@@ -80,13 +80,13 @@ export function* writeToCache(f: string): Saga<void> {
   }
 }
 
-// $FlowFixMe
-const fsReadPromise = (fs: any, f: string) => {
+const fsReadPromise = (fs: DOMFileSystem, f: string) => {
   return new Promise(function(resolve, reject) {
     if (!fs) {
       reject();
+      return;
     }
-    fs.root.getFile(f, { create: false }, function(fileEntry) {
+    fs.root.getFile(f, {}, function(fileEntry) {
       fileEntry.file(function(file) {
         const reader = new FileReader();
 
@@ -113,11 +113,11 @@ export function* readFromCache(f: string): Saga<void> {
   yield put(actions.loadCachedData(log));
 }
 
-const entryPromise = (e) => {
+const entryPromise = (e: FileSystemEntry) => {
   return new Promise(function(resolve, reject) {
     const success = () => resolve();
     const erh = (err) => reject(err);
-    if (e.isDirectory) {
+    if (e.isDirectory === true) {
       e.removeRecursively(success, erh);
     } else {
       e.remove(success, erh);
@@ -142,10 +142,9 @@ export function* wipeCache(): Saga<void> {
   }
 }
 
-// $FlowFixMe
-function remove(fs: any, f: string) {
+function remove(fs: DOMFileSystem, f: string) {
   return new Promise(function(resolve, reject) {
-    fs.root.getFile(f, (fileEntry) => {
+    fs.root.getFile(f, {}, (fileEntry) => {
       entryPromise(fileEntry)
         .then(() => resolve())
         .catch((e) => reject(e));
@@ -161,19 +160,22 @@ function* wipeFileFromCache(f: string): Saga<void> {
   }
   try {
     const fs = yield call(fsUp, state.size);
-    yield remove(fs, f);
+    yield call(remove, fs, f);
   } catch (err) {
     console.error('Failed to wipe cache:', err);
   }
 }
 
 export function* boil(action: actions.WipeCache): Saga<void> {
-  window.localStorage.clear();
   try {
-    if (action.payload.file == null) {
-      yield wipeCache();
+    const { file } = action.payload;
+    if (file == null) {
+      console.log('Attempting to clear lobster local cache');
+      window.localStorage.clear();
+      yield call(wipeCache);
     } else {
-      yield wipeFileFromCache(action.payload.file);
+      console.log(`Attempting to remove '${file}'lobster local cache`);
+      yield call(wipeFileFromCache, file);
     }
     window.location.reload();
   } catch (err) {

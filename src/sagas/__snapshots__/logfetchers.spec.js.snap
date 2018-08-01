@@ -1,0 +1,616 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fetchEvergreen resolves-200-task 1`] = `
+Object {
+  "call": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "execution": 0,
+            "id": "task",
+            "log": "all",
+            "type": "evergreen-task",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/evergreenLoadData",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "execution": 0,
+            "id": "task",
+            "log": "all",
+            "type": "evergreen-task",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/proxy",
+      },
+    },
+  ],
+  "put": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "error": false,
+          "payload": Object {
+            "data": "evergreen-task",
+            "isDone": true,
+            "type": "raw",
+          },
+          "type": "process-response",
+        },
+        "channel": null,
+      },
+    },
+  ],
+}
+`;
+
+exports[`fetchEvergreen resolves-200-test 1`] = `
+Object {
+  "call": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "id": "test",
+            "type": "evergreen-test",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/evergreenLoadData",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "fetchEvergreen-test-test.json",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/readFromCache",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "id": "test",
+            "type": "evergreen-test",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/proxy",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "fetchEvergreen-test-test.json",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/writeToCache",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+  ],
+  "put": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "error": false,
+          "payload": Object {
+            "data": "evergreen-test",
+            "isDone": true,
+            "type": "raw",
+          },
+          "type": "process-response",
+        },
+        "channel": null,
+        "resolve": true,
+      },
+    },
+  ],
+  "select": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
+  ],
+}
+`;
+
+exports[`fetchLobster rejects 1`] = `
+Object {
+  "call": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "file": "simple.log",
+            "server": "domain.invalid",
+            "type": "lobster",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/lobsterLoadData",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "domain.invalid",
+          "simple.log",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/proxy",
+      },
+    },
+  ],
+  "put": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "error": true,
+          "payload": Object {
+            "data": Object {
+              "name": "error",
+            },
+            "isDone": true,
+            "type": "resmoke",
+          },
+          "type": "process-response",
+        },
+        "channel": null,
+      },
+    },
+  ],
+}
+`;
+
+exports[`fetchLobster resolves-200 1`] = `
+Object {
+  "call": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "file": "simple.log",
+            "server": "domain.invalid",
+            "type": "lobster",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/lobsterLoadData",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "domain.invalid",
+          "simple.log",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/proxy",
+      },
+    },
+  ],
+  "put": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "error": false,
+          "payload": Object {
+            "data": "lobster",
+            "isDone": true,
+            "type": "resmoke",
+          },
+          "type": "process-response",
+        },
+        "channel": null,
+      },
+    },
+  ],
+}
+`;
+
+exports[`fetchLobster resolves-404 1`] = `
+Object {
+  "call": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "file": "simple.log",
+            "server": "domain.invalid",
+            "type": "lobster",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/lobsterLoadData",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "domain.invalid",
+          "simple.log",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/proxy",
+      },
+    },
+  ],
+  "put": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "error": true,
+          "payload": Object {
+            "data": Object {
+              "_bodyBlob": Object {},
+              "_bodyInit": Object {},
+              "headers": Object {
+                "map": Object {},
+              },
+              "ok": false,
+              "status": 404,
+              "statusText": "OK",
+              "type": "default",
+              "url": "",
+            },
+            "isDone": true,
+            "type": "resmoke",
+          },
+          "type": "process-response",
+        },
+        "channel": null,
+      },
+    },
+  ],
+}
+`;
+
+exports[`fetchLogkeeper resolves-200 1`] = `
+Object {
+  "call": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "build": "build",
+            "test": "test",
+            "type": "logkeeper",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/logkeeperLoadData",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "fetchLogkeeper-build-test.json",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/readFromCache",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "build",
+          "test",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/proxy",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "fetchLogkeeper-build-test.json",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/writeToCache",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+  ],
+  "put": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "error": false,
+          "payload": Object {
+            "data": "logkeeper",
+            "isDone": true,
+            "type": "resmoke",
+          },
+          "type": "process-response",
+        },
+        "channel": null,
+        "resolve": true,
+      },
+    },
+  ],
+  "select": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
+  ],
+}
+`;
+
+exports[`fetchLogkeeper resolves-200-notest 1`] = `
+Object {
+  "call": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "build": "build",
+            "type": "logkeeper",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/logkeeperLoadData",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "fetchLogkeeper-build-all.json",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/readFromCache",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "build",
+          undefined,
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/proxy",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "fetchLogkeeper-build-all.json",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/writeToCache",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+  ],
+  "put": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "error": false,
+          "payload": Object {
+            "data": "logkeeper",
+            "isDone": true,
+            "type": "resmoke",
+          },
+          "type": "process-response",
+        },
+        "channel": null,
+        "resolve": true,
+      },
+    },
+  ],
+  "select": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
+  ],
+}
+`;

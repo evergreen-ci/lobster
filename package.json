@@ -40,6 +40,7 @@
     "test:e2e": "node ./e2e.js",
     "flow": "flow",
     "lint": "eslint --ext .js,.jsx -- .",
+    "lint:fix": "eslint --ext .js,.jsx --fix .",
     "eslint": "eslint --ext .js,.jsx",
     "debug": "react-scripts --inspect-brk test --runInBand --env=jsdom",
     "generate-tasks": "node generate-tasks.js"
@@ -60,6 +61,7 @@
     "localstorage-memory": "^1.0.2",
     "node-fetch": "^2.2.0",
     "react-test-renderer": "^15.5.0",
+    "redux-saga-test-plan": "^3.7.0",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "sinon": "^6.0.0"
   },

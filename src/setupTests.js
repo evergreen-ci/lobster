@@ -14,10 +14,6 @@ import 'babel-polyfill';
 import 'url-search-params-polyfill';
 import localStorageMemory from 'localstorage-memory';
 
-// Prevent us from hitting production
-process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';
-process.env.REACT_APP_EVERGREEN_BASE = 'http://domain.invalid';
-
 if (!global.window) {
   global.window = {};
 } else if (!global.window.localStorage) {
@@ -32,10 +28,26 @@ if (!global.window) {
 }
 
 // Skip end-to-end tests by default
-global.e2e = test.skip;
+
+const skip = (name, ...rest) => {
+  return test.skip(`e2e-${name}`, ...rest);
+};
+
+global.e2e = skip;
+global.e2eChrome = skip;
 if (process.env.LOBSTER_E2E_SERVER_PORT) {
   process.env.LOBSTER_E2E_SERVER_PORT = parseInt(process.env.LOBSTER_E2E_SERVER_PORT, 10);
   global.e2e = (name, ...rest) => {
     return test(`e2e-${name}`, ...rest);
   };
+
+  if (process.env.LOBSTER_E2E_BROWSER === 'chrome' || process.env.LOBSTER_E2E_BROWSER === undefined) {
+    global.e2eChrome = (name, ...rest) => {
+      return test(`e2e-${name}`, ...rest);
+    };
+  }
+} else {
+  // Prevent us from hitting production
+  process.env.REACT_APP_LOGKEEPER_BASE = 'http://domain.invalid';
+  process.env.REACT_APP_EVERGREEN_BASE = 'http://evergreen.invalid';
 }

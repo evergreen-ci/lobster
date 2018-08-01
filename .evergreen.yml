@@ -163,6 +163,9 @@ tasks:
             - lobster/build/.tasks.json
 
   - name: e2e-chrome
+    depends_on:
+      - name: dist
+        variant: ubuntu1604
     commands:
       - func: preamble
       - func: chromedriver
@@ -181,10 +184,12 @@ tasks:
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
             export IS_VM=true
-            npm run test:e2e chrome
-            mv e2e_srv.log ./.node_cache/_logs || true
+            npm run test:e2e -- --browser chrome
 
   - name: e2e-firefox
+    depends_on:
+      - name: dist
+        variant: ubuntu1604
     commands:
       - func: preamble
       - func: geckodriver
@@ -203,8 +208,7 @@ tasks:
             export CI=true
             export NPM_CONFIG_CACHE="./.node_cache"
             export IS_VM=true
-            npm run test:e2e firefox
-            mv e2e_srv.log ./.node_cache/_logs || true
+            npm run test:e2e -- --browser firefox
 
 
 buildvariants:
