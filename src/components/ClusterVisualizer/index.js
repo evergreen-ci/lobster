@@ -7,11 +7,13 @@ import { type Event } from '../../models';
 import vegaEmbed from 'vega-embed'; // vegaEmbed.embed(…)
 import { vega as vegaTooltip } from 'vega-tooltip';
 import jQuery from 'jquery';
+import { Button } from 'react-bootstrap';
 import '../../../node_modules/vega-tooltip/build/vega-tooltip.min.css';
+import type { ContextRouter } from 'react-router-dom';
 
 type Props = {|
   events: Event[]
-|}
+|} & ContextRouter
 
 type State = {|
   opts: {[key: string]: boolean},
@@ -100,10 +102,15 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
     }
   }
 
+  handleBack = () => {
+    this.props.history.goBack();
+  }
+
   render() {
     return (
       <div ref={this.refCallback}>
         <div id="clusterVis" className="width: 100%">asdas</div>
+        <Button onClick={this.handleBack}>Back</Button>
       </div>);
   }
 }

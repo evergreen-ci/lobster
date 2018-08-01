@@ -6,7 +6,6 @@ import { LinkContainer } from 'react-router-bootstrap';
 import './style.css';
 import About from '../About';
 import NotFound from '../NotFound';
-import Fetch from '../Fetch';
 import ClusterVisualizer from '../ClusterVisualizer';
 import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
 import LogkeeperLogViewer from '../Fetch/LogkeeperLogViewer';
@@ -15,6 +14,7 @@ import CacheModal from './CacheModal';
 import LogDrop from '../LogDrop';
 import queryString from '../../thirdparty/query-string';
 
+let visualizerOpen = false;
 const logdrop = (props: ContextRouter) => {
   const parsed = queryString.parse(props.location.search === '' ? props.location.hash : props.location.search);
   if ('url' in parsed && 'server' in parsed) {
@@ -48,6 +48,11 @@ const Main = () => (
 // between routes.
 const never = () => false;
 
+function visualizerClickHandler() {
+  visualizerOpen = !visualizerOpen;
+  console.log(visualizerOpen);
+}
+
 const Header = () => (
   <header className="head">
     <Nav bsStyle="pills">
@@ -58,7 +63,7 @@ const Header = () => (
         <NavItem>Viewer</NavItem>
       </LinkContainer>
       <LinkContainer to="/lobster/visualizer" isActive={never}>
-        <NavItem>Visualizer</NavItem>
+        <NavItem onClick={visualizerClickHandler}>Visualizer</NavItem>
       </LinkContainer>
     </Nav>
   </header>
