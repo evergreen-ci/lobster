@@ -2,11 +2,10 @@ import React from 'react';
 import * as actions from '../../actions';
 import * as logviewerActions from '../../actions/logviewer';
 import './style.css';
-// import LogView from '../LogView/index';
+import LogView from '../LogView/index';
 import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
 import { connect } from 'react-redux';
-import { ClusterVisualizer } from '../ClusterVisualizer/index';
 import queryString from '../../thirdparty/query-string';
 import Toolbar from './Toolbar';
 
@@ -388,7 +387,6 @@ export class Fetch extends React.Component {
     if (!this.props.log.lines) {
       return <div />;
     }
-    /*
     return (
       <LogView
         filter={filter}
@@ -404,8 +402,6 @@ export class Fetch extends React.Component {
         shouldPrintLine={this.shouldPrintLine}
         shouldHighlightLine={this.shouldHighlightLine}
       />);
-    */
-    return (<ClusterVisualizer events={this.props.log.events} />);
   }
 
   showJIRA() {
