@@ -1,4 +1,4 @@
-import { Builder, Capabilities, By, until, Condition } from 'selenium-webdriver';
+import { Builder, Capabilities, By, until, Condition, Key } from 'selenium-webdriver';
 import path from 'path';
 import { existsSync } from 'fs';
 
@@ -222,10 +222,12 @@ export class Lobster {
   }
 
   async scrollToBottom() {
-    const list = await this._driver.wait(until.elementLocated(By.xpath(logLineList)));
+    const list = await this._driver.wait(until.elementLocated(By.id("root")));
     const js = 'window.scrollBy(0, 40000000);';
     await this._driver.executeScript(js);
     await this._driver.executeScript(js);
+    // Make sure we're really at the bottom
+    await this._driver.actions({ async: false }).sendKeys(Key.PAGE_DOWN).perform();
   }
 }
 

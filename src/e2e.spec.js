@@ -180,20 +180,35 @@ describe('e2e', function() {
     }
   }, 60000);
 
+  // react-list works by creating a div with height
+  // (# of elements) * (height of each element). Given a large number of
+  // elements, you get an extremely large floating point number, which the
+  // Chrome render/firefox compositor eventually gives up on. Unfortunately,
+  // this number is pretty low on Firefox vs Chrome (~447000*height vs
+  // ~1.67 million*height). An infinite list implementation that does not rely
+  // on a giant div is going to be necessary to fix this, but I haven't looked
+  // into whether one exists, nor whether or not it's possible to make one
   e2e('render-stress', async (done) => {
     const driver = await makeDriver(done);
     try {
+      // Element 0: Large number close to the maximum number of lines
+      // Element 1: larger number that the browser gives up or can't render
+      const table = [1600000, 1700000];
+      if (process.env.LOBSTER_E2E_BROWSER === 'firefox') {
+        table[0] = 447000;
+      }
       const l = new Lobster(driver);
-      await l.init(undefined, { url: 'perf-1500000.special.log' });
+      await l.init(undefined, { url: `perf-${table[0]}.special.log` });
 
       await l.scrollToBottom();
       let lines = await l.lines();
       let token = await lines[lines.length - 1].getText();
       expect(token).toBe('FIND_THIS_TOKEN');
 
-      await l.init(undefined, { url: 'perf-1700000.special.log' });
+      await l.init(undefined, { url: `perf-${table[1]}.special.log` });
       await l.scrollToBottom();
       lines = await l.lines();
+
       token = await lines[lines.length - 1].getText();
       expect(token).not.toBe('FIND_THIS_TOKEN');
       expect(token.match('line [0-8]+')).not.toEqual(null);
