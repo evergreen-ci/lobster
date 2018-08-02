@@ -63,7 +63,7 @@ describe('lobsterserver-default-args', function() {
     lobster().then((resp) => {
       resp.text().then((body) => {
         expect(resp.status).toBe(200);
-        expect(body).toHaveLength(51);
+        expect(body).toMatchSnapshot();
         done();
       });
     }).catch((e) => {
@@ -101,36 +101,36 @@ describe('lobsterserver-default-args', function() {
       expect(resp.status).toBe(200);
       return resp.text().then((log) => {
       console.log(log);
-        expect(log).toMatchSnapshot();
+        expect(log.slice(0, -1)).toMatchSnapshot();
         done();
       });
     });
   }, 10000);
 
-  //e2e('evergreen-task', (done) => {
-  //  return api.fetchEvergreen({
-  //    type: 'evergreen-task',
-  //    id: 'testid1234',
-  //    execution: 1234
-  //  }).then((resp) => {
-  //    expect(resp.status).toBe(200);
-  //    return resp.text().then((log) => {
-  //      expect(log).toMatchSnapshot();
-  //      done();
-  //    });
-  //  });
-  //}, 10000);
+  e2e('evergreen-task', (done) => {
+    return api.fetchEvergreen({
+      type: 'evergreen-task',
+      id: 'testid1234',
+      execution: 1234
+    }).then((resp) => {
+      expect(resp.status).toBe(200);
+      return resp.text().then((log) => {
+        expect(log.slice(0, -1)).toMatchSnapshot();
+        done();
+      });
+    });
+  }, 10000);
 
-  //e2e('logkeeper', (done) => {
-  //  return api.fetchLogkeeper('build1234', 'test1234')
-  //    .then((resp) => {
-  //      expect(resp.status).toBe(200);
-  //      return resp.text().then((log) => {
-  //        expect(log).toMatchSnapshot();
-  //        done();
-  //      });
-  //    });
-  //}, 10000);
+  e2e('logkeeper', (done) => {
+    return api.fetchLogkeeper('build1234', 'test1234')
+      .then((resp) => {
+        expect(resp.status).toBe(200);
+        return resp.text().then((log) => {
+          expect(log.slice(0, -1)).toMatchSnapshot();
+          done();
+        });
+      });
+  }, 10000);
 
 });
 
@@ -147,8 +147,8 @@ describe('lobsterserver-other', function() {
     setTimeout(function() {
       lobster(undefined, 'simple.log').then((resp) => {
         resp.text().then((body) => {
-          expect(resp.status).toBe(400);
-          expect(body).toBe('');
+          expect(resp.status).toBe(404);
+          expect(body).toBe('log not found');
           done();
         }).catch((e) => done.fail(e));
       }).catch((e) => done.fail(e));

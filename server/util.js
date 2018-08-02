@@ -7,7 +7,6 @@ function isValidURL(str) {
 
 function cors(req, res, next) {
   const origin = req.get('Origin');
-  console.log(origin);
   if (origin) {
     res.set({
       'Access-Control-Allow-Origin': origin,

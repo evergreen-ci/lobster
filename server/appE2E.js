@@ -33,6 +33,7 @@ function logkeeper(req, res) {
     res.write('\n');
   }
   makeLines(req, res);
+  res.end();
 }
 
 function evergreen(req, res) {
@@ -52,26 +53,29 @@ function evergreen(req, res) {
     res.write('\n');
   }
   makeLines(req, res);
+  res.end();
 }
 
 function generatePerfTestLog(lines, res) {
   res.status(200);
-  res.write('This log is a miniature performance stress test for lobster\n');
-  res.write('Chrome has a limit of about 1.57 million lines\n');
-  res.write('This file allows for testing that\n');
+  res.write('This log is a performance and rendering stress test for lobster\n');
+  res.write('Chrome has a limit of about 1.67 million lines\n');
+  res.write('If you or selenium can see FIND_THIS_TOKEN at the end of this\n');
+  res.write('file, then you\'ve avoided a performance regression.\n');
   for (let i = 0; i < lines; ++i) {
-    res.write(`line ${i}\n`);
+    res.write(`line ${i + 1}\n`);
   }
   res.write('FIND_THIS_TOKEN');
 }
 
 const perfRegex = new RegExp(/perf-([0-9]+).special.log/);
 
-function logMiddleware(req, res, next) {
+function logGeneratorMiddleware(req, res, next) {
   if (req.body.url) {
     const matches = perfRegex.exec(req.body.url);
     if (matches && matches.length === 2) {
       generatePerfTestLog(parseInt(matches[1], 10), res);
+      res.end();
       return;
     }
   }
@@ -79,7 +83,7 @@ function logMiddleware(req, res, next) {
 }
 
 function e2e(app) {
-  app.use('/api/log', cors, logMiddleware);
+  app.use('/api/log', cors, logGeneratorMiddleware);
   app.options('/evergreen/task_log_raw/:id/:execution', cors);
   app.get('/evergreen/task_log_raw/:id/:execution', evergreen);
   app.options('/evergreen/test_log/:id', cors);

@@ -36,16 +36,14 @@ function makeApp(logsPath, cache, isE2E) {
     res.render('error', { error: err });
   });
 
-  if (isE2E) {
-    console.log('e2e routes are active');
-    appE2E(app);
-  }
-
-
   app.use('/api/log', cors);
   app.options('/api/log', function(req, res, _next) {
     res.send();
   });
+  if (isE2E) {
+    console.log('e2e routes are active');
+    appE2E(app);
+  }
 
   app.post('/api/log', function(req, res, _next) {
     const logUrl = req.body.url;
@@ -114,7 +112,7 @@ function makeApp(logsPath, cache, isE2E) {
       });
     } else {
       console.log('Must provide the --logs argument to handle local files');
-      res.status(400).end();
+      res.status(404).send('log not found').end();
     }
   });
 
