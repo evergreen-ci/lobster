@@ -225,7 +225,7 @@ export class Lobster {
     await this._driver.executeScript(js);
     await this._driver.executeScript(js);
     // Make sure we're really at the bottom
-    await this._driver.actions({ async: false }).sendKeys(Key.PAGE_DOWN).perform();
+    // await this._driver.actions({ async: false }).sendKeys(Key.PAGE_DOWN).perform();
   }
 }
 
