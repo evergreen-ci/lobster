@@ -134,6 +134,7 @@ export function loadLog(identity: LogIdentity): LoadLog {
   };
 }
 
+
 export type Action = ProcessResponse
   | LoadCachedData
   | WipeCache

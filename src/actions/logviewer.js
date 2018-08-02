@@ -10,6 +10,8 @@ export const LOGVIEWER_LOAD_BOOKMARKS = 'logviewer:load-bookmarks';
 export const LOGVIEWER_ENSURE_BOOKMARK = 'logviewer:ensure-bookmark';
 export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
 export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
+export const CLEAR_LINE_LIST = 'clear-line-list';
+export const ADD_LINE = 'add-line';
 
 export type Filter = {|
   text: string,
@@ -100,6 +102,18 @@ export type LoadFilters = {|
   |}
 |}
 
+export type ClearLineList = $Exact<{
+  type: 'clear-line-list'
+}>
+
+export type AddLine = $Exact<{
+  type: 'add-line',
+  payload: $Exact<$ReadOnly<{
+    line: number,
+    text: string
+  }>>
+}>
+
 export type Action = ChangeSetting
   | ChangeFilter
   | ChangeHighlight
@@ -110,6 +124,8 @@ export type Action = ChangeSetting
   | ChangeSearch
   | LoadHighlights
   | LoadFilters
+  | ClearLineList
+  | AddLine
 
 function toggleSetting(setting: string): ChangeSetting {
   return {
@@ -243,6 +259,22 @@ export function changeSearch(text: string): ChangeSearch {
   return {
     type: LOGVIEWER_CHANGE_SEARCH,
     payload: {
+      text: text
+    }
+  };
+}
+
+export function clearLineList(): ClearLineList {
+  return {
+    type: CLEAR_LINE_LIST
+  };
+}
+
+export function addLine(line: number, text: string): AddLine {
+  return {
+    type: ADD_LINE,
+    payload: {
+      line: line,
       text: text
     }
   };

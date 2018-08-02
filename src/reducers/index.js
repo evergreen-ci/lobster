@@ -8,6 +8,7 @@ import highlights from './highlights';
 import bookmarks from './bookmarks';
 import find from './find';
 import cache from './cache';
+import scrollView from './scrollView';
 
 export const lobster = combineReducers({
   cache: cache,
@@ -16,5 +17,6 @@ export const lobster = combineReducers({
   filters: filters,
   highlights: highlights,
   bookmarks: bookmarks,
-  find: find
+  find: find,
+  scrollView: scrollView
 });

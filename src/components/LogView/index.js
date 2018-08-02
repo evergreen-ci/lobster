@@ -159,6 +159,7 @@ class FullLogLine extends React.Component {
   }
 
   render() {
+    console.log(this.props.line.lineNumber);
     let className = 'monospace hover-highlight inline';
     if (this.props.bookmarked) {
       className += ' bookmark-line';
