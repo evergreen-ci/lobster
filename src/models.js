@@ -9,6 +9,12 @@ export type Line = $Exact<$ReadOnly<{
 
 export type ColorMap = $ReadOnly<{ [string]: string }>
 
+export type Settings = {|
+  +wrap: boolean,
+  +caseSensitive: boolean,
+  +filterIntersection: boolean
+|}
+
 export type Bookmark = {|
   lineNumber: number,
   scrollFunc?: (SyntheticMouseEvent<HTMLInputElement>) => void

@@ -7,16 +7,11 @@ import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
 import { wipeCache } from '../../actions';
 import * as actions from '../../actions/logviewer';
-import type { Highlight, Filter } from '../../models';
-import type { LogIdentity } from '../../models';
+import type { Highlight, Filter, Settings, LogIdentity } from '../../models';
 
 type Props = {
   setFormRef: (?HTMLInputElement) => void,
-  settings: {
-    wrap: boolean,
-    caseSensitive: boolean,
-    filterIntersection: boolean
-  },
+  settings: Settings,
   toggleSettings: {
     toggleWrap: () => void,
     toggleCaseSensitive: () => void,

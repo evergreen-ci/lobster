@@ -6,15 +6,11 @@ import './style.css';
 import { Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
-import type { LogIdentity, Highlight, Filter } from '../../models';
+import type { LogIdentity, Highlight, Filter, Settings } from '../../models';
 import * as api from '../../api';
 
 type Props = {
-  settings: {
-    wrap: boolean,
-    caseSensitive: boolean,
-    filterIntersection: boolean
-  },
+  settings: Settings,
   toggleSettings: {
     toggleWrap: () => void,
     toggleCaseSensitive: () => void,
