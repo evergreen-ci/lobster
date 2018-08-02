@@ -1,4 +1,4 @@
-import { Builder, Capabilities, By, until, Condition, Key } from 'selenium-webdriver';
+import { Builder, Capabilities, By, until, Condition } from 'selenium-webdriver';
 import path from 'path';
 import { existsSync } from 'fs';
 
