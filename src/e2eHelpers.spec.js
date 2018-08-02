@@ -22,9 +22,9 @@ const lobsterURL = (file = 'simple.log') => {
   return `http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}/lobster?server=localhost:${process.env.LOBSTER_E2E_SERVER_PORT}%2Fapi%2Flog&url=${file}`;
 };
 
-const logLineList = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div';
+// const logLineList = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div';
 const firstLine = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div/div[1]';
-//const bookmarks = '//*[@id="root"]/div/main/div/div[1]/div';
+// const bookmarks = '//*[@id="root"]/div/main/div/div[1]/div';
 const cacheModal = '//*[@id="root"]/div/div/div/div';
 
 export class Lobster {
@@ -53,7 +53,6 @@ export class Lobster {
 
   async init(url, options = {}) {
     if (url === undefined) {
-      let url = options.url || undefined;
       await this._driver.get(lobsterURL(options.url));
     } else {
       await this._driver.get(`http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}${url}`);
@@ -222,7 +221,6 @@ export class Lobster {
   }
 
   async scrollToBottom() {
-    const list = await this._driver.wait(until.elementLocated(By.id("root")));
     const js = 'window.scrollBy(0, 40000000);';
     await this._driver.executeScript(js);
     await this._driver.executeScript(js);

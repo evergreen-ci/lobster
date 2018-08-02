@@ -21,4 +21,4 @@ function cors(req, res, next) {
 module.exports = {
   cors: cors,
   isValidURL: isValidURL
-}
+};

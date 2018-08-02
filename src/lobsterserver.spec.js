@@ -44,7 +44,7 @@ describe('lobsterserver-default-args', function() {
       console.log(req.url);
       return fetch(req.url);
     });
-  })
+  });
 
   afterEach(() => {
     sinon.restore();
@@ -140,7 +140,6 @@ describe('lobsterserver-default-args', function() {
       }).catch((e) => done.fail(e));
     }).catch((e) => done.fail(e));
   }, 10000);
-
 });
 
 describe('lobsterserver-other', function() {
