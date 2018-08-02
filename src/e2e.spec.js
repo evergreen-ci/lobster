@@ -124,7 +124,7 @@ describe('e2e', function() {
   }, 60000);
 
   e2e('logdrop', async (done) => {
-    // Allow webdriver to interact with the dropFile elements
+    // Allow webdriver to interact with the dropFile elements in Firefox
     const opts = {
       firefox: {
         'moz:webdriverClick': false
@@ -132,7 +132,7 @@ describe('e2e', function() {
     };
     const driver = await makeDriver(done, opts);
     try {
-      const l = new Lobster(driver);
+      const l = new Lobster(driver, { skipWaitForLine: true });
       await l.init('/lobster');
 
       await l.dropFile('./e2e/simple.log');

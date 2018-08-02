@@ -83,7 +83,9 @@ export class Lobster {
       }
     }
 
-    await this.firstLine();
+    if (options.skipWaitForLine !== true) {
+      await this.firstLine();
+    }
   }
 
   async browserHasFilesystemAPI() {
