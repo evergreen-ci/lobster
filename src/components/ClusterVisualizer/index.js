@@ -20,7 +20,7 @@ type State = {|
   opts: {[key: string]: {[key: string]: boolean}},
   tooltipsOptions: {},
   spec: {},
-  events: Event[],
+  events: ?Event[],
   loaded: boolean
 |}
 
@@ -59,7 +59,7 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
         ]
       },
       spec: {},
-      events: [],
+      events: null,
       loaded: false
     };
   }
@@ -69,10 +69,13 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
   }
 
   componentDidUpdate() {
-    if (this.props.lines.length !== 0 && this.state.events.length === 0) {
+    if (this.props.lines.length !== 0 && this.state.events == null) {
       this.parseEvents();
-    } else if (!this.state.loaded && this.state.events.length > 0) {
-      this.withSpec('test.json', this.state.events);
+    } else if (!this.state.loaded) {
+      if (this.state.events) {
+        this.withSpec('test.json', this.state.events);
+        this.setState({ loaded: true });
+      }
     }
   }
 
@@ -105,7 +108,6 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
         vegaTooltip(result.view, this.state.tooltipsOptions);
       });
     }
-    this.setState({ loaded: true });
   }
 
   handleBack = () => {
@@ -113,10 +115,8 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
   }
 
   render() {
-    console.log(this.props.scrollView.startDate);
-    console.log(this.props.scrollView.endDate);
     return (
-      <div ref={this.refCallback}>
+      <div ref={this.refCallback} id="base">
         <div id="clusterVis" className="width: 100%"></div>
         <Button onClick={this.handleBack} bsStyle="primary" style={{ marginLeft: '10px' }}>Back</Button>
       </div>);

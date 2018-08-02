@@ -9,7 +9,7 @@ import NotFound from '../NotFound';
 import ClusterVisualizer from '../ClusterVisualizer';
 import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
 import LogkeeperLogViewer from '../Fetch/LogkeeperLogViewer';
-import { Nav, NavItem } from 'react-bootstrap';
+import { Nav, NavItem, NavDropdown } from 'react-bootstrap';
 import CacheModal from './CacheModal';
 import LogDrop from '../LogDrop';
 import queryString from '../../thirdparty/query-string';
@@ -26,12 +26,13 @@ const evergreenLogviewer = (props) => (<EvergreenLogViewer {...props} />);
 const about = (props) => (<About {...props} />);
 const notfound = (props) => (<NotFound {...props} />);
 const visualizer = (props) => (<ClusterVisualizer {...props} />);
+let visualizerPage = false;
 
 const Main = () => (
   <main className="lobster">
     <Switch>
       <Route exact path="/lobster/about" render={about} />
-      <Route exact path="/lobster/visualizer" render={visualizer} />
+      <Route exact path="/lobster/clustervis" render={visualizer} />
       <Route path="/lobster/build/:build/test/:test" render={logviewer} />
       <Route path="/lobster/build/:build/all" render={logviewer} />
       <Route exact path="/lobster/evergreen/task/:id/:execution/:type" render={evergreenLogviewer} />
@@ -47,18 +48,28 @@ const Main = () => (
 // between routes.
 const never = () => false;
 
+function switchToViewer() {
+  visualizerPage = false;
+}
+
+function switchToCluster() {
+  visualizerPage = true;
+}
+
 const Header = () => (
   <header className="head">
     <Nav bsStyle="pills">
       <LinkContainer to="/lobster/about" isActive={never}>
         <NavItem>About</NavItem>
       </LinkContainer>
-      <LinkContainer to="/lobster" isActive={never}>
-        <NavItem>Viewer</NavItem>
-      </LinkContainer>
-      <LinkContainer to="/lobster/visualizer" isActive={never}>
-        <NavItem>Visualizer</NavItem>
-      </LinkContainer>
+      <NavDropdown title={visualizerPage ? 'Cluster Vis' : 'Viewer'} id="nav-dropdown">
+        <LinkContainer to="/lobster" isActive={never}>
+          <NavItem onClick={switchToViewer}>Viewer</NavItem>
+        </LinkContainer>
+        <LinkContainer to="/lobster/clustervis" isActive={never}>
+          <NavItem onClick={switchToCluster}>Cluster Vis</NavItem>
+        </LinkContainer>
+      </NavDropdown>
     </Nav>
   </header>
 );

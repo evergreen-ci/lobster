@@ -133,7 +133,8 @@ class FullLogLine extends React.Component {
     updateSelectEndIndex: PropTypes.func,
     highlightText: PropTypes.array.isRequired,
     handleDoubleClick: PropTypes.func.isRequired,
-    addLine: PropTypes.func
+    addLine: PropTypes.func,
+    scrollLine: PropTypes.number
   };
 
   constructor(props) {
@@ -161,7 +162,6 @@ class FullLogLine extends React.Component {
   }
 
   render() {
-    this.props.addLine(this.props.line.lineNumber, this.props.line.text);
     let className = 'monospace hover-highlight inline';
     if (this.props.bookmarked) {
       className += ' bookmark-line';
@@ -232,6 +232,7 @@ class LogView extends React.Component {
     this.indexMap = {};
     this.setLogListRef = element => {
       this.logListRef = element;
+      this.lineViewHandler();
     };
     this.lineRefCallback = (element, line, isUnmount) => {
       if (isUnmount === true) {
@@ -298,6 +299,7 @@ class LogView extends React.Component {
         updateSelectEndIndex={this.updateSelectEndIndex}
         handleDoubleClick={this.handleDoubleClick}
         addLine={this.props.addLine}
+        scrollLine={this.props.scrollLine}
       />
     );
   }
@@ -388,6 +390,16 @@ class LogView extends React.Component {
     }
   }
 
+  lineViewHandler = () => {
+    console.log('scrolling');
+    if (this.logListRef) {
+      console.log(this.logListRef);
+      const visibleRange = this.logListRef.getVisibleRange();
+      this.props.clearLineList();
+      console.log(visibleRange);
+    }
+  }
+
   render() {
     let j = 0;
     this.indexMap = {};
@@ -405,7 +417,7 @@ class LogView extends React.Component {
     });
     if (this.filteredLines.length !== 0) {
       return (
-        <div onScroll={this.props.clearLineList()}>
+        <div onScroll={this.lineViewHandler}>
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
@@ -432,7 +444,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-    clearLineList: () => dispatch(logviewerActions.clearLineList),
+    clearLineList: () => dispatch(logviewerActions.clearLineList()),
     addLine: (line, text) => dispatch(logviewerActions.addLine(line, text)),
     ...ownProps
   };
