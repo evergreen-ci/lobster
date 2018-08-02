@@ -9,6 +9,23 @@ export type Line = $Exact<$ReadOnly<{
 
 export type ColorMap = $ReadOnly<{ [string]: string }>
 
+export type Bookmark = {|
+  lineNumber: number,
+  scrollFunc?: (SyntheticMouseEvent<HTMLInputElement>) => void
+|}
+
+export type Filter = {|
+  text: string,
+  on: boolean,
+  inverse: boolean
+|}
+
+export type Highlight = {|
+  text: string,
+  on: boolean,
+  line: boolean
+|}
+
 export type MongoLine = {|
   +ts: ?Date,
   +rawTs: string,
@@ -174,4 +191,3 @@ export type Log = $Exact<$ReadOnly<{
   isDone: boolean,
   events: Event[]
 }>>
-

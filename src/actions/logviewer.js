@@ -1,5 +1,7 @@
 // @flow strict
 
+import type { Bookmark, Highlight, Filter } from '../models';
+
 export const LOGVIEWER_CHANGE_SETTING = 'logviewer:change-setting';
 export const LOGVIEWER_CHANGE_FILTER = 'logviewer:change-filter';
 export const LOGVIEWER_LOAD_FILTERS = 'logviewer:load-filters';
@@ -10,22 +12,6 @@ export const LOGVIEWER_LOAD_BOOKMARKS = 'logviewer:load-bookmarks';
 export const LOGVIEWER_ENSURE_BOOKMARK = 'logviewer:ensure-bookmark';
 export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
 export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
-
-export type Filter = {|
-  text: string,
-  on: boolean,
-  inverse: boolean
-|}
-
-export type Highlight = {|
-  text: string,
-  on: boolean,
-  line: boolean
-|}
-
-export type Bookmark = {|
-  lineNumber: number,
-|}
 
 export type ChangeSetting = {|
   +type: 'logviewer:change-setting',
