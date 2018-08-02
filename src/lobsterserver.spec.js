@@ -60,7 +60,7 @@ describe('lobsterserver-default-args', function() {
   });
 
   e2e('fetch-ok', (done) => {
-    lobster().then((resp) => {
+    return lobster().then((resp) => {
       resp.text().then((body) => {
         expect(resp.status).toBe(200);
         expect(body).toMatchSnapshot();
@@ -72,7 +72,7 @@ describe('lobsterserver-default-args', function() {
   }, 10000);
 
   e2e('fetch-notexist', (done) => {
-    lobster(undefined, '___notexist.log').then((resp) => {
+    return lobster(undefined, '___notexist.log').then((resp) => {
       resp.text().then((body) => {
         expect(resp.status).toBe(404);
         expect(body).toBe('log not found');
@@ -83,7 +83,7 @@ describe('lobsterserver-default-args', function() {
 
   e2e('fetch-insecure-path', (done) => {
     fs.closeSync(fs.openSync(tmp, 'w'));
-    lobster(undefined, '../../../../../../../../../../../../../' + tmp).then((resp) => {
+    return lobster(undefined, '../../../../../../../../../../../../../' + tmp).then((resp) => {
       resp.text().then((body) => {
         expect(resp.status).toBe(404);
         expect(body).toBe('log not found');
@@ -97,14 +97,12 @@ describe('lobsterserver-default-args', function() {
       type: 'evergreen-test',
       id: 'testid1234'
     }).then((resp) => {
-      console.log(resp);
       expect(resp.status).toBe(200);
       return resp.text().then((log) => {
-      console.log(log);
         expect(log.slice(0, -1)).toMatchSnapshot();
         done();
       });
-    });
+    }).catch((e) => done.fail(e));
   }, 10000);
 
   e2e('evergreen-task', (done) => {
@@ -118,7 +116,7 @@ describe('lobsterserver-default-args', function() {
         expect(log.slice(0, -1)).toMatchSnapshot();
         done();
       });
-    });
+    }).catch((e) => done.fail(e));
   }, 10000);
 
   e2e('logkeeper', (done) => {
@@ -128,8 +126,19 @@ describe('lobsterserver-default-args', function() {
         return resp.text().then((log) => {
           expect(log.slice(0, -1)).toMatchSnapshot();
           done();
-        });
-      });
+        }).catch((e) => done.fail(e));
+      }).catch((e) => done.fail(e));
+  }, 10000);
+
+  e2e('perf-gen', (done) => {
+    return lobster(undefined, 'perf-10.special.log').then((resp) => {
+      resp.text().then((body) => {
+        expect(resp.status).toBe(200);
+        expect(body).toMatchSnapshot();
+        expect(body).toEqual(expect.stringContaining('FIND_THIS_TOKEN'));
+        done();
+      }).catch((e) => done.fail(e));
+    }).catch((e) => done.fail(e));
   }, 10000);
 
 });
