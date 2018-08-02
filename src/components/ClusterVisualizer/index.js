@@ -4,7 +4,7 @@ import React from 'react';
 import type { Node as ReactNode } from 'react';
 import resmokeTestEvents from '../../reducers/logProcessor/resmokeTestEvents';
 import { connect } from 'react-redux';
-import type { Line, Event } from '../../models';
+import type { Line, Event, ScrollView } from '../../models';
 import vegaEmbed from 'vega-embed'; // vegaEmbed.embed(…)
 import { vega as vegaTooltip } from 'vega-tooltip';
 import { Button } from 'react-bootstrap';
@@ -12,7 +12,8 @@ import '../../../node_modules/vega-tooltip/build/vega-tooltip.min.css';
 import type { ContextRouter } from 'react-router-dom';
 
 type Props = {|
-  lines: Line[]
+  lines: Line[],
+  scrollView: ScrollView
 |} & ContextRouter
 
 type State = {|
@@ -112,6 +113,8 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
   }
 
   render() {
+    console.log(this.props.scrollView.startDate);
+    console.log(this.props.scrollView.endDate);
     return (
       <div ref={this.refCallback}>
         <div id="clusterVis" className="width: 100%"></div>
@@ -121,7 +124,7 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
 }
 
 function mapStateToProps(state, ownProps) {
-  return { ...state, ...ownProps, lines: state.log.lines };
+  return { ...state, ...ownProps, lines: state.log.lines, scrollView: state.scrollView };
 }
 
 export default connect(mapStateToProps, undefined)(ClusterVisualizer);

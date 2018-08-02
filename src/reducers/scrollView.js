@@ -2,15 +2,11 @@
 
 import { LOGVIEWER_CLEAR_LINE_LIST, LOGVIEWER_ADD_LINE } from '../actions/logviewer';
 import type { Action } from '../actions';
+import type { ScrollView } from '../models';
 
 // $FlowFixMe
 const TIME_RE = new RegExp(String.raw`(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})`);
 const MONGO_TS_PREFIX_LENGTH = ('2017-01-23T19:51:55.058').length;
-
-export type ScrollView = {|
-  startDate: ?Date,
-  endDate: ?Date
-|}
 
 const initialState = {
   startDate: null,

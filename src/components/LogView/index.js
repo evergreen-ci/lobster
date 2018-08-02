@@ -3,6 +3,7 @@ import ReactList from 'react-list';
 import Highlighter from 'react-highlight-words';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import * as logviewerActions from '../../actions/logviewer';
 
 import './style.css';
 
@@ -131,7 +132,8 @@ class FullLogLine extends React.Component {
     updateSelectStartIndex: PropTypes.func,
     updateSelectEndIndex: PropTypes.func,
     highlightText: PropTypes.array.isRequired,
-    handleDoubleClick: PropTypes.func.isRequired
+    handleDoubleClick: PropTypes.func.isRequired,
+    addLine: PropTypes.func
   };
 
   constructor(props) {
@@ -159,7 +161,7 @@ class FullLogLine extends React.Component {
   }
 
   render() {
-    console.log(this.props.line.lineNumber);
+    this.props.addLine(this.props.line.lineNumber, this.props.line.text);
     let className = 'monospace hover-highlight inline';
     if (this.props.bookmarked) {
       className += ' bookmark-line';
@@ -212,7 +214,9 @@ class LogView extends React.Component {
     highlightText: PropTypes.array,
     highlightLine: PropTypes.array.isRequired,
     shouldPrintLine: PropTypes.func.isRequired,
-    shouldHighlightLine: PropTypes.func.isRequired
+    shouldHighlightLine: PropTypes.func.isRequired,
+    clearLineList: PropTypes.func,
+    addLine: PropTypes.func
   };
   constructor(props) {
     super(props);
@@ -293,6 +297,7 @@ class LogView extends React.Component {
         updateSelectStartIndex={this.updateSelectStartIndex}
         updateSelectEndIndex={this.updateSelectEndIndex}
         handleDoubleClick={this.handleDoubleClick}
+        addLine={this.props.addLine}
       />
     );
   }
@@ -400,7 +405,7 @@ class LogView extends React.Component {
     });
     if (this.filteredLines.length !== 0) {
       return (
-        <div>
+        <div onScroll={this.props.clearLineList()}>
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
@@ -427,6 +432,8 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
+    clearLineList: () => dispatch(logviewerActions.clearLineList),
+    addLine: (line, text) => dispatch(logviewerActions.addLine(line, text)),
     ...ownProps
   };
 }
