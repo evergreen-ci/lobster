@@ -132,8 +132,8 @@ describe('e2e', function() {
     };
     const driver = await makeDriver(done, opts);
     try {
-      const l = new Lobster(driver, { skipWaitForLine: true });
-      await l.init('/lobster');
+      const l = new Lobster(driver);
+      await l.init('/lobster', { skipWaitForLine: true });
 
       await l.dropFile('./e2e/simple.log');
 
