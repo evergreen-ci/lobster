@@ -10,8 +10,8 @@ export const LOGVIEWER_LOAD_BOOKMARKS = 'logviewer:load-bookmarks';
 export const LOGVIEWER_ENSURE_BOOKMARK = 'logviewer:ensure-bookmark';
 export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
 export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
-export const CLEAR_LINE_LIST = 'clear-line-list';
-export const ADD_LINE = 'add-line';
+export const LOGVIEWER_CLEAR_LINE_LIST = 'clear-line-list';
+export const LOGVIEWER_ADD_LINE = 'add-line';
 
 export type Filter = {|
   text: string,
@@ -266,13 +266,13 @@ export function changeSearch(text: string): ChangeSearch {
 
 export function clearLineList(): ClearLineList {
   return {
-    type: CLEAR_LINE_LIST
+    type: LOGVIEWER_CLEAR_LINE_LIST
   };
 }
 
 export function addLine(line: number, text: string): AddLine {
   return {
-    type: ADD_LINE,
+    type: LOGVIEWER_ADD_LINE,
     payload: {
       line: line,
       text: text
