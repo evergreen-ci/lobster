@@ -6,8 +6,7 @@ import './style.css';
 import { Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
-import type { Highlight, Filter } from '../../actions/logviewer';
-import type { LogIdentity } from '../../models';
+import type { LogIdentity, Highlight, Filter } from '../../models';
 import * as api from '../../api';
 
 type Props = {

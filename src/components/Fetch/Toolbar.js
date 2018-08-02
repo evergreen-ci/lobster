@@ -7,7 +7,7 @@ import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
 import { wipeCache } from '../../actions';
 import * as actions from '../../actions/logviewer';
-import type { Highlight, Filter } from '../../actions/logviewer';
+import type { Highlight, Filter } from '../../models';
 import type { LogIdentity } from '../../models';
 
 type Props = {

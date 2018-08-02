@@ -1,10 +1,10 @@
 // @flow strict
 
 import React from 'react';
-import type { Bookmark } from '../../models';
+import type { Bookmark as BookmarkType } from '../../models';
 
 type Props = {|
-  bookmarks: Bookmark[],
+  bookmarks: BookmarkType[],
   setScroll: (number) => void
 |}
 
@@ -20,7 +20,7 @@ export class Bookmarks extends React.PureComponent<Props> {
       <div className="bookmarks-bar monospace">
         <div>
           {this.props.bookmarks.map((bookmark, key) => {
-            return (<BookmarkWithScroll key={key} lineNumber={bookmark.lineNumber} scrollFunc={this.scroll} />);
+            return (<Bookmark key={key} lineNumber={bookmark.lineNumber} scrollFunc={this.scroll} />);
           })}
         </div>
       </div>
@@ -28,7 +28,7 @@ export class Bookmarks extends React.PureComponent<Props> {
   }
 }
 
-export const BookmarkWithScroll = (props: Bookmark) => {
+export const Bookmark = (props: BookmarkType) => {
   return (
     <div onClick={props.scrollFunc} key={props.lineNumber}>
       {props.lineNumber}
