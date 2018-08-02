@@ -82,9 +82,9 @@ const cleanup = () => {
   });
   processes = [];
 };
-process.on('SIGINT', () => {
+process.on('SIGTERM', () => {
   cleanup();
-  process.exit(130);
+  process.exit(143);
 });
 process.on('exit', () => {
   cleanup();

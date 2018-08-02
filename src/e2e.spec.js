@@ -146,7 +146,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 15000);
+  }, 60000);
 
   e2eChrome('lobstercage', async (done) => {
     const driver = await makeDriver(done);
@@ -178,7 +178,33 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 15000);
+  }, 60000);
+
+  e2e('render-stress', async (done) => {
+    const driver = await makeDriver(done);
+    try {
+      const l = new Lobster(driver);
+      await l.init(undefined, { url: 'perf-1500000.special.log' });
+
+      await l.scrollToBottom();
+      let lines = await l.lines();
+      let token = await lines[lines.length - 1].getText();
+      expect(token).toBe('FIND_THIS_TOKEN');
+
+      await l.init(undefined, { url: 'perf-1700000.special.log' });
+      await l.scrollToBottom();
+      lines = await l.lines();
+      token = await lines[lines.length - 1].getText();
+      expect(token).not.toBe('FIND_THIS_TOKEN');
+      expect(token.match('line [0-8]+')).not.toEqual(null);
+
+      done();
+    } catch (e) {
+      done.fail(e);
+    } finally {
+      await driver.quit();
+    }
+  }, 60000);
 });
 
 // Test that each logviewer page can actually download logs
