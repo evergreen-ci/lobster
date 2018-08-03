@@ -10,10 +10,8 @@ import { Bookmarks } from './Bookmarks';
 import { connect } from 'react-redux';
 import queryString from '../../thirdparty/query-string';
 import Toolbar from './Toolbar';
-import type { Dispatch as ReduxDispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import type { Log, LogIdentity, Settings, Filter, Highlight, Bookmark, Line } from '../../models';
-import type { LoadLog } from '../../actions';
-import type { LoadFilters, LoadHighlights, LoadBookmarks, ChangeBookmark, ChangeFindIdx, ChangeSearch, ChangeFilter, ChangeHighlight } from '../../actions/logviewer';
 import type { ContextRouter } from 'react-router-dom';
 
 type Props = {
@@ -42,7 +40,6 @@ type Props = {
   changeSearch: (RegExp) => void,
   addFilter: (string) => void,
   addHighlight: (string) => void,
-  settings: Settings
 } & ContextRouter
 
 type State = {
