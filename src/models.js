@@ -197,3 +197,8 @@ export type Log = $Exact<$ReadOnly<{
   isDone: boolean,
   events: Event[]
 }>>
+
+export type Find = $Exact<$ReadOnly<{
+  findIdx: number,
+  searchRegex: RegExp
+}>>

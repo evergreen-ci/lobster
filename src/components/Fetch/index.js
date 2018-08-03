@@ -14,37 +14,36 @@ import type { Dispatch as ReduxDispatch } from 'redux';
 import type { Log, LogIdentity, Settings, Filter, Highlight, Bookmark, Line } from '../../models';
 import type { LoadLog } from '../../actions';
 import type { LoadFilters, LoadHighlights, LoadBookmarks, ChangeBookmark, ChangeFindIdx, ChangeSearch, ChangeFilter, ChangeHighlight } from '../../actions/logviewer';
+import type { ContextRouter } from 'react-router-dom';
 
 type Props = {
   log: Log,
-  location: {
-    search: string,
-    hash: string
-  },
   match: {
     params: {
       build: string,
-      test: string
+      test: string,
+      [key: string]: ?string
     }
   },
-  logIdentity: LogIdentity,
-  loadLogByIdentity: (LogIdentity) => LoadLog,
+  logIdentity: ?LogIdentity,
+  loadLogByIdentity: (LogIdentity) => void,
   settings: Settings,
-  loadInitialFilters: (Filter[]) => LoadFilters,
-  loadInitialHighlights: (Highlight[]) => LoadHighlights,
+  loadInitialFilters: (Filter[]) => void,
+  loadInitialHighlights: (Highlight[]) => void,
   filterList: Filter[],
   highlightList: Highlight[],
   bookmarks: Bookmark[],
-  loadBookmarks: (Bookmark[]) => LoadBookmarks,
-  toggleBookmark: (number[]) => ChangeBookmark,
-  ensureBookmark: (number) => ChangeBookmark,
+  loadBookmarks: (Bookmark[]) => void,
+  toggleBookmark: (number[]) => void,
+  ensureBookmark: (number) => void,
   findIdx: number,
-  changeFindIdx: (number) => ChangeFindIdx,
+  changeFindIdx: (number) => void,
   searchRegex: string,
-  changeSearch: (RegExp) => ChangeSearch,
-  addFilter: (string) => ChangeFilter,
-  addHighlight: (string) => ChangeHighlight
-}
+  changeSearch: (RegExp) => void,
+  addFilter: (string) => void,
+  addHighlight: (string) => void,
+  settings: Settings
+} & ContextRouter
 
 type State = {
   build: string,
@@ -54,14 +53,14 @@ type State = {
   url: ?string,
   detailsOpen: boolean,
   findResults: number[],
-  lines?: Line[]
+  lines?: Line[],
 }
+
 
 export class Fetch extends React.Component<Props, State> {
   findInput: ?HTMLInputElement;
   urlInput: ?HTMLInputElement;
   static defaultProps = {
-    lines: [],
     bookmarks: []
   }
 
@@ -162,7 +161,7 @@ export class Fetch extends React.Component<Props, State> {
     if (this.state.url) {
       parsed.url = this.state.url;
     }
-    window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));
+    window.history.replaceState({}, '', this.props.location.pathname + '#' + queryString.stringify(parsed));
   }
 
   handleSubmit = (event: KeyboardEvent) => {
@@ -532,13 +531,13 @@ export class Fetch extends React.Component<Props, State> {
 
 // This is not the ideal way to do this, but it allows for better compatibility
 // as we migrate towards the react-redux model
-function mapStateToProps(state: State, ownProps: Props) {
-  return { ...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap,
+function mapStateToProps(state, ownProps: $Shape<Props>) {
+  return { ...state, ...ownProps, colorMap: state.log.colorMap,
     settings: state.settings, findIdx: state.find.findIdx, searchRegex: state.find.searchRegex,
     filterList: state.filters, highlightList: state.highlights, bookmarks: state.bookmarks };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
   return {
     loadInitialFilters: (initialFilters) => dispatch(logviewerActions.loadInitialFilters(initialFilters)),
     loadInitialHighlights: (initialHighlights) => dispatch(logviewerActions.loadInitialHighlights(initialHighlights)),
