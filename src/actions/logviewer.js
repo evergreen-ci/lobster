@@ -119,7 +119,7 @@ export function toggleFilterIntersection(): ChangeSetting {
   return toggleSetting('filter-intersection');
 }
 
-export function loadInitialFilters(initialFilters: Filter[]): loadInitialFilters {
+export function loadInitialFilters(initialFilters: Filter[]): LoadFilters {
   return {
     type: LOGVIEWER_LOAD_FILTERS,
     payload: {
@@ -154,7 +154,7 @@ export function removeFilter(text: string): ChangeFilter {
   return changeFilter('remove', text);
 }
 
-export function loadInitialHighlights(initialHighlights: Highlight[]): loadInitialHighlights {
+export function loadInitialHighlights(initialHighlights: Highlight[]): LoadHighlights {
   return {
     type: LOGVIEWER_LOAD_HIGHLIGHTS,
     payload: {

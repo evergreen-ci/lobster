@@ -1,55 +1,60 @@
+// @flow
+
 import React from 'react';
+import type { Node as ReactNode } from 'react';
 import * as actions from '../../actions';
 import * as logviewerActions from '../../actions/logviewer';
 import './style.css';
 import LogView from '../LogView/index';
-import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
 import { connect } from 'react-redux';
 import queryString from '../../thirdparty/query-string';
 import Toolbar from './Toolbar';
+import type { Log, LogIdentity, Settings, Filter, Highlight, Bookmark, Line } from '../../models';
+import type { LoadLog, LoadFilters, LoadHighlights, LoadBookmarks, ChangeBookmark, ChangeFindIdx, ChangeSearch } from '../../actions';
 
-export class Fetch extends React.Component {
-  static propTypes = {
-    log: PropTypes.shape({
-      lines: PropTypes.array,
-      colorMap: PropTypes.object,
-      isDone: PropTypes.bool
-    }),
-    location: PropTypes.shape({
-      search: PropTypes.string,
-      hash: PropTypes.string
-    }),
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        build: PropTypes.string,
-        test: PropTypes.string
-      })
-    }),
-    logIdentity: PropTypes.object,
-    loadLogByIdentity: PropTypes.func,
-    history: PropTypes.object,
-    settings: PropTypes.shape({
-      wrap: PropTypes.bool.isRequired,
-      caseSensitive: PropTypes.bool.isRequired,
-      filterIntersection: PropTypes.bool.isRequired
-    }),
-    loadInitialFilters: PropTypes.func,
-    loadInitialHighlights: PropTypes.func,
-    filterList: PropTypes.array,
-    addFilter: PropTypes.func,
-    addHighlight: PropTypes.func,
-    highlightList: PropTypes.array,
-    bookmarks: PropTypes.array,
-    loadBookmarks: PropTypes.func,
-    toggleBookmark: PropTypes.func,
-    ensureBookmark: PropTypes.func,
-    findIdx: PropTypes.number.isRequired,
-    changeFindIdx: PropTypes.func.isRequired,
-    searchRegex: PropTypes.string.isRequired,
-    changeSearch: PropTypes.func.isRequired
-  };
+type Props = {
+  log: Log,
+  location: {
+    search: string,
+    hash: string
+  },
+  match: {
+    params: {
+      build: string,
+      test: string
+    }
+  },
+  logIdentity: LogIdentity,
+  loadLogByIdentity: (LogIdentity) => LoadLog,
+  settings: Settings,
+  loadInitialFilters: (Filter[]) => LoadFilters,
+  loadInitialHighlights: (Highlight[]) => LoadHighlights,
+  filterList: Filter[],
+  highlightList: Highlight[],
+  bookmarks: Bookmark[],
+  loadBookmarks: (Bookmark[]) => LoadBookmarks,
+  toggleBookmark: (number[]) => ChangeBookmark,
+  ensureBookmark: (number) => ChangeBookmark,
+  findIdx: number,
+  changeFindIdx: (number) => ChangeFindIdx,
+  searchRegex: string,
+  changeSearch: (RegExp) => ChangeSearch,
+  addFilter: (string) => ChangeFilter,
+  addHighlight: (string) => ChangeHighlight
+}
 
+type State = {
+  build: string,
+  test: string,
+  scrollLine: number,
+  server: ?string,
+  url: ?string,
+  detailsOpen: boolean,
+  findResults: number[]
+}
+
+export class Fetch extends React.Component<Props, State> {
   static defaultProps = {
     lines: [],
     bookmarks: []
@@ -112,7 +117,7 @@ export class Fetch extends React.Component {
     return null;
   }
 
-  makeFilterURLString(filter) {
+  makeFilterURLString(filter: Filter): string {
     let res = '';
     res += (filter.on ? '1' : '0');
     res += (filter.inverse ? '1' : '0');
@@ -120,7 +125,7 @@ export class Fetch extends React.Component {
     return res;
   }
 
-  makeHighlightURLString(highlight) {
+  makeHighlightURLString(highlight: Highlight): string {
     let res = '';
     res += (highlight.on ? '1' : '0');
     res += (highlight.line ? '1' : '0');
@@ -128,7 +133,7 @@ export class Fetch extends React.Component {
     return res;
   }
 
-  updateURL(bookmarks, filters, highlights) {
+  updateURL(bookmarks: Bookmark[], filters: Filter[], highlights: Highlight[]) {
     const parsed = {};
     for (let i = 0; i < filters.length; i++) {
       parsed.f = this.makeFilterURLString(filters[i]);
@@ -178,17 +183,17 @@ export class Fetch extends React.Component {
     }
   }
 
-  setScroll = (lineNum) => {
+  setScroll = (lineNum: number) => {
     this.setState({ scrollLine: lineNum });
   }
 
-  findBookmark(bookmarkList, lineNum) {
+  findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
     return bookmarkList.findIndex(function(bookmark) {
       return bookmark.lineNumber === lineNum;
     });
   }
 
-  bookmarkSort(b1, b2) {
+  bookmarkSort(b1: Bookmark, b2: Bookmark): number {
     return b1.lineNumber - b2.lineNumber;
   }
 
@@ -260,7 +265,7 @@ export class Fetch extends React.Component {
     this.setState({ findResults: [] });
   }
 
-  shouldPrintLine = (bookmarks, line, filter, inverseFilter) => {
+  shouldPrintLine = (bookmarks: Bookmark[], line: Line, filter: RegExp[], inverseFilter: RegExp[]): boolean => {
     if (this.findBookmark(bookmarks, line.lineNumber) !== -1) {
       return true;
     }
@@ -268,7 +273,7 @@ export class Fetch extends React.Component {
     if ((!filter && !inverseFilter) || (filter.length === 0 && inverseFilter.length === 0)) {
       return true;
     } else if (!filter || filter.length === 0) {
-      if (this.matchFilters(inverseFilter, line.text)) {
+      if (this.matchFilters(inverseFilter, line.text, this.props.settings.filterIntersection)) {
         return false;
       }
       return true;
@@ -282,21 +287,21 @@ export class Fetch extends React.Component {
     // the inverseFilter.
     if (this.props.settings.filterIntersection) {
       if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection) &&
-            !this.matchFilters(inverseFilter, line.text)) {
+            !this.matchFilters(inverseFilter, line.text, this.props.settings.filterIntersection)) {
         return true;
       }
     } else if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection) ||
-          !this.matchFilters(inverseFilter, line.text)) {
+          !this.matchFilters(inverseFilter, line.text, this.props.settings.filterIntersection)) {
       return true;
     }
     return false;
   }
 
-  shouldHighlightLine = (line, highlight, highlightLine) => {
+  shouldHighlightLine = (line: Line, highlight: RegExp[], highlightLine: RegExp[]): boolean => {
     if (!highlight || highlight.length === 0) {
       return false;
     }
-    if (this.matchFilters(highlight, line.text, this.props.settings.filterIntersection) && this.matchFilters(highlightLine, line.text)) {
+    if (this.matchFilters(highlight, line.text, this.props.settings.filterIntersection) && this.matchFilters(highlightLine, line.text, this.props.settings.filterIntersection)) {
       return true;
     }
     return false;
@@ -320,7 +325,7 @@ export class Fetch extends React.Component {
     this.clearFind();
   }
 
-  makeRegexp(regexp, caseSensitive) {
+  makeRegexp(regexp: string, caseSensitive: boolean) {
     if (!regexp) {
       return '';
     }
@@ -331,31 +336,31 @@ export class Fetch extends React.Component {
     return new RegExp(regexp);
   }
 
-  mergeActiveFilters(filterList, caseSensitive) {
+  mergeActiveFilters(filterList: Filter[], caseSensitive: boolean): RegExp[] {
     return filterList
       .filter((elem) => elem.on && !elem.inverse)
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
-  mergeActiveInverseFilters(filterList, caseSensitive) {
+  mergeActiveInverseFilters(filterList: Filter[], caseSensitive: boolean): RegExp[] {
     return filterList
       .filter((elem) => elem.on && elem.inverse)
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
-  mergeActiveHighlights(highlightList, caseSensitive) {
+  mergeActiveHighlights(highlightList: Highlight[], caseSensitive: boolean): RegExp[] {
     return highlightList
       .filter((elem) => elem.on)
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
-  mergeActiveHighlightLines(highlightList, caseSensitive) {
+  mergeActiveHighlightLines(highlightList: Highlight[], caseSensitive: boolean): RegExp[] {
     return highlightList
       .filter((elem) => elem.on && elem.line)
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
-  getHighlightText(highlightList) {
+  getHighlightText(highlightList: Highlight[]): string[] {
     const highlight = [];
     highlightList.forEach((element) => {
       if (element.on && !element.line) {
@@ -368,14 +373,14 @@ export class Fetch extends React.Component {
   // Checks a given string against a list of regular expression filters
   // If isIntersection === false, will return true if the string matches at least one regex
   // Otherwise, will return true if the string matches all regexes
-  matchFilters(filter, string, isIntersection) {
+  matchFilters(filter: RegExp[], string: string, isIntersection: boolean): boolean {
     if (isIntersection) {
       return filter.every(regex => string.match(regex));
     }
     return filter.some(regex => string.match(regex));
   }
 
-  showLines() {
+  showLines(): ?ReactNode {
     const filter = this.mergeActiveFilters(this.props.filterList, this.props.settings.caseSensitive);
     const inverseFilter = this.mergeActiveInverseFilters(this.props.filterList, this.props.settings.caseSensitive);
     const highlight = this.mergeActiveHighlights(this.props.highlightList, this.props.settings.caseSensitive);
@@ -401,7 +406,7 @@ export class Fetch extends React.Component {
       />);
   }
 
-  showJIRA() {
+  showJIRA(): string {
     if (this.props.bookmarks.length === 0 || this.props.log.lines.length === 0) {
       return '';
     }
@@ -423,7 +428,7 @@ export class Fetch extends React.Component {
     return text;
   }
 
-  setURLRef = (ref) => {this.urlInput = ref;}
+  setURLRef = (ref: ?HTMLInputElement) => {this.urlInput = ref;}
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
@@ -470,7 +475,7 @@ export class Fetch extends React.Component {
   }
 
   togglePanel = () => this.setState((state) => ({ detailsOpen: !state.detailsOpen }));
-  setFormRef = (ref) => {this.findInput = ref;}
+  setFormRef = (ref: ?HTMLInputElement) => {this.findInput = ref;}
 
   render() {
     return (
