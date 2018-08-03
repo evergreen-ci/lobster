@@ -5,12 +5,12 @@ import type { Action } from '../actions';
 
 export type Find = {|
   +findIdx: number,
-  +searchRegex: string
+  +searchRegex: RegExp
 |}
 
 const initialState: Find = {
   findIdx: -1,
-  searchRegex: ''
+  searchRegex: new RegExp('')
 };
 
 export default function(state: Find = initialState, action: Action): Find {

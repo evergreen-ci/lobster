@@ -10,8 +10,10 @@ import { Bookmarks } from './Bookmarks';
 import { connect } from 'react-redux';
 import queryString from '../../thirdparty/query-string';
 import Toolbar from './Toolbar';
+import type { Dispatch as ReduxDispatch } from 'redux';
 import type { Log, LogIdentity, Settings, Filter, Highlight, Bookmark, Line } from '../../models';
-import type { LoadLog, LoadFilters, LoadHighlights, LoadBookmarks, ChangeBookmark, ChangeFindIdx, ChangeSearch } from '../../actions';
+import type { LoadLog } from '../../actions';
+import type { LoadFilters, LoadHighlights, LoadBookmarks, ChangeBookmark, ChangeFindIdx, ChangeSearch, ChangeFilter, ChangeHighlight } from '../../actions/logviewer';
 
 type Props = {
   log: Log,
@@ -51,16 +53,19 @@ type State = {
   server: ?string,
   url: ?string,
   detailsOpen: boolean,
-  findResults: number[]
+  findResults: number[],
+  lines?: Line[]
 }
 
 export class Fetch extends React.Component<Props, State> {
+  findInput: ?HTMLInputElement;
+  urlInput: ?HTMLInputElement;
   static defaultProps = {
     lines: [],
     bookmarks: []
   }
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
     const locationSearch = props.location.search;
@@ -93,7 +98,7 @@ export class Fetch extends React.Component<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     if (this.props.filterList !== prevProps.filterList) {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
       this.clearFind();
@@ -110,7 +115,7 @@ export class Fetch extends React.Component<Props, State> {
     }
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     if (nextProps.log.lines !== prevState.lines) {
       return { lines: nextProps.log.lines };
     }
@@ -160,7 +165,7 @@ export class Fetch extends React.Component<Props, State> {
     window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));
   }
 
-  handleSubmit = (event) => {
+  handleSubmit = (event: KeyboardEvent) => {
     console.log('handleSubmit');
     event.preventDefault();
     // prepare do to the change
@@ -170,15 +175,20 @@ export class Fetch extends React.Component<Props, State> {
     }
 
     this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-
-    if (this.urlInput.value !== this.state.url) {
+    let value = null;
+    if (this.urlInput) {
+      value = this.urlInput.value;
+    } else {
+      return;
+    }
+    if (value !== this.state.url) {
       this.props.changeFindIdx(-1);
-      this.setState({ url: this.urlInput.value, findResults: [] });
+      this.setState({ url: value, findResults: [] });
       this.props.loadBookmarks([]);
       this.props.loadLogByIdentity({
         type: 'lobster',
-        server: this.state.server,
-        url: this.state.url
+        server: this.state.server ? this.state.server : '',
+        file: this.state.url ? this.state.url : ''
       });
     }
   }
@@ -197,14 +207,14 @@ export class Fetch extends React.Component<Props, State> {
     return b1.lineNumber - b2.lineNumber;
   }
 
-  find = (event) => {
+  find = (event?: KeyboardEvent) => {
     if (event) {
       event.preventDefault();
       if (event.keyCode === 13 && event.shiftKey) {
         return;
       }
     }
-    const findRegexp = this.findInput.value;
+    const findRegexp = this.findInput ? (this.findInput.value ? this.findInput.value : '') : '';
     const findRegexpFull = this.makeRegexp(findRegexp, this.props.settings.caseSensitive);
 
     if (findRegexp === '') {
@@ -261,7 +271,7 @@ export class Fetch extends React.Component<Props, State> {
 
   clearFind() {
     this.props.changeFindIdx(-1);
-    this.props.changeSearch('');
+    this.props.changeSearch(new RegExp(''));
     this.setState({ findResults: [] });
   }
 
@@ -308,26 +318,32 @@ export class Fetch extends React.Component<Props, State> {
   }
 
   addFilter = () => {
-    if (this.findInput.value === '' || this.props.filterList.find((elem) => elem.text === this.findInput.value)) {
-      return;
+    if (this.findInput) {
+      const value = this.findInput.value;
+      if (value === '' || this.props.filterList.find((elem) => elem.text === value)) {
+        return;
+      }
+      this.props.addFilter(value);
+      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
+      this.clearFind();
     }
-    this.props.addFilter(this.findInput.value);
-    this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-    this.clearFind();
   }
 
   addHighlight = () => {
-    if (this.findInput.value === '' || this.props.highlightList.find((elem) => elem.text === this.findInput.value)) {
-      return;
+    if (this.findInput) {
+      const value = this.findInput.value;
+      if (value === '' || this.props.highlightList.find((elem) => elem.text === value)) {
+        return;
+      }
+      this.props.addHighlight(value);
+      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
+      this.clearFind();
     }
-    this.props.addHighlight(this.findInput.value);
-    this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-    this.clearFind();
   }
 
   makeRegexp(regexp: string, caseSensitive: boolean) {
     if (!regexp) {
-      return '';
+      return new RegExp('');
     }
 
     if (!caseSensitive) {
@@ -444,7 +460,7 @@ export class Fetch extends React.Component<Props, State> {
     }
   }
 
-  handleKeyDown = (event) => {
+  handleKeyDown = (event: KeyboardEvent) => {
     switch (event.keyCode) {
       case 114: // F3
         this.focusOnFind(event);
@@ -459,13 +475,17 @@ export class Fetch extends React.Component<Props, State> {
     }
   }
 
-  focusOnFind(event) {
-    this.findInput.focus();
-    this.findInput.select();
+  focusOnFind(event: KeyboardEvent) {
+    if (this.findInput) {
+      this.findInput.focus();
+    }
+    if (this.findInput) {
+      this.findInput.select();
+    }
     event.preventDefault();
   }
 
-  handleShiftEnter = (event) => {
+  handleShiftEnter = (event: KeyboardEvent) => {
     if (this.state.findResults.length !== 0) {
       if (event.keyCode === 13 && event.shiftKey) {
         event.preventDefault();
@@ -487,7 +507,6 @@ export class Fetch extends React.Component<Props, State> {
             handleChangeFindEvent={this.find}
             searchRegex={this.props.searchRegex}
             find={this.find}
-            showFind={this.showFind}
             addFilter={this.addFilter}
             addHighlight={this.addHighlight}
             togglePanel={this.togglePanel}
@@ -513,13 +532,13 @@ export class Fetch extends React.Component<Props, State> {
 
 // This is not the ideal way to do this, but it allows for better compatibility
 // as we migrate towards the react-redux model
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state: State, ownProps: Props) {
   return { ...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap,
     settings: state.settings, findIdx: state.find.findIdx, searchRegex: state.find.searchRegex,
     filterList: state.filters, highlightList: state.highlights, bookmarks: state.bookmarks };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {
     loadInitialFilters: (initialFilters) => dispatch(logviewerActions.loadInitialFilters(initialFilters)),
     loadInitialHighlights: (initialHighlights) => dispatch(logviewerActions.loadInitialHighlights(initialHighlights)),

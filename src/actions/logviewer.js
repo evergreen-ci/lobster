@@ -68,7 +68,7 @@ export type ChangeFindIdx = {|
 export type ChangeSearch = {|
   +type: 'logviewer:change-search',
   +payload: {|
-    +text: string
+    +text: RegExp
   |}
 |}
 
@@ -225,7 +225,7 @@ export function changeFindIdx(index: number): ChangeFindIdx {
   };
 }
 
-export function changeSearch(text: string): ChangeSearch {
+export function changeSearch(text: RegExp): ChangeSearch {
   return {
     type: LOGVIEWER_CHANGE_SEARCH,
     payload: {
