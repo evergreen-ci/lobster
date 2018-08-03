@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`lobsterserver e2e-evergreen-task 1`] = `
+exports[`lobsterserver-default-args e2e-evergreen-task 1`] = `
 "testid1234
 1234
 ALL
@@ -15,11 +15,10 @@ line 7
 line 8
 line 9
 something else
-enumerate: 0
-"
+enumerate: 0"
 `;
 
-exports[`lobsterserver e2e-evergreen-test 1`] = `
+exports[`lobsterserver-default-args e2e-evergreen-test 1`] = `
 "testid1234
 line 0
 line 1
@@ -32,11 +31,20 @@ line 7
 line 8
 line 9
 something else
-enumerate: 0
+enumerate: 0"
+`;
+
+exports[`lobsterserver-default-args e2e-fetch-ok 1`] = `
+"line 0
+line 1
+line 2
+line 3
+line 4
+somethingelse 5
 "
 `;
 
-exports[`lobsterserver e2e-logkeeper 1`] = `
+exports[`lobsterserver-default-args e2e-logkeeper 1`] = `
 "build1234
 test1234
 line 0
@@ -50,6 +58,23 @@ line 7
 line 8
 line 9
 something else
-enumerate: 0
-"
+enumerate: 0"
+`;
+
+exports[`lobsterserver-default-args e2e-perf-gen 1`] = `
+"This log is a performance and rendering stress test for lobster
+Chrome has a limit of about 1.67 million lines
+If you or selenium can see FIND_THIS_TOKEN at the end of this
+file, then you've avoided a performance regression.
+line 1
+line 2
+line 3
+line 4
+line 5
+line 6
+line 7
+line 8
+line 9
+line 10
+FIND_THIS_TOKEN"
 `;

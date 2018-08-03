@@ -78,13 +78,13 @@ const cleanup = () => {
     listener.close();
   }
   processes.forEach((p) => {
-    p.kill('SIGINT');
+    p.kill('SIGTERM');
   });
   processes = [];
 };
-process.on('SIGINT', () => {
+process.on('SIGTERM', () => {
   cleanup();
-  process.exit(130);
+  process.exit(143);
 });
 process.on('exit', () => {
   cleanup();

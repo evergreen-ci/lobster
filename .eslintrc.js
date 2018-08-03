@@ -43,7 +43,8 @@ module.exports = {
     {
       'files': ['src/**/*.spec.js*', 'src/**/*.test.js*', 'src/setupTests.js'],
       'env': {
-        'browser': true
+        'browser': true,
+        'node': true
       },
       'plugins': ['babel', 'react', 'jest'],
       'parserOptions': {
@@ -67,10 +68,10 @@ module.exports = {
     {
       'files': ['server/**/*.js', 'generate-tasks.js', 'e2e.js', 'reporter.js', '.eslintrc.js'],
       'env': {
-        'node': true,
-        'parserOptions': {
-          'sourceType': 'scripts'
-        }
+        'node': true
+      },
+      'parserOptions': {
+        'sourceType': 'script'
       },
       'rules': {
         'no-sync': 0

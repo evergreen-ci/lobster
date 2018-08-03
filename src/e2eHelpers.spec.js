@@ -20,6 +20,11 @@ const lobsterURL = (file = 'simple.log') => {
   return `http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}/lobster?server=localhost:${process.env.LOBSTER_E2E_SERVER_PORT}%2Fapi%2Flog&url=${file}`;
 };
 
+// const logLineList = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div';
+const firstLine = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div/div[1]';
+// const bookmarks = '//*[@id="root"]/div/main/div/div[1]/div';
+const cacheModal = '//*[@id="root"]/div/div/div/div';
+
 export class Lobster {
   constructor(driver) {
     this._driver = driver;
@@ -35,7 +40,6 @@ export class Lobster {
   }
 
   async waitUntilDocumentReady() {
-    // Wait until document is ready
     await this._driver.wait(
       new Condition('document is ready', (driver) => {
         return driver.executeScript('return document.readyState').then((val) => {
@@ -47,7 +51,7 @@ export class Lobster {
 
   async init(url, options = {}) {
     if (url === undefined) {
-      await this._driver.get(lobsterURL());
+      await this._driver.get(lobsterURL(options.url));
     } else {
       await this._driver.get(`http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}${url}`);
     }
@@ -56,22 +60,29 @@ export class Lobster {
 
     const browserHasFilesystemAPI = await this.browserHasFilesystemAPI();
     if (browserHasFilesystemAPI) {
-      if (options.cache === true) {
-        const button = await this._driver.wait(until.elementLocated(By.xpath(cacheYes)));
-        try {
-          await button.click();
-        } catch (err) {
-          console.log(err);
-        }
-      } else {
-        // Click the never button the cache
-        const never = await this._driver.wait(until.elementLocated(By.xpath(cacheNever)));
-        try {
-          await never.click();
-        } catch (err) {
-          console.log(err);
+      const modal = await this._driver.findElements(By.xpath(cacheModal));
+      if (modal.length > 0) {
+        if (options.cache === true) {
+          const button = await this._driver.wait(until.elementLocated(By.xpath(cacheYes)));
+          try {
+            await button.click();
+          } catch (err) {
+            console.log(err);
+          }
+        } else {
+          // Click the never button the cache
+          const never = await this._driver.wait(until.elementLocated(By.xpath(cacheNever)));
+          try {
+            await never.click();
+          } catch (err) {
+            console.log(err);
+          }
         }
       }
+    }
+
+    if (options.skipWaitForLine !== true) {
+      await this.firstLine();
     }
   }
 
@@ -79,6 +90,10 @@ export class Lobster {
     const res = await this._driver.executeScript(
       'return window.requestFileSystem != null');
     return res === true;
+  }
+
+  async firstLine() {
+    await this._driver.wait(until.elementLocated(By.xpath(firstLine)));
   }
 
   async search(text) {
@@ -203,6 +218,14 @@ export class Lobster {
     await this._driver.wait(until.stalenessOf(input));
     const button = await this._driver.wait(until.elementLocated(By.xpath(processLogButton)));
     await button.click();
+  }
+
+  async scrollToBottom() {
+    const js = 'window.scrollBy(0, 40000000);';
+    await this._driver.executeScript(js);
+    await this._driver.executeScript(js);
+    // Make sure we're really at the bottom
+    // await this._driver.actions({ async: false }).sendKeys(Key.PAGE_DOWN).perform();
   }
 }
 

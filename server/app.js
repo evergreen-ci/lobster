@@ -9,12 +9,7 @@ const appE2E = require('./appE2E');
 const dummyCache = require('./dummy_cache');
 const localCache = require('./local_cache');
 
-function isValidURL(str) {
-  const expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
-  const regex = new RegExp(expression);
-
-  return str.match(regex);
-}
+const { cors, isValidURL } = require('./util');
 
 function makeApp(logsPath, cache, isE2E) {
   const logsDir = logsPath === undefined ? undefined : path.resolve(logsPath);
@@ -41,27 +36,16 @@ function makeApp(logsPath, cache, isE2E) {
     res.render('error', { error: err });
   });
 
-  function cors(req, res) {
-    if (!req) return;
-    const origin = req.get('Origin');
-    if (origin) {
-      res.set({
-        'Access-Control-Allow-Origin': origin,
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
-      });
-    }
-  }
-
+  app.use('/api/log', cors);
   app.options('/api/log', function(req, res, _next) {
-    cors(req, res);
     res.send();
   });
+  if (isE2E) {
+    console.log('e2e routes are active');
+    appE2E(app);
+  }
 
   app.post('/api/log', function(req, res, _next) {
-    cors(req, res);
-
     const logUrl = req.body.url;
     const filter = req.body.filter;
     if (logUrl === undefined) {
@@ -118,22 +102,19 @@ function makeApp(logsPath, cache, isE2E) {
       }
 
       res.sendFile(reqPath, function(e) {
-        if (e && e.code === 'ENOENT') {
-          res.status(404).send('log not found').end();
-        } else {
-          res.status(500).send(e).end();
+        if (e) {
+          if (e && e.code === 'ENOENT') {
+            res.status(404).send('log not found').end();
+          } else {
+            res.status(500).send(e).end();
+          }
         }
       });
     } else {
       console.log('Must provide the --logs argument to handle local files');
-      res.status(400).end();
+      res.status(404).send('log not found').end();
     }
   });
-
-  if (isE2E) {
-    console.log('e2e routes are active');
-    appE2E(app);
-  }
 
   // Always return the main index.html, so react-router render the route in the client
   app.get('*', (req, res) => {

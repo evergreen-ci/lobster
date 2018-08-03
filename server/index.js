@@ -52,6 +52,9 @@ if (require.main === module) {
   }
 
   app.makeListener(argv, (listener) => {
+    process.on('exit', function() {
+      listener.close();
+    });
     const address = `${listener.address().address}:${listener.address().port}`;
     console.log('App listening on ' + address + '!');
   });

@@ -1,14 +1,4 @@
-function cors(req, res) {
-  if (!req) return;
-  const origin = req.get('Origin');
-  if (origin) {
-    console.log(origin);
-    res.set({
-      'Access-Control-Allow-Origin': origin,
-      'Access-Control-Allow-Methods': 'GET, OPTIONS'
-    });
-  }
-}
+const { cors } = require('./util');
 
 let enumerate = {};
 function makeLines(req, res) {
@@ -28,11 +18,9 @@ function makeLines(req, res) {
   res.write(enumerate[e].toString());
   ++enumerate[e];
   res.write('\n');
-  res.end();
 }
 
 function logkeeper(req, res) {
-  cors(req, res);
   if (req.query.raw !== '1') {
     return res.status(404).send();
   }
@@ -45,10 +33,10 @@ function logkeeper(req, res) {
     res.write('\n');
   }
   makeLines(req, res);
+  res.end();
 }
 
 function evergreen(req, res) {
-  cors(req, res);
   if (req.params.execution && (req.query.type === undefined || req.query.text !== 'true')) {
     return res.status(404).send();
   } else if (!req.params.execution && req.query.raw !== '1') {
@@ -65,9 +53,37 @@ function evergreen(req, res) {
     res.write('\n');
   }
   makeLines(req, res);
+  res.end();
+}
+
+function generatePerfTestLog(lines, res) {
+  res.status(200);
+  res.write('This log is a performance and rendering stress test for lobster\n');
+  res.write('Chrome has a limit of about 1.67 million lines\n');
+  res.write('If you or selenium can see FIND_THIS_TOKEN at the end of this\n');
+  res.write('file, then you\'ve avoided a performance regression.\n');
+  for (let i = 0; i < lines; ++i) {
+    res.write(`line ${i + 1}\n`);
+  }
+  res.write('FIND_THIS_TOKEN');
+}
+
+const perfRegex = new RegExp(/perf-([0-9]+).special.log/);
+
+function logGeneratorMiddleware(req, res, next) {
+  if (req.body.url) {
+    const matches = perfRegex.exec(req.body.url);
+    if (matches && matches.length === 2) {
+      generatePerfTestLog(parseInt(matches[1], 10), res);
+      res.end();
+      return;
+    }
+  }
+  next();
 }
 
 function e2e(app) {
+  app.use('/api/log', cors, logGeneratorMiddleware);
   app.options('/evergreen/task_log_raw/:id/:execution', cors);
   app.get('/evergreen/task_log_raw/:id/:execution', evergreen);
   app.options('/evergreen/test_log/:id', cors);
