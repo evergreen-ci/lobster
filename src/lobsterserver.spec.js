@@ -6,7 +6,6 @@ import fetch from 'node-fetch';
 import sinon from 'sinon';
 import * as api from './api';
 
-
 function lobster(port = 9000, file = 'simple.log') {
   return fetch(`http://localhost:${port}/api/log`, {
     method: 'POST',
@@ -29,7 +28,17 @@ function startServer(args) {
   }
 }
 
-describe('lobsterserver', function() {
+describe('lobsterserver-default-args', function() {
+  const tmp = tmpdir() + '/lobster.txt';
+  let c;
+  beforeAll(async () => {
+    return new Promise(function(resolve) {
+      c = startServer(['--logs', path.dirname(__dirname) + '/e2e', '--e2e']);
+      expect(c).not.toEqual(null);
+      return setTimeout(resolve, 5000);
+    });
+  }, 10000);
+
   beforeEach(() => {
     sinon.replace(window, 'fetch', function(req) {
       console.log(req.url);
@@ -37,68 +46,117 @@ describe('lobsterserver', function() {
     });
   });
 
-  let c;
   afterEach(() => {
     sinon.restore();
-    if (fs.existsSync('/tmp/lobster.txt')) {
-      fs.unlinkSync('/tmp/lobster.txt');
-    }
+  });
+
+  afterAll(() => {
     if (c) {
-      c.kill('SIGINT');
-      c = undefined;
+      c.kill();
+    }
+    if (fs.existsSync(tmp)) {
+      fs.unlink(tmp, 'w');
     }
   });
 
   e2e('fetch-ok', (done) => {
-    c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
-    setTimeout(function() {
-      lobster().then((resp) => {
-        resp.text().then((body) => {
-          expect(resp.status).toBe(200);
-          expect(body).toHaveLength(51);
-          done();
-        });
-      }).catch((e) => {
-        done.fail(e);
+    return lobster().then((resp) => {
+      resp.text().then((body) => {
+        expect(resp.status).toBe(200);
+        expect(body).toMatchSnapshot();
+        done();
       });
-    }, 5000);
+    }).catch((e) => {
+      done.fail(e);
+    });
   }, 10000);
 
   e2e('fetch-notexist', (done) => {
-    c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
-    setTimeout(function() {
-      lobster(undefined, '___notexist.log').then((resp) => {
-        resp.text().then((body) => {
-          expect(resp.status).toBe(404);
-          expect(body).toBe('log not found');
-          done();
-        });
-      }).catch((e) => done.fail(e));
-    }, 5000);
+    return lobster(undefined, '___notexist.log').then((resp) => {
+      resp.text().then((body) => {
+        expect(resp.status).toBe(404);
+        expect(body).toBe('log not found');
+        done();
+      });
+    }).catch((e) => done.fail(e));
   }, 10000);
 
   e2e('fetch-insecure-path', (done) => {
-    fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
-    c = startServer(['--logs', path.dirname(__dirname) + '/e2e']);
-    setTimeout(function() {
-      lobster(undefined, '___notexist.log').then((resp) => {
-        resp.text().then((body) => {
-          expect(resp.status).toBe(404);
-          expect(body).toBe('log not found');
-          done();
-        });
-      }).catch((e) => done.fail(e));
-    }, 5000);
+    fs.closeSync(fs.openSync(tmp, 'w'));
+    return lobster(undefined, '../../../../../../../../../../../../../' + tmp).then((resp) => {
+      resp.text().then((body) => {
+        expect(resp.status).toBe(404);
+        expect(body).toBe('log not found');
+        done();
+      });
+    }).catch((e) => done.fail(e));
   }, 10000);
 
+  e2e('evergreen-test', (done) => {
+    return api.fetchEvergreen({
+      type: 'evergreen-test',
+      id: 'testid1234'
+    }).then((resp) => {
+      expect(resp.status).toBe(200);
+      return resp.text().then((log) => {
+        expect(log.slice(0, -1)).toMatchSnapshot();
+        done();
+      });
+    }).catch((e) => done.fail(e));
+  }, 10000);
+
+  e2e('evergreen-task', (done) => {
+    return api.fetchEvergreen({
+      type: 'evergreen-task',
+      id: 'testid1234',
+      execution: 1234
+    }).then((resp) => {
+      expect(resp.status).toBe(200);
+      return resp.text().then((log) => {
+        expect(log.slice(0, -1)).toMatchSnapshot();
+        done();
+      });
+    }).catch((e) => done.fail(e));
+  }, 10000);
+
+  e2e('logkeeper', (done) => {
+    return api.fetchLogkeeper('build1234', 'test1234')
+      .then((resp) => {
+        expect(resp.status).toBe(200);
+        return resp.text().then((log) => {
+          expect(log.slice(0, -1)).toMatchSnapshot();
+          done();
+        }).catch((e) => done.fail(e));
+      }).catch((e) => done.fail(e));
+  }, 10000);
+
+  e2e('perf-gen', (done) => {
+    return lobster(undefined, 'perf-10.special.log').then((resp) => {
+      resp.text().then((body) => {
+        expect(resp.status).toBe(200);
+        expect(body).toMatchSnapshot();
+        expect(body).toEqual(expect.stringContaining('FIND_THIS_TOKEN'));
+        done();
+      }).catch((e) => done.fail(e));
+    }).catch((e) => done.fail(e));
+  }, 10000);
+});
+
+describe('lobsterserver-other', function() {
+  let c;
+  afterEach(() => {
+    if (c) {
+      c.kill();
+    }
+  });
+
   e2e('fetch-logs-disabled', (done) => {
-    fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
     c = startServer([]);
     setTimeout(function() {
       lobster(undefined, 'simple.log').then((resp) => {
         resp.text().then((body) => {
-          expect(resp.status).toBe(400);
-          expect(body).toBe('');
+          expect(resp.status).toBe(404);
+          expect(body).toBe('log not found');
           done();
         }).catch((e) => done.fail(e));
       }).catch((e) => done.fail(e));
@@ -106,7 +164,6 @@ describe('lobsterserver', function() {
   }, 10000);
 
   e2e('fetch-port', (done) => {
-    fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
     c = startServer(['--port', '8999', '--logs', path.dirname(__dirname) + '/e2e']);
     setTimeout(function() {
       lobster(8999, 'simple.log').then((resp) => {
@@ -115,56 +172,6 @@ describe('lobsterserver', function() {
           done();
         }).catch((e) => done.fail(e));
       }).catch((e) => done.fail(e));
-    }, 5000);
-  }, 10000);
-
-  e2e('evergreen-test', (done) => {
-    fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
-    c = startServer(['--e2e']);
-    setTimeout(function() {
-      return api.fetchEvergreen({
-        type: 'evergreen-test',
-        id: 'testid1234'
-      }).then((resp) => {
-        expect(resp.status).toBe(200);
-        return resp.text().then((log) => {
-          expect(log).toMatchSnapshot();
-          done();
-        });
-      });
-    }, 5000);
-  }, 10000);
-
-  e2e('evergreen-task', (done) => {
-    fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
-    c = startServer(['--e2e']);
-    setTimeout(function() {
-      return api.fetchEvergreen({
-        type: 'evergreen-task',
-        id: 'testid1234',
-        execution: 1234
-      }).then((resp) => {
-        expect(resp.status).toBe(200);
-        return resp.text().then((log) => {
-          expect(log).toMatchSnapshot();
-          done();
-        });
-      });
-    }, 5000);
-  }, 10000);
-
-  e2e('logkeeper', (done) => {
-    fs.closeSync(fs.openSync(tmpdir() + '/lobster.txt', 'w'));
-    c = startServer(['--e2e']);
-    setTimeout(function() {
-      return api.fetchLogkeeper('build1234', 'test1234')
-        .then((resp) => {
-          expect(resp.status).toBe(200);
-          return resp.text().then((log) => {
-            expect(log).toMatchSnapshot();
-            done();
-          });
-        });
     }, 5000);
   }, 10000);
 });

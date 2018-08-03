@@ -43,7 +43,8 @@ module.exports = {
     {
       'files': ['src/**/*.spec.js*', 'src/**/*.test.js*', 'src/setupTests.js'],
       'env': {
-        'browser': true
+        'browser': true,
+        'node': true
       },
       'plugins': ['babel', 'react', 'jest'],
       'parserOptions': {
