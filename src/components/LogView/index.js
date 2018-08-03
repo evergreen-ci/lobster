@@ -393,14 +393,25 @@ class LogView extends React.Component {
   lineViewHandler = () => {
     console.log('scrolling');
     if (this.logListRef) {
-      console.log(this.logListRef);
       const visibleRange = this.logListRef.getVisibleRange();
+      console.log(this.logListRef);
       this.props.clearLineList();
-      console.log(visibleRange);
+      const start = visibleRange[0];
+      const end = visibleRange[1];
+      console.log(start);
+      console.log(end);
+      if (start && end) {
+        this.props.addLine(this.props.lines[start].lineNumber, this.props.lines[start].text);
+        this.props.addLine(this.props.lines[end].lineNumber, this.props.lines[end].text);
+      } else {
+        this.props.addLine(this.props.lines[this.logListRef.state.from].lineNumber, this.props.lines[this.logListRef.state.from].text);
+        this.props.addLine(this.props.lines[this.logListRef.state.size].lineNumber, this.props.lines[this.logListRef.state.size].text);
+      }
     }
   }
 
   render() {
+    window.addEventListener('scroll', this.lineViewHandler);
     let j = 0;
     this.indexMap = {};
     this.highlightLines = [];
