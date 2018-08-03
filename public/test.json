@@ -232,6 +232,20 @@
                 ]
               }
             }
+          },
+          {
+            "type": "rect",
+            "from": {"data": "annotation"},
+            "encode": {
+              "enter": {
+                "x": {"scale": "xDetail", "field": "start"},
+                "x2": {"scale": "xDetail", "field": "end"},
+                "y": {"scale": "yDetail", "value": 0},
+                "height": {"value": "10"},
+                "fill": {"scale": "colorscale", "field": "blue"},
+                "opacity": {"value": 1}
+              }
+            }
           }
           ]
         }

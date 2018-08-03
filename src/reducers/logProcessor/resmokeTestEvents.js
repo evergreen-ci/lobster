@@ -538,6 +538,8 @@ function makeEvent(type: string, start: ?Date, end: ?Date, fixtureId: string): E
 }
 
 function makeEventWithLine(type: string, start: ?Date, end: ?Date, fixtureId: string, line: LogEvent): Event {
+  console.log(start);
+  console.log(dateToString(start));
   return ({
     type: type,
     start: dateToString(start),

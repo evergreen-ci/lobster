@@ -95,8 +95,12 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
       })
       .then((data) => {
         console.log('succeeded in downloading file!');
+        const timeWindow = { start: Math.floor(this.props.scrollView.startDate), end: Math.floor(this.props.scrollView.endDate) };
         data.data[0].values = events;
+        data.data.push({ 'name': 'annotation', 'values': timeWindow });
         this.setState({ spec: data });
+        console.log(events);
+        console.log(data);
         this.graph();
       });
   }
