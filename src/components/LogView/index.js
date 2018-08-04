@@ -75,14 +75,13 @@ class LogView extends React.Component<Props, State> {
   }
 
   updateSelectEndIndex = (index: number) => {
-    if (this.state.selectStartIndex == null) {
+    const newClicks = this.state.clicks.slice();
+    if (this.state.selectStartIndex === null || this.state.selectStartIndex === undefined) {
       return;
     }
-    this.setState({ selectEndIndex: index });
-    const newClicks = this.state.clicks.slice();
     const clickElem = [this.state.selectStartIndex, index];
     newClicks.push(clickElem);
-    this.setState({ clicks: newClicks });
+    this.setState({ clicks: newClicks, selectEndIndex: index });
   }
 
   handleDoubleClick = () => {
@@ -260,10 +259,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
-  return {
-    ...ownProps
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(LogView);
+export default connect(mapStateToProps)(LogView);
