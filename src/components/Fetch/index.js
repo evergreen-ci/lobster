@@ -1,61 +1,67 @@
+// @flow
+
 import React from 'react';
+import type { Node as ReactNode } from 'react';
 import * as actions from '../../actions';
 import * as logviewerActions from '../../actions/logviewer';
 import './style.css';
 import LogView from '../LogView/index';
-import PropTypes from 'prop-types';
 import { Bookmarks } from './Bookmarks';
 import { connect } from 'react-redux';
 import queryString from '../../thirdparty/query-string';
 import Toolbar from './Toolbar';
+import type { Dispatch } from 'redux';
+import type { Log, LogIdentity, Settings, Filter, Highlight, Bookmark, Line } from '../../models';
+import type { ContextRouter } from 'react-router-dom';
 
-export class Fetch extends React.Component {
-  static propTypes = {
-    log: PropTypes.shape({
-      lines: PropTypes.array,
-      colorMap: PropTypes.object,
-      isDone: PropTypes.bool
-    }),
-    location: PropTypes.shape({
-      search: PropTypes.string,
-      hash: PropTypes.string
-    }),
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        build: PropTypes.string,
-        test: PropTypes.string
-      })
-    }),
-    logIdentity: PropTypes.object,
-    loadLogByIdentity: PropTypes.func,
-    history: PropTypes.object,
-    settings: PropTypes.shape({
-      wrap: PropTypes.bool.isRequired,
-      caseSensitive: PropTypes.bool.isRequired,
-      filterIntersection: PropTypes.bool.isRequired
-    }),
-    loadInitialFilters: PropTypes.func,
-    loadInitialHighlights: PropTypes.func,
-    filterList: PropTypes.array,
-    addFilter: PropTypes.func,
-    addHighlight: PropTypes.func,
-    highlightList: PropTypes.array,
-    bookmarks: PropTypes.array,
-    loadBookmarks: PropTypes.func,
-    toggleBookmark: PropTypes.func,
-    ensureBookmark: PropTypes.func,
-    findIdx: PropTypes.number.isRequired,
-    changeFindIdx: PropTypes.func.isRequired,
-    searchRegex: PropTypes.string.isRequired,
-    changeSearch: PropTypes.func.isRequired
-  };
+type Props = {
+  log: Log,
+  match: {
+    params: {
+      build: string,
+      test: string,
+      [key: string]: ?string
+    }
+  },
+  logIdentity: ?LogIdentity,
+  loadLogByIdentity: (LogIdentity) => void,
+  settings: Settings,
+  loadInitialFilters: (Filter[]) => void,
+  loadInitialHighlights: (Highlight[]) => void,
+  filterList: Filter[],
+  highlightList: Highlight[],
+  bookmarks: Bookmark[],
+  loadBookmarks: (Bookmark[]) => void,
+  toggleBookmark: (number[]) => void,
+  ensureBookmark: (number) => void,
+  findIdx: number,
+  changeFindIdx: (number) => void,
+  searchRegex: string,
+  changeSearch: (RegExp) => void,
+  addFilter: (string) => void,
+  addHighlight: (string) => void,
+} & ContextRouter
 
+type State = {
+  build: string,
+  test: string,
+  scrollLine: number,
+  server: ?string,
+  url: ?string,
+  detailsOpen: boolean,
+  findResults: number[],
+  lines?: Line[],
+}
+
+
+export class Fetch extends React.Component<Props, State> {
+  findInput: ?HTMLInputElement;
+  urlInput: ?HTMLInputElement;
   static defaultProps = {
-    lines: [],
     bookmarks: []
   }
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
     const locationSearch = props.location.search;
@@ -88,7 +94,7 @@ export class Fetch extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     if (this.props.filterList !== prevProps.filterList) {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
       this.clearFind();
@@ -105,14 +111,14 @@ export class Fetch extends React.Component {
     }
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     if (nextProps.log.lines !== prevState.lines) {
       return { lines: nextProps.log.lines };
     }
     return null;
   }
 
-  makeFilterURLString(filter) {
+  makeFilterURLString(filter: Filter): string {
     let res = '';
     res += (filter.on ? '1' : '0');
     res += (filter.inverse ? '1' : '0');
@@ -120,7 +126,7 @@ export class Fetch extends React.Component {
     return res;
   }
 
-  makeHighlightURLString(highlight) {
+  makeHighlightURLString(highlight: Highlight): string {
     let res = '';
     res += (highlight.on ? '1' : '0');
     res += (highlight.line ? '1' : '0');
@@ -128,7 +134,7 @@ export class Fetch extends React.Component {
     return res;
   }
 
-  updateURL(bookmarks, filters, highlights) {
+  updateURL(bookmarks: Bookmark[], filters: Filter[], highlights: Highlight[]) {
     const parsed = {};
     for (let i = 0; i < filters.length; i++) {
       parsed.f = this.makeFilterURLString(filters[i]);
@@ -152,10 +158,10 @@ export class Fetch extends React.Component {
     if (this.state.url) {
       parsed.url = this.state.url;
     }
-    window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));
+    window.history.replaceState({}, '', this.props.location.pathname + '#' + queryString.stringify(parsed));
   }
 
-  handleSubmit = (event) => {
+  handleSubmit = (event: KeyboardEvent) => {
     console.log('handleSubmit');
     event.preventDefault();
     // prepare do to the change
@@ -165,41 +171,46 @@ export class Fetch extends React.Component {
     }
 
     this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-
-    if (this.urlInput.value !== this.state.url) {
+    let value = null;
+    if (this.urlInput) {
+      value = this.urlInput.value;
+    } else {
+      return;
+    }
+    if (value !== this.state.url) {
       this.props.changeFindIdx(-1);
-      this.setState({ url: this.urlInput.value, findResults: [] });
+      this.setState({ url: value, findResults: [] });
       this.props.loadBookmarks([]);
       this.props.loadLogByIdentity({
         type: 'lobster',
-        server: this.state.server,
-        url: this.state.url
+        server: this.state.server ? this.state.server : '',
+        file: this.state.url ? this.state.url : ''
       });
     }
   }
 
-  setScroll = (lineNum) => {
+  setScroll = (lineNum: number) => {
     this.setState({ scrollLine: lineNum });
   }
 
-  findBookmark(bookmarkList, lineNum) {
+  findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
     return bookmarkList.findIndex(function(bookmark) {
       return bookmark.lineNumber === lineNum;
     });
   }
 
-  bookmarkSort(b1, b2) {
+  bookmarkSort(b1: Bookmark, b2: Bookmark): number {
     return b1.lineNumber - b2.lineNumber;
   }
 
-  find = (event) => {
+  find = (event?: KeyboardEvent) => {
     if (event) {
       event.preventDefault();
       if (event.keyCode === 13 && event.shiftKey) {
         return;
       }
     }
-    const findRegexp = this.findInput.value;
+    const findRegexp = this.findInput ? (this.findInput.value ? this.findInput.value : '') : '';
     const findRegexpFull = this.makeRegexp(findRegexp, this.props.settings.caseSensitive);
 
     if (findRegexp === '') {
@@ -256,11 +267,11 @@ export class Fetch extends React.Component {
 
   clearFind() {
     this.props.changeFindIdx(-1);
-    this.props.changeSearch('');
+    this.props.changeSearch(new RegExp(''));
     this.setState({ findResults: [] });
   }
 
-  shouldPrintLine = (bookmarks, line, filter, inverseFilter) => {
+  shouldPrintLine = (bookmarks: Bookmark[], line: Line, filter: RegExp[], inverseFilter: RegExp[]): boolean => {
     if (this.findBookmark(bookmarks, line.lineNumber) !== -1) {
       return true;
     }
@@ -268,7 +279,7 @@ export class Fetch extends React.Component {
     if ((!filter && !inverseFilter) || (filter.length === 0 && inverseFilter.length === 0)) {
       return true;
     } else if (!filter || filter.length === 0) {
-      if (this.matchFilters(inverseFilter, line.text)) {
+      if (this.matchFilters(inverseFilter, line.text, this.props.settings.filterIntersection)) {
         return false;
       }
       return true;
@@ -282,47 +293,53 @@ export class Fetch extends React.Component {
     // the inverseFilter.
     if (this.props.settings.filterIntersection) {
       if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection) &&
-            !this.matchFilters(inverseFilter, line.text)) {
+            !this.matchFilters(inverseFilter, line.text, this.props.settings.filterIntersection)) {
         return true;
       }
     } else if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection) ||
-          !this.matchFilters(inverseFilter, line.text)) {
+          !this.matchFilters(inverseFilter, line.text, this.props.settings.filterIntersection)) {
       return true;
     }
     return false;
   }
 
-  shouldHighlightLine = (line, highlight, highlightLine) => {
+  shouldHighlightLine = (line: Line, highlight: RegExp[], highlightLine: RegExp[]): boolean => {
     if (!highlight || highlight.length === 0) {
       return false;
     }
-    if (this.matchFilters(highlight, line.text, this.props.settings.filterIntersection) && this.matchFilters(highlightLine, line.text)) {
+    if (this.matchFilters(highlight, line.text, this.props.settings.filterIntersection) && this.matchFilters(highlightLine, line.text, this.props.settings.filterIntersection)) {
       return true;
     }
     return false;
   }
 
   addFilter = () => {
-    if (this.findInput.value === '' || this.props.filterList.find((elem) => elem.text === this.findInput.value)) {
-      return;
+    if (this.findInput) {
+      const value = this.findInput.value;
+      if (value === '' || this.props.filterList.find((elem) => elem.text === value)) {
+        return;
+      }
+      this.props.addFilter(value);
+      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
+      this.clearFind();
     }
-    this.props.addFilter(this.findInput.value);
-    this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-    this.clearFind();
   }
 
   addHighlight = () => {
-    if (this.findInput.value === '' || this.props.highlightList.find((elem) => elem.text === this.findInput.value)) {
-      return;
+    if (this.findInput) {
+      const value = this.findInput.value;
+      if (value === '' || this.props.highlightList.find((elem) => elem.text === value)) {
+        return;
+      }
+      this.props.addHighlight(value);
+      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
+      this.clearFind();
     }
-    this.props.addHighlight(this.findInput.value);
-    this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-    this.clearFind();
   }
 
-  makeRegexp(regexp, caseSensitive) {
+  makeRegexp(regexp: string, caseSensitive: boolean) {
     if (!regexp) {
-      return '';
+      return new RegExp('');
     }
 
     if (!caseSensitive) {
@@ -331,31 +348,31 @@ export class Fetch extends React.Component {
     return new RegExp(regexp);
   }
 
-  mergeActiveFilters(filterList, caseSensitive) {
+  mergeActiveFilters(filterList: Filter[], caseSensitive: boolean): RegExp[] {
     return filterList
       .filter((elem) => elem.on && !elem.inverse)
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
-  mergeActiveInverseFilters(filterList, caseSensitive) {
+  mergeActiveInverseFilters(filterList: Filter[], caseSensitive: boolean): RegExp[] {
     return filterList
       .filter((elem) => elem.on && elem.inverse)
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
-  mergeActiveHighlights(highlightList, caseSensitive) {
+  mergeActiveHighlights(highlightList: Highlight[], caseSensitive: boolean): RegExp[] {
     return highlightList
       .filter((elem) => elem.on)
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
-  mergeActiveHighlightLines(highlightList, caseSensitive) {
+  mergeActiveHighlightLines(highlightList: Highlight[], caseSensitive: boolean): RegExp[] {
     return highlightList
       .filter((elem) => elem.on && elem.line)
       .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
   }
 
-  getHighlightText(highlightList) {
+  getHighlightText(highlightList: Highlight[]): string[] {
     const highlight = [];
     highlightList.forEach((element) => {
       if (element.on && !element.line) {
@@ -368,14 +385,14 @@ export class Fetch extends React.Component {
   // Checks a given string against a list of regular expression filters
   // If isIntersection === false, will return true if the string matches at least one regex
   // Otherwise, will return true if the string matches all regexes
-  matchFilters(filter, string, isIntersection) {
+  matchFilters(filter: RegExp[], string: string, isIntersection: boolean): boolean {
     if (isIntersection) {
       return filter.every(regex => string.match(regex));
     }
     return filter.some(regex => string.match(regex));
   }
 
-  showLines() {
+  showLines(): ?ReactNode {
     const filter = this.mergeActiveFilters(this.props.filterList, this.props.settings.caseSensitive);
     const inverseFilter = this.mergeActiveInverseFilters(this.props.filterList, this.props.settings.caseSensitive);
     const highlight = this.mergeActiveHighlights(this.props.highlightList, this.props.settings.caseSensitive);
@@ -401,7 +418,7 @@ export class Fetch extends React.Component {
       />);
   }
 
-  showJIRA() {
+  showJIRA(): string {
     if (this.props.bookmarks.length === 0 || this.props.log.lines.length === 0) {
       return '';
     }
@@ -423,7 +440,7 @@ export class Fetch extends React.Component {
     return text;
   }
 
-  setURLRef = (ref) => {this.urlInput = ref;}
+  setURLRef = (ref: ?HTMLInputElement) => {this.urlInput = ref;}
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
@@ -439,7 +456,7 @@ export class Fetch extends React.Component {
     }
   }
 
-  handleKeyDown = (event) => {
+  handleKeyDown = (event: KeyboardEvent) => {
     switch (event.keyCode) {
       case 114: // F3
         this.focusOnFind(event);
@@ -454,13 +471,17 @@ export class Fetch extends React.Component {
     }
   }
 
-  focusOnFind(event) {
-    this.findInput.focus();
-    this.findInput.select();
+  focusOnFind(event: KeyboardEvent) {
+    if (this.findInput) {
+      this.findInput.focus();
+    }
+    if (this.findInput) {
+      this.findInput.select();
+    }
     event.preventDefault();
   }
 
-  handleShiftEnter = (event) => {
+  handleShiftEnter = (event: KeyboardEvent) => {
     if (this.state.findResults.length !== 0) {
       if (event.keyCode === 13 && event.shiftKey) {
         event.preventDefault();
@@ -470,7 +491,7 @@ export class Fetch extends React.Component {
   }
 
   togglePanel = () => this.setState((state) => ({ detailsOpen: !state.detailsOpen }));
-  setFormRef = (ref) => {this.findInput = ref;}
+  setFormRef = (ref: ?HTMLInputElement) => {this.findInput = ref;}
 
   render() {
     return (
@@ -482,7 +503,6 @@ export class Fetch extends React.Component {
             handleChangeFindEvent={this.find}
             searchRegex={this.props.searchRegex}
             find={this.find}
-            showFind={this.showFind}
             addFilter={this.addFilter}
             addHighlight={this.addHighlight}
             togglePanel={this.togglePanel}
@@ -509,12 +529,12 @@ export class Fetch extends React.Component {
 // This is not the ideal way to do this, but it allows for better compatibility
 // as we migrate towards the react-redux model
 function mapStateToProps(state, ownProps) {
-  return { ...state, ...ownProps, lines: state.log.lines, colorMap: state.log.colorMap,
+  return { ...state, ...ownProps, colorMap: state.log.colorMap,
     settings: state.settings, findIdx: state.find.findIdx, searchRegex: state.find.searchRegex,
     filterList: state.filters, highlightList: state.highlights, bookmarks: state.bookmarks };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   return {
     loadInitialFilters: (initialFilters) => dispatch(logviewerActions.loadInitialFilters(initialFilters)),
     loadInitialHighlights: (initialHighlights) => dispatch(logviewerActions.loadInitialHighlights(initialHighlights)),

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ToggleButton, ToggleButtonGroup, Button } from 'react-bootstrap';
-import type { Filter as FilterType } from '../../actions/logviewer';
+import type { Filter as FilterType } from '../../models';
 
 type FilterProps = {
   filter: FilterType,

@@ -2,15 +2,11 @@
 
 import { LOGVIEWER_CHANGE_FINDIDX, LOGVIEWER_CHANGE_SEARCH } from '../actions/logviewer';
 import type { Action } from '../actions';
-
-export type Find = {|
-  +findIdx: number,
-  +searchRegex: string
-|}
+import type { Find } from '../models';
 
 const initialState: Find = {
   findIdx: -1,
-  searchRegex: ''
+  searchRegex: new RegExp('')
 };
 
 export default function(state: Find = initialState, action: Action): Find {

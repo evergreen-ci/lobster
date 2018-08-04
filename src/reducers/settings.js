@@ -2,12 +2,7 @@
 
 import { LOGVIEWER_CHANGE_SETTING } from '../actions/logviewer';
 import type { Action } from '../actions';
-
-export type Settings = {|
-  +wrap: boolean,
-  +caseSensitive: boolean,
-  +filterIntersection: boolean
-|}
+import type { Settings } from '../models';
 
 const initialState: Settings = {
   wrap: false,
