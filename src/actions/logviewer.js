@@ -14,7 +14,7 @@ export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
 export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
 
 export type ChangeSetting = {|
-  +type: 'logviewer:change-setting',
+  type: 'logviewer:change-setting',
   +payload: {|
     +setting: string,
     +value: string
@@ -22,7 +22,7 @@ export type ChangeSetting = {|
 |}
 
 export type ChangeFilter = {|
-  +type: 'logviewer:change-filter',
+  type: 'logviewer:change-filter',
   +payload: {|
     +field: string,
     +text: string
@@ -30,7 +30,7 @@ export type ChangeFilter = {|
 |}
 
 export type ChangeHighlight = {|
-  +type: 'logviewer:change-highlight',
+  type: 'logviewer:change-highlight',
   +payload: {|
     +field: string,
     +text: string
@@ -38,49 +38,49 @@ export type ChangeHighlight = {|
 |}
 
 export type ChangeBookmark = {|
-  +type: 'logviewer:change-bookmark',
+  type: 'logviewer:change-bookmark',
   +payload: {|
     +lineNumArray: number[]
   |}
 |}
 
 export type EnsureBookmark = {|
-  +type: 'logviewer:ensure-bookmark',
+  type: 'logviewer:ensure-bookmark',
   +payload: {|
     +lineNum: number
   |}
 |}
 
 export type LoadBookmarks = {|
-  +type: 'logviewer:load-bookmarks',
+  type: 'logviewer:load-bookmarks',
   +payload: {|
     +bookmarksArr: Bookmark[]
   |}
 |}
 
 export type ChangeFindIdx = {|
-  +type: 'logviewer:change-findidx',
+  type: 'logviewer:change-findidx',
   +payload: {|
     +index: number
   |}
 |}
 
 export type ChangeSearch = {|
-  +type: 'logviewer:change-search',
+  type: 'logviewer:change-search',
   +payload: {|
     +text: RegExp
   |}
 |}
 
 export type LoadHighlights = {|
-  +type: 'logviewer:load-highlights',
+  type: 'logviewer:load-highlights',
   +payload: {|
     +initialHighlights: Highlight[]
   |}
 |}
 
 export type LoadFilters = {|
-  +type: 'logviewer:load-filters',
+  type: 'logviewer:load-filters',
   +payload: {|
     +initialFilters: Filter[]
   |}
