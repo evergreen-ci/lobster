@@ -2,11 +2,9 @@
 
 import React from 'react';
 import ReactList from 'react-list';
-import PropTypes from 'prop-types';
 import FullLogLine from './FullLogLine';
-import LogOptions from './LogLineText';
 import { connect } from 'react-redux';
-import type { ColorMap, Line, Bookmark, Filter, Highlight } from '../../models';
+import type { ColorMap, Line, Bookmark } from '../../models';
 
 import './style.css';
 

@@ -18,7 +18,7 @@ type Props = {
 
 type State = {
   startSelect: boolean,
-  endSelect:boolean ,
+  endSelect: boolean,
   clicks: number[],
   selectStartIndex: ?number,
   selectEndIndex: ?number,
