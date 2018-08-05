@@ -309,7 +309,7 @@ eventMatcherList.heartbeatSentEvent = (logLine: MongoLine): ?LogEvent => {
   if (match) {
     const hrEvent = initiateLogEvent('HeartbeatReceivedEvent', logLine.ts, logLine);
     hrEvent.requestId = match[1];
-    hrEvent.node = match.groups[2];
+    hrEvent.node = match[2];
     return hrEvent;
   }
   return null;
@@ -356,7 +356,15 @@ function parseMongoTs(line: string): ?Date {
   if (!match) {
     return null;
   }
-  return new Date(Date.UTC(match[1], match[2] - 1, match[3], match[4], match[5], match[6], match[7]));
+  return new Date(Date.UTC(
+    parseInt(match[1], 10),
+    parseInt(match[2], 10) - 1,
+    parseInt(match[3], 10),
+    parseInt(match[4], 10),
+    parseInt(match[5], 10),
+    parseInt(match[6], 10),
+    parseInt(match[7], 10)
+  ));
 }
 
 function initiateFixtureLogList(): FixtureLogList {
