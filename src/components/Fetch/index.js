@@ -529,9 +529,13 @@ export class Fetch extends React.Component<Props, State> {
 // This is not the ideal way to do this, but it allows for better compatibility
 // as we migrate towards the react-redux model
 function mapStateToProps(state, ownProps) {
-  return { ...state, ...ownProps, colorMap: state.log.colorMap,
-    settings: state.settings, findIdx: state.find.findIdx, searchRegex: state.find.searchRegex,
-    filterList: state.filters, highlightList: state.highlights, bookmarks: state.bookmarks };
+  return { ...state, ...ownProps,
+    settings: state.logviewer.settings,
+    findIdx: state.logviewer.find.findIdx,
+    searchRegex: state.logviewer.find.searchRegex,
+    filterList: state.logviewer.filters,
+    highlightList: state.logviewer.highlights,
+    bookmarks: state.logviewer.bookmarks };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {

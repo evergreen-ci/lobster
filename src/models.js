@@ -202,3 +202,11 @@ export type Find = $Exact<$ReadOnly<{
   findIdx: number,
   searchRegex: RegExp
 }>>
+
+export type Logviewer = $Exact<$ReadOnly<{
+  filters: Filter[],
+  highlights: Highlight[],
+  bookmarks: Bookmark[],
+  find: Find,
+  settings: Settings,
+}>>
