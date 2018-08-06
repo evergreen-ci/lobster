@@ -12,6 +12,7 @@ export const LOGVIEWER_LOAD_BOOKMARKS = 'logviewer:load-bookmarks';
 export const LOGVIEWER_ENSURE_BOOKMARK = 'logviewer:ensure-bookmark';
 export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
 export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
+export const LOGVIEWER_TOGGLE_SETTINGS_PANEL = 'logviewer:toggle-settings-panel';
 
 export type ChangeSetting = {|
   type: 'logviewer:change-setting',
@@ -86,6 +87,11 @@ export type LoadFilters = {|
   |}
 |}
 
+export type ToggleSettingsPanel = $Exact<{
+  type: 'logviewer:toggle-settings-panel',
+  +payload: $Exact<$ReadOnly<{}>>
+}>
+
 export type Action = ChangeSetting
   | ChangeFilter
   | ChangeHighlight
@@ -96,6 +102,7 @@ export type Action = ChangeSetting
   | ChangeSearch
   | LoadHighlights
   | LoadFilters
+  | ToggleSettingsPanel
 
 function toggleSetting(setting: string): ChangeSetting {
   return {
@@ -231,5 +238,12 @@ export function changeSearch(text: RegExp): ChangeSearch {
     payload: {
       text: text
     }
+  };
+}
+
+export function toggleSettingsPanel(): ToggleSettingsPanel {
+  return {
+    type: LOGVIEWER_TOGGLE_SETTINGS_PANEL,
+    payload: {}
   };
 }

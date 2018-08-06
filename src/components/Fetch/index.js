@@ -48,7 +48,6 @@ type State = {
   scrollLine: number,
   server: ?string,
   url: ?string,
-  detailsOpen: boolean,
   findResults: number[],
   lines?: Line[],
 }
@@ -79,7 +78,6 @@ export class Fetch extends React.Component<Props, State> {
       scrollLine: parseInt(parsed.scroll, 10),
       server: parsed.server || null,
       url: parsed.url || null,
-      detailsOpen: false,
       findResults: []
     };
     const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({ text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1') }));
@@ -463,7 +461,6 @@ export class Fetch extends React.Component<Props, State> {
     }
   }
 
-  togglePanel = () => this.setState((state) => ({ detailsOpen: !state.detailsOpen }));
   setFormRef = (ref: ?HTMLInputElement) => {this.findInput = ref;}
 
   render() {
@@ -474,12 +471,9 @@ export class Fetch extends React.Component<Props, State> {
           <Toolbar
             setFormRef={this.setFormRef}
             handleChangeFindEvent={this.find}
-            searchRegex={this.props.searchRegex}
             find={this.find}
             addFilter={this.addFilter}
             addHighlight={this.addHighlight}
-            togglePanel={this.togglePanel}
-            detailsOpen={this.state.detailsOpen}
             handleSubmit={this.handleSubmit}
             server={this.state.server}
             build={this.state.build}

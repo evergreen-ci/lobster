@@ -5,6 +5,7 @@ import highlights from './highlights';
 import bookmarks from './bookmarks';
 import find from './find';
 import settings from './settings';
+import settingsPanel from './settingsPanel';
 import { combineReducers } from 'redux';
 
 export default combineReducers({
@@ -12,5 +13,6 @@ export default combineReducers({
   highlights: highlights,
   bookmarks: bookmarks,
   find: find,
-  settings: settings
+  settings: settings,
+  settingsPanel: settingsPanel
 });

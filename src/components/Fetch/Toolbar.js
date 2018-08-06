@@ -5,6 +5,7 @@ import './style.css';
 import { Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col } from 'react-bootstrap';
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
+import { toggleSettingsPanel } from '../../actions/logviewer';
 
 type Props = {
   setFormRef: (?HTMLInputElement) => void,
@@ -76,11 +77,20 @@ export class Toolbar extends React.PureComponent<Props> {
 
 function mapStateToProps(state, ownProps) {
   return {
-    ...state, ...ownProps,
+    ...state,
+    ...ownProps,
     settings: state.logviewer.settings,
     findIdx: state.logviewer.find.findIdx,
-    searchRegex: state.logviewer.find.searchRegex
+    searchRegex: state.logviewer.find.searchRegex,
+    detailsOpen: state.logviewer.settingsPanel
   };
 }
 
-export default connect(mapStateToProps)(Toolbar);
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
+  return {
+    ...ownProps,
+    togglePanel: () => dispatch(toggleSettingsPanel())
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);
