@@ -199,10 +199,6 @@ export class Fetch extends React.Component<Props, State> {
     });
   }
 
-  bookmarkSort(b1: Bookmark, b2: Bookmark): number {
-    return b1.lineNumber - b2.lineNumber;
-  }
-
   find = (event?: KeyboardEvent) => {
     if (event) {
       event.preventDefault();
@@ -413,7 +409,6 @@ export class Fetch extends React.Component<Props, State> {
         bookmarks={this.props.bookmarks}
         highlightText={highlightText}
         findLine={this.props.findIdx === -1 ? -1 : this.state.findResults[this.props.findIdx]}
-        shouldPrintLine={this.shouldPrintLine}
         shouldHighlightLine={this.shouldHighlightLine}
       />);
   }

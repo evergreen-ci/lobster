@@ -137,11 +137,11 @@ export class Toolbar extends React.Component<Props> {
 function mapStateToProps(state, ownProps) {
   return {
     ...state, ...ownProps,
-    settings: state.settings,
-    filterList: state.filters,
-    highlightList: state.highlights,
-    findIdx: state.find.findIdx,
-    searchRegex: state.find.searchRegex,
+    settings: state.logviewer.settings,
+    filterList: state.logviewer.filters,
+    highlightList: state.logviewer.highlights,
+    findIdx: state.logviewer.find.findIdx,
+    searchRegex: state.logviewer.find.searchRegex,
     logIdentity: state.log.identity
   };
 }

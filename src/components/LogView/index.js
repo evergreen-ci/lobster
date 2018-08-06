@@ -4,6 +4,7 @@ import React from 'react';
 import ReactList from 'react-list';
 import FullLogLine from './FullLogLine';
 import { connect } from 'react-redux';
+import search from '../../selectors/search';
 import type { ColorMap, Line, Bookmark } from '../../models';
 
 import './style.css';
@@ -24,7 +25,6 @@ type Props = {
   highlight: RegExp[],
   highlightText: string[],
   highlightLine: RegExp[],
-  shouldPrintLine: (bookmarks: Bookmark[], line: Line, filter: RegExp[], inverseFilter: RegExp[]) => boolean,
   shouldHighlightLine: (line: Line, highlight: RegExp[], highlightLine: RegExp[]) => boolean
 };
 
@@ -38,7 +38,6 @@ type State = {
 };
 
 class LogView extends React.Component<Props, State> {
-  filteredLines: Line[] = [];
   highlightLines: Line[] = [];
   logListRef: ?ReactList = null;
   indexMap: { [number]: number }
@@ -109,11 +108,11 @@ class LogView extends React.Component<Props, State> {
       <FullLogLine
         lineRefCallback={this.lineRefCallback}
         key={key}
-        found={this.filteredLines[index].lineNumber === this.props.findLine}
-        bookmarked={this.props.findBookmark(this.props.bookmarks, this.filteredLines[index].lineNumber) !== -1}
-        highlight={this.highlightLines.includes(this.filteredLines[index])}
+        found={this.props.lines[index].lineNumber === this.props.findLine}
+        bookmarked={this.props.findBookmark(this.props.bookmarks, this.props.lines[index].lineNumber) !== -1}
+        highlight={this.highlightLines.includes(this.props.lines[index])}
         wrap={this.props.wrap}
-        line={this.filteredLines[index]}
+        line={this.props.lines[index]}
         toggleBookmark={this.props.toggleBookmark}
         colorMap={this.props.colorMap}
         find={this.props.find}
@@ -220,25 +219,20 @@ class LogView extends React.Component<Props, State> {
   render() {
     let j = 0;
     this.indexMap = new Map();
-    this.highlightLines = [];
-    this.filteredLines = this.props.lines.filter((line, i) => {
-      if (!this.props.shouldPrintLine(this.props.bookmarks, line, this.props.filter, this.props.inverseFilter)) {
-        return false;
+    this.highlightLines = this.props.lines.filter((line, index) => {
+      this.indexMap[index] = j++;
+      if (this.props.shouldHighlightLine(line, this.props.highlight, this.props.highlightLine)) {
+        return true;
       }
-      this.indexMap[i] = j++;
-      if (this.props.highlight.length > 0
-        && this.props.shouldHighlightLine(line, this.props.highlight, this.props.highlightLine)) {
-        this.highlightLines.push(line);
-      }
-      return true;
+      return false;
     });
-    if (this.filteredLines.length !== 0) {
+    if (this.props.lines.length !== 0) {
       return (
         <div>
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
-            length={this.filteredLines.length}
+            length={this.props.lines.length}
             initialIndex={this.props.scrollLine}
             type={this.props.wrap ? 'variable' : 'uniform'}
             useStaticSize={true}
@@ -252,10 +246,11 @@ class LogView extends React.Component<Props, State> {
 
 function mapStateToProps(state, ownProps) {
   return { ...state, ...ownProps,
-    colorMap: state.log.colorMap, lines: state.log.lines,
-    caseSensitive: state.settings.caseSensitive,
-    wrap: state.settings.wrap,
-    find: state.find.searchRegex
+    colorMap: state.log.colorMap,
+    lines: search(state, ownProps),
+    caseSensitive: state.logviewer.settings.caseSensitive,
+    wrap: state.logviewer.settings.wrap,
+    find: state.logviewer.find.searchRegex
   };
 }
 
