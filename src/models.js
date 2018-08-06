@@ -198,9 +198,14 @@ export type Log = $Exact<$ReadOnly<{
   events: Event[]
 }>>
 
+export type SearchTerm = $Exact<$ReadOnly<{
+  term: string,
+  regex: RegExp
+}>>
+
 export type Find = $Exact<$ReadOnly<{
   findIdx: number,
-  searchRegex: RegExp
+  searchTerm: ?SearchTerm
 }>>
 
 export type Logviewer = $Exact<$ReadOnly<{
@@ -209,4 +214,10 @@ export type Logviewer = $Exact<$ReadOnly<{
   bookmarks: Bookmark[],
   find: Find,
   settings: Settings,
+}>>
+
+export type VisualLineData = $Exact<$ReadOnly<{
+  filteredLines: Line[],
+  indexMap: Map<number, number>,
+  highlights: Set<number>
 }>>

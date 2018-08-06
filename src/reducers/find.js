@@ -6,7 +6,7 @@ import type { Find } from '../models';
 
 const initialState: Find = {
   findIdx: -1,
-  searchRegex: new RegExp('')
+  searchTerm: null
 };
 
 export default function(state: Find = initialState, action: Action): Find {
@@ -14,7 +14,18 @@ export default function(state: Find = initialState, action: Action): Find {
     return { ...state, findIdx: action.payload.index };
   }
   if (action.type === LOGVIEWER_CHANGE_SEARCH) {
-    return { ...state, searchRegex: action.payload.text };
+    const { text } = action.payload;
+    if (text === '') {
+      return { ...state, searchTerm: null };
+
+    }
+    return {
+      ...state,
+      searchTerm: {
+        term: text,
+        regex: new RegExp(text)
+      }
+    };
   }
   return state;
 }

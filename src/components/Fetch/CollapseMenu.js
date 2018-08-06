@@ -38,7 +38,7 @@ type Props = {
   handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
   setURLRef: (?HTMLInputElement) => void,
   valueJIRA: string,
-  logIdentity: ?LogIdentity
+  logIdentity: ?LogIdentity,
 }
 
 function showLogBox(id: ?LogIdentity, setURLRef: (?HTMLInputElement) => void): ?ReactNode {
@@ -200,7 +200,6 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
     toggleSettings: toggleSettings,
     filterActions, highlightActions,
     changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
-    changeSearch: (text) => dispatch(actions.changeSearch(text)),
     wipeCache: () => dispatch(wipeCache())
   };
 }

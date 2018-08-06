@@ -43,11 +43,7 @@ type Props = {
 } & ContextRouter
 
 type State = {
-  build: string,
-  test: string,
   scrollLine: number,
-  server: ?string,
-  url: ?string,
   findResults: number[],
   lines?: Line[],
 }
@@ -73,11 +69,7 @@ export class Fetch extends React.Component<Props, State> {
     }
     this.props.loadBookmarks(bookmarksArr);
     this.state = {
-      build: params.build,
-      test: params.test,
       scrollLine: parseInt(parsed.scroll, 10),
-      server: parsed.server || null,
-      url: parsed.url || null,
       findResults: []
     };
     const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({ text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1') }));
@@ -387,8 +379,6 @@ export class Fetch extends React.Component<Props, State> {
   }
 
   showLines(): ?ReactNode {
-    const filter = this.mergeActiveFilters(this.props.filterList, this.props.settings.caseSensitive);
-    const inverseFilter = this.mergeActiveInverseFilters(this.props.filterList, this.props.settings.caseSensitive);
     const highlight = this.mergeActiveHighlights(this.props.highlightList, this.props.settings.caseSensitive);
     const highlightText = this.getHighlightText(this.props.highlightList);
     const highlightLine = this.mergeActiveHighlightLines(this.props.highlightList, this.props.settings.caseSensitive);
@@ -397,8 +387,6 @@ export class Fetch extends React.Component<Props, State> {
     }
     return (
       <LogView
-        filter={filter}
-        inverseFilter={inverseFilter}
         highlight={highlight}
         highlightLine={highlightLine}
         scrollLine={this.state.scrollLine}
@@ -475,9 +463,6 @@ export class Fetch extends React.Component<Props, State> {
             addFilter={this.addFilter}
             addHighlight={this.addHighlight}
             handleSubmit={this.handleSubmit}
-            server={this.state.server}
-            build={this.state.build}
-            url={this.state.url}
             setURLRef={this.setURLRef}
             findResults={this.state.findResults}
             nextFind={this.nextFind}
