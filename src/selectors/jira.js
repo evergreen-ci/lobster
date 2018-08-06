@@ -2,12 +2,12 @@
 
 import { createSelector } from 'reselect';
 
-const logLines = (state) => state.log.lines;
-const bookmarks = (state) => state.logviewer.bookmarks;
+const getLogLines = (state) => state.log.lines;
+const getBookmarks = (state) => state.logviewer.bookmarks;
 
 export default createSelector(
-  logLines,
-  bookmarks,
+  getLogLines,
+  getBookmarks,
   function(lines, bookmarks) {
     if (bookmarks.length === 0 || lines.length === 0) {
       return '';

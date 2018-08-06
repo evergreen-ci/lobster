@@ -72,18 +72,18 @@ function makeRegexp(regexp: string, caseSensitive: boolean) {
 }
 
 
-const searchTerm = (state) => state.logviewer.find.text;
-const logLines = (state) => state.log.lines;
-const filters = (state) => state.logviewer.filters;
-const bookmarks = (state) => state.logviewer.bookmarks;
-const settings = (state) => state.logviewer.settings;
+const getSearchTerm = (state) => state.logviewer.find.text;
+const getLogLines = (state) => state.log.lines;
+const getFilters = (state) => state.logviewer.filters;
+const getBookmarks = (state) => state.logviewer.bookmarks;
+const getSettings = (state) => state.logviewer.settings;
 
 export default createSelector(
-  searchTerm,
-  logLines,
-  filters,
-  bookmarks,
-  settings,
+  getSearchTerm,
+  getLogLines,
+  getFilters,
+  getBookmarks,
+  getSettings,
   function(searchTerm, lines, filters, bookmarks, settings) {
     const findRegexpFull = makeRegexp(searchTerm, settings.caseSensitive);
     const filter = mergeActiveFilters(filters, settings.caseSensitive);
