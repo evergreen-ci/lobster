@@ -6,6 +6,7 @@ import { Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col 
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
 import { toggleSettingsPanel } from '../../actions/logviewer';
+import type { Settings } from '../../models';
 
 type Props = {
   setFormRef: (?HTMLInputElement) => void,

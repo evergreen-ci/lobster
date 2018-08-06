@@ -89,7 +89,7 @@ export type LoadFilters = {|
 
 export type ToggleSettingsPanel = $Exact<{
   type: 'logviewer:toggle-settings-panel',
-  +payload: $Exact<$ReadOnly<{}>>
+  +payload: {}
 }>
 
 export type Action = ChangeSetting

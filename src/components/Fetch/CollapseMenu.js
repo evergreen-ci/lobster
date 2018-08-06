@@ -12,6 +12,7 @@ import * as actions from '../../actions/logviewer';
 import { wipeCache } from '../../actions';
 import { connect } from 'react-redux';
 import jira from '../../selectors/jira';
+import type { LogIdentity, Highlight, Filter } from '../../models';
 
 type Props = {
   settings: Settings,
@@ -35,23 +36,20 @@ type Props = {
   highlightList: Highlight[],
   detailsOpen: boolean,
   handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
-  server?: string,
-  url?: string,
-  build: string,
   setURLRef: (?HTMLInputElement) => void,
   valueJIRA: string,
   logIdentity: ?LogIdentity
 }
 
-function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement) => void): ?ReactNode {
-  if (server) {
+function showLogBox(id: ?LogIdentity, setURLRef: (?HTMLInputElement) => void): ?ReactNode {
+  if (id && id.type === 'lobster') {
     return (
       <FormGroup controlId="urlInput">
         <Col componentClass={ControlLabel} lg={1}>Log</Col>
         <Col lg={6}>
           <FormControl
             type="text"
-            defaultValue={url}
+            defaultValue={id.file}
             placeholder="optional. custom file location iff used with local server"
             inputRef={setURLRef}
           />
@@ -107,7 +105,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
       <Collapse className="collapse-menu" in={this.props.detailsOpen}>
         <div>
           <Form horizontal onSubmit={this.props.handleSubmit}>
-            {showLogBox(this.props.server, this.props.url, this.props.setURLRef)}
+            {showLogBox(this.props.logIdentity, this.props.setURLRef)}
             <FormGroup controlId="collapseButtons">
               <Col lg={5}>
                 <span className="far-left-label">Wrap</span>
