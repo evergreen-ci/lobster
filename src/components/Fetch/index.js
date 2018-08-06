@@ -413,28 +413,6 @@ export class Fetch extends React.Component<Props, State> {
       />);
   }
 
-  showJIRA(): string {
-    if (this.props.bookmarks.length === 0 || this.props.log.lines.length === 0) {
-      return '';
-    }
-
-    let text = '{noformat}\n';
-    for (let i = 0; i < this.props.bookmarks.length; i++) {
-      const curr = this.props.bookmarks[i].lineNumber;
-      if (curr >= this.props.log.lines.length) {
-        text += '{noformat}';
-        return text;
-      }
-
-      text += this.props.log.lines[curr].text + '\n';
-      if ((i !== (this.props.bookmarks.length - 1)) && (this.props.bookmarks[i + 1].lineNumber !== (curr + 1))) {
-        text += '...\n';
-      }
-    }
-    text += '{noformat}';
-    return text;
-  }
-
   setURLRef = (ref: ?HTMLInputElement) => {this.urlInput = ref;}
 
   componentDidMount() {
@@ -507,7 +485,6 @@ export class Fetch extends React.Component<Props, State> {
             build={this.state.build}
             url={this.state.url}
             setURLRef={this.setURLRef}
-            valueJIRA={this.showJIRA()}
             findResults={this.state.findResults}
             nextFind={this.nextFind}
             prevFind={this.prevFind}

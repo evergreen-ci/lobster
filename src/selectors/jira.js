@@ -1,7 +1,6 @@
 // @flow strict
 
 import { createSelector } from 'reselect';
-import type { Line, Bookmark, Filter } from '../models';
 
 const logLines = (state) => state.log.lines;
 const bookmarks = (state) => state.logviewer.bookmarks;

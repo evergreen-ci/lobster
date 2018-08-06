@@ -6,8 +6,12 @@ import './style.css';
 import { Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
-import type { LogIdentity, Highlight, Filter, Settings } from '../../models';
+import type { Settings } from '../../models';
 import * as api from '../../api';
+import * as actions from '../../actions/logviewer';
+import { wipeCache } from '../../actions';
+import { connect } from 'react-redux';
+import jira from '../../selectors/jira';
 
 type Props = {
   settings: Settings,
@@ -163,4 +167,44 @@ export class CollapseMenu extends React.PureComponent<Props> {
   }
 }
 
-export default CollapseMenu;
+function mapStateToProps(state, ownProps) {
+  return {
+    ...state, ...ownProps,
+    settings: state.logviewer.settings,
+    filterList: state.logviewer.filters,
+    highlightList: state.logviewer.highlights,
+    findIdx: state.logviewer.find.findIdx,
+    searchRegex: state.logviewer.find.searchRegex,
+    logIdentity: state.log.identity,
+    valueJIRA: jira(state, ownProps)
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
+  const filterActions = {
+    toggleFilter: (text) => dispatch(actions.toggleFilter(text)),
+    toggleFilterInverse: (text) => dispatch(actions.toggleFilterInverse(text)),
+    removeFilter: (text) => dispatch(actions.removeFilter(text))
+  };
+  const highlightActions = {
+    toggleHighlight: (text) => dispatch(actions.toggleHighlight(text)),
+    toggleHighlightLine: (text) => dispatch(actions.toggleHighlightLine(text)),
+    removeHighlight: (text) => dispatch(actions.removeHighlight(text))
+  };
+  const toggleSettings = {
+    toggleWrap: () => dispatch(actions.toggleLineWrap()),
+    toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
+    toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection())
+  };
+
+  return {
+    ...ownProps,
+    toggleSettings: toggleSettings,
+    filterActions, highlightActions,
+    changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
+    changeSearch: (text) => dispatch(actions.changeSearch(text)),
+    wipeCache: () => dispatch(wipeCache())
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CollapseMenu);

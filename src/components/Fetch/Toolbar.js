@@ -5,76 +5,28 @@ import './style.css';
 import { Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col } from 'react-bootstrap';
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
-import { wipeCache } from '../../actions';
-import * as actions from '../../actions/logviewer';
-import type { Highlight, Filter, Settings, LogIdentity } from '../../models';
 
 type Props = {
   setFormRef: (?HTMLInputElement) => void,
   settings: Settings,
-  toggleSettings: {
-    toggleWrap: () => void,
-    toggleCaseSensitive: () => void,
-    toggleFilterIntersection: () => void
-  },
   handleChangeFindEvent: () => void,
   searchRegex: string,
   find: (SyntheticEvent<HTMLButtonElement>) => void,
   addFilter: () => void,
   addHighlight: () => void,
-  filterActions: {
-    removeFilter: (string) => void,
-    toggleFilter: (string) => void,
-    toggleFilterInverse: (string) => void
-  },
-  highlightActions: {
-    removeHighlight: (string) => void,
-    toggleHighlight: (string) => void,
-    toggleHighlightLine: (string) => void
-  },
   wipeCache: () => void,
-  filterList: Filter[],
-  highlightList: Highlight[],
   togglePanel: () => void,
   detailsOpen: boolean,
   handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
-  server?: string,
-  url?: string,
-  build: string,
   setURLRef: (?HTMLInputElement) => void,
-  valueJIRA: string,
   findIdx: number,
   findResults: number[],
   changeFindIdx: (number) => void,
-  changeSearch: (string) => void,
   nextFind: () => void,
-  prevFind: () => void,
-  logIdentity: ?LogIdentity
+  prevFind: () => void
 };
 
-export class Toolbar extends React.Component<Props> {
-  shouldComponentUpdate(nextProps: Props, _nextState: void) {
-    if (nextProps.detailsOpen !== this.props.detailsOpen) {
-      return true;
-    }
-    if (nextProps.findIdx !== this.props.findIdx) {
-      return true;
-    }
-    if (nextProps.findResults !== this.props.findResults) {
-      return true;
-    }
-    if (nextProps.settings !== this.props.settings) {
-      return true;
-    }
-    if (nextProps.toggleSettings !== this.props.toggleSettings) {
-      return true;
-    }
-    if (nextProps.filterList !== this.props.filterList || nextProps.highlightList !== this.props.highlightList) {
-      return true;
-    }
-    return false;
-  }
-
+export class Toolbar extends React.PureComponent<Props> {
   showFind = () => {
     if (this.props.searchRegex !== '') {
       if (this.props.findResults.length > 0) {
@@ -112,21 +64,9 @@ export class Toolbar extends React.Component<Props> {
             </FormGroup>
           </Form>
           <CollapseMenu
-            detailsOpen={this.props.detailsOpen}
             handleSubmit={this.props.handleSubmit}
-            settings={this.props.settings}
-            server={this.props.server}
-            url={this.props.url}
-            toggleSettings={this.props.toggleSettings}
-            build={this.props.build}
             setURLRef={this.props.setURLRef}
-            valueJIRA={this.props.valueJIRA}
-            filterActions={this.props.filterActions}
-            highlightActions={this.props.highlightActions}
-            highlightList={this.props.highlightList}
-            filterList={this.props.filterList}
-            wipeCache={this.props.wipeCache}
-            logIdentity={this.props.logIdentity}
+            detailsOpen={this.props.detailsOpen}
           />
         </div>
       </Col>
@@ -138,37 +78,9 @@ function mapStateToProps(state, ownProps) {
   return {
     ...state, ...ownProps,
     settings: state.logviewer.settings,
-    filterList: state.logviewer.filters,
-    highlightList: state.logviewer.highlights,
     findIdx: state.logviewer.find.findIdx,
-    searchRegex: state.logviewer.find.searchRegex,
-    logIdentity: state.log.identity
+    searchRegex: state.logviewer.find.searchRegex
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
-  const filterActions = {
-    toggleFilter: (text) => dispatch(actions.toggleFilter(text)),
-    toggleFilterInverse: (text) => dispatch(actions.toggleFilterInverse(text)),
-    removeFilter: (text) => dispatch(actions.removeFilter(text))
-  };
-  const highlightActions = {
-    toggleHighlight: (text) => dispatch(actions.toggleHighlight(text)),
-    toggleHighlightLine: (text) => dispatch(actions.toggleHighlightLine(text)),
-    removeHighlight: (text) => dispatch(actions.removeHighlight(text))
-  };
-  const toggleSettings = {
-    toggleWrap: () => dispatch(actions.toggleLineWrap()),
-    toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
-    toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection())
-  };
-
-  return {
-    ...ownProps, toggleSettings: toggleSettings, filterActions, highlightActions,
-    changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
-    changeSearch: (text) => dispatch(actions.changeSearch(text)),
-    wipeCache: () => dispatch(wipeCache())
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);
+export default connect(mapStateToProps)(Toolbar);
