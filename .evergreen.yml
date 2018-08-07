@@ -6,7 +6,7 @@ ignore:
 
 variables:
   - &node
-    NODEJS_VERSION: 8.9.3
+    NODEJS_VERSION: 8.11.3
   - &drivers
     CHROMEDRIVER_URL: https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip
     GECKODRIVER_URL: https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz
@@ -113,6 +113,36 @@ functions:
         tar xf geckodriver.tar.gz
         rm geckodriver.tar.gz
 
+  e2e:
+    command: shell.exec
+    params:
+      working_dir: lobster
+      shell: bash
+      script: |
+        set -ex
+        export PATH="/opt/google/chrome:${workdir}/driver:${workdir}/nodejs/bin:$PATH"
+        export CI=true
+        export NPM_CONFIG_CACHE="./.node_cache"
+        export IS_VM=true
+        npm run test:e2e -- --browser ${browser}
+
+  killallthethings:
+    command: shell.exec
+    params:
+      working_dir: lobster
+      shell: bash
+      silent: true
+      ignore_standard_error: true
+      ignore_standard_out: true
+      script: |
+        # do not set -ex this!
+        killall node
+        killall npm
+        killall chromedriver
+        killall chrome
+        killall geckodriver
+        killall firefox
+
 
 post:
   - command: shell.exec
@@ -127,6 +157,7 @@ post:
         rm ./.node_cache/_logs/*log
   - func: results-attach
   - func: results-clean
+  - func: killallthethings
 
 
 tasks:
@@ -172,19 +203,9 @@ tasks:
       - func: npm
         vars:
           cmd: run-script build
-      - command: shell.exec
-        params:
-          working_dir: lobster
-          shell: bash
-          script: |
-            set -ex
-            pushd ../driver
-            export PATH="/opt/google/chrome:$PWD:${workdir}/nodejs/bin:$PATH"
-            popd
-            export CI=true
-            export NPM_CONFIG_CACHE="./.node_cache"
-            export IS_VM=true
-            npm run test:e2e -- --browser chrome
+      - func: e2e
+        vars:
+          browser: chrome
 
   - name: e2e-firefox
     depends_on:
@@ -196,19 +217,9 @@ tasks:
       - func: npm
         vars:
           cmd: run-script build
-      - command: shell.exec
-        params:
-          working_dir: lobster
-          shell: bash
-          script: |
-            set -ex
-            pushd ../driver
-            export PATH="$PWD:${workdir}/nodejs/bin:$PATH"
-            popd
-            export CI=true
-            export NPM_CONFIG_CACHE="./.node_cache"
-            export IS_VM=true
-            npm run test:e2e -- --browser firefox
+      - func: e2e
+        vars:
+          browser: firefox
 
 
 buildvariants:
