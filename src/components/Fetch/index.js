@@ -61,7 +61,6 @@ export class Fetch extends React.Component<Props, State> {
     // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
     const locationSearch = props.location.search;
     const parsed = queryString.parse(locationSearch === '' ? props.location.hash : locationSearch);
-    const params = this.props.match.params;
     const bookmarksList = parsed.bookmarks;
     let bookmarksArr = [];
     if (bookmarksList) {
@@ -196,7 +195,7 @@ export class Fetch extends React.Component<Props, State> {
         return;
       }
     }
-    const findRegexp = this.findInput ? (this.findInput.value ? this.findInput.value : '') : '';
+    const findRegexp = this.findInput.value || '';
     const findRegexpFull = this.makeRegexp(findRegexp, this.props.settings.caseSensitive);
 
     if (findRegexp === '') {

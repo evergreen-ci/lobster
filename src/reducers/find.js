@@ -17,7 +17,6 @@ export default function(state: Find = initialState, action: Action): Find {
     const { text } = action.payload;
     if (text === '') {
       return { ...state, searchTerm: null };
-
     }
     return {
       ...state,
