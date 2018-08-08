@@ -8,7 +8,7 @@ import type { ColorMap } from '../../models';
 type Props = {
   caseSensitive: boolean,
   colorMap: ColorMap,
-  find: string,
+  searchTerm: string,
   lineNumber: number,
   lineRefCallback: (?HTMLSpanElement, number, isUnmount?: boolean) => void,
   port: ?string,
@@ -54,7 +54,7 @@ export default class LogLineText extends React.Component<Props, State> {
 
   updateHighlightAndFind() {
     const newHighlight = this.props.highlightText.slice();
-    newHighlight.push(this.props.find);
+    newHighlight.push(this.props.searchTerm);
     return newHighlight;
   }
 
@@ -78,7 +78,7 @@ export default class LogLineText extends React.Component<Props, State> {
           unhighlightStyle={style}
           highlightStyle={highlightStyle}
           textToHighlight={this.props.text}
-          searchWords={this.props.highlightText.length === 0 ? [this.props.find] : highlightAndFind}
+          searchWords={this.props.highlightText.length === 0 ? [this.props.searchTerm] : highlightAndFind}
         />
       </span>
     );

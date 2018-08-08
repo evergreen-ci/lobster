@@ -5,16 +5,15 @@ import './style.css';
 import { Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col } from 'react-bootstrap';
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
-import { search, toggleSettingsPanel, setSearch } from '../../actions/logviewer';
+import { addFilter, addHighlight, search, toggleSettingsPanel, setSearch } from '../../actions/logviewer';
 import type { Settings, LineData } from '../../models';
-import type { Ref } from 'react';
 
 type Props = {
   setFormRef: (?HTMLInputElement) => void,
   settings: Settings,
   searchTerm: string,
-  addFilter: () => void,
-  addHighlight: () => void,
+  addFilter: (string) => void,
+  addHighlight: (string) => void,
   wipeCache: () => void,
   togglePanel: () => void,
   detailsOpen: boolean,
@@ -29,12 +28,7 @@ type Props = {
 };
 
 export class Toolbar extends React.PureComponent<Props> {
-  findInput: Ref<*>
-
-  constructor(props: Props) {
-    super(props);
-    this.findInput = React.createRef();
-  }
+  findInput: ?HTMLInputElement
 
   showFind = () => {
     if (this.props.searchTerm !== '') {
@@ -50,8 +44,8 @@ export class Toolbar extends React.PureComponent<Props> {
   }
 
   handleChangeFindEvent = () => {
-    if (this.findInput.current != null) {
-      this.props.setSearch(this.findInput.current.value);
+    if (this.findInput != null) {
+      this.props.setSearch(this.findInput.value);
     }
   }
 
@@ -68,8 +62,8 @@ export class Toolbar extends React.PureComponent<Props> {
 
   focusOnFind(event: KeyboardEvent) {
     event.preventDefault();
-    if (this.findInput.current) {
-      this.findInput.current.focus();
+    if (this.findInput) {
+      this.findInput.focus();
     }
   }
 
@@ -88,16 +82,27 @@ export class Toolbar extends React.PureComponent<Props> {
     }
   }
 
+  setFindInputRef(ref: ?HTMLInputElement) {
+    this.findInput = ref;
+  }
+
+  addFilter() {
+
+  }
+  addHighlight() {
+
+  }
+
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
-    if (this.findInput.current) {
-      this.findInput.current.addEventListener('keydown', this.submit);
+    if (this.findInput) {
+      this.findInput.addEventListener('keydown', this.submit);
     }
   }
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
-    if (this.findInput.current) {
-      this.findInput.current.removeEventListener('keydown', this.submit);
+    if (this.findInput) {
+      this.findInput.removeEventListener('keydown', this.submit);
     }
   }
 
@@ -109,7 +114,7 @@ export class Toolbar extends React.PureComponent<Props> {
             <FormGroup controlId="findInput" className="filter-header">
               <Col lg={6} >
                 <FormControl
-                  inputRef={this.findInput}
+                  inputRef={this.setFindInputRef}
                   type="text"
                   placeholder="optional. regexp to search for"
                   onChange={this.handleChangeFindEvent}
@@ -118,8 +123,8 @@ export class Toolbar extends React.PureComponent<Props> {
               <ButtonToolbar>
                 <Button id="formSubmit" type="submit">Find</Button>
                 {this.showFind()}
-                <Button onClick={this.props.addFilter}>Add Filter</Button>
-                <Button onClick={this.props.addHighlight}>Add Highlight</Button>
+                <Button onClick={this.addFilter}>Add Filter</Button>
+                <Button onClick={this.addHighlight}>Add Highlight</Button>
                 <Button onClick={this.props.togglePanel}>{this.props.detailsOpen ? 'Hide Details \u25B4' : 'Show Details \u25BE'}</Button>
               </ButtonToolbar>
             </FormGroup>
@@ -134,24 +139,26 @@ export class Toolbar extends React.PureComponent<Props> {
   }
 }
 
-function mapStateToProps(state, ownProps): $Shape<Props> {
+function mapStateToProps(state, ownProps: $Shape<Props>) {
   return {
     ...state,
     ...ownProps,
     settings: state.logviewer.settings,
     findIdx: state.logviewer.find.findIdx,
     searchTerm: state.logviewer.find.searchTerm,
-    detailsOpen: state.logviewer.settingsPanel
+    detailsOpen: state.logviewer.settingsPanel,
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<*>, ownProps): $Shape<Props> {
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
   return {
     ...ownProps,
     togglePanel: () => dispatch(toggleSettingsPanel()),
     nextFind: () => dispatch(search('next')),
     prevFind: () => dispatch(search('prev')),
-    setSearch: (value: string) => dispatch(setSearch(value))
+    setSearch: (value: string) => dispatch(setSearch(value)),
+    addFilter: (text) => dispatch(addFilter(text)),
+    addHighlight: (text) => dispatch(addHighlight(text))
   };
 }
 

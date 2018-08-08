@@ -15,7 +15,7 @@ type Props = {
   wrap: boolean,
   toggleBookmark: (number[]) => void,
   colorMap: ColorMap,
-  find: string,
+  searchTerm: string,
   caseSensitive: boolean,
   scrollLine: number,
   lineData: LineData,
@@ -107,7 +107,7 @@ class LogView extends React.Component<Props, State> {
         line={this.props.lineData.filteredLines[index]}
         toggleBookmark={this.props.toggleBookmark}
         colorMap={this.props.colorMap}
-        find={this.props.find}
+        searchTerm={this.props.searchTerm}
         highlightText={this.props.lineData.highlightText}
         caseSensitive={this.props.caseSensitive}
         updateSelectStartIndex={this.updateSelectStartIndex}
@@ -141,7 +141,7 @@ class LogView extends React.Component<Props, State> {
     if (nextProps.bookmarks !== this.props.bookmarks) {
       return true;
     }
-    if (nextProps.find !== this.props.find) {
+    if (nextProps.searchTerm !== this.props.searchTerm) {
       return true;
     }
     if (nextProps.findLine !== this.props.findLine) {
@@ -197,7 +197,7 @@ class LogView extends React.Component<Props, State> {
     }
 
     // If the find index changed, scroll to the right if necessary.
-    if (this.props.findLine !== prevProps.findLine || this.props.find !== prevProps.find) {
+    if (this.props.findLine !== prevProps.findLine || this.props.searchTerm !== prevProps.searchTerm) {
       this.scrollFindIntoView();
     }
   }
@@ -226,7 +226,7 @@ function mapStateToProps(state, ownProps): $Shape<Props> {
     colorMap: state.log.colorMap,
     caseSensitive: state.logviewer.settings.caseSensitive,
     wrap: state.logviewer.settings.wrap,
-    find: state.logviewer.find.searchRegex
+    searchTerm: state.logviewer.find.searchTerm
   };
 }
 

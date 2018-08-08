@@ -10,7 +10,7 @@ type Props = {
   bookmarked: boolean,
   caseSensitive: boolean,
   colorMap: ColorMap,
-  find: string,
+  searchTerm: string,
   found: boolean,
   highlight: boolean,
   line: Line,
@@ -69,7 +69,7 @@ export default class FullLogLine extends React.Component<Props> {
           lineNumber={this.props.line.lineNumber}
           port={this.props.line.port}
           colorMap={this.props.colorMap}
-          find={this.props.find}
+          searchTerm={this.props.searchTerm}
           caseSensitive={this.props.caseSensitive}
           highlightText={this.props.highlightText}
         />

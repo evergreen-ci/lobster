@@ -39,8 +39,6 @@ type Props = {
   changeFindIdx: (number) => void,
   searchRegex: string,
   changeSearch: (RegExp) => void,
-  addFilter: (string) => void,
-  addHighlight: (string) => void,
   lineData: LineData
 } & ContextRouter
 
@@ -85,13 +83,9 @@ export class Fetch extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     if (this.props.filterList !== prevProps.filterList) {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-      // this.clearFind();
     }
     if (this.props.log.isDone && ((JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) || this.props.log.lines !== prevProps.log.lines)) {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-    }
-    if (this.props.settings !== prevProps.settings) {
-      this.find();
     }
   }
 
@@ -163,7 +157,7 @@ export class Fetch extends React.Component<Props, State> {
     }
     if (value !== this.state.url) {
       this.props.changeFindIdx(-1);
-      this.setState({ url: value, findResults: [] });
+      this.setState({ url: value });
       this.props.loadBookmarks([]);
       this.props.loadLogByIdentity({
         type: 'lobster',
@@ -236,8 +230,6 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   return {
     loadInitialFilters: (initialFilters) => dispatch(logviewerActions.loadInitialFilters(initialFilters)),
     loadInitialHighlights: (initialHighlights) => dispatch(logviewerActions.loadInitialHighlights(initialHighlights)),
-    addFilter: (text) => dispatch(logviewerActions.addFilter(text)),
-    addHighlight: (text) => dispatch(logviewerActions.addHighlight(text)),
     changeFindIdx: (index) => dispatch(logviewerActions.changeFindIdx(index)),
     loadBookmarks: (bookmarksArr) => dispatch(logviewerActions.loadBookmarks(bookmarksArr)),
     toggleBookmark: (lineNumArray) => dispatch(logviewerActions.toggleBookmark(lineNumArray)),
