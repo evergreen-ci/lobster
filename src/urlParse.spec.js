@@ -90,5 +90,41 @@ describe('urlParse', function() {
         }
       ]);
   });
+
+  test('bad-filter-and-highlight', function() {
+    const queryParams = '?h=doop&h';
+    const hash = '#f=text';
+
+    const out = urlParse(hash, queryParams);
+    expect([...out.filters]).toHaveLength(0);
+    expect([...out.highlights]).toHaveLength(0);
+  });
+
+  test('bad-bookmarks', function() {
+    const values = ['?bookmarks=', '?bookmarks', '?', '', undefined, null];
+      values.forEach((queryParams) => {
+        values.forEach((hash) => {
+          const out = urlParse(hash, queryParams);
+          expect([...out.filters]).toHaveLength(0);
+          expect([...out.highlights]).toHaveLength(0);
+        });
+      });
+
+    [null, '?bookmarks=randomtext', '?bookmarks=ra,n,domt,ext!']
+      .forEach((value) => {
+        const out = urlParse(null, value);
+        expect(out.bookmarks).toEqual(new Set());
+      });
+  });
+
+  test('bad-scroll', function() {
+    const values = ['?scroll=', '?scroll', '?', '', undefined, null, '?scroll=zippitydoodah'];
+      values.forEach((queryParams) => {
+        values.forEach((hash) => {
+          const out = urlParse(hash, queryParams);
+          expect(out.scrollToLine).toBe(undefined);
+        });
+      });
+  });
 });
 
