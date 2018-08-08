@@ -85,7 +85,7 @@ export default createSelector(
   getBookmarks,
   getSettings,
   function(searchTerm: ?string, lines: Line[], filters: Filter[], bookmarks: Bookmark[], settings: Settings) {
-    if(searchTerm == null) {
+    if (searchTerm == null) {
       return lines;
     }
 
