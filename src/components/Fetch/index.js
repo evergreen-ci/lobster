@@ -195,6 +195,7 @@ export class Fetch extends React.Component<Props, State> {
         return;
       }
     }
+    return;
     const findRegexp = this.findInput.value || '';
     const findRegexpFull = this.makeRegexp(findRegexp, this.props.settings.caseSensitive);
 
@@ -209,10 +210,10 @@ export class Fetch extends React.Component<Props, State> {
       }
       return;
     }
-    if (findResults.length > 0) {
+    if (this.state.findResults.length > 0) {
       this.props.changeFindIdx(0);
       this.props.changeSearch(findRegexpFull);
-      this.setScroll(findResults[0]);
+      this.setScroll(this.state.findResults[0]);
     } else {
       this.props.changeFindIdx(-1);
       this.props.changeSearch(findRegexpFull);
@@ -339,15 +340,11 @@ export class Fetch extends React.Component<Props, State> {
         <div className="main">
           <Toolbar
             setFormRef={this.setFormRef}
-            handleChangeFindEvent={this.find}
-            find={this.find}
             addFilter={this.addFilter}
             addHighlight={this.addHighlight}
             handleSubmit={this.handleSubmit}
             setURLRef={this.setURLRef}
             findResults={this.state.findResults}
-            nextFind={this.nextFind}
-            prevFind={this.prevFind}
           />
           <div className="log-list">
             {this.showLines()}

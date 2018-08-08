@@ -72,7 +72,7 @@ function makeRegexp(regexp: string, caseSensitive: boolean) {
 }
 
 
-const getSearchTerm = (state) => state.logviewer.find.text;
+const getSearchTerm = (state) => state.logviewer.find.searchTerm;
 const getLogLines = (state) => state.log.lines;
 const getFilters = (state) => state.logviewer.filters;
 const getBookmarks = (state) => state.logviewer.bookmarks;

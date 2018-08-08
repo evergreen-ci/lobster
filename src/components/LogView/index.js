@@ -5,6 +5,8 @@ import ReactList from 'react-list';
 import FullLogLine from './FullLogLine';
 import { connect } from 'react-redux';
 import search from '../../selectors/search';
+import highlights from '../../selectors/highlights';
+import { textHighlights } from '../../selectors/highlights';
 import type { ColorMap, Line, Bookmark } from '../../models';
 
 import './style.css';
@@ -20,12 +22,8 @@ type Props = {
   caseSensitive: boolean,
   scrollLine: number,
   lines: Line[],
-  filter: RegExp[],
-  inverseFilter: RegExp[],
-  highlight: RegExp[],
+  highlightLines: Line[],
   highlightText: string[],
-  highlightLine: RegExp[],
-  shouldHighlightLine: (line: Line, highlight: RegExp[], highlightLine: RegExp[]) => boolean
 };
 
 type State = {
@@ -38,7 +36,6 @@ type State = {
 };
 
 class LogView extends React.Component<Props, State> {
-  highlightLines: Line[] = [];
   logListRef: ?ReactList = null;
   indexMap: { [number]: number }
 
@@ -110,7 +107,7 @@ class LogView extends React.Component<Props, State> {
         key={key}
         found={this.props.lines[index].lineNumber === this.props.findLine}
         bookmarked={this.props.findBookmark(this.props.bookmarks, this.props.lines[index].lineNumber) !== -1}
-        highlight={this.highlightLines.includes(this.props.lines[index])}
+        highlight={this.props.highlightLines.includes(this.props.lines[index])}
         wrap={this.props.wrap}
         line={this.props.lines[index]}
         toggleBookmark={this.props.toggleBookmark}
@@ -149,12 +146,6 @@ class LogView extends React.Component<Props, State> {
     if (nextProps.bookmarks !== this.props.bookmarks) {
       return true;
     }
-    if (nextProps.filter !== this.props.filter) {
-      return true;
-    }
-    if (nextProps.inverseFilter !== this.props.inverseFilter) {
-      return true;
-    }
     if (nextProps.find !== this.props.find) {
       return true;
     }
@@ -170,7 +161,7 @@ class LogView extends React.Component<Props, State> {
     if (nextState.clicks !== this.state.clicks) {
       return true;
     }
-    if (nextProps.highlight !== this.props.highlight) {
+    if (nextProps.highlightText !== this.props.highlightText) {
       return true;
     }
 
@@ -219,12 +210,8 @@ class LogView extends React.Component<Props, State> {
   render() {
     let j = 0;
     this.indexMap = new Map();
-    this.highlightLines = this.props.lines.filter((line, index) => {
+    this.props.lines.forEach((_line, index) => {
       this.indexMap[index] = j++;
-      if (this.props.shouldHighlightLine(line, this.props.highlight, this.props.highlightLine)) {
-        return true;
-      }
-      return false;
     });
     if (this.props.lines.length !== 0) {
       return (
@@ -247,10 +234,12 @@ class LogView extends React.Component<Props, State> {
 function mapStateToProps(state, ownProps) {
   return { ...state, ...ownProps,
     colorMap: state.log.colorMap,
-    lines: search(state, ownProps),
+    lines: search(state, {}),
     caseSensitive: state.logviewer.settings.caseSensitive,
     wrap: state.logviewer.settings.wrap,
-    find: state.logviewer.find.searchRegex
+    find: state.logviewer.find.searchRegex,
+    highlightLines: highlights(state, ownProps),
+    highlightText: textHighlights(state, ownProps),
   };
 }
 

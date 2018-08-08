@@ -13,6 +13,7 @@ export const LOGVIEWER_ENSURE_BOOKMARK = 'logviewer:ensure-bookmark';
 export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
 export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
 export const LOGVIEWER_TOGGLE_SETTINGS_PANEL = 'logviewer:toggle-settings-panel';
+export const LOGVIEWER_SEARCH_EVENT = 'logviewer:search-event';
 
 export type ChangeSetting = {|
   type: 'logviewer:change-setting',
@@ -90,6 +91,21 @@ export type LoadFilters = {|
 export type ToggleSettingsPanel = $Exact<{
   type: 'logviewer:toggle-settings-panel',
   +payload: {}
+}>
+
+export type SearchEventDirection = $Exact<$ReadOnly<{
+  action: 'next' | 'prev'
+}>>
+
+export type SearchEventSetTerm = $Exact<$ReadOnly<{
+  action: 'search',
+  term: string
+}>>
+
+
+export type SearchEvent= $Exact<{
+  type: 'logviewer:search-event',
+  +payload: SearchEventDirection | SearchEventSetTerm
 }>
 
 export type Action = ChangeSetting
@@ -245,5 +261,24 @@ export function toggleSettingsPanel(): ToggleSettingsPanel {
   return {
     type: LOGVIEWER_TOGGLE_SETTINGS_PANEL,
     payload: {}
+  };
+}
+
+export function search(action: 'next' | 'prev'): SearchEvent {
+  return {
+    type: LOGVIEWER_SEARCH_EVENT,
+    payload: {
+      action: action
+    }
+  };
+}
+
+export function setSearch(term: string): SearchEvent {
+  return {
+    type: LOGVIEWER_SEARCH_EVENT,
+    payload: {
+      action: 'search',
+      term: term
+    }
   };
 }

@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 
 import { createSelector } from 'reselect';
 import type { Line, Highlight, Settings } from '../models';
@@ -57,6 +57,12 @@ export default createSelector(
       if (shouldHighlightLine(line, highlights, highlightLine, settings)) {
         return true;
       }
+      return false;
     });
   }
+);
+
+export const textHighlights = createSelector(
+  getHighlights,
+  getHighlightText
 );
