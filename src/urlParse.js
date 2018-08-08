@@ -115,7 +115,7 @@ export default function(hashString: string = '', queryParams: string = '') {
   ]);
 
   let scrollToLine = parseInt(hash.query.scroll || query.query.scroll, 10);
-  if (!Number.isFinite(scrollToLine)) {
+  if (!Number.isFinite(scrollToLine) || scrollToLine < 0) {
     scrollToLine = undefined;
   }
 

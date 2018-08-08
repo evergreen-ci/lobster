@@ -122,7 +122,7 @@ describe('urlParse', function() {
   });
 
   test('bad-scroll', function() {
-    const values = ['?scroll=', '?scroll', '?', '', undefined, null, '?scroll=zippitydoodah'];
+    const values = ['?scroll=', '?scroll', '?', '', undefined, null, '?scroll=zippitydoodah', '?scroll=-5'];
       values.forEach((queryParams) => {
         values.forEach((hash) => {
           const out = urlParse(hash, queryParams);
