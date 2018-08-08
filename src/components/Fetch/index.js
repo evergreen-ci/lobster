@@ -10,6 +10,7 @@ import { Bookmarks } from './Bookmarks';
 import { connect } from 'react-redux';
 import queryString from '../../thirdparty/query-string';
 import Toolbar from './Toolbar';
+import lines from '../../selectors/lines';
 import type { Dispatch } from 'redux';
 import type { Log, LogIdentity, Settings, Filter, Highlight, Bookmark, Line } from '../../models';
 import type { ContextRouter } from 'react-router-dom';
@@ -40,17 +41,16 @@ type Props = {
   changeSearch: (RegExp) => void,
   addFilter: (string) => void,
   addHighlight: (string) => void,
+  findResults: LineData
 } & ContextRouter
 
 type State = {
   scrollLine: number,
-  findResults: number[],
   lines?: Line[],
 }
 
 
 export class Fetch extends React.Component<Props, State> {
-  findInput: ?HTMLInputElement;
   urlInput: ?HTMLInputElement;
   static defaultProps = {
     bookmarks: []
@@ -69,7 +69,6 @@ export class Fetch extends React.Component<Props, State> {
     this.props.loadBookmarks(bookmarksArr);
     this.state = {
       scrollLine: parseInt(parsed.scroll, 10),
-      findResults: []
     };
     const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({ text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1') }));
     this.props.loadInitialFilters(initialFilters);
@@ -86,13 +85,9 @@ export class Fetch extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     if (this.props.filterList !== prevProps.filterList) {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-      this.clearFind();
+      //this.clearFind();
     }
     if (this.props.log.isDone && ((JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) || this.props.log.lines !== prevProps.log.lines)) {
-      if (this.props.log.lines.length > 0) {
-        this.props.ensureBookmark(0);
-        this.props.ensureBookmark(this.props.log.lines[this.props.log.lines.length - 1].lineNumber);
-      }
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
     }
     if (this.props.settings !== prevProps.settings) {
@@ -188,28 +183,6 @@ export class Fetch extends React.Component<Props, State> {
     });
   }
 
-  nextFind = () => {
-    let nextIdx = this.props.findIdx + 1;
-    if (nextIdx === this.state.findResults.length) {
-      nextIdx = 0;
-    }
-    this.props.changeFindIdx(nextIdx);
-    this.setScroll(this.state.findResults[nextIdx]);
-  }
-
-  prevFind = () => {
-    let nextIdx = this.props.findIdx - 1;
-    if (nextIdx === -1) {
-      nextIdx = this.state.findResults.length - 1;
-    }
-    this.props.changeFindIdx(nextIdx);
-    this.setScroll(this.state.findResults[nextIdx]);
-  }
-
-  clearFind() {
-    this.props.changeFindIdx(-1);
-  }
-
   showLines(): ?ReactNode {
     if (!this.props.log.lines) {
       return <div />;
@@ -220,7 +193,8 @@ export class Fetch extends React.Component<Props, State> {
         findBookmark={this.findBookmark}
         toggleBookmark={this.props.toggleBookmark}
         bookmarks={this.props.bookmarks}
-        findLine={this.props.findIdx === -1 ? -1 : this.state.findResults[this.props.findIdx]}
+        findLine={this.props.findIdx === -1 ? -1 : this.props.findResults.findResults[this.props.findIdx].lineNumber}
+        lines={this.props.findResults}
       />);
   }
 
@@ -228,16 +202,10 @@ export class Fetch extends React.Component<Props, State> {
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
-    if (this.findInput) {
-      this.findInput.addEventListener('keydown', this.handleShiftEnter);
-    }
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
-    if (this.findInput) {
-      this.findInput.removeEventListener('keydown', this.handleShiftEnter);
-    }
   }
 
   handleKeyDown = (event: KeyboardEvent) => {
@@ -250,31 +218,13 @@ export class Fetch extends React.Component<Props, State> {
           this.focusOnFind(event);
         }
         break;
-      default:
-        break;
+      // no default
     }
   }
 
   focusOnFind(event: KeyboardEvent) {
-    if (this.findInput) {
-      this.findInput.focus();
-    }
-    if (this.findInput) {
-      this.findInput.select();
-    }
     event.preventDefault();
   }
-
-  handleShiftEnter = (event: KeyboardEvent) => {
-    if (this.state.findResults.length !== 0) {
-      if (event.keyCode === 13 && event.shiftKey) {
-        event.preventDefault();
-        this.prevFind();
-      }
-    }
-  }
-
-  setFormRef = (ref: ?HTMLInputElement) => {this.findInput = ref;}
 
   render() {
     return (
@@ -283,6 +233,7 @@ export class Fetch extends React.Component<Props, State> {
         <div className="main">
           <Toolbar
             setURLRef={this.setURLRef}
+            findResults={this.props.findResults}
           />
           <div className="log-list">
             {this.showLines()}
@@ -304,7 +255,8 @@ function mapStateToProps(state, ownProps) {
     searchRegex: state.logviewer.find.searchRegex,
     filterList: state.logviewer.filters,
     highlightList: state.logviewer.highlights,
-    bookmarks: state.logviewer.bookmarks
+    bookmarks: state.logviewer.bookmarks,
+    findResults: lines(state)
   };
 }
 

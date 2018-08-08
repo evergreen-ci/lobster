@@ -40,22 +40,21 @@ export default createSelector(
 
     const indexMap = new Map();
     const highlightLines = [];
-    const outLines = [];
 
     let j = 0;
-    lines.forEach((line, i) => {
+    const outLines = lines.filter((line, i) => {
       if (!findRegexp.test(line.text)) {
-        return;
+        return false;
       }
       if (!shouldPrintLine(bookmarks, line, settings.filterIntersection, filter, inverseFilter)) {
-        return;
+        return false;
       }
-      outLines.push(line);
       indexMap.set(i, j++);
       if (highlight.length > 0
         && shouldHighlightLine(line, highlight, highlightLine, settings)) {
         highlightLines.push(line);
       }
+      return true;
     });
 
     return {

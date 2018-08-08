@@ -167,7 +167,8 @@ export class CollapseMenu extends React.PureComponent<Props> {
 
 function mapStateToProps(state, ownProps) {
   return {
-    ...state, ...ownProps,
+    ...state,
+    ...ownProps,
     settings: state.logviewer.settings,
     filterList: state.logviewer.filters,
     highlightList: state.logviewer.highlights,

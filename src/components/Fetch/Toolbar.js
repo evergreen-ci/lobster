@@ -6,8 +6,7 @@ import { Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col 
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
 import { search, toggleSettingsPanel, setSearch } from '../../actions/logviewer';
-import lines from '../../selectors/lines';
-import type { Settings, Line, LineData } from '../../models';
+import type { Settings, LineData } from '../../models';
 import type { Ref } from 'react';
 
 type Props = {
@@ -22,12 +21,11 @@ type Props = {
   handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
   setURLRef: (?HTMLInputElement) => void,
   findIdx: number,
-  findResults: LineData,
   changeFindIdx: (number) => void,
   nextFind: () => void,
   prevFind: () => void,
-  setSearch: (value: string) => void
-
+  setSearch: (value: string) => void,
+  findResults: LineData
 };
 
 export class Toolbar extends React.PureComponent<Props> {
@@ -39,8 +37,8 @@ export class Toolbar extends React.PureComponent<Props> {
   }
 
   showFind = () => {
-    if (this.props.searchTerm != null) {
-      if (this.props.findResults.findResults.length > 0 && this.props.findResults.findResults.length !== this.props.findResults.findResults.length) {
+    if (this.props.searchTerm !== '') {
+      if (this.props.findResults.findResults.length > 0) {
         return (
           <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.props.findIdx + 1}/{this.props.findResults.findResults.length}</Col>
             <Button onClick={this.props.nextFind}>Next</Button>
@@ -58,7 +56,25 @@ export class Toolbar extends React.PureComponent<Props> {
   }
 
   submit = (event: Event) => {
-    event.preventDefault();
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      if (event.shiftKey) {
+        this.props.prevFind();
+      } else {
+        this.props.nextFind();
+      }
+    }
+  }
+
+  componentDidMount() {
+    if (this.findInput.current) {
+      this.findInput.current.addEventListener('keydown', this.submit);
+    }
+  }
+  componentWillUnmount() {
+    if (this.findInput.current) {
+      this.findInput.current.removeEventListener('keydown', this.submit);
+    }
   }
 
   render() {
@@ -76,7 +92,7 @@ export class Toolbar extends React.PureComponent<Props> {
                 />
               </Col>
               <ButtonToolbar>
-                <Button id="formSubmit" type="submit" onClick={this.props.nextFind}>Find</Button>
+                <Button id="formSubmit" type="submit">Find</Button>
                 {this.showFind()}
                 <Button onClick={this.props.addFilter}>Add Filter</Button>
                 <Button onClick={this.props.addHighlight}>Add Highlight</Button>
@@ -102,8 +118,7 @@ function mapStateToProps(state, ownProps) {
     findIdx: state.logviewer.find.findIdx,
     searchTerm: state.logviewer.find.searchTerm,
     detailsOpen: state.logviewer.settingsPanel,
-    lines: state.log.lines,
-    findResults: lines(state)
+    lines: state.log.lines
   };
 }
 

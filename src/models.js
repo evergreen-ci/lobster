@@ -200,7 +200,7 @@ export type Log = $Exact<$ReadOnly<{
 
 export type Find = $Exact<$ReadOnly<{
   findIdx: number,
-  searchTerm: ?string
+  searchTerm: string
 }>>
 
 export type Logviewer = $Exact<$ReadOnly<{

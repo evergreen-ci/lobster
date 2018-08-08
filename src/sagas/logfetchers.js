@@ -1,9 +1,10 @@
 // @flow strict
 
-import { put, call } from 'redux-saga/effects';
+import { put, call, select } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import type { LogProcessor, LogkeeperLog, EvergreenLog, LobsterLog } from '../models';
 import * as actions from '../actions';
+import { ensureBookmark } from '../actions/logviewer';
 import * as api from '../api';
 import { fetchEvergreen } from '../api/evergreen';
 import { writeToCache, readFromCache } from './lobstercage';
@@ -98,4 +99,9 @@ export default function*(action: actions.LoadLog): Saga<void> {
 
     // no default
   }
+
+  const lines = yield select((state) => state.log.lines);
+
+  yield put(ensureBookmark(0));
+  yield put(ensureBookmark(lines[lines.length - 1].lineNumber));
 }

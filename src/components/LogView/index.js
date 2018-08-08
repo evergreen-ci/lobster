@@ -225,7 +225,6 @@ class LogView extends React.Component<Props, State> {
 function mapStateToProps(state, ownProps): $Shape<Props> {
   return { ...state, ...ownProps,
     colorMap: state.log.colorMap,
-    lines: lines(state),
     caseSensitive: state.logviewer.settings.caseSensitive,
     wrap: state.logviewer.settings.wrap,
     find: state.logviewer.find.searchRegex,
