@@ -1,4 +1,3 @@
-import assert from 'assert';
 import Enzyme from 'enzyme';
 import { Filters, Filter } from './Filters';
 import React from 'react';
@@ -38,7 +37,7 @@ test('Filters', function() {
       toggleFilterInverse={toggleFilterInverse}
     />);
 
-  assert.ok(wrapper.containsAllMatchingElements([
+  expect(wrapper.containsAllMatchingElements([
     <Filter
       filter={data[0]}
       removeFilter={removeFilter}
@@ -52,14 +51,14 @@ test('Filters', function() {
       toggleFilterInverse={toggleFilterInverse}
     />
   ]
-  ));
+  )).toBe(true);
 
   const buttons = wrapper.find('Button');
-  assert.equal(buttons.length, 10);
+  expect(buttons).toHaveLength(10);
   buttons.at(0).simulate('click', {});
-  assert.equal(data.length, 1);
+  expect(data).toHaveLength(1);
   wrapper.setProps({ filters: data });
-  assert.equal(wrapper.find('Button').length, 5);
+  expect(wrapper.find('Button')).toHaveLength(5);
 });
 
 test('Filter', function() {
@@ -87,12 +86,12 @@ test('Filter', function() {
       toggleFilterInverse={toggleFilterInverse}
     />);
 
-  assert.ok(wrapper.containsAllMatchingElements([
+  expect(wrapper.containsAllMatchingElements([
     <span>Hello</span>
-  ]));
+  ])).toBe(true);
 
   const buttons = wrapper.find('Button');
-  assert.equal(buttons.length, 5);
+  expect(buttons).toHaveLength(5);
   buttons.map(function(e, index) {
     data = {
       text: 'Hello',
@@ -101,16 +100,16 @@ test('Filter', function() {
     };
 
     if (index === 0) {
-      assert.ok(data !== null);
+      expect(data).not.toBe(null);
       e.simulate('click', {});
-      assert.ok(data === null);
+      expect(data).toBe(null);
     }
   });
-  assert.ok(data.on === true);
+  expect(data.on).toBe(true);
   wrapper.instance().toggleFilter();
   wrapper.update();
-  assert.ok(data.on === false);
-  assert.ok(data.inverse === false);
+  expect(data.on).toBe(false);
+  expect(data.inverse).toBe(false);
   wrapper.instance().toggleFilterInverse();
-  assert.ok(data.inverse === true);
+  expect(data.inverse).toBe(true);
 });
