@@ -5,7 +5,7 @@ import ReactList from 'react-list';
 import FullLogLine from './FullLogLine';
 import { connect } from 'react-redux';
 import lines from '../../selectors/lines';
-import type { ColorMap, Line, Bookmark } from '../../models';
+import type { ColorMap, Line, LineData, Bookmark } from '../../models';
 
 import './style.css';
 
@@ -19,13 +19,12 @@ type Props = {
   find: string,
   caseSensitive: boolean,
   scrollLine: number,
-  lines: Line[],
+  lines: LineData,
   highlightLines: Line[],
   highlightText: string[],
 };
 
 type State = {
-  processed: string,
   lineMap: Map<number, HTMLSpanElement>,
   selectStartIndex: ?number,
   selectEndIndex: ?number,
@@ -40,7 +39,6 @@ class LogView extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
-      processed: '',
       lineMap: new Map(),
       selectStartIndex: null,
       selectEndIndex: null,
@@ -103,15 +101,15 @@ class LogView extends React.Component<Props, State> {
       <FullLogLine
         lineRefCallback={this.lineRefCallback}
         key={key}
-        found={this.props.lines[index].lineNumber === this.props.findLine}
-        bookmarked={this.props.findBookmark(this.props.bookmarks, this.props.lines[index].lineNumber) !== -1}
-        highlight={this.props.highlightLines.includes(this.props.lines[index])}
+        found={this.props.lines.findResults[index].lineNumber === this.props.findLine}
+        bookmarked={this.props.findBookmark(this.props.bookmarks, this.props.lines.findResults[index].lineNumber) !== -1}
+        highlight={this.props.lines.highlightLines.includes(this.props.lines.findResults[index])}
         wrap={this.props.wrap}
-        line={this.props.lines[index]}
+        line={this.props.lines.findResults[index]}
         toggleBookmark={this.props.toggleBookmark}
         colorMap={this.props.colorMap}
         find={this.props.find}
-        highlightText={this.props.highlightText}
+        highlightText={this.props.lines.highlightText}
         caseSensitive={this.props.caseSensitive}
         updateSelectStartIndex={this.updateSelectStartIndex}
         updateSelectEndIndex={this.updateSelectEndIndex}
@@ -206,18 +204,13 @@ class LogView extends React.Component<Props, State> {
   }
 
   render() {
-    let j = 0;
-    this.indexMap = new Map();
-    this.props.lines.forEach((_line, index) => {
-      this.indexMap[index] = j++;
-    });
-    if (this.props.lines.length !== 0) {
+    if (this.props.lines.findResults.length !== 0) {
       return (
         <div>
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
-            length={this.props.lines.length}
+            length={this.props.lines.findResults.length}
             initialIndex={this.props.scrollLine}
             type={this.props.wrap ? 'variable' : 'uniform'}
             useStaticSize={true}
@@ -229,7 +222,7 @@ class LogView extends React.Component<Props, State> {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state, ownProps): $Shape<Props> {
   return { ...state, ...ownProps,
     colorMap: state.log.colorMap,
     lines: lines(state),

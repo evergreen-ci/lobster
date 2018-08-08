@@ -9,28 +9,28 @@ export type Line = $Exact<$ReadOnly<{
 
 export type ColorMap = $ReadOnly<{ [string]: string }>
 
-export type Settings = {|
-  +wrap: boolean,
-  +caseSensitive: boolean,
-  +filterIntersection: boolean
-|}
+export type Settings = $ReadOnly<$Exact<{
+  wrap: boolean,
+  caseSensitive: boolean,
+  filterIntersection: boolean
+}>>
 
 export type Bookmark = {|
   lineNumber: number,
   scrollFunc?: (SyntheticMouseEvent<HTMLInputElement>) => void
 |}
 
-export type Filter = {|
+export type Filter = $Exact<$ReadOnly<{
   text: string,
   on: boolean,
   inverse: boolean
-|}
+}>>
 
-export type Highlight = {|
+export type Highlight = $Exact<$ReadOnly<{
   text: string,
   on: boolean,
   line: boolean
-|}
+}>>
 
 export type MongoLine = {|
   +ts: ?Date,
@@ -215,4 +215,11 @@ export type VisualLineData = $Exact<$ReadOnly<{
   filteredLines: Line[],
   indexMap: Map<number, number>,
   highlights: Set<number>
+}>>
+
+export type LineData = $Exact<$ReadOnly<{
+  indexMap: Map<number, number>,
+  findResults: Line[],
+  highlightLines: Line[],
+  highlightText: string[]
 }>>

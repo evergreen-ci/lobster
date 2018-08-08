@@ -1,7 +1,7 @@
 // @flow strict
 
 import { createSelector } from 'reselect';
-import type { Line, Bookmark, Filter, Settings } from '../models';
+import type { Line, Bookmark, Filter, Settings } from '../../models';
 
 export function mergeActiveFilters(filterList: Filter[], caseSensitive: boolean): RegExp[] {
   return filterList
@@ -58,15 +58,4 @@ export function shouldPrintLine(bookmarks: Bookmark[], line: Line, filterInterse
     return true;
   }
   return false;
-}
-
-function makeRegexp(regexp: string, caseSensitive: boolean) {
-  if (!regexp) {
-    return new RegExp('');
-  }
-
-  if (!caseSensitive) {
-    return new RegExp(regexp, 'i');
-  }
-  return new RegExp(regexp);
 }

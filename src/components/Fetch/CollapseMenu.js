@@ -174,7 +174,8 @@ function mapStateToProps(state, ownProps) {
     findIdx: state.logviewer.find.findIdx,
     searchRegex: state.logviewer.find.searchRegex,
     logIdentity: state.log.identity,
-    valueJIRA: jira(state, ownProps)
+    valueJIRA: jira(state, ownProps),
+    detailsOpen: state.logviewer.settingsPanel
   };
 }
 

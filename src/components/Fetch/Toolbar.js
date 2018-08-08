@@ -7,7 +7,7 @@ import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
 import { search, toggleSettingsPanel, setSearch } from '../../actions/logviewer';
 import lines from '../../selectors/lines';
-import type { Settings, Line } from '../../models';
+import type { Settings, Line, LineData } from '../../models';
 import type { Ref } from 'react';
 
 type Props = {
@@ -22,7 +22,7 @@ type Props = {
   handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
   setURLRef: (?HTMLInputElement) => void,
   findIdx: number,
-  findResults: Object,
+  findResults: LineData,
   changeFindIdx: (number) => void,
   nextFind: () => void,
   prevFind: () => void,
@@ -31,16 +31,16 @@ type Props = {
 };
 
 export class Toolbar extends React.PureComponent<Props> {
-  findInput: Ref<HTMLInputElement>
+  findInput: Ref<*>
+
   constructor(props: Props) {
     super(props);
     this.findInput = React.createRef();
   }
 
   showFind = () => {
-
     if (this.props.searchTerm != null) {
-      if (this.props.findResults.findResults.length > 0 && this.props.lines.length !== this.props.findResults.findResults.length) {
+      if (this.props.findResults.findResults.length > 0 && this.props.findResults.findResults.length !== this.props.findResults.findResults.length) {
         return (
           <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.props.findIdx + 1}/{this.props.findResults.findResults.length}</Col>
             <Button onClick={this.props.nextFind}>Next</Button>
@@ -52,7 +52,7 @@ export class Toolbar extends React.PureComponent<Props> {
   }
 
   handleChangeFindEvent = (event: Event) => {
-    if (this.findInput.current) {
+    if (this.findInput.current != null) {
       this.props.setSearch(this.findInput.current.value);
     }
   }
@@ -87,7 +87,6 @@ export class Toolbar extends React.PureComponent<Props> {
           <CollapseMenu
             handleSubmit={this.props.handleSubmit}
             setURLRef={this.props.setURLRef}
-            detailsOpen={this.props.detailsOpen}
           />
         </div>
       </Col>
