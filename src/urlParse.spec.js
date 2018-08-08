@@ -2,12 +2,14 @@ import urlParse from './urlParse';
 
 describe('urlParse', function() {
   test('merge', function() {
-    const queryParams = '?scroll=99&bookmarks=0,1,2';
-    const hash = '#scroll=0&bookmarks=2,4,5';
+    const queryParams = '?scroll=99&bookmarks=0,1,2&url=urlserver&server=serverserver';
+    const hash = '#scroll=0&bookmarks=2,4,5&url=urlhash&server=serverhash';
 
     const out = urlParse(hash, queryParams);
     expect(out.scrollToLine).toBe(0);
     expect([...out.bookmarks]).toEqual(expect.arrayContaining([0, 1, 2, 4, 5]));
+    expect(out.url).toBe('urlhash')
+    expect(out.server).toBe('serverhash')
   });
 
   test('multi-highlight', function() {
@@ -37,6 +39,8 @@ describe('urlParse', function() {
           inverse: true
         }
       ]));
+    expect(out.url).toBe(undefined);
+    expect(out.server).toBe(undefined);
   });
 
   test('multi-filter', function() {

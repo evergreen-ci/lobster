@@ -93,6 +93,13 @@ function arrayify(obj: { [string]: mixed }, field: string) {
   }
 }
 
+function parseOptionalString(s: ?string): ?string {
+  if (s == null) {
+    return undefined;
+  }
+  return s;
+}
+
 export default function(hashString: string = '', queryParams: string = '') {
   const hash = queryString.parseUrl(`?${(hashString || '').substring(1)}`);
   const query = queryString.parseUrl(queryParams || '');
@@ -114,6 +121,8 @@ export default function(hashString: string = '', queryParams: string = '') {
 
   const filters = parseFilters([...hash.query.f, ...query.query.f]);
   const highlights = parseHighlights([...hash.query.h, ...query.query.h]);
+  const server = parseOptionalString(hash.query.server || query.query.server);
+  const url = parseOptionalString(hash.query.url || query.query.url);
 
-  return { bookmarks, scrollToLine, filters, highlights };
+  return { bookmarks, scrollToLine, filters, highlights, server, url };
 }
