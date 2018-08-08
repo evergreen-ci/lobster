@@ -98,7 +98,8 @@ function initiateLogEvent(type: string, ts: ?Date, logLine: MongoLine): LogEvent
 const serverStartEventMatchRegExp = [
   // $FlowFixMe
   new RegExp(String.raw`MongoDB starting : pid=(\d+) port=(\d+)`),
-  new RegExp('bridge waiting for connections on port (\d+)'),
+  // $FlowFixMe
+  new RegExp(String.raw`bridge waiting for connections on port (\d+)`),
   new RegExp('mongos version ')
 ];
 // // Lifecycle event matcher functions
@@ -127,7 +128,8 @@ eventMatcherList.serverStartEvent = (logLine: MongoLine): ?LogEvent => {
 const serverShutdownStartEventRegExp = [
   // $FlowFixMe
   new RegExp(String.raw`got signal (\d+) \((\w+)\)`),
-  new RegExp('dbexit: {2}rc: \d+')
+  // $FlowFixMe
+  new RegExp(String.raw`dbexit: {2}rc: \d+`)
 ];
 eventMatcherList.serverShutdownStartEvent = (logLine: MongoLine): ?LogEvent => {
   let match = serverShutdownStartEventRegExp[0].exec(logLine.messages[0]);
@@ -159,6 +161,7 @@ eventMatcherList.replicasetReconfigEvent = (logLine: MongoLine): ?LogEvent => {
   return null;
 };
 
+// $FlowFixMe
 const transitionEventMatchRegExp = new RegExp(String.raw`transition to (\w*) from (\w*)`);
 eventMatcherList.transitionEvent = (logLine: MongoLine): ?LogEvent => {
   /*
@@ -274,7 +277,7 @@ eventMatcherList.initialSyncStartEvent = (logLine: MongoLine): ?LogEvent => {
 };
 
 eventMatcherList.initialSyncSuccessEvent = eventMatcherList.initialSyncStartEvent;
-
+// $FlowFixMe
 const heartbeatScheduledEventMatchRegExp = new RegExp(String.raw`Scheduling heartbeat to ([\w:-]+) at (.*)$`);
 eventMatcherList.heartbeatScheduledEvent = (logLine: MongoLine): ?LogEvent => {
   const match = heartbeatScheduledEventMatchRegExp.exec(logLine.messages[0]);
@@ -288,8 +291,10 @@ eventMatcherList.heartbeatScheduledEvent = (logLine: MongoLine): ?LogEvent => {
 };
 
 const heartbeatSentEventMatchRegExp = [
-  new RegExp('Sending heartbeat \(requestId: (\d+)\) to ([\w:-]+)'),
-  new RegExp('Received response to heartbeat \(requestId: (\d+)\) from ([\w:-]+)')
+  // $FlowFixMe
+  new RegExp(String.raw`Sending heartbeat \(requestId: (\d+)\) to ([\w:-]+)`),
+  // $FlowFixMe
+  new RegExp(String.raw`Received response to heartbeat \(requestId: (\d+)\) from ([\w:-]+)`)
 ];
 eventMatcherList.heartbeatSentEvent = (logLine: MongoLine): ?LogEvent => {
   let match = heartbeatSentEventMatchRegExp[0].exec(logLine.messages[0]);
