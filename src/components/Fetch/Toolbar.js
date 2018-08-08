@@ -82,15 +82,20 @@ export class Toolbar extends React.PureComponent<Props> {
     }
   }
 
-  setFindInputRef(ref: ?HTMLInputElement) {
+  setFindInputRef = (ref: ?HTMLInputElement) => {
     this.findInput = ref;
   }
 
-  addFilter() {
-
+  addFilter = () => {
+    if (this.findInput) {
+      this.props.addFilter(this.findInput.value);
+    }
   }
-  addHighlight() {
 
+  addHighlight = () => {
+    if (this.findInput) {
+      this.props.addHighlight(this.findInput.value);
+    }
   }
 
   componentDidMount() {

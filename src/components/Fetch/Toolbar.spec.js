@@ -1,107 +1,104 @@
+// @flow
+
 import React from 'react';
 import Enzyme from 'enzyme';
 import assert from 'assert';
 import Button from 'react-bootstrap/lib/Button';
-import sinon from 'sinon';
 import { Toolbar } from './Toolbar';
-import 'babel-polyfill';
-import 'url-search-params-polyfill';
+import { Col, ControlLabel } from 'react-bootstrap';
+import type { LineData } from '../../models';
 
 const linesArr = [
-  { lineNumber: 1, text: '[cpp_integration_test:connection_pool_asio_integration_test] 2018-05-09T17:20:31.322+0000 Starting C++ integration test build' },
-  { lineNumber: 2, text: 'build/integration_tests/connection_pool_asio_integration_test --connectionString=rs/localhost:20250,localhost:20251' },
-  { lineNumber: 3, text: '[cpp_integration_test:connection_pool_asio_integra…pool_asio_integration_test started with pid 9843.' },
-  { lineNumber: 4, text: '[cpp_integration_test:connection_pool_asio_integra…ction string = rs/localhost:20250,localhost:20251' },
-  { lineNumber: 5, text: '[cpp_integration_test:connection_pool_asio_integra…0 I -        [main] 	 going to run test: TestPing' },
-  { lineNumber: 6, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250' },
-  { lineNumber: 7, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250' },
-  { lineNumber: 8, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250' },
-  { lineNumber: 9, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250]' },
-  { lineNumber: 10, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250' }
+  { lineNumber: 1, text: '[cpp_integration_test:connection_pool_asio_integration_test] 2018-05-09T17:20:31.322+0000 Starting C++ integration test build', gitRef: null, port: null },
+  { lineNumber: 2, text: 'build/integration_tests/connection_pool_asio_integration_test --connectionString=rs/localhost:20250,localhost:20251', gitRef: null, port: null },
+  { lineNumber: 3, text: '[cpp_integration_test:connection_pool_asio_integra…pool_asio_integration_test started with pid 9843.', gitRef: null, port: null },
+  { lineNumber: 4, text: '[cpp_integration_test:connection_pool_asio_integra…ction string = rs/localhost:20250,localhost:20251', gitRef: null, port: null },
+  { lineNumber: 5, text: '[cpp_integration_test:connection_pool_asio_integra…0 I -        [main] 	 going to run test: TestPing', gitRef: null, port: null },
+  { lineNumber: 6, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250', gitRef: null, port: null },
+  { lineNumber: 7, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250', gitRef: null, port: null },
+  { lineNumber: 8, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250', gitRef: null, port: null },
+  { lineNumber: 9, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250]', gitRef: null, port: null },
+  { lineNumber: 10, text: '[cpp_integration_test:connection_pool_asio_integra…orkInterfaceASIO-0] Connecting to localhost:20250', gitRef: null, port: null }
 ];
 
-const wrapper = Enzyme.shallow(
-  <Toolbar
-    log={{
-      lines: linesArr,
-      colorMap: {}
-    }}
-    settings={{
-      caseSensitive: false,
-      wrap: false,
-      filterIntersection: false
-    }}
-    filterList={[]}
-    highlightList={[]}
-    bookmarks={[]}
-    searchRegex={''}
-    findIdx={-1}
-    setFormRef={sinon.fake()}
-    toggleSettings={{
-      toggleWrap: sinon.fake(),
-      toggleCaseSensitive: sinon.fake(),
-      toggleFilterIntersection: sinon.fake()
-    }}
-    handleChangeFindEvent={sinon.fake()}
-    addFilter={sinon.fake()}
-    filterActions={{
-      removeFilter: sinon.fake(),
-      toggleFilter: sinon.fake(),
-      toggleFilterInverse: sinon.fake()
-    }}
-    addHighlight={sinon.fake()}
-    highlightActions={{
-      removeHighlight: sinon.fake(),
-      toggleHighlight: sinon.fake(),
-      toggleHighlightLine: sinon.fake()
-    }}
-    togglePanel={sinon.fake()}
-    detailsOpen={false}
-    handleSubmit={sinon.fake()}
-    server={null}
-    url={null}
-    build={'4191390ec6c7ee9bdea4e45f9cc94d31'}
-    setURLRef={sinon.fake()}
-    valueJIRA={'asdfghjkl'}
-    findResults={[]}
-    changeFindIdx={sinon.fake()}
-    changeSearch={sinon.fake()}
-    nextFind={sinon.fake()}
-    prevFind={sinon.fake()}
-    find={sinon.fake()}
-  />
-);
+function makeWrapper(state) {
+  return Enzyme.shallow(
+    <Toolbar
+      log={{
+        lines: linesArr,
+        colorMap: {}
+      }}
+      settings={{
+        caseSensitive: false,
+        wrap: false,
+        filterIntersection: false
+      }}
+      filterList={[]}
+      highlightList={[]}
+      bookmarks={[]}
+      searchRegex={''}
+      findIdx={-1}
+      handleChangeFindEvent={jest.fn()}
+      addFilter={jest.fn()}
+      filterActions={{
+        removeFilter: jest.fn(),
+        toggleFilter: jest.fn(),
+        toggleFilterInverse: jest.fn()
+      }}
+      addHighlight={jest.fn()}
+      highlightActions={{
+        removeHighlight: jest.fn(),
+        toggleHighlight: jest.fn(),
+        toggleHighlightLine: jest.fn()
+      }}
+      togglePanel={jest.fn()}
+      detailsOpen={false}
+      handleSubmit={jest.fn()}
+      server={null}
+      url={null}
+      build={'4191390ec6c7ee9bdea4e45f9cc94d31'}
+      setURLRef={jest.fn()}
+      valueJIRA={'asdfghjkl'}
+      lineData={state}
+      changeFindIdx={jest.fn()}
+      changeSearch={jest.fn()}
+      nextFind={jest.fn()}
+      prevFind={jest.fn()}
+      find={jest.fn()}
+      searchTerm={''}
+      setFormRef={jest.fn()}
+      setSearch={jest.fn()}
+      wipeCache={jest.fn()}
+    />
+  );
+}
 
 test('Toolbar-Search', function() {
-  assert.equal(wrapper.instance().props.findIdx, -1);
-  assert.equal(wrapper.instance().props.findResults.length, 0);
-  assert.equal(wrapper.instance().props.searchRegex, '');
-  assert(!wrapper.instance().props.handleChangeFindEvent.called);
-  assert(!wrapper.instance().props.find.called);
-  assert.ok(!wrapper.containsAllMatchingElements([
+  const data: LineData = {
+    indexMap: new Map(),
+    findResults: [],
+    filteredLines: linesArr,
+    highlightLines: [],
+    highlightText: []
+  };
+  const wrapper = makeWrapper(data);
+  expect(wrapper.containsAllMatchingElements([
     <Button onClick={wrapper.instance().props.nextFind}>Next</Button>,
     <Button onClick={wrapper.instance().props.prevFind}>Prev</Button>
-  ]));
+  ])).toBe(false);
 
   // Testing change in search bar with results
-  // wrapper.find('#findInput').instance().value = '2018';
-  // wrapper.find('#findInput').simulate('change', {});
-  // assert(wrapper.instance().props.handleChangeFindEvent.called);
 
-  // // Manually change find results to see if next/prev buttons render
-  // wrapper.setProps({ findResults: [1, 2, 3], searchRegex: '2018' });
-  // assert.equal(wrapper.instance().props.findResults.length, 3);
-  // assert.ok(wrapper.containsAllMatchingElements([
-  //   <Button>Next</Button>,
-  //   <Button>Prev</Button>
-  // ]));
+  // Manually change find results to see if next/prev buttons render
+  wrapper.setProps({ lineData: { ...data, findResults: [0] }, searchTerm: '2018', findIdx: 0 });
+  expect(wrapper.containsAllMatchingElements([
+    <Col lg={1} componentClass={ControlLabel} className="next-prev" >1/1</Col>,
+    <Button>Next</Button>,
+    <Button>Prev</Button>
+  ])).toBe(true);
 
-  // // Test next and prev button clicks
-  // assert(!wrapper.instance().props.nextFind.called);
-  // assert(!wrapper.instance().props.prevFind.called);
-  // const buttons = wrapper.find(Button);
-  // buttons.at(1).simulate('click', {});
-  // assert(wrapper.instance().props.nextFind.called);
-  // buttons.at(2).simulate('click', {});
-  // assert(wrapper.instance().props.prevFind.called);
+  wrapper.setProps({ lineData: { ...data, findResults: [] }, searchTerm: '2018' });
+  expect(wrapper.containsAllMatchingElements([
+    <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>
+  ])).toBe(true);
 });
