@@ -6,7 +6,7 @@ import { Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col 
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
 import { search, toggleSettingsPanel, setSearch } from '../../actions/logviewer';
-import searchLines from '../../selectors/search';
+import lines from '../../selectors/lines';
 import type { Settings, Line } from '../../models';
 import type { Ref } from 'react';
 
@@ -22,7 +22,7 @@ type Props = {
   handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
   setURLRef: (?HTMLInputElement) => void,
   findIdx: number,
-  findResults: Line[],
+  findResults: Object,
   changeFindIdx: (number) => void,
   nextFind: () => void,
   prevFind: () => void,
@@ -40,9 +40,9 @@ export class Toolbar extends React.PureComponent<Props> {
   showFind = () => {
 
     if (this.props.searchTerm != null) {
-      if (this.props.findResults.length > 0) {
+      if (this.props.findResults.findResults.length > 0 && this.props.lines.length !== this.props.findResults.findResults.length) {
         return (
-          <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.props.findIdx + 1}/{this.props.findResults.length}</Col>
+          <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.props.findIdx + 1}/{this.props.findResults.findResults.length}</Col>
             <Button onClick={this.props.nextFind}>Next</Button>
             <Button onClick={this.props.prevFind}>Prev</Button>
           </span>);
@@ -103,7 +103,8 @@ function mapStateToProps(state, ownProps) {
     findIdx: state.logviewer.find.findIdx,
     searchTerm: state.logviewer.find.searchTerm,
     detailsOpen: state.logviewer.settingsPanel,
-    findResults: searchLines(state)
+    lines: state.log.lines,
+    findResults: lines(state)
   };
 }
 

@@ -4,9 +4,7 @@ import React from 'react';
 import ReactList from 'react-list';
 import FullLogLine from './FullLogLine';
 import { connect } from 'react-redux';
-import search from '../../selectors/search';
-import highlights from '../../selectors/highlights';
-import { textHighlights } from '../../selectors/highlights';
+import lines from '../../selectors/lines';
 import type { ColorMap, Line, Bookmark } from '../../models';
 
 import './style.css';
@@ -234,12 +232,10 @@ class LogView extends React.Component<Props, State> {
 function mapStateToProps(state, ownProps) {
   return { ...state, ...ownProps,
     colorMap: state.log.colorMap,
-    lines: search(state, {}),
+    lines: lines(state),
     caseSensitive: state.logviewer.settings.caseSensitive,
     wrap: state.logviewer.settings.wrap,
     find: state.logviewer.find.searchRegex,
-    highlightLines: highlights(state, ownProps),
-    highlightText: textHighlights(state, ownProps),
   };
 }
 

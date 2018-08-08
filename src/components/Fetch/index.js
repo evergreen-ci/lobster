@@ -188,38 +188,6 @@ export class Fetch extends React.Component<Props, State> {
     });
   }
 
-  find = (event?: KeyboardEvent) => {
-    if (event) {
-      event.preventDefault();
-      if (event.keyCode === 13 && event.shiftKey) {
-        return;
-      }
-    }
-    return;
-    const findRegexp = this.findInput.value || '';
-    const findRegexpFull = this.makeRegexp(findRegexp, this.props.settings.caseSensitive);
-
-    if (findRegexp === '') {
-      this.clearFind();
-      return;
-    }
-
-    if (this.props.searchRegex === findRegexpFull) {
-      if (this.state.findResults.length > 0) {
-        return this.nextFind();
-      }
-      return;
-    }
-    if (this.state.findResults.length > 0) {
-      this.props.changeFindIdx(0);
-      this.props.changeSearch(findRegexpFull);
-      this.setScroll(this.state.findResults[0]);
-    } else {
-      this.props.changeFindIdx(-1);
-      this.props.changeSearch(findRegexpFull);
-    }
-  }
-
   nextFind = () => {
     let nextIdx = this.props.findIdx + 1;
     if (nextIdx === this.state.findResults.length) {
@@ -241,30 +209,6 @@ export class Fetch extends React.Component<Props, State> {
   clearFind() {
     this.props.changeFindIdx(-1);
     this.props.changeSearch(new RegExp(''));
-  }
-
-  addFilter = () => {
-    if (this.findInput) {
-      const value = this.findInput.value;
-      if (value === '' || this.props.filterList.find((elem) => elem.text === value)) {
-        return;
-      }
-      this.props.addFilter(value);
-      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-      this.clearFind();
-    }
-  }
-
-  addHighlight = () => {
-    if (this.findInput) {
-      const value = this.findInput.value;
-      if (value === '' || this.props.highlightList.find((elem) => elem.text === value)) {
-        return;
-      }
-      this.props.addHighlight(value);
-      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-      this.clearFind();
-    }
   }
 
   showLines(): ?ReactNode {
@@ -339,12 +283,7 @@ export class Fetch extends React.Component<Props, State> {
         <Bookmarks bookmarks={this.props.bookmarks} setScroll={this.setScroll} />
         <div className="main">
           <Toolbar
-            setFormRef={this.setFormRef}
-            addFilter={this.addFilter}
-            addHighlight={this.addHighlight}
-            handleSubmit={this.handleSubmit}
             setURLRef={this.setURLRef}
-            findResults={this.state.findResults}
           />
           <div className="log-list">
             {this.showLines()}

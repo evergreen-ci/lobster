@@ -1,6 +1,5 @@
 // @flow strict
 
-import { createSelector } from 'reselect';
 import type { Line, Highlight, Settings } from '../../models';
 
 function matchFilters(filter: RegExp[], string: string, isIntersection: boolean): boolean {
