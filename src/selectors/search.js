@@ -1,7 +1,7 @@
 // @flow strict
 
 import { createSelector } from 'reselect';
-import type { Line, Bookmark, Filter } from '../models';
+import type { Line, Bookmark, Filter, Settings } from '../models';
 
 function mergeActiveFilters(filterList: Filter[], caseSensitive: boolean): RegExp[] {
   return filterList
@@ -84,13 +84,17 @@ export default createSelector(
   getFilters,
   getBookmarks,
   getSettings,
-  function(searchTerm, lines, filters, bookmarks, settings) {
+  function(searchTerm: ?string, lines: Line[], filters: Filter[], bookmarks: Bookmark[], settings: Settings) {
+    if(searchTerm == null) {
+      return lines;
+    }
+
     const findRegexpFull = makeRegexp(searchTerm, settings.caseSensitive);
     const filter = mergeActiveFilters(filters, settings.caseSensitive);
     const inverseFilter = mergeActiveInverseFilters(filters, settings.caseSensitive);
 
     return lines.filter((line) => {
-      if (line.text.match(findRegexpFull) && shouldPrintLine(bookmarks, line, settings.filterIntersection, filter, inverseFilter)) {
+      if (findRegexpFull.test(line.text) && shouldPrintLine(bookmarks, line, settings.filterIntersection, filter, inverseFilter)) {
         return true;
       }
       return false;

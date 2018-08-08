@@ -209,26 +209,13 @@ export class Fetch extends React.Component<Props, State> {
       }
       return;
     }
-    const findResults = [];
-    const filter = this.mergeActiveFilters(this.props.filterList, this.props.settings.caseSensitive);
-    const inverseFilter = this.mergeActiveInverseFilters(this.props.filterList, this.props.settings.caseSensitive);
-
-    for (let i = 0; i < this.props.log.lines.length; i++) {
-      const line = this.props.log.lines[i];
-      if (line.text.match(findRegexpFull) && this.shouldPrintLine(this.props.bookmarks, line, filter, inverseFilter)) {
-        findResults.push(line.lineNumber);
-      }
-    }
-
     if (findResults.length > 0) {
       this.props.changeFindIdx(0);
       this.props.changeSearch(findRegexpFull);
-      this.setState({ findResults: findResults });
       this.setScroll(findResults[0]);
     } else {
       this.props.changeFindIdx(-1);
       this.props.changeSearch(findRegexpFull);
-      this.setState({ findResults: findResults });
     }
   }
 
@@ -253,49 +240,6 @@ export class Fetch extends React.Component<Props, State> {
   clearFind() {
     this.props.changeFindIdx(-1);
     this.props.changeSearch(new RegExp(''));
-    this.setState({ findResults: [] });
-  }
-
-  shouldPrintLine = (bookmarks: Bookmark[], line: Line, filter: RegExp[], inverseFilter: RegExp[]): boolean => {
-    if (this.findBookmark(bookmarks, line.lineNumber) !== -1) {
-      return true;
-    }
-
-    if ((!filter && !inverseFilter) || (filter.length === 0 && inverseFilter.length === 0)) {
-      return true;
-    } else if (!filter || filter.length === 0) {
-      if (this.matchFilters(inverseFilter, line.text, this.props.settings.filterIntersection)) {
-        return false;
-      }
-      return true;
-    } else if (!inverseFilter || inverseFilter.length === 0) {
-      if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection)) {
-        return true;
-      }
-      return false;
-    }
-    // If there are both types of filters, it has to match the filter and not match
-    // the inverseFilter.
-    if (this.props.settings.filterIntersection) {
-      if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection) &&
-            !this.matchFilters(inverseFilter, line.text, this.props.settings.filterIntersection)) {
-        return true;
-      }
-    } else if (this.matchFilters(filter, line.text, this.props.settings.filterIntersection) ||
-          !this.matchFilters(inverseFilter, line.text, this.props.settings.filterIntersection)) {
-      return true;
-    }
-    return false;
-  }
-
-  shouldHighlightLine = (line: Line, highlight: RegExp[], highlightLine: RegExp[]): boolean => {
-    if (!highlight || highlight.length === 0) {
-      return false;
-    }
-    if (this.matchFilters(highlight, line.text, this.props.settings.filterIntersection) && this.matchFilters(highlightLine, line.text, this.props.settings.filterIntersection)) {
-      return true;
-    }
-    return false;
   }
 
   addFilter = () => {
@@ -322,79 +266,17 @@ export class Fetch extends React.Component<Props, State> {
     }
   }
 
-  makeRegexp(regexp: string, caseSensitive: boolean) {
-    if (!regexp) {
-      return new RegExp('');
-    }
-
-    if (!caseSensitive) {
-      return new RegExp(regexp, 'i');
-    }
-    return new RegExp(regexp);
-  }
-
-  mergeActiveFilters(filterList: Filter[], caseSensitive: boolean): RegExp[] {
-    return filterList
-      .filter((elem) => elem.on && !elem.inverse)
-      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
-  }
-
-  mergeActiveInverseFilters(filterList: Filter[], caseSensitive: boolean): RegExp[] {
-    return filterList
-      .filter((elem) => elem.on && elem.inverse)
-      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
-  }
-
-  mergeActiveHighlights(highlightList: Highlight[], caseSensitive: boolean): RegExp[] {
-    return highlightList
-      .filter((elem) => elem.on)
-      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
-  }
-
-  mergeActiveHighlightLines(highlightList: Highlight[], caseSensitive: boolean): RegExp[] {
-    return highlightList
-      .filter((elem) => elem.on && elem.line)
-      .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
-  }
-
-  getHighlightText(highlightList: Highlight[]): string[] {
-    const highlight = [];
-    highlightList.forEach((element) => {
-      if (element.on && !element.line) {
-        highlight.push(element.text);
-      }
-    });
-    return highlight;
-  }
-
-  // Checks a given string against a list of regular expression filters
-  // If isIntersection === false, will return true if the string matches at least one regex
-  // Otherwise, will return true if the string matches all regexes
-  matchFilters(filter: RegExp[], string: string, isIntersection: boolean): boolean {
-    if (isIntersection) {
-      return filter.every(regex => string.match(regex));
-    }
-    return filter.some(regex => string.match(regex));
-  }
-
   showLines(): ?ReactNode {
-    const highlight = this.mergeActiveHighlights(this.props.highlightList, this.props.settings.caseSensitive);
-    const highlightText = this.getHighlightText(this.props.highlightList);
-    const highlightLine = this.mergeActiveHighlightLines(this.props.highlightList, this.props.settings.caseSensitive);
     if (!this.props.log.lines) {
       return <div />;
     }
     return (
       <LogView
-        highlight={highlight}
-        highlightLine={highlightLine}
         scrollLine={this.state.scrollLine}
         findBookmark={this.findBookmark}
         toggleBookmark={this.props.toggleBookmark}
         bookmarks={this.props.bookmarks}
-        highlightText={highlightText}
         findLine={this.props.findIdx === -1 ? -1 : this.state.findResults[this.props.findIdx]}
-        shouldHighlightLine={this.shouldHighlightLine}
       />);
   }
 
