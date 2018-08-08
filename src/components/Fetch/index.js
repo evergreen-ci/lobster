@@ -187,18 +187,17 @@ export class Fetch extends React.Component<Props, State> {
     if (!this.props.log.lines) {
       return <div />;
     }
+    const findLine = this.props.findResults.findResults[this.props.findIdx]
     return (
       <LogView
         scrollLine={this.state.scrollLine}
         findBookmark={this.findBookmark}
         toggleBookmark={this.props.toggleBookmark}
         bookmarks={this.props.bookmarks}
-        findLine={this.props.findIdx === -1 ? -1 : this.props.findResults.findResults[this.props.findIdx].lineNumber}
+        findLine={findLine ? findLine.lineNumber : -1}
         lines={this.props.findResults}
       />);
   }
-
-  setURLRef = (ref: ?HTMLInputElement) => {this.urlInput = ref;}
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
@@ -232,7 +231,6 @@ export class Fetch extends React.Component<Props, State> {
         <Bookmarks bookmarks={this.props.bookmarks} setScroll={this.setScroll} />
         <div className="main">
           <Toolbar
-            setURLRef={this.setURLRef}
             findResults={this.props.findResults}
           />
           <div className="log-list">
