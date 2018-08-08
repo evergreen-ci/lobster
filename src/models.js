@@ -198,14 +198,9 @@ export type Log = $Exact<$ReadOnly<{
   events: Event[]
 }>>
 
-export type SearchTerm = $Exact<$ReadOnly<{
-  term: string,
-  regex: RegExp
-}>>
-
 export type Find = $Exact<$ReadOnly<{
   findIdx: number,
-  searchTerm: ?SearchTerm
+  searchTerm: ?string
 }>>
 
 export type Logviewer = $Exact<$ReadOnly<{
