@@ -4,7 +4,6 @@ import React from 'react';
 import ReactList from 'react-list';
 import FullLogLine from './FullLogLine';
 import { connect } from 'react-redux';
-import lines from '../../selectors/lines';
 import type { ColorMap, Line, LineData, Bookmark } from '../../models';
 
 import './style.css';
@@ -227,7 +226,7 @@ function mapStateToProps(state, ownProps): $Shape<Props> {
     colorMap: state.log.colorMap,
     caseSensitive: state.logviewer.settings.caseSensitive,
     wrap: state.logviewer.settings.wrap,
-    find: state.logviewer.find.searchRegex,
+    find: state.logviewer.find.searchRegex
   };
 }
 

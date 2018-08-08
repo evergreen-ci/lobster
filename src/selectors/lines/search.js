@@ -1,7 +1,6 @@
 // @flow strict
 
-import { createSelector } from 'reselect';
-import type { Line, Bookmark, Filter, Settings } from '../../models';
+import type { Line, Bookmark, Filter } from '../../models';
 
 export function mergeActiveFilters(filterList: Filter[], caseSensitive: boolean): RegExp[] {
   return filterList

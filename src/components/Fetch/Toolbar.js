@@ -49,7 +49,7 @@ export class Toolbar extends React.PureComponent<Props> {
     }
   }
 
-  handleChangeFindEvent = (event: Event) => {
+  handleChangeFindEvent = () => {
     if (this.findInput.current != null) {
       this.props.setSearch(this.findInput.current.value);
     }
@@ -66,12 +66,36 @@ export class Toolbar extends React.PureComponent<Props> {
     }
   }
 
+  focusOnFind(event: KeyboardEvent) {
+    event.preventDefault();
+    if (this.findInput.current) {
+      this.findInput.current.focus();
+    }
+  }
+
+  handleKeyDown = (event: KeyboardEvent) => {
+    switch (event.keyCode) {
+      case 114: // F3
+        this.focusOnFind(event);
+        break;
+
+      case 70: // F
+        if (event.ctrlKey || event.metaKey) {
+          this.focusOnFind(event);
+        }
+        break;
+      // no default
+    }
+  }
+
   componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyDown);
     if (this.findInput.current) {
       this.findInput.current.addEventListener('keydown', this.submit);
     }
   }
   componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
     if (this.findInput.current) {
       this.findInput.current.removeEventListener('keydown', this.submit);
     }

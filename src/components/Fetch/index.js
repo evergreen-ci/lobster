@@ -68,7 +68,7 @@ export class Fetch extends React.Component<Props, State> {
     }
     this.props.loadBookmarks(bookmarksArr);
     this.state = {
-      scrollLine: parseInt(parsed.scroll, 10),
+      scrollLine: parseInt(parsed.scroll, 10)
     };
     const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({ text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1') }));
     this.props.loadInitialFilters(initialFilters);
@@ -85,7 +85,7 @@ export class Fetch extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     if (this.props.filterList !== prevProps.filterList) {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-      //this.clearFind();
+      // this.clearFind();
     }
     if (this.props.log.isDone && ((JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) || this.props.log.lines !== prevProps.log.lines)) {
       this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
@@ -187,7 +187,7 @@ export class Fetch extends React.Component<Props, State> {
     if (!this.props.log.lines) {
       return <div />;
     }
-    const findLine = this.props.findResults.findResults[this.props.findIdx]
+    const findLine = this.props.findResults.findResults[this.props.findIdx];
     return (
       <LogView
         scrollLine={this.state.scrollLine}
@@ -197,32 +197,6 @@ export class Fetch extends React.Component<Props, State> {
         findLine={findLine ? findLine.lineNumber : -1}
         lines={this.props.findResults}
       />);
-  }
-
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyDown);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  handleKeyDown = (event: KeyboardEvent) => {
-    switch (event.keyCode) {
-      case 114: // F3
-        this.focusOnFind(event);
-        break;
-      case 70: // F
-        if (event.ctrlKey || event.metaKey) {
-          this.focusOnFind(event);
-        }
-        break;
-      // no default
-    }
-  }
-
-  focusOnFind(event: KeyboardEvent) {
-    event.preventDefault();
   }
 
   render() {

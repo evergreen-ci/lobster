@@ -18,11 +18,6 @@ test('selectors-shouldPrintLine', function() {
     { lineNumber: 0 },
     { lineNumber: 5 }
   ];
-  const settings = {
-    caseSensitive: false,
-    filterIntersection: false,
-    wrap: false
-  };
   let filtersRegexps = mergeActiveFilters(filters, false);
   let inverseFilters = mergeActiveInverseFilters(filters, false);
 

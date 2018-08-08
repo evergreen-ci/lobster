@@ -15,7 +15,6 @@ export default function*(event: SearchEvent): Saga<void> {
 
   const findIndex = yield select((state) => state.logviewer.find.findIdx);
 
-  const { action } = event.payload;
   if (event.payload.action === 'next') {
     let newIdx = findIndex + 1;
     if (newIdx >= numLines) {
@@ -33,7 +32,7 @@ export default function*(event: SearchEvent): Saga<void> {
     yield put(actions.changeSearch(event.payload.term));
     if (event.payload.term === '') {
       yield put(actions.changeFindIdx(-1));
-    }else {
+    } else {
       const newLines = yield select(getLines);
       const newFindIndex = yield select((state) => state.logviewer.find.findIdx);
       if (newLines.findResults.length > 0 && newFindIndex === -1) {

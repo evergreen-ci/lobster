@@ -16,7 +16,7 @@ export default function(state: Find = initialState, action: Action): Find {
   if (action.type === LOGVIEWER_CHANGE_SEARCH) {
     const { text } = action.payload;
     if (!text) {
-      return { ...state, searchTerm: ''};
+      return { ...state, searchTerm: '' };
     }
     return {
       ...state,

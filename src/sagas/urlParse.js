@@ -2,7 +2,7 @@
 
 import urlParse from '../urlParse'; // ughhh
 import { loadBookmarks, loadInitialFilters, loadInitialHighlights } from '../actions/logviewer';
-import { put, call } from 'redux-saga/effects';
+import { put } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 
 export default function*(): Saga<void> {

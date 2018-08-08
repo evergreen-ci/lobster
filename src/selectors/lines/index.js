@@ -31,7 +31,7 @@ export default createSelector(
   getBookmarks,
   getSettings,
   function(searchTerm: ?string, lines: Line[], filters: Filter[], highlights: Highlight[], bookmarks: Bookmark[], settings: Settings): LineData {
-    const findRegexp = makeRegexp(searchTerm, settings.caseSensitive)
+    const findRegexp = makeRegexp(searchTerm, settings.caseSensitive);
     const filter = mergeActiveFilters(filters, settings.caseSensitive);
     const inverseFilter = mergeActiveInverseFilters(filters, settings.caseSensitive);
     const highlight = mergeActiveHighlights(highlights, settings.caseSensitive);
@@ -62,6 +62,6 @@ export default createSelector(
       findResults: outLines,
       highlightLines: highlightLines,
       highlightText: highlightText
-    }
+    };
   }
 );
