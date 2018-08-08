@@ -151,7 +151,7 @@ function mapStateToProps(state, ownProps: $Shape<Props>) {
     settings: state.logviewer.settings,
     findIdx: state.logviewer.find.findIdx,
     searchTerm: state.logviewer.find.searchTerm,
-    detailsOpen: state.logviewer.settingsPanel,
+    detailsOpen: state.logviewer.settingsPanel
   };
 }
 

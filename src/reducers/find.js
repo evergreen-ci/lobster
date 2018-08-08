@@ -19,13 +19,13 @@ export default function(state: Find = initialState, action: Action): Find {
       return { ...state, searchTerm: '' };
     }
     try {
-      new RegExp(text)
+      RegExp(text);
       return {
         ...state,
         searchTerm: text
       };
     } catch (e) {
-
+      // empty
     }
   }
   return state;

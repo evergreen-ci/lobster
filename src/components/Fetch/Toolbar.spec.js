@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Enzyme from 'enzyme';
-import assert from 'assert';
 import Button from 'react-bootstrap/lib/Button';
 import { Toolbar } from './Toolbar';
 import { Col, ControlLabel } from 'react-bootstrap';
