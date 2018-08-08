@@ -32,9 +32,6 @@ describe('lobsterserver-default-args', function() {
   const tmp = tmpdir() + '/lobster.txt';
   let c;
   beforeAll(async () => {
-    if (process.env.LOBSTER_E2E_SERVER_PORT !== null) {
-      return Promise.reject();
-    }
     return new Promise(function(resolve) {
       c = startServer(['--logs', path.dirname(__dirname) + '/e2e', '--e2e']);
       expect(c).not.toEqual(null);
