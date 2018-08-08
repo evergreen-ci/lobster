@@ -89,12 +89,14 @@ export class Toolbar extends React.PureComponent<Props> {
   addFilter = () => {
     if (this.findInput) {
       this.props.addFilter(this.findInput.value);
+      this.findInput.value = '';
     }
   }
 
   addHighlight = () => {
     if (this.findInput) {
       this.props.addHighlight(this.findInput.value);
+      this.findInput.value = '';
     }
   }
 
