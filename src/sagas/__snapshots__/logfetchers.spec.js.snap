@@ -61,6 +61,39 @@ Object {
         "channel": null,
       },
     },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": 0,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": undefined,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+  ],
+  "select": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
   ],
 }
 `;
@@ -165,8 +198,39 @@ Object {
         "resolve": true,
       },
     },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": 0,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": undefined,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
   ],
   "select": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
     Object {
       "@@redux-saga/IO": true,
       "SELECT": Object {
@@ -243,6 +307,39 @@ Object {
         "channel": null,
       },
     },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": 0,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": undefined,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+  ],
+  "select": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
   ],
 }
 `;
@@ -301,6 +398,27 @@ Object {
           "type": "process-response",
         },
         "channel": null,
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": 0,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+  ],
+  "select": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
       },
     },
   ],
@@ -372,6 +490,39 @@ Object {
           "type": "process-response",
         },
         "channel": null,
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": 0,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": undefined,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+  ],
+  "select": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
       },
     },
   ],
@@ -477,8 +628,39 @@ Object {
         "resolve": true,
       },
     },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": 0,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": undefined,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
   ],
   "select": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
     Object {
       "@@redux-saga/IO": true,
       "SELECT": Object {
@@ -595,8 +777,39 @@ Object {
         "resolve": true,
       },
     },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": 0,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": undefined,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
   ],
   "select": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
     Object {
       "@@redux-saga/IO": true,
       "SELECT": Object {

@@ -101,7 +101,10 @@ export default function*(action: actions.LoadLog): Saga<void> {
   }
 
   const lines = yield select((state) => state.log.lines);
-
-  yield put(ensureBookmark(0));
-  yield put(ensureBookmark(lines[lines.length - 1].lineNumber));
+  if (lines.length > 0) {
+    yield put(ensureBookmark(0));
+    if (lines.length > 1) {
+      yield put(ensureBookmark(lines[lines.length - 1].lineNumber));
+    }
+  }
 }
