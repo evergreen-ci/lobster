@@ -18,10 +18,15 @@ export default function(state: Find = initialState, action: Action): Find {
     if (!text) {
       return { ...state, searchTerm: '' };
     }
-    return {
-      ...state,
-      searchTerm: text
-    };
+    try {
+      new RegExp(text)
+      return {
+        ...state,
+        searchTerm: text
+      };
+    } catch (e) {
+
+    }
   }
   return state;
 }

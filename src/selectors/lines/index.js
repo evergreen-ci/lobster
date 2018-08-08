@@ -40,26 +40,29 @@ export default createSelector(
 
     const indexMap = new Map();
     const highlightLines = [];
+    const findResults = [];
+    const filteredLines = [];
 
     let j = 0;
-    const outLines = lines.filter((line, i) => {
-      if (!findRegexp.test(line.text)) {
-        return false;
-      }
+    lines.forEach((line, i) => {
       if (!shouldPrintLine(bookmarks, line, settings.filterIntersection, filter, inverseFilter)) {
-        return false;
+        return;
+      }
+      filteredLines.push(line);
+      if (findRegexp.test(line.text)) {
+        findResults.push(line.lineNumber);
       }
       indexMap.set(i, j++);
       if (highlight.length > 0
         && shouldHighlightLine(line, highlight, highlightLine, settings)) {
         highlightLines.push(line);
       }
-      return true;
     });
 
     return {
       indexMap: indexMap,
-      findResults: outLines,
+      findResults: findResults,
+      filteredLines: filteredLines,
       highlightLines: highlightLines,
       highlightText: highlightText
     };

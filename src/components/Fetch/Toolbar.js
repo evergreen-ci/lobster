@@ -25,7 +25,7 @@ type Props = {
   nextFind: () => void,
   prevFind: () => void,
   setSearch: (value: string) => void,
-  findResults: LineData
+  lineData: LineData
 };
 
 export class Toolbar extends React.PureComponent<Props> {
@@ -38,9 +38,9 @@ export class Toolbar extends React.PureComponent<Props> {
 
   showFind = () => {
     if (this.props.searchTerm !== '') {
-      if (this.props.findResults.findResults.length > 0) {
+      if (this.props.lineData.findResults.length > 0) {
         return (
-          <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.props.findIdx + 1}/{this.props.findResults.findResults.length}</Col>
+          <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.props.findIdx + 1}/{this.props.lineData.findResults.length}</Col>
             <Button onClick={this.props.nextFind}>Next</Button>
             <Button onClick={this.props.prevFind}>Prev</Button>
           </span>);
@@ -55,7 +55,7 @@ export class Toolbar extends React.PureComponent<Props> {
     }
   }
 
-  submit = (event: Event) => {
+  submit = (event: KeyboardEvent) => {
     if (event.keyCode === 13) {
       event.preventDefault();
       if (event.shiftKey) {
@@ -134,19 +134,18 @@ export class Toolbar extends React.PureComponent<Props> {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state, ownProps): $Shape<Props> {
   return {
     ...state,
     ...ownProps,
     settings: state.logviewer.settings,
     findIdx: state.logviewer.find.findIdx,
     searchTerm: state.logviewer.find.searchTerm,
-    detailsOpen: state.logviewer.settingsPanel,
-    lines: state.log.lines
+    detailsOpen: state.logviewer.settingsPanel
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps): $Shape<Props> {
   return {
     ...ownProps,
     togglePanel: () => dispatch(toggleSettingsPanel()),

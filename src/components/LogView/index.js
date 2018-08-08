@@ -18,7 +18,7 @@ type Props = {
   find: string,
   caseSensitive: boolean,
   scrollLine: number,
-  lines: LineData,
+  lineData: LineData,
   highlightLines: Line[],
   highlightText: string[],
 };
@@ -100,15 +100,15 @@ class LogView extends React.Component<Props, State> {
       <FullLogLine
         lineRefCallback={this.lineRefCallback}
         key={key}
-        found={this.props.lines.findResults[index].lineNumber === this.props.findLine}
-        bookmarked={this.props.findBookmark(this.props.bookmarks, this.props.lines.findResults[index].lineNumber) !== -1}
-        highlight={this.props.lines.highlightLines.includes(this.props.lines.findResults[index])}
+        found={this.props.lineData.filteredLines[index].lineNumber === this.props.findLine}
+        bookmarked={this.props.findBookmark(this.props.bookmarks, this.props.lineData.filteredLines[index].lineNumber) !== -1}
+        highlight={this.props.lineData.highlightLines.includes(this.props.lineData.filteredLines[index])}
         wrap={this.props.wrap}
-        line={this.props.lines.findResults[index]}
+        line={this.props.lineData.filteredLines[index]}
         toggleBookmark={this.props.toggleBookmark}
         colorMap={this.props.colorMap}
         find={this.props.find}
-        highlightText={this.props.lines.highlightText}
+        highlightText={this.props.lineData.highlightText}
         caseSensitive={this.props.caseSensitive}
         updateSelectStartIndex={this.updateSelectStartIndex}
         updateSelectEndIndex={this.updateSelectEndIndex}
@@ -135,7 +135,7 @@ class LogView extends React.Component<Props, State> {
       this.scrollToLine(nextProps.scrollLine);
     }
 
-    if (nextProps.lines !== this.props.lines) {
+    if (nextProps.lineData !== this.props.lineData) {
       return true;
     }
     if (nextProps.bookmarks !== this.props.bookmarks) {
@@ -203,13 +203,13 @@ class LogView extends React.Component<Props, State> {
   }
 
   render() {
-    if (this.props.lines.findResults.length !== 0) {
+    if (this.props.lineData.filteredLines.length !== 0) {
       return (
         <div>
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
-            length={this.props.lines.findResults.length}
+            length={this.props.lineData.filteredLines.length}
             initialIndex={this.props.scrollLine}
             type={this.props.wrap ? 'variable' : 'uniform'}
             useStaticSize={true}

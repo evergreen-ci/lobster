@@ -219,7 +219,8 @@ export type VisualLineData = $Exact<$ReadOnly<{
 
 export type LineData = $Exact<$ReadOnly<{
   indexMap: Map<number, number>,
-  findResults: Line[],
+  findResults: number[],
+  filteredLines: Line[],
   highlightLines: Line[],
   highlightText: string[]
 }>>

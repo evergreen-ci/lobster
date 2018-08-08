@@ -12,7 +12,7 @@ import queryString from '../../thirdparty/query-string';
 import Toolbar from './Toolbar';
 import lines from '../../selectors/lines';
 import type { Dispatch } from 'redux';
-import type { Log, LogIdentity, Settings, Filter, Highlight, Bookmark, Line } from '../../models';
+import type { LineData, Log, LogIdentity, Settings, Filter, Highlight, Bookmark, Line } from '../../models';
 import type { ContextRouter } from 'react-router-dom';
 
 type Props = {
@@ -41,7 +41,7 @@ type Props = {
   changeSearch: (RegExp) => void,
   addFilter: (string) => void,
   addHighlight: (string) => void,
-  findResults: LineData
+  lineData: LineData
 } & ContextRouter
 
 type State = {
@@ -187,15 +187,15 @@ export class Fetch extends React.Component<Props, State> {
     if (!this.props.log.lines) {
       return <div />;
     }
-    const findLine = this.props.findResults.findResults[this.props.findIdx];
+    const findLine = this.props.lineData.findResults[this.props.findIdx];
     return (
       <LogView
         scrollLine={this.state.scrollLine}
         findBookmark={this.findBookmark}
         toggleBookmark={this.props.toggleBookmark}
         bookmarks={this.props.bookmarks}
-        findLine={findLine ? findLine.lineNumber : -1}
-        lines={this.props.findResults}
+        findLine={findLine ? findLine : -1}
+        lineData={this.props.lineData}
       />);
   }
 
@@ -205,7 +205,7 @@ export class Fetch extends React.Component<Props, State> {
         <Bookmarks bookmarks={this.props.bookmarks} setScroll={this.setScroll} />
         <div className="main">
           <Toolbar
-            findResults={this.props.findResults}
+            lineData={this.props.lineData}
           />
           <div className="log-list">
             {this.showLines()}
@@ -228,7 +228,7 @@ function mapStateToProps(state, ownProps) {
     filterList: state.logviewer.filters,
     highlightList: state.logviewer.highlights,
     bookmarks: state.logviewer.bookmarks,
-    findResults: lines(state)
+    lineData: lines(state)
   };
 }
 
