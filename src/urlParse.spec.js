@@ -1,15 +1,17 @@
+// @flow
+
 import urlParse from './urlParse';
 
 describe('urlParse', function() {
   test('merge', function() {
-    const queryParams = '?scroll=99&bookmarks=0,1,2&url=urlserver&server=serverserver';
+    const queryParams = 'http://domain.invalid/?scroll=99&bookmarks=0,1,2&url=urlserver&server=serverserver';
     const hash = '#scroll=0&bookmarks=2,4,5&url=urlhash&server=serverhash';
 
     const out = urlParse(hash, queryParams);
-    expect(out.scrollToLine).toBe(0);
+    expect(out.scroll).toBe(0);
     expect([...out.bookmarks]).toEqual(expect.arrayContaining([0, 1, 2, 4, 5]));
-    expect(out.url).toBe('urlhash')
-    expect(out.server).toBe('serverhash')
+    expect(out.url).toBe('urlhash');
+    expect(out.server).toBe('serverhash');
   });
 
   test('multi-highlight', function() {
@@ -106,13 +108,13 @@ describe('urlParse', function() {
 
   test('bad-bookmarks', function() {
     const values = ['?bookmarks=', '?bookmarks', '?', '', undefined, null];
-      values.forEach((queryParams) => {
-        values.forEach((hash) => {
-          const out = urlParse(hash, queryParams);
-          expect([...out.filters]).toHaveLength(0);
-          expect([...out.highlights]).toHaveLength(0);
-        });
+    values.forEach((queryParams) => {
+      values.forEach((hash) => {
+        const out = urlParse(hash, queryParams);
+        expect([...out.filters]).toHaveLength(0);
+        expect([...out.highlights]).toHaveLength(0);
       });
+    });
 
     [null, '?bookmarks=randomtext', '?bookmarks=ra,n,domt,ext!']
       .forEach((value) => {
@@ -123,12 +125,12 @@ describe('urlParse', function() {
 
   test('bad-scroll', function() {
     const values = ['?scroll=', '?scroll', '?', '', undefined, null, '?scroll=zippitydoodah', '?scroll=-5'];
-      values.forEach((queryParams) => {
-        values.forEach((hash) => {
-          const out = urlParse(hash, queryParams);
-          expect(out.scrollToLine).toBe(undefined);
-        });
+    values.forEach((queryParams) => {
+      values.forEach((hash) => {
+        const out = urlParse(hash, queryParams);
+        expect(out.scroll).toBe(undefined);
       });
+    });
   });
 });
 

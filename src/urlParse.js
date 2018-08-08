@@ -33,11 +33,11 @@ function parseSingleFilter(s: string): ?[boolean, boolean, string] {
   }
 
   const str0 = charToBool(s.charAt(0));
-  if(str0 == null) {
+  if (str0 == null) {
     return null;
   }
   const str1 = charToBool(s.charAt(1));
-  if(str1 == null) {
+  if (str1 == null) {
     return null;
   }
   const text = s.substring(2);
@@ -100,7 +100,16 @@ function parseOptionalString(s: ?string): ?string {
   return s;
 }
 
-export default function(hashString: string = '', queryParams: string = '') {
+export type URLParseData = $Exact<$ReadOnly<{
+  bookmarks: Set<number>,
+  filters: Filter[],
+  highlights: Highlight[],
+  scroll: ?number,
+  server: ?string,
+  url: ?string
+}>>
+
+export default function(hashString: ?string = '', queryParams: ?string = ''): URLParseData {
   const hash = queryString.parseUrl(`?${(hashString || '').substring(1)}`);
   const query = queryString.parseUrl(queryParams || '');
 
@@ -114,9 +123,9 @@ export default function(hashString: string = '', queryParams: string = '') {
     ...parseBookmarks(query.query.bookmarks)
   ]);
 
-  let scrollToLine = parseInt(hash.query.scroll || query.query.scroll, 10);
-  if (!Number.isFinite(scrollToLine) || scrollToLine < 0) {
-    scrollToLine = undefined;
+  let scroll = parseInt(hash.query.scroll || query.query.scroll, 10);
+  if (!Number.isFinite(scroll) || scroll < 0) {
+    scroll = undefined;
   }
 
   const filters = parseFilters([...hash.query.f, ...query.query.f]);
@@ -124,5 +133,5 @@ export default function(hashString: string = '', queryParams: string = '') {
   const server = parseOptionalString(hash.query.server || query.query.server);
   const url = parseOptionalString(hash.query.url || query.query.url);
 
-  return { bookmarks, scrollToLine, filters, highlights, server, url };
+  return { bookmarks, scroll, filters, highlights, server, url };
 }
