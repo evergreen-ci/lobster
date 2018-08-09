@@ -208,7 +208,8 @@ describe('e2e', function() {
         const expected = ['FIND_THIS_TOKEN', 'line 446999', 'line 447000'];
         expect(expected.includes(token)).toBe(true);
       } else {
-        expect(token).toBe('FIND_THIS_TOKEN');
+        const expected = ['FIND_THIS_TOKEN', 'line 1600000', 'line 1599999'];
+        expect(expected.includes(token)).toBe(true);
       }
 
       await l.init(undefined, { url: `perf-${table[1]}.special.log` });
