@@ -88,7 +88,8 @@ export class Toolbar extends React.PureComponent<Props> {
 
   addFilter = () => {
     if (this.findInput) {
-      this.props.addFilter(this.findInput.value);
+      const { value } = this.findInput;
+      this.props.addFilter(value);
       this.findInput.value = '';
     }
   }

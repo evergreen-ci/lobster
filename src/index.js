@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { lobster } from './reducers';
 import rootSaga from './sagas';
 import urlParse from './sagas/urlParse';
+import urlReplacer from './sagas/urlReplacer';
 import { wipeCache } from './sagas/lobstercage';
 import App from './components/App';
 import './index.css';
@@ -40,3 +41,5 @@ window.boilLobster = () => {
   window.lobsterWipeFilesystem();
   window.localStorage.clear();
 };
+
+//window.addEventListener('hashchange', (e: HashChangeEvent) => saga.run(urlReplacer), false);

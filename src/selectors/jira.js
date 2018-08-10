@@ -1,6 +1,7 @@
 // @flow strict
 
 import { createSelector } from 'reselect';
+import type { Line, Bookmark } from '../models';
 
 const getLogLines = (state) => state.log.lines;
 const getBookmarks = (state) => state.logviewer.bookmarks;
@@ -8,7 +9,7 @@ const getBookmarks = (state) => state.logviewer.bookmarks;
 export default createSelector(
   getLogLines,
   getBookmarks,
-  function(lines, bookmarks) {
+  function(lines: Line[], bookmarks: Bookmark[]) {
     if (bookmarks.length === 0 || lines.length === 0) {
       return '';
     }
