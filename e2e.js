@@ -91,7 +91,12 @@ process.on('exit', () => {
 });
 
 function test() {
-  const e2eProcess = child.spawn('npm', ['run', 'test', '--', '-t', argv.t, ...argv._], {
+  let testcmd = 'test';
+  if (process.env.CI === 'true') {
+    testcmd = 'test:ci';
+  }
+
+  const e2eProcess = child.spawn('npm', ['run', testcmd, '--', '-t', argv.t, ...argv._], {
     'env': {
       ...process.env,
       ...this

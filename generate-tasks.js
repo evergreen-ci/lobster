@@ -21,7 +21,8 @@ const isFileWithEnding = (endings, file) =>
   isFile(file) && endsWithAnyOf(endings, file);
 
 const testFileSpec = () => ['.spec.', '.test.']
-  .reduce((acc, val) => acc.concat(['js', 'jsx'].map(suf => val + suf)), []);
+  .reduce((acc, val) => acc.concat(['js', 'jsx']
+    .map(suf => val + suf)), []);
 
 // given a directory, return true if that directory has files ending in
 // .spec.js or .test.js
@@ -56,7 +57,7 @@ const dirs = scanDirs.reduce((acc, val) => acc.concat(getDirectories(val)), []).
 const testDirs = dirs.filter(hasTests);
 console.log('Will run tests in: ', testDirs);
 
-const testTasks = testDirs.map(makeTask('test', 'test', '*.{spec,test}.js{,x}'));
+const testTasks = testDirs.map(makeTask('test:ci', 'test', '*.{spec,test}.js{,x}'));
 const gt = {
   'buildvariants': [
     {
