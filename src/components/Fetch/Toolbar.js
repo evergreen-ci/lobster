@@ -93,6 +93,7 @@ export class Toolbar extends React.PureComponent<Props> {
     const { value } = this.findInput;
 
     this.props.addFilter(value);
+    // $FlowFixMe
     this.findInput.value = '';
   }
 
@@ -103,6 +104,7 @@ export class Toolbar extends React.PureComponent<Props> {
     const { value } = this.findInput;
 
     this.props.addHighlight(value);
+    // $FlowFixMe
     this.findInput.value = '';
   }
 
