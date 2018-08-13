@@ -9,7 +9,6 @@ import type { ColorMap, Line, LineData, Bookmark } from '../../models';
 import './style.css';
 
 type Props = {
-  findBookmark: (Bookmark[], number) => void,
   findLine: number,
   bookmarks: Bookmark[],
   wrap: boolean,
@@ -95,13 +94,19 @@ class LogView extends React.Component<Props, State> {
     }
   }
 
+  findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
+    return bookmarkList.findIndex(function(bookmark) {
+      return bookmark.lineNumber === lineNum;
+    });
+  }
+
   genList = (index, key) => {
     return (
       <FullLogLine
         lineRefCallback={this.lineRefCallback}
         key={key}
         found={this.props.lineData.filteredLines[index].lineNumber === this.props.findLine}
-        bookmarked={this.props.findBookmark(this.props.bookmarks, this.props.lineData.filteredLines[index].lineNumber) !== -1}
+        bookmarked={this.findBookmark(this.props.bookmarks, this.props.lineData.filteredLines[index].lineNumber) !== -1}
         highlight={this.props.lineData.highlightLines.includes(this.props.lineData.filteredLines[index])}
         wrap={this.props.wrap}
         line={this.props.lineData.filteredLines[index]}

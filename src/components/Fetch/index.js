@@ -56,61 +56,16 @@ export class Fetch extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    // this.componentWillReceiveProps = this.componentWillReceiveProps(this);
     const locationSearch = props.location.search;
     const parsed = queryString.parse(locationSearch === '' ? props.location.hash : locationSearch);
-    const bookmarksList = parsed.bookmarks;
-    let bookmarksArr = [];
-    if (bookmarksList) {
-      bookmarksArr = bookmarksList.split(',').map((n)=>({ lineNumber: parseInt(n, 10) }));
-    }
-    this.props.loadBookmarks(bookmarksArr);
     this.state = {
       scrollLine: parseInt(parsed.scroll, 10)
     };
-    const initialFilters = ((typeof parsed.f === 'string' ? [parsed.f] : parsed.f) || []).map((f) => ({ text: f.substring(2), on: (f.charAt(0) === '1'), inverse: (f.charAt(1) === '1') }));
-    this.props.loadInitialFilters(initialFilters);
-    const initialHighlights = ((typeof parsed.h === 'string' ? [parsed.h] : parsed.h) || []).map((h) => ({ text: h.substring(2), on: (h.charAt(0) === '1'), line: (h.charAt(1) === '1') }));
-    this.props.loadInitialHighlights(initialHighlights);
-    if (locationSearch !== '') {
-      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-    }
     if (this.props.logIdentity) {
       this.props.loadLogByIdentity(this.props.logIdentity);
     }
   }
 
-  componentDidUpdate(prevProps: Props) {
-    if (this.props.filterList !== prevProps.filterList) {
-      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-    }
-    if (this.props.log.isDone && ((JSON.stringify(this.props.bookmarks) !== JSON.stringify(prevProps.bookmarks)) || this.props.log.lines !== prevProps.log.lines)) {
-      this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-    }
-  }
-
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.log.lines !== prevState.lines) {
-      return { lines: nextProps.log.lines };
-    }
-    return null;
-  }
-
-  makeFilterURLString(filter: Filter): string {
-    let res = '';
-    res += (filter.on ? '1' : '0');
-    res += (filter.inverse ? '1' : '0');
-    res += filter.text;
-    return res;
-  }
-
-  makeHighlightURLString(highlight: Highlight): string {
-    let res = '';
-    res += (highlight.on ? '1' : '0');
-    res += (highlight.line ? '1' : '0');
-    res += highlight.text;
-    return res;
-  }
 
   updateURL(bookmarks: Bookmark[], filters: Filter[], highlights: Highlight[]) {
     const parsed = {};
@@ -171,12 +126,6 @@ export class Fetch extends React.Component<Props, State> {
     this.setState({ scrollLine: lineNum });
   }
 
-  findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
-    return bookmarkList.findIndex(function(bookmark) {
-      return bookmark.lineNumber === lineNum;
-    });
-  }
-
   showLines(): ?ReactNode {
     if (!this.props.log.lines) {
       return <div />;
@@ -185,7 +134,6 @@ export class Fetch extends React.Component<Props, State> {
     return (
       <LogView
         scrollLine={this.state.scrollLine}
-        findBookmark={this.findBookmark}
         toggleBookmark={this.props.toggleBookmark}
         bookmarks={this.props.bookmarks}
         findLine={findLine ? findLine : -1}
@@ -214,8 +162,8 @@ export class Fetch extends React.Component<Props, State> {
 // as we migrate towards the react-redux model
 function mapStateToProps(state, ownProps) {
   return {
-    ...state,
     ...ownProps,
+    ...state,
     settings: state.logviewer.settings,
     findIdx: state.logviewer.find.findIdx,
     searchRegex: state.logviewer.find.searchRegex,
@@ -228,6 +176,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   return {
+    ...ownProps,
     loadInitialFilters: (initialFilters) => dispatch(logviewerActions.loadInitialFilters(initialFilters)),
     loadInitialHighlights: (initialHighlights) => dispatch(logviewerActions.loadInitialHighlights(initialHighlights)),
     changeFindIdx: (index) => dispatch(logviewerActions.changeFindIdx(index)),
@@ -235,8 +184,7 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
     toggleBookmark: (lineNumArray) => dispatch(logviewerActions.toggleBookmark(lineNumArray)),
     ensureBookmark: (lineNum) => dispatch(logviewerActions.ensureBookmark(lineNum)),
     changeSearch: (text) => dispatch(logviewerActions.changeSearch(text)),
-    loadLogByIdentity: (identity) => dispatch(actions.loadLog(identity)),
-    ...ownProps
+    loadLogByIdentity: (identity) => dispatch(actions.loadLog(identity))
   };
 }
 

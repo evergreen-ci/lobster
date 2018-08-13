@@ -19,6 +19,15 @@ import 'whatwg-fetch';
 // TODO: maybe Firefox support?
 // import '../node_modules/idb.filesystem.js/dist/idb.filesystem.min.js';
 
+const logger = store => next => action => {
+  console.group(action.type)
+  console.info('dispatching', action)
+  let result = next(action)
+  console.log('next state', store.getState())
+  console.groupEnd()
+  return result
+}
+
 const saga = createSagaMiddleware();
 const store = createStore(lobster, applyMiddleware(saga));
 saga.run(urlParse);

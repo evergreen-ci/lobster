@@ -2,42 +2,88 @@
 
 import queryString from '../thirdparty/query-string';
 import urlParse, { replaceState } from '../urlParse';
-import { loadBookmarks, loadInitialFilters, loadInitialHighlights } from '../actions/logviewer';
-import { put, takeEvery, select } from 'redux-saga/effects';
+import { takeEvery, takeLatest, select, put } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
-import * as logviewerActions from '../actions/logviewer';
-import type { Filter, Highlight, Bookmark } from '../models';
+import { type LoadLog, type Action } from '../actions';
 
-const getFilters = (state) => state.logviewer.filters;
-function* filter(): Saga<void> {
-  const urlData = urlParse(window.location.hash, window.location.href);
-  const filters = yield select(getFilters);
-
-  replaceState({ ...urlData, filters: filters });
+function boolToInt(b: boolean): string {
+  return b ? '1' : '0';
 }
 
-const getHighlights = (state) => state.logviewer.highlights;
-function* highlight(): Saga<void> {
-  const urlData = urlParse(window.location.hash, window.location.href);
-  const highlights = yield select(getHighlights);
-
-  replaceState({ ...urlData, highlights: highlights });
+function makeFilterURLString(filter: Filter): string {
+  let res = '';
+  res += (filter.on ? '1' : '0');
+  res += (filter.inverse ? '1' : '0');
+  res += filter.text;
+  return res;
 }
 
-const getBookmarks = (state) => state.logviewer.bookmarks;
-function* bookmark(): Saga<void> {
-  const urlData = urlParse(window.location.hash, window.location.href);
-  const bookmarks = yield select(getBookmarks);
-  const bookmarksSet = new Set(bookmarks.map((bk) => bk.lineNumber));
-
-  replaceState({ ...urlData, bookmarks: bookmarksSet});
+function makeHighlightURLString(highlight: Highlight): string {
+  let res = '';
+  res += (highlight.on ? '1' : '0');
+  res += (highlight.line ? '1' : '0');
+  res += highlight.text;
+  return res;
 }
 
-export default function*(): Saga<void> {
-  while (true) {
-    yield takeEvery(logviewerActions.LOGVIEWER_CHANGE_FILTER, filter);
-    yield takeEvery(logviewerActions.LOGVIEWER_CHANGE_HIGHLIGHT, highlight);
-    yield takeEvery(logviewerActions.LOGVIEWER_CHANGE_BOOKMARK, bookmark);
-    yield takeEvery(logviewerActions.LOGVIEWER_ENSURE_BOOKMARK, bookmark);
+export function* updateURL(action: action.Action) {
+  const logviewer = yield select((state) => state.logviewer);
+  const { identity } = yield select((state) => state.log.identity);
+  const { filters, highlights, bookmarks } = logviewer;
+
+  const parsed = {
+    f: [],
+    h: []
+  };
+  for (let i = 0; i < filters.length; i++) {
+    parsed.f.push(makeFilterURLString(filters[i]));
+  }
+  for (let i = 0; i < highlights.length; i++) {
+    parsed.h.push(makeHighlightURLString(highlights[i]));
+  }
+  if (bookmarks.length > 0) {
+    let bookmarkStr = '';
+    for (let i = 0; i < bookmarks.length; i++) {
+      bookmarkStr += bookmarks[i].lineNumber;
+      if (i !== bookmarks.length - 1) {
+        bookmarkStr += ',';
+      }
+    }
+    parsed.bookmarks = bookmarkStr;
+  }
+
+  Object.keys(parsed)
+    .filter((k) => {
+      switch (typeof parsed[k]) {
+        case 'array':
+          return parsed[k].length === 0;
+
+        case 'object':
+          return Object.keys(parsed[k]) === 0;
+
+        default:
+          return parsed[k] == null;
+      }
+    })
+    .forEach((k) => {
+      delete parsed[k]
+    });
+
+  if (identity != null && identity.type === 'lobster') {
+    if (identity.server) {
+      parsed.server = identity.server;
+    }
+    if (identity.url) {
+      parsed.url = identity.url;
+    }
+  }
+  if (Object.keys(parsed) !== 0) {
+    console.log(parsed);
+    console.log(window.location.pathname + '#' + queryString.stringify(parsed));
+    try {
+      window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));
+    } catch(e) {
+      console.log(e);
+    }
   }
 }

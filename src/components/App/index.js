@@ -16,7 +16,7 @@ import queryString from '../../thirdparty/query-string';
 const logdrop = (props: ContextRouter) => {
   const parsed = queryString.parse(props.location.search === '' ? props.location.hash : props.location.search);
   if ('url' in parsed && 'server' in parsed) {
-    return (<Redirect to={`/lobster/logdrop#${queryString.stringify(parsed)}`} />);
+    return (<Redirect to={`/lobster/logdrop?${queryString.stringify(parsed)}`} />);
   }
   return (<LogDrop {...props} />);
 };
