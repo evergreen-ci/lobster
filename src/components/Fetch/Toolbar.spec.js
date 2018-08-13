@@ -65,6 +65,7 @@ function makeWrapper(state) {
       prevFind={jest.fn()}
       find={jest.fn()}
       searchTerm={''}
+      searchTermError={null}
       setFormRef={jest.fn()}
       setSearch={jest.fn()}
       wipeCache={jest.fn()}

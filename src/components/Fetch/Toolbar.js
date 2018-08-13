@@ -2,7 +2,7 @@
 
 import React from 'react';
 import './style.css';
-import { Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col } from 'react-bootstrap';
+import { Overlay, Popover, Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col } from 'react-bootstrap';
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
 import { addFilter, addHighlight, search, toggleSettingsPanel, changeSearch } from '../../actions';
@@ -13,6 +13,7 @@ type Props = {
   setFormRef: (?HTMLInputElement) => void,
   settings: Settings,
   searchTerm: string,
+  searchTermError: ?Error,
   addFilter: (string) => void,
   addHighlight: (string) => void,
   wipeCache: () => void,
@@ -29,6 +30,19 @@ type Props = {
 
 export class Toolbar extends React.PureComponent<Props> {
   findInput: ?HTMLInputElement
+  formElement: ?ReactNode
+
+  constructor(props: Props) {
+    super(props);
+    this.formElement = (
+      <FormControl
+        inputRef={this.setFindInputRef}
+        type="text"
+        placeholder="optional. regexp to search for"
+        onChange={this.handleChangeFindEvent}
+      />
+    );
+  }
 
   showFind = () => {
     if (this.props.searchTerm !== '') {
@@ -121,19 +135,33 @@ export class Toolbar extends React.PureComponent<Props> {
     }
   }
 
+  regexValidationState = () => {
+    if (this.props.searchTermError != null) {
+      return 'error';
+    }
+
+    return null;
+  }
+
   render() {
     return (
       <Col lg={11} lgOffset={1}>
         <div className="find-box">
           <Form horizontal onSubmit={this.submit}>
-            <FormGroup controlId="findInput" className="filter-header">
+            <FormGroup controlId="findInput" className="filter-header" validationState={this.regexValidationState()}>
+              <Overlay
+                show={this.props.searchTermError != null}
+                target={this.findInput}
+                placement="bottom"
+                container={this}
+                containerPadding={0}
+              >
+                <Popover id="popover-contained" title="Invalid search term">
+                  {this.props.searchTermError != null ? this.props.searchTermError.toString() : ''}
+                </Popover>
+              </Overlay>
               <Col lg={6} >
-                <FormControl
-                  inputRef={this.setFindInputRef}
-                  type="text"
-                  placeholder="optional. regexp to search for"
-                  onChange={this.handleChangeFindEvent}
-                />
+                {this.formElement}
               </Col>
               <ButtonToolbar>
                 <Button id="formSubmit" type="submit">Find</Button>
@@ -157,6 +185,7 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Pro
     settings: selectors.getLogViewerSettings(state),
     findIdx: selectors.getLogViewerFindIdx(state),
     searchTerm: selectors.getLogViewerSearchTerm(state),
+    searchTermError: selectors.getLogViewerSearchTermError(state),
     detailsOpen: selectors.getIsLogViewerSettingsPanel(state),
     lineData: selectors.getFilteredLineData(state)
   };

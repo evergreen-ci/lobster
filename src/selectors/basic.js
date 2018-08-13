@@ -15,8 +15,8 @@ export const getLogViewerBookmarks = (state: ReduxState) => getLogViewer(state).
 export const getLogViewerFind = (state: ReduxState) => getLogViewer(state).find;
 export const getLogViewerFindIdx = (state: ReduxState) => getLogViewerFind(state).findIdx;
 export const getLogViewerSearchTerm = (state: ReduxState) => getLogViewerFind(state).searchTerm;
+export const getLogViewerSearchTermError = (state: ReduxState) => getLogViewerFind(state).regexError;
 
 export const getLogViewerSettings = (state: ReduxState) => getLogViewer(state).settings;
 
 export const getIsLogViewerSettingsPanel = (state: ReduxState) => getLogViewer(state).settingsPanel;
-
