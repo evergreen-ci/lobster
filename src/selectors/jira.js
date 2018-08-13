@@ -1,12 +1,12 @@
 // @flow strict
 
 import { createSelector } from 'reselect';
-import type { Line, Bookmark } from '../models';
+import type { ReduxState, Line, Bookmark } from '../models';
 
 const getLogLines = (state) => state.log.lines;
 const getBookmarks = (state) => state.logviewer.bookmarks;
 
-export default createSelector(
+const getJiraTemplate = createSelector(
   getLogLines,
   getBookmarks,
   function(lines: Line[], bookmarks: Bookmark[]) {
@@ -31,3 +31,10 @@ export default createSelector(
     return text;
   }
 );
+
+// because this function memoises based on its parameters, prevent the user
+// from passing the components props into it. Ideally, all users are relying on
+// only the redux store's state to derive this data
+export default function(state: ReduxState) {
+  return getJiraTemplate(state);
+}

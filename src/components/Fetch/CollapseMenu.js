@@ -199,7 +199,7 @@ function mapStateToProps(state: ReduxState, ownProps) {
     highlightList: selectors.getHighlights(state),
     findIdx: selectors.getFind(state).findIdx,
     logIdentity: selectors.getLogIdentity(state),
-    valueJIRA: selectors.getJiraTemplate(state, ownProps),
+    valueJIRA: selectors.getJiraTemplate(state),
     detailsOpen: selectors.getLogViewer(state).settingsPanel
   };
 }

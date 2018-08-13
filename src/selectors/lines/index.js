@@ -1,7 +1,7 @@
 // @flow strict
 
 import { createSelector } from 'reselect';
-import type { Line, LineData, Filter, Highlight, Bookmark, Settings } from '../../models';
+import type { ReduxState, Line, LineData, Filter, Highlight, Bookmark, Settings } from '../../models';
 import { shouldPrintLine, mergeActiveFilters, mergeActiveInverseFilters } from './search';
 import { getHighlightText, shouldHighlightLine, mergeActiveHighlights, mergeActiveHighlightLines } from './highlights';
 
@@ -23,7 +23,7 @@ const getHighlights = (state) => state.logviewer.highlights;
 const getBookmarks = (state) => state.logviewer.bookmarks;
 const getSettings = (state) => state.logviewer.settings;
 
-export default createSelector(
+const lines = createSelector(
   getSearchTerm,
   getLines,
   getFilters,
@@ -68,3 +68,7 @@ export default createSelector(
     };
   }
 );
+
+export default function(state: ReduxState) {
+  return lines(state);
+}
