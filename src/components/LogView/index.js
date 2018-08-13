@@ -244,7 +244,7 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
   return {
     ...ownProps,
     toggleBookmark: (bk: number[]) => dispatch(toggleBookmark(bk))
-  }
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LogView);
