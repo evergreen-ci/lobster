@@ -23,7 +23,7 @@ import 'whatwg-fetch';
 
 const saga = createSagaMiddleware();
 const middlewares = [saga];
-if (isProd) {
+if (!isProd) {
   middlewares.push(logger);
 }
 

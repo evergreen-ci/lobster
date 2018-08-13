@@ -28,9 +28,9 @@ function makeHighlightURLString(highlight: Highlight): string {
 
 export default function*(): Saga<void> {
   const identity = yield select(selectors.getLogIdentity);
-  const filters = yield select(selectors.getFilters);
-  const highlights = yield select(selectors.getHighlights);
-  const bookmarks = yield select(selectors.getBookmarks);
+  const filters = yield select(selectors.getLogViewerFilters);
+  const highlights = yield select(selectors.getLogViewerHighlights);
+  const bookmarks = yield select(selectors.getLogViewerBookmarks);
 
   const parsed = {};
   parsed.f = [];

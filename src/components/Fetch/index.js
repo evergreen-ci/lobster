@@ -103,12 +103,12 @@ function mapStateToProps(state: ReduxState, ownProps) {
   return {
     ...ownProps,
     lines: selectors.getLogLines(state),
-    settings: selectors.getSettings(state),
-    findIdx: selectors.getFind(state).findIdx,
-    filterList: selectors.getFilters(state),
-    highlightList: selectors.getHighlights(state),
-    bookmarks: selectors.getBookmarks(state),
-    lineData: selectors.getLines(state)
+    settings: selectors.getLogViewerSettings(state),
+    findIdx: selectors.getLogViewerFind(state).findIdx,
+    filterList: selectors.getLogViewerFilters(state),
+    highlightList: selectors.getLogViewerHighlights(state),
+    bookmarks: selectors.getLogViewerBookmarks(state),
+    lineData: selectors.getFilteredLineData(state)
   };
 }
 

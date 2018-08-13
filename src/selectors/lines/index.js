@@ -4,6 +4,7 @@ import { createSelector } from 'reselect';
 import type { ReduxState, Line, LineData, Filter, Highlight, Bookmark, Settings } from '../../models';
 import { shouldPrintLine, mergeActiveFilters, mergeActiveInverseFilters } from './search';
 import { getHighlightText, shouldHighlightLine, mergeActiveHighlights, mergeActiveHighlightLines } from './highlights';
+import * as selectors from '../basic';
 
 function makeRegexp(regexp: ?string, caseSensitive: boolean) {
   if (regexp == null || regexp === '') {
@@ -16,20 +17,13 @@ function makeRegexp(regexp: ?string, caseSensitive: boolean) {
   return new RegExp(regexp);
 }
 
-const getSearchTerm = (state) => state.logviewer.find.searchTerm;
-const getLines = (state) => state.log.lines;
-const getFilters = (state) => state.logviewer.filters;
-const getHighlights = (state) => state.logviewer.highlights;
-const getBookmarks = (state) => state.logviewer.bookmarks;
-const getSettings = (state) => state.logviewer.settings;
-
-const lines = createSelector(
-  getSearchTerm,
-  getLines,
-  getFilters,
-  getHighlights,
-  getBookmarks,
-  getSettings,
+const getFilteredLineData = createSelector(
+  selectors.getLogViewerSearchTerm,
+  selectors.getLogLines,
+  selectors.getLogViewerFilters,
+  selectors.getLogViewerHighlights,
+  selectors.getLogViewerBookmarks,
+  selectors.getLogViewerSettings,
   function(searchTerm: ?string, lines: Line[], filters: Filter[], highlights: Highlight[], bookmarks: Bookmark[], settings: Settings): LineData {
     const findRegexp = makeRegexp(searchTerm, settings.caseSensitive);
     const filter = mergeActiveFilters(filters, settings.caseSensitive);
@@ -70,5 +64,5 @@ const lines = createSelector(
 );
 
 export default function(state: ReduxState) {
-  return lines(state);
+  return getFilteredLineData(state);
 }

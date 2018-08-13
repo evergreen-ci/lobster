@@ -151,14 +151,14 @@ export class Toolbar extends React.PureComponent<Props> {
   }
 }
 
-function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>) {
-  const find = selectors.getFind(state);
+function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Props> {
   return {
     ...ownProps,
-    settings: selectors.getSettings(state),
-    findIdx: find.findIdx,
-    searchTerm: find.searchTerm,
-    detailsOpen: selectors.getLogViewer(state).settingsPanel
+    settings: selectors.getLogViewerSettings(state),
+    findIdx: selectors.getLogViewerFindIdx(state),
+    searchTerm: selectors.getLogViewerSearchTerm(state),
+    detailsOpen: selectors.getIsLogViewerSettingsPanel(state),
+    lineData: selectors.getFilteredLineData(state)
   };
 }
 

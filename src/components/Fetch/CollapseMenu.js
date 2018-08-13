@@ -194,13 +194,13 @@ export class CollapseMenu extends React.PureComponent<Props> {
 function mapStateToProps(state: ReduxState, ownProps) {
   return {
     ...ownProps,
-    settings: selectors.getSettings(state),
-    filterList: selectors.getFilters(state),
-    highlightList: selectors.getHighlights(state),
-    findIdx: selectors.getFind(state).findIdx,
+    settings: selectors.getLogViewerSettings(state),
+    filterList: selectors.getLogViewerFilters(state),
+    highlightList: selectors.getLogViewerHighlights(state),
+    findIdx: selectors.getLogViewerFindIdx(state),
     logIdentity: selectors.getLogIdentity(state),
     valueJIRA: selectors.getJiraTemplate(state),
-    detailsOpen: selectors.getLogViewer(state).settingsPanel
+    detailsOpen: selectors.getIsLogViewerSettingsPanel(state)
   };
 }
 
