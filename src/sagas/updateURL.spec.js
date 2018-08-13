@@ -4,7 +4,7 @@ import { testSaga } from 'redux-saga-test-plan';
 import * as selectors from '../selectors';
 
 describe('updateURL', () => {
-  const mock = sinon.fake();
+  let mock = sinon.fake();
   beforeEach(function() {
     sinon.replace(window.history, 'replaceState', mock);
     sinon.replaceGetter(window.location, 'pathname', () => '/my/path');
@@ -12,6 +12,7 @@ describe('updateURL', () => {
 
   afterEach(function() {
     sinon.restore();
+    mock = sinon.fake();
   });
 
   test('logkeeper-empty', function() {

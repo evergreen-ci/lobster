@@ -40,12 +40,10 @@ type Props = {
 } & ContextRouter
 
 type State = {
-  scrollLine: number,
-  lines?: Line[],
+  scrollLine: number
 }
 
-
-export class Fetch extends React.Component<Props, State> {
+export class Fetch extends React.PureComponent<Props, State> {
   static defaultProps = {
     bookmarks: []
   }
