@@ -1,7 +1,6 @@
 import sinon from 'sinon';
 import updateURL from './updateURL';
 import { testSaga } from 'redux-saga-test-plan';
-import * as matchers from 'redux-saga-test-plan/matchers';
 import * as selectors from '../selectors';
 
 describe('updateURL', () => {
@@ -13,9 +12,9 @@ describe('updateURL', () => {
 
   afterEach(function() {
     sinon.restore();
-  })
+  });
 
-  test('logkeeper-empty', () => {
+  test('logkeeper-empty', function() {
     testSaga(updateURL)
       .next()
       .select(selectors.getLogIdentity)
@@ -35,7 +34,7 @@ describe('updateURL', () => {
     expect(mock.callCount).toBe(0);
   });
 
-  test('logkeeper-withdata', () => {
+  test('logkeeper-withdata', function() {
     testSaga(updateURL)
       .next()
       .select(selectors.getLogIdentity)
@@ -93,7 +92,7 @@ describe('updateURL', () => {
     expect(mock.lastCall.args[2]).toBe('/my/path#bookmarks=0%2C58%2C55%2C120&f=10filter0&f=01filter1&h=10highlight0&h=01highlight1');
   });
 
-  test('lobster-withdata', () => {
+  test('lobster-withdata', function() {
     testSaga(updateURL)
       .next()
       .select(selectors.getLogIdentity)
@@ -150,5 +149,4 @@ describe('updateURL', () => {
     expect(mock.lastCall.args[1]).toBe('');
     expect(mock.lastCall.args[2]).toBe('/my/path#bookmarks=0%2C58%2C55%2C120&f=10filter0&f=01filter1&h=10highlight0&h=01highlight1&server=localhost%3A9000%2Fapi%2Flog&url=simple.log');
   });
-
 });

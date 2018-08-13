@@ -20,7 +20,7 @@ describe('events', function() {
     const comparisonFile = fs.readFileSync(comparisonPath, 'utf8');
     const comparisonJSON = JSON.parse(comparisonFile);
     expect(state.events).toEqual(comparisonJSON);
-    expect(state.events.length).toBe(comparisonJSON.length);
+    expect(state.events).toHaveLength(comparisonJSON.length);
   });
 
   test('validate-collections', function() {
@@ -38,6 +38,6 @@ describe('events', function() {
     const validateCollectionsFile = fs.readFileSync(validateCollectionsPath, 'utf8');
     const validateCollectionsJSON = JSON.parse(validateCollectionsFile);
     expect(state.events).toEqual(validateCollectionsJSON);
-    expect(state.events.length).toBe(validateCollectionsJSON.length);
+    expect(state.events).toHaveLength(validateCollectionsJSON.length);
   });
 });

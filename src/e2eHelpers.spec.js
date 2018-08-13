@@ -113,11 +113,11 @@ export class Lobster {
   async showDetails() {
     const details = await this._driver.wait(until.elementLocated(By.xpath(showDetails)));
     await details.click();
-    const caseToggle = await this._driver.wait(until.elementLocated(By.xpath(caseToggle)));
+    const caseToggleButton = await this._driver.wait(until.elementLocated(By.xpath(caseToggle)));
     if (this._showdetails) {
-      await this._driver.wait(until.elementIsNotVisible(caseToggle));
+      await this._driver.wait(until.elementIsNotVisible(caseToggleButton));
     } else {
-      await this._driver.wait(until.elementIsVisible(caseToggle));
+      await this._driver.wait(until.elementIsVisible(caseToggleButton));
     }
 
     this._showdetails = !this._showdetails;

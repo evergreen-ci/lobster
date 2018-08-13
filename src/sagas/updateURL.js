@@ -11,16 +11,16 @@ function boolToInt(b: boolean): string {
 
 function makeFilterURLString(filter: Filter): string {
   let res = '';
-  res += (filter.on ? '1' : '0');
-  res += (filter.inverse ? '1' : '0');
+  res += boolToInt(filter.on);
+  res += boolToInt(filter.inverse);
   res += filter.text;
   return res;
 }
 
 function makeHighlightURLString(highlight: Highlight): string {
   let res = '';
-  res += (highlight.on ? '1' : '0');
-  res += (highlight.line ? '1' : '0');
+  res += boolToInt(highlight.on);
+  res += boolToInt(highlight.line);
   res += highlight.text;
   return res;
 }
@@ -66,7 +66,7 @@ export default function*(): Saga<void> {
       }
     })
     .forEach((k) => {
-      delete parsed[k]
+      delete parsed[k];
     });
 
   if (identity != null && identity.type === 'lobster') {
@@ -80,7 +80,7 @@ export default function*(): Saga<void> {
   if (Object.keys(parsed).length !== 0) {
     try {
       window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   }
