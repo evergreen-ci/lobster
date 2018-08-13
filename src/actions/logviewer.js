@@ -272,13 +272,3 @@ export function search(action: 'next' | 'prev'): SearchEvent {
     }
   };
 }
-
-export function setSearch(term: string): SearchEvent {
-  return {
-    type: LOGVIEWER_SEARCH_EVENT,
-    payload: {
-      action: 'search',
-      term: term
-    }
-  };
-}

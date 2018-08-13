@@ -3,20 +3,19 @@
 import React from 'react';
 import type { Node as ReactNode } from 'react';
 import * as actions from '../../actions';
-import * as logviewerActions from '../../actions/logviewer';
 import './style.css';
 import LogView from '../LogView/index';
 import { Bookmarks } from './Bookmarks';
 import { connect } from 'react-redux';
 import queryString from '../../thirdparty/query-string';
 import Toolbar from './Toolbar';
-import lines from '../../selectors/lines';
+import * as selectors from '../../selectors';
 import type { Dispatch } from 'redux';
-import type { LineData, Log, LogIdentity, Settings, Filter, Highlight, Bookmark, Line } from '../../models';
+import type { ReduxState, LineData, LogIdentity, Settings, Filter, Highlight, Bookmark, Line } from '../../models';
 import type { ContextRouter } from 'react-router-dom';
 
 type Props = {
-  log: Log,
+  lines: Line[],
   match: {
     params: {
       build: string,
@@ -32,12 +31,10 @@ type Props = {
   filterList: Filter[],
   highlightList: Highlight[],
   bookmarks: Bookmark[],
-  loadBookmarks: (Bookmark[]) => void,
   toggleBookmark: (number[]) => void,
   ensureBookmark: (number) => void,
   findIdx: number,
   changeFindIdx: (number) => void,
-  searchRegex: string,
   changeSearch: (RegExp) => void,
   lineData: LineData
 } & ContextRouter
@@ -49,7 +46,6 @@ type State = {
 
 
 export class Fetch extends React.Component<Props, State> {
-  urlInput: ?HTMLInputElement;
   static defaultProps = {
     bookmarks: []
   }
@@ -67,67 +63,12 @@ export class Fetch extends React.Component<Props, State> {
   }
 
 
-  updateURL(bookmarks: Bookmark[], filters: Filter[], highlights: Highlight[]) {
-    const parsed = {};
-    for (let i = 0; i < filters.length; i++) {
-      parsed.f = this.makeFilterURLString(filters[i]);
-    }
-    for (let i = 0; i < highlights.length; i++) {
-      parsed.h = this.makeHighlightURLString(highlights[i]);
-    }
-    if (bookmarks.length > 0) {
-      let bookmarkStr = '';
-      for (let i = 0; i < bookmarks.length; i++) {
-        bookmarkStr += bookmarks[i].lineNumber;
-        if (i !== bookmarks.length - 1) {
-          bookmarkStr += ',';
-        }
-      }
-      parsed.bookmarks = bookmarkStr;
-    }
-    if (this.state.server) {
-      parsed.server = this.state.server;
-    }
-    if (this.state.url) {
-      parsed.url = this.state.url;
-    }
-    window.history.replaceState({}, '', this.props.location.pathname + '#' + queryString.stringify(parsed));
-  }
-
-  handleSubmit = (event: KeyboardEvent) => {
-    console.log('handleSubmit');
-    event.preventDefault();
-    // prepare do to the change
-    if (this.urlInput && this.urlInput.value && !this.state.server) {
-      console.log('must set a server parameter for a custom log URL');
-      return;
-    }
-
-    this.updateURL(this.props.bookmarks, this.props.filterList, this.props.highlightList);
-    let value = null;
-    if (this.urlInput) {
-      value = this.urlInput.value;
-    } else {
-      return;
-    }
-    if (value !== this.state.url) {
-      this.props.changeFindIdx(-1);
-      this.setState({ url: value });
-      this.props.loadBookmarks([]);
-      this.props.loadLogByIdentity({
-        type: 'lobster',
-        server: this.state.server ? this.state.server : '',
-        file: this.state.url ? this.state.url : ''
-      });
-    }
-  }
-
   setScroll = (lineNum: number) => {
     this.setState({ scrollLine: lineNum });
   }
 
   showLines(): ?ReactNode {
-    if (!this.props.log.lines) {
+    if (!this.props.lines) {
       return <div />;
     }
     const findLine = this.props.lineData.findResults[this.props.findIdx];
@@ -160,30 +101,28 @@ export class Fetch extends React.Component<Props, State> {
 
 // This is not the ideal way to do this, but it allows for better compatibility
 // as we migrate towards the react-redux model
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state: ReduxState, ownProps) {
   return {
     ...ownProps,
-    ...state,
-    settings: state.logviewer.settings,
-    findIdx: state.logviewer.find.findIdx,
-    searchRegex: state.logviewer.find.searchRegex,
-    filterList: state.logviewer.filters,
-    highlightList: state.logviewer.highlights,
-    bookmarks: state.logviewer.bookmarks,
-    lineData: lines(state)
+    lines: selectors.getLogLines(state),
+    settings: selectors.getSettings(state),
+    findIdx: selectors.getFind(state).findIdx,
+    filterList: selectors.getFilters(state),
+    highlightList: selectors.getHighlights(state),
+    bookmarks: selectors.getBookmarks(state),
+    lineData: selectors.getLines(state)
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   return {
     ...ownProps,
-    loadInitialFilters: (initialFilters) => dispatch(logviewerActions.loadInitialFilters(initialFilters)),
-    loadInitialHighlights: (initialHighlights) => dispatch(logviewerActions.loadInitialHighlights(initialHighlights)),
-    changeFindIdx: (index) => dispatch(logviewerActions.changeFindIdx(index)),
-    loadBookmarks: (bookmarksArr) => dispatch(logviewerActions.loadBookmarks(bookmarksArr)),
-    toggleBookmark: (lineNumArray) => dispatch(logviewerActions.toggleBookmark(lineNumArray)),
-    ensureBookmark: (lineNum) => dispatch(logviewerActions.ensureBookmark(lineNum)),
-    changeSearch: (text) => dispatch(logviewerActions.changeSearch(text)),
+    loadInitialFilters: (initialFilters) => dispatch(actions.loadInitialFilters(initialFilters)),
+    loadInitialHighlights: (initialHighlights) => dispatch(actions.loadInitialHighlights(initialHighlights)),
+    changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
+    toggleBookmark: (lineNumArray) => dispatch(actions.toggleBookmark(lineNumArray)),
+    ensureBookmark: (lineNum) => dispatch(actions.ensureBookmark(lineNum)),
+    changeSearch: (text) => dispatch(actions.changeSearch(text)),
     loadLogByIdentity: (identity) => dispatch(actions.loadLog(identity))
   };
 }

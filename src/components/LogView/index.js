@@ -4,7 +4,7 @@ import React from 'react';
 import ReactList from 'react-list';
 import FullLogLine from './FullLogLine';
 import { connect } from 'react-redux';
-import type { ColorMap, Line, LineData, Bookmark } from '../../models';
+import type { ReduxState, ColorMap, Line, LineData, Bookmark } from '../../models';
 
 import './style.css';
 
@@ -226,8 +226,9 @@ class LogView extends React.Component<Props, State> {
   }
 }
 
-function mapStateToProps(state, ownProps): $Shape<Props> {
-  return { ...state, ...ownProps,
+function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Props> {
+  return {
+    ...ownProps,
     colorMap: state.log.colorMap,
     caseSensitive: state.logviewer.settings.caseSensitive,
     wrap: state.logviewer.settings.wrap,

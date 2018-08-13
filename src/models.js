@@ -224,3 +224,25 @@ export type LineData = $Exact<$ReadOnly<{
   highlightLines: Line[],
   highlightText: string[]
 }>>
+
+export type CacheStatus = 'ok' | 'error' | 'never' | 'later' | 'unsupported' | null;
+
+export type CacheState = $Exact<$ReadOnly<{
+  status: CacheStatus,
+  size: number
+}>>
+
+export type LogViewerState = $Exact<$ReadOnly<{
+  filters: Filter[],
+  highlights: Highlight[],
+  bookmarks: Bookmark[],
+  find: Find,
+  settings: Settings,
+  settingsPanel: boolean
+}>>
+
+export type ReduxState = $Exact<$ReadOnly<{
+  cache: CacheState,
+  log: Log,
+  logviewer: LogViewerState
+}>>

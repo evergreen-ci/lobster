@@ -5,8 +5,9 @@ import './style.css';
 import { Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col } from 'react-bootstrap';
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
-import { addFilter, addHighlight, search, toggleSettingsPanel, setSearch } from '../../actions/logviewer';
-import type { Settings, LineData } from '../../models';
+import { addFilter, addHighlight, search, toggleSettingsPanel, changeSearch } from '../../actions';
+import * as selectors from '../../selectors';
+import type { ReduxState, Settings, LineData } from '../../models';
 
 type Props = {
   setFormRef: (?HTMLInputElement) => void,
@@ -17,13 +18,12 @@ type Props = {
   wipeCache: () => void,
   togglePanel: () => void,
   detailsOpen: boolean,
-  handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
   setURLRef: (?HTMLInputElement) => void,
   findIdx: number,
   changeFindIdx: (number) => void,
   nextFind: () => void,
   prevFind: () => void,
-  setSearch: (value: string) => void,
+  changeSearch: (value: string) => void,
   lineData: LineData
 };
 
@@ -45,7 +45,7 @@ export class Toolbar extends React.PureComponent<Props> {
 
   handleChangeFindEvent = () => {
     if (this.findInput != null) {
-      this.props.setSearch(this.findInput.value);
+      this.props.changeSearch(this.findInput.value);
     }
   }
 
@@ -87,18 +87,23 @@ export class Toolbar extends React.PureComponent<Props> {
   }
 
   addFilter = () => {
-    if (this.findInput) {
-      const { value } = this.findInput;
-      this.props.addFilter(value);
-      this.findInput.value = '';
+    if (!this.findInput) {
+      return;
     }
+    const { value } = this.findInput;
+
+    this.props.addFilter(value);
+    this.findInput.value = '';
   }
 
   addHighlight = () => {
-    if (this.findInput) {
-      this.props.addHighlight(this.findInput.value);
-      this.findInput.value = '';
+    if (!this.findInput) {
+      return;
     }
+    const { value } = this.findInput;
+
+    this.props.addHighlight(value);
+    this.findInput.value = '';
   }
 
   componentDidMount() {
@@ -137,24 +142,21 @@ export class Toolbar extends React.PureComponent<Props> {
               </ButtonToolbar>
             </FormGroup>
           </Form>
-          <CollapseMenu
-            handleSubmit={this.props.handleSubmit}
-            setURLRef={this.props.setURLRef}
-          />
+          <CollapseMenu />
         </div>
       </Col>
     );
   }
 }
 
-function mapStateToProps(state, ownProps: $Shape<Props>) {
+function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>) {
+  const find = selectors.getFind(state);
   return {
-    ...state,
     ...ownProps,
-    settings: state.logviewer.settings,
-    findIdx: state.logviewer.find.findIdx,
-    searchTerm: state.logviewer.find.searchTerm,
-    detailsOpen: state.logviewer.settingsPanel
+    settings: selectors.getSettings(state),
+    findIdx: find.findIdx,
+    searchTerm: find.searchTerm,
+    detailsOpen: selectors.getLogViewer(state).settingsPanel
   };
 }
 
@@ -164,7 +166,7 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
     togglePanel: () => dispatch(toggleSettingsPanel()),
     nextFind: () => dispatch(search('next')),
     prevFind: () => dispatch(search('prev')),
-    setSearch: (value: string) => dispatch(setSearch(value)),
+    changeSearch: (value: string) => dispatch(changeSearch(value)),
     addFilter: (text) => dispatch(addFilter(text)),
     addHighlight: (text) => dispatch(addHighlight(text))
   };

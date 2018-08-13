@@ -8,11 +8,10 @@ import { Filters } from './Filters';
 import { Highlights } from './Highlights';
 import type { Settings } from '../../models';
 import * as api from '../../api';
-import * as actions from '../../actions/logviewer';
-import { wipeCache } from '../../actions';
+import * as actions from '../../actions';
 import { connect } from 'react-redux';
-import jira from '../../selectors/jira';
-import type { LogIdentity, Highlight, Filter } from '../../models';
+import * as selectors from '../../selectors';
+import type { ReduxState, LogIdentity, Highlight, Filter, Bookmark } from '../../models';
 
 type Props = {
   settings: Settings,
@@ -31,12 +30,13 @@ type Props = {
     toggleHighlight: (string) => void,
     toggleHighlightLine: (string) => void
   },
+  loadLogByIdentity: (LogIdentity) => void,
+  loadBookmarks: (Bookmark[]) => void,
+  changeFindIdx: (number) => void,
   wipeCache: () => void,
   filterList: Filter[],
   highlightList: Highlight[],
   detailsOpen: boolean,
-  handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
-  setURLRef: (?HTMLInputElement) => void,
   valueJIRA: string,
   logIdentity: ?LogIdentity,
 }
@@ -100,12 +100,38 @@ function showDetailButtons(id: ?LogIdentity, clearCache: ?() => void): ?ReactNod
 }
 
 export class CollapseMenu extends React.PureComponent<Props> {
+  urlInput: ?HTMLInputElement;
+
+  setURLRef = (ref: ?HTMLInputElement) => {
+    this.urlInput = ref;
+  }
+
+  handleSubmit = (event: SyntheticEvent<HTMLButtonElement>) => {
+    console.log('handleSubmit');
+    event.preventDefault();
+    if (!this.urlInput || this.props.logIdentity == null ||
+      this.props.logIdentity.type !== 'lobster') {
+      return;
+    }
+    const { file, server } = this.props.logIdentity;
+    const { value } = this.urlInput;
+    if (value !== this.props.logIdentity.file) {
+      this.props.changeFindIdx(-1);
+      this.props.loadBookmarks([]);
+      this.props.loadLogByIdentity({
+        type: 'lobster',
+        server: server,
+        file: file
+      });
+    }
+  }
+
   render() {
     return (
       <Collapse className="collapse-menu" in={this.props.detailsOpen}>
         <div>
-          <Form horizontal onSubmit={this.props.handleSubmit}>
-            {showLogBox(this.props.logIdentity, this.props.setURLRef)}
+          <Form horizontal onSubmit={this.handleSubmit}>
+            {showLogBox(this.props.logIdentity, this.setURLRef)}
             <FormGroup controlId="collapseButtons">
               <Col lg={5}>
                 <span className="far-left-label">Wrap</span>
@@ -165,18 +191,16 @@ export class CollapseMenu extends React.PureComponent<Props> {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state: ReduxState, ownProps) {
   return {
-    ...state,
     ...ownProps,
-    settings: state.logviewer.settings,
-    filterList: state.logviewer.filters,
-    highlightList: state.logviewer.highlights,
-    findIdx: state.logviewer.find.findIdx,
-    searchRegex: state.logviewer.find.searchRegex,
-    logIdentity: state.log.identity,
-    valueJIRA: jira(state, ownProps),
-    detailsOpen: state.logviewer.settingsPanel
+    settings: selectors.getSettings(state),
+    filterList: selectors.getFilters(state),
+    highlightList: selectors.getHighlights(state),
+    findIdx: selectors.getFind(state).findIdx,
+    logIdentity: selectors.getLogIdentity(state),
+    valueJIRA: selectors.getJiraTemplate(state, ownProps),
+    detailsOpen: selectors.getLogViewer(state).settingsPanel
   };
 }
 
@@ -202,7 +226,9 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
     toggleSettings: toggleSettings,
     filterActions, highlightActions,
     changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
-    wipeCache: () => dispatch(wipeCache())
+    wipeCache: () => dispatch(actions.wipeCache()),
+    loadLogByIdentity: (identity: LogIdentity) => dispatch(actions.loadLog(identity)),
+    loadBookmarks: (bookmarksArr) => dispatch(actions.loadBookmarks(bookmarksArr))
   };
 }
 

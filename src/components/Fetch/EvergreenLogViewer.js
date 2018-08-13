@@ -5,8 +5,6 @@ import Fetch from '.';
 import { stringToEvergreenTaskLogType, type LogIdentity } from '../../models';
 import type { ContextRouter } from 'react-router-dom';
 
-type Props = ContextRouter
-
 function makeEvergreenLogID(id: ?string, type: ?string, execution: ?string): ?LogIdentity {
   if (id == null) {
     return null;
@@ -31,7 +29,7 @@ function makeEvergreenLogID(id: ?string, type: ?string, execution: ?string): ?Lo
   };
 }
 
-const EvergreenLogViewer = (props: Props) => {
+const EvergreenLogViewer = (props: ContextRouter) => {
   const lineRegex = new RegExp('#L([0-9]+)');
 
   const newProps = Object.assign({}, props);

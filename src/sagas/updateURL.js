@@ -4,6 +4,7 @@ import queryString from '../thirdparty/query-string';
 import { select } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import * as selectors from '../selectors';
+import type { Highlight, Filter } from '../models';
 
 function boolToInt(b: boolean): string {
   return b ? '1' : '0';
@@ -31,10 +32,9 @@ export default function*(): Saga<void> {
   const highlights = yield select(selectors.getHighlights);
   const bookmarks = yield select(selectors.getBookmarks);
 
-  const parsed = {
-    f: [],
-    h: []
-  };
+  const parsed = {};
+  parsed.f = [];
+  parsed.h = [];
   for (let i = 0; i < filters.length; i++) {
     parsed.f.push(makeFilterURLString(filters[i]));
   }
