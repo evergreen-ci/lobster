@@ -8,7 +8,7 @@ import { ensureBookmark } from '../actions/logviewer';
 import * as api from '../api';
 import { fetchEvergreen } from '../api/evergreen';
 import { writeToCache, readFromCache } from './lobstercage';
-import { getLines } from '../selectors';
+import { getLogLines } from '../selectors';
 
 
 // $FlowFixMe
@@ -102,7 +102,7 @@ export default function*(action: actions.LoadLog): Saga<void> {
     // no default
   }
 
-  const lines = yield select(getLines);
+  const lines = yield select(getLogLines);
   if (lines.length > 0) {
     yield put(ensureBookmark(0));
     if (lines.length > 1) {

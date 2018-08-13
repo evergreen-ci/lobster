@@ -45,7 +45,8 @@ describe('fetchLobster', function() {
         expect(result.toJSON()).toMatchSnapshot();
 
         done();
-      });
+      })
+      .catch(e => done.fail(e));
   });
 
   test('resolves-404', function(done) {
