@@ -8,7 +8,7 @@ import { takeEvery, takeLatest } from 'redux-saga/effects';
 import * as actions from '../actions';
 import * as logviewerActions from '../actions/logviewer';
 import { LOAD_LOG } from '../actions';
-import { updateURL } from '../sagas/urlReplacer';
+import updateURL from '../sagas/updateURL';
 
 export default function* rootSaga(): Saga<void> {
   yield takeLatest(actions.LOAD_LOG, logfetchers);

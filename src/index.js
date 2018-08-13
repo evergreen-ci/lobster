@@ -8,7 +8,6 @@ import { Provider } from 'react-redux';
 import { lobster } from './reducers';
 import rootSaga from './sagas';
 import urlParse from './sagas/urlParse';
-import urlReplacer from './sagas/urlReplacer';
 import { wipeCache } from './sagas/lobstercage';
 import App from './components/App';
 import './index.css';
@@ -19,6 +18,7 @@ import 'whatwg-fetch';
 // TODO: maybe Firefox support?
 // import '../node_modules/idb.filesystem.js/dist/idb.filesystem.min.js';
 
+// eslint-disable-next-line no-unused-vars
 const logger = store => next => action => {
   console.group(action.type)
   console.info('dispatching', action)
@@ -51,4 +51,4 @@ window.boilLobster = () => {
   window.localStorage.clear();
 };
 
-//window.addEventListener('hashchange', (e: HashChangeEvent) => saga.run(urlReplacer), false);
+window.addEventListener('hashchange', () => saga.run(urlParse), false);

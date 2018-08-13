@@ -135,25 +135,3 @@ export default function(hashString: ?string = '', queryParams: ?string = ''): UR
 
   return { bookmarks, scroll, filters, highlights, server, url };
 }
-
-export function replaceState(data: URLParseData) {
-  const qsdata = {};
-  let bookmarks = "";
-  data.bookmarks.forEach((n) => bookmarks = bookmarks.concat(`${n},`))
-  qsdata.bookmarks = bookmarks.substring(bookmarks.length, bookmarks.length - 1);
-
-  Object.keys(data).forEach((key) => {
-    if (!(key in qsdata) && data[key] != null) {
-      qsdata[key] = data[key];
-    }
-  });
-
-  let url = window.location.pathname;
-  if (window.location.search) {
-    url = `${url}${window.location.search}`;
-  }
-  url = `${url}${queryString.stringify(qsdata)}`
-  console.log(queryString.stringify(qsdata));
-
-  window.history.replaceState({}, '', url);
-}

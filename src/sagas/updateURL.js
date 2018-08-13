@@ -1,10 +1,9 @@
 // @flow
 
 import queryString from '../thirdparty/query-string';
-import urlParse, { replaceState } from '../urlParse';
-import { takeEvery, takeLatest, select, put } from 'redux-saga/effects';
+import { select } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
-import { type LoadLog, type Action } from '../actions';
+import * as selectors from '../selectors';
 
 function boolToInt(b: boolean): string {
   return b ? '1' : '0';
@@ -26,10 +25,11 @@ function makeHighlightURLString(highlight: Highlight): string {
   return res;
 }
 
-export function* updateURL(action: action.Action) {
-  const logviewer = yield select((state) => state.logviewer);
-  const { identity } = yield select((state) => state.log.identity);
-  const { filters, highlights, bookmarks } = logviewer;
+export default function*(): Saga<void> {
+  const identity = yield select(selectors.getLogIdentity);
+  const filters = yield select(selectors.getFilters);
+  const highlights = yield select(selectors.getHighlights);
+  const bookmarks = yield select(selectors.getBookmarks);
 
   const parsed = {
     f: [],
@@ -55,10 +55,10 @@ export function* updateURL(action: action.Action) {
   Object.keys(parsed)
     .filter((k) => {
       switch (typeof parsed[k]) {
-        case 'array':
-          return parsed[k].length === 0;
-
         case 'object':
+          if (Array.isArray(parsed[k])) {
+            return parsed[k].length === 0;
+          }
           return Object.keys(parsed[k]) === 0;
 
         default:
@@ -77,9 +77,7 @@ export function* updateURL(action: action.Action) {
       parsed.url = identity.url;
     }
   }
-  if (Object.keys(parsed) !== 0) {
-    console.log(parsed);
-    console.log(window.location.pathname + '#' + queryString.stringify(parsed));
+  if (Object.keys(parsed).length !== 0) {
     try {
       window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));
     } catch(e) {
