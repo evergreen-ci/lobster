@@ -57,7 +57,7 @@ const dirs = scanDirs.reduce((acc, val) => acc.concat(getDirectories(val)), []).
 const testDirs = dirs.filter(hasTests);
 console.log('Will run tests in: ', testDirs);
 
-const testTasks = testDirs.map(makeTask('test:ci', 'test', '*.{spec,test}.js{,x}'));
+const testTasks = testDirs.map(makeTask('test', 'test:ci', '*.{spec,test}.js{,x}'));
 const gt = {
   'buildvariants': [
     {
