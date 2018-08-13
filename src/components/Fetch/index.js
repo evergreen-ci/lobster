@@ -11,32 +11,16 @@ import queryString from '../../thirdparty/query-string';
 import Toolbar from './Toolbar';
 import * as selectors from '../../selectors';
 import type { Dispatch } from 'redux';
-import type { ReduxState, LineData, LogIdentity, Settings, Filter, Highlight, Bookmark, Line } from '../../models';
+import type { ReduxState, LineData, LogIdentity, Bookmark, Line } from '../../models';
 import type { ContextRouter } from 'react-router-dom';
 
 type Props = {
   lines: Line[],
-  match: {
-    params: {
-      build: string,
-      test: string,
-      [key: string]: ?string
-    }
-  },
+  bookmarks: Bookmark[],
+  findIdx: number,
+  lineData: LineData,
   logIdentity: ?LogIdentity,
   loadLogByIdentity: (LogIdentity) => void,
-  settings: Settings,
-  loadInitialFilters: (Filter[]) => void,
-  loadInitialHighlights: (Highlight[]) => void,
-  filterList: Filter[],
-  highlightList: Highlight[],
-  bookmarks: Bookmark[],
-  toggleBookmark: (number[]) => void,
-  ensureBookmark: (number) => void,
-  findIdx: number,
-  changeFindIdx: (number) => void,
-  changeSearch: (RegExp) => void,
-  lineData: LineData
 } & ContextRouter
 
 type State = {
@@ -55,7 +39,7 @@ export class Fetch extends React.PureComponent<Props, State> {
     this.state = {
       scrollLine: parseInt(parsed.scroll, 10)
     };
-    if (this.props.logIdentity) {
+    if (this.props.logIdentity != null) {
       this.props.loadLogByIdentity(this.props.logIdentity);
     }
   }
@@ -73,7 +57,6 @@ export class Fetch extends React.PureComponent<Props, State> {
     return (
       <LogView
         scrollLine={this.state.scrollLine}
-        toggleBookmark={this.props.toggleBookmark}
         bookmarks={this.props.bookmarks}
         findLine={findLine ? findLine : -1}
         lineData={this.props.lineData}
@@ -99,14 +82,11 @@ export class Fetch extends React.PureComponent<Props, State> {
 
 // This is not the ideal way to do this, but it allows for better compatibility
 // as we migrate towards the react-redux model
-function mapStateToProps(state: ReduxState, ownProps) {
+function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>) {
   return {
     ...ownProps,
     lines: selectors.getLogLines(state),
-    settings: selectors.getLogViewerSettings(state),
-    findIdx: selectors.getLogViewerFind(state).findIdx,
-    filterList: selectors.getLogViewerFilters(state),
-    highlightList: selectors.getLogViewerHighlights(state),
+    findIdx: selectors.getLogViewerFindIdx(state),
     bookmarks: selectors.getLogViewerBookmarks(state),
     lineData: selectors.getFilteredLineData(state)
   };
@@ -115,13 +95,7 @@ function mapStateToProps(state: ReduxState, ownProps) {
 function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   return {
     ...ownProps,
-    loadInitialFilters: (initialFilters) => dispatch(actions.loadInitialFilters(initialFilters)),
-    loadInitialHighlights: (initialHighlights) => dispatch(actions.loadInitialHighlights(initialHighlights)),
-    changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
-    toggleBookmark: (lineNumArray) => dispatch(actions.toggleBookmark(lineNumArray)),
-    ensureBookmark: (lineNum) => dispatch(actions.ensureBookmark(lineNum)),
-    changeSearch: (text) => dispatch(actions.changeSearch(text)),
-    loadLogByIdentity: (identity) => dispatch(actions.loadLog(identity))
+    loadLogByIdentity: (identity: LogIdentity) => dispatch(actions.loadLog(identity))
   };
 }
 

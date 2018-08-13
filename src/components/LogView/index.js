@@ -4,6 +4,7 @@ import React from 'react';
 import ReactList from 'react-list';
 import FullLogLine from './FullLogLine';
 import { connect } from 'react-redux';
+import { toggleBookmark } from '../../actions';
 import type { ReduxState, ColorMap, Line, LineData, Bookmark } from '../../models';
 
 import './style.css';
@@ -30,9 +31,8 @@ type State = {
   scrollLine: ?number
 };
 
-class LogView extends React.Component<Props, State> {
+class LogView extends React.PureComponent<Props, State> {
   logListRef: ?ReactList = null;
-  indexMap: { [number]: number }
 
   constructor(props) {
     super(props);
@@ -123,7 +123,11 @@ class LogView extends React.Component<Props, State> {
   }
 
   scrollToLine(lineNumber) {
-    let scrollIndex = this.indexMap[lineNumber] - 20;
+    const visibleIndex = this.props.lineData.indexMap.get(lineNumber);
+    if (visibleIndex === null || visibleIndex === undefined) {
+      return;
+    }
+    let scrollIndex = visibleIndex - 20;
     if (scrollIndex < 0) {
       scrollIndex = 0;
     }
@@ -217,7 +221,7 @@ class LogView extends React.Component<Props, State> {
             length={this.props.lineData.filteredLines.length}
             initialIndex={this.props.scrollLine}
             type={this.props.wrap ? 'variable' : 'uniform'}
-            useStaticSize={true}
+            useStaticSize={!this.props.wrap}
           />
         </div>
       );
@@ -236,4 +240,11 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Pro
   };
 }
 
-export default connect(mapStateToProps)(LogView);
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
+  return {
+    ...ownProps,
+    toggleBookmark: (bk: number[]) => dispatch(toggleBookmark(bk))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LogView);
