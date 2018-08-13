@@ -1,7 +1,7 @@
 // @flow strict
 
 import * as actions from '../actions';
-import type { CacheState } from '../models'
+import type { CacheState } from '../models';
 
 const cacheSettings = (): CacheState => {
   window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;

@@ -3,7 +3,7 @@
 import type { ReduxState } from '../models';
 
 export const getLog = (state: ReduxState) => state.log;
-export const getLogLines= (state: ReduxState) => getLog(state).lines;
+export const getLogLines = (state: ReduxState) => getLog(state).lines;
 export const getLogIdentity = (state: ReduxState) => getLog(state).identity;
 
 export const getLogViewer = (state: ReduxState) => state.logviewer;

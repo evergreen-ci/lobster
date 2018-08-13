@@ -11,6 +11,7 @@ import urlParse from './sagas/urlParse';
 import { wipeCache } from './sagas/lobstercage';
 import App from './components/App';
 import { logger } from 'redux-logger';
+import { isProd } from './config';
 import './index.css';
 
 // Polyfills
@@ -22,7 +23,7 @@ import 'whatwg-fetch';
 
 const saga = createSagaMiddleware();
 const middlewares = [saga];
-if (process.env.NODE_ENV === `development`) {
+if (isProd) {
   middlewares.push(logger);
 }
 
