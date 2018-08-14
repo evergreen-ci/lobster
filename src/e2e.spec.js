@@ -277,7 +277,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  })
+  });
 });
 
 // Test that each logviewer page can actually download logs

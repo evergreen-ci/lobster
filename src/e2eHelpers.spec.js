@@ -1,4 +1,5 @@
 // @flow
+
 import { Builder, Capabilities, By, until, Condition } from 'selenium-webdriver';
 import path from 'path';
 import { existsSync } from 'fs';
@@ -200,7 +201,8 @@ export class Lobster {
     const absPath = path.resolve(file);
     const fileExists = existsSync(absPath);
     if (!fileExists) {
-      throw new String(`file '${absPath}' does not exist`);
+      // eslint-disable-next-line no-throw-literal
+      throw `file '${absPath}' does not exist`;
     }
 
     const dropzone = await this._driver.wait(until.elementLocated(By.xpath(dropArea)));
@@ -377,7 +379,7 @@ describe('capabilities', () => {
 
       process.env.LOBSTER_E2E_BROWSER = 'firefox';
       const ffcaps = capabilities();
-      expect(caps.get('chromeOptions').args.includes('--headless')).toBe(!v);
+      expect(ffcaps.get('chromeOptions').args.includes('--headless')).toBe(!v);
     });
   });
 });
