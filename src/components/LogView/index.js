@@ -62,10 +62,10 @@ class LogView extends React.PureComponent<Props, State> {
   }
 
   updateSelectEndIndex = (index: number) => {
-    if (this.state.selectStartIndex === null || this.state.selectStartIndex === undefined) {
-      return;
-    }
     this.setState((state: State) => {
+      if (state.selectStartIndex === null || state.selectStartIndex === undefined) {
+        return state;
+      }
       const clickElem = [state.selectStartIndex, index];
       const newClicks = state.clicks.slice();
       newClicks.push(clickElem);
