@@ -16,7 +16,6 @@ const logicToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/for
 const caseToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]';
 const dropArea = '//*[@id="root"]/div/main/div/div';
 const processLogButton = '//*[@id="root"]/div/main/div/div/p[2]/button';
-
 // const logLineList = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div';
 const firstLine = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div/div[1]';
 // const bookmarks = '//*[@id="root"]/div/main/div/div[1]/div';

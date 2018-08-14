@@ -138,6 +138,9 @@ class LogView extends React.PureComponent<Props, State> {
 
   scrollFindIntoView() {
     const renderedLineNum = this.props.lineData.findResults[this.props.searchFindIdx];
+    if (renderedLineNum < 0 || renderedLineNum === undefined || renderedLineNum === null) {
+      return;
+    }
     const line = this.state.lineMap.get(renderedLineNum);
     this.props.scrollToLine(renderedLineNum);
     if (line == null) {
@@ -198,7 +201,8 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Pro
     wrap: settings.wrap,
     searchTerm: selectors.getLogViewerSearchTerm(state),
     scrollLine: selectors.getLogViewerScrollLine(state),
-    searchFindIdx: selectors.getLogViewerFindIdx(state)
+    searchFindIdx: selectors.getLogViewerFindIdx(state),
+    bookmarks: selectors.getLogViewerBookmarks(state)
   };
 }
 
