@@ -253,6 +253,29 @@ describe('e2e', function() {
       await driver.quit();
     }
   }, 60000);
+
+  e2e('applyNewLog', async (done) => {
+    const driver = await makeDriver(done);
+    try {
+      const l = new Lobster(driver);
+      await l.init();
+
+      let lines = await l.lines();
+      expect(lines).toHaveLength(6);
+
+      await l.setNewLobsterServerFile('clap.txt');
+      await l.submitLobsterServerLogFile();
+
+      lines = await l.lines();
+      expect(lines).toHaveLength(5);
+
+      done();
+    } catch (e) {
+      done.fail(e);
+    } finally {
+      await driver.quit();
+    }
+  })
 });
 
 // Test that each logviewer page can actually download logs

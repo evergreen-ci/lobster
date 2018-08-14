@@ -1,3 +1,4 @@
+// @flow
 import { Builder, Capabilities, By, until, Condition } from 'selenium-webdriver';
 import path from 'path';
 import { existsSync } from 'fs';
@@ -20,15 +21,30 @@ const processLogButton = '//*[@id="root"]/div/main/div/div/p[2]/button';
 const firstLine = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div/div[1]';
 // const bookmarks = '//*[@id="root"]/div/main/div/div[1]/div';
 const cacheModal = '//*[@id="root"]/div/div/div/div';
+const logURLField = '//*[@id="urlInput"]';
+const logURLApplyButton = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[1]/div[2]/button';
 
-export const lobsterURL = (file = 'simple.log') => {
-  return `http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}/lobster?server=localhost:${process.env.LOBSTER_E2E_SERVER_PORT}%2Fapi%2Flog&url=${file}`;
+export const lobsterURL = (file: string = 'simple.log') => {
+  const port = process.env.LOBSTER_E2E_SERVER_PORT || 9000;
+  return `http://localhost:${port}/lobster?server=localhost:${port}%2Fapi%2Flog&url=${file}`;
 };
 
 export class Lobster {
-  constructor(driver) {
+  _driver = {};
+  _showdetails: boolean = false;
+
+  constructor(driver: Object) {
     this._driver = driver;
-    this._showdetails = false;
+  }
+
+  async setNewLobsterServerLogFile(file: string) {
+    const field = await this._driver.wait(until.elementLocated(By.xpath(logURLField)));
+    await field.sendKeys(file);
+  }
+
+  async submitLobsterServerLogFile() {
+    const button = await this._driver.wait(until.elementLocated(By.xpath(logURLApplyButton)));
+    await button.click();
   }
 
   async refresh() {
@@ -49,11 +65,11 @@ export class Lobster {
     );
   }
 
-  async init(url, options = {}) {
-    if (url === undefined) {
+  async init(url: ?string, options: Object = {}) {
+    if (url == null) {
       await this._driver.get(lobsterURL(options.url));
     } else {
-      await this._driver.get(`http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}${url}`);
+      await this._driver.get(`http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT || 9000}${url}`);
     }
 
     await this.waitUntilDocumentReady();
@@ -86,7 +102,7 @@ export class Lobster {
     }
   }
 
-  async get(url) {
+  async get(url: string) {
     await this._driver.get(url);
   }
 
@@ -100,7 +116,7 @@ export class Lobster {
     await this._driver.wait(until.elementLocated(By.xpath(firstLine)));
   }
 
-  async search(text) {
+  async search(text: string) {
     const find = this._driver.findElement(By.id('findInput'));
     await find.sendKeys(text);
   }
@@ -155,7 +171,7 @@ export class Lobster {
     return await logContainer.findElements(By.xpath('.//div'));
   }
 
-  async line(x) {
+  async line(x: number) {
     const l = await this.lines();
     return l[x];
   }
@@ -179,11 +195,11 @@ export class Lobster {
     return await this._driver.wait(until.elementLocated(By.xpath(notFound)));
   }
 
-  async dropFile(file) {
+  async dropFile(file: string) {
     const absPath = path.resolve(file);
     const fileExists = existsSync(absPath);
     if (!fileExists) {
-      throw new `file '${absPath}' does not exist`;
+      throw new String(`file '${absPath}' does not exist`);
     }
 
     const dropzone = await this._driver.wait(until.elementLocated(By.xpath(dropArea)));
@@ -278,14 +294,16 @@ const capabilities = (opts = {}) => {
   } else if (useBrowser === 'firefox') {
     caps = firefoxCapabilities();
   }
-  if (caps === undefined) {
+  if (caps == null) {
     throw new TypeError(`expected browser to be 'chrome' or 'firefox', got ${useBrowser}`);
   }
 
   const browserCaps = opts[useBrowser];
-  if (browserCaps !== undefined) {
+  if (browserCaps != null && caps != null) {
     Object.keys(browserCaps).forEach((key) => {
-      if (!caps.get(key)) {
+      // $FlowFixMe
+      if (caps.get(key) == null) {
+        // $FlowFixMe
         caps.set(key, browserCaps[key]);
       }
     });
@@ -293,7 +311,7 @@ const capabilities = (opts = {}) => {
   return caps;
 };
 
-export const makeDriver = async (done, opts) => {
+export const makeDriver = async (done: () => void, opts: Object) => {
   try {
     return await new Builder().withCapabilities(capabilities(opts)).build();
   } catch (err) {
@@ -319,6 +337,7 @@ describe('capabilities', () => {
     process.env.LOBSTER_E2E_BROWSER = 'netscape';
     expect(() => {
       capabilities();
+      // $FlowFixMe
     }).toThrow(TypeError);
   });
 
@@ -335,30 +354,29 @@ describe('capabilities', () => {
     expect(caps.get('chromeOptions')).not.toBe('bad');
   });
 
-  // [true, false].forEach((v) => {
-  //   test(`is-headless-ci-${v}`, () => {
-  //     process.env.CI = JSON.stringify(v);
+  [true, false].forEach((v) => {
+    test(`is-headless-ci-${JSON.stringify(v)}`, () => {
+      process.env.CI = JSON.stringify(v);
 
-  //     process.env.LOBSTER_E2E_BROWSER = 'chrome';
-  //     const caps = capabilities();
-  //     console.log('--headless' in caps.get('chromeOptions').args);
-  //     expect('--headless' in caps.get('chromeOptions').args).toBe(v);
+      process.env.LOBSTER_E2E_BROWSER = 'chrome';
+      const caps = capabilities();
+      expect(caps.get('chromeOptions').args.includes('--headless')).toBe(v);
 
-  //     process.env.LOBSTER_E2E_BROWSER = 'firefox';
-  //     const ffcaps = capabilities();
-  //     expect('--headless' in ffcaps.get('moz:firefoxOptions').args).toBe(v);
-  //   });
+      process.env.LOBSTER_E2E_BROWSER = 'firefox';
+      const ffcaps = capabilities();
+      expect(ffcaps.get('moz:firefoxOptions').args.includes('--headless')).toBe(v);
+    });
 
-  //   test(`is-headless-headless-false-ci-${v}`, () => {
-  //     process.env.CI = JSON.stringify(v);
-  //     process.env.LOBSTER_E2E_HEADLESS = 'false';
-  //     process.env.LOBSTER_E2E_BROWSER = 'chrome';
-  //     const caps = capabilities();
-  //     expect('--headless' in caps.get('chromeOptions').args).toBe(!v);
+    test(`is-headless-headless-false-ci-${JSON.stringify(v)}`, () => {
+      process.env.CI = JSON.stringify(v);
+      process.env.LOBSTER_E2E_HEADLESS = 'false';
+      process.env.LOBSTER_E2E_BROWSER = 'chrome';
+      const caps = capabilities();
+      expect(caps.get('chromeOptions').args.includes('--headless')).toBe(!v);
 
-  //     process.env.LOBSTER_E2E_BROWSER = 'firefox';
-  //     const ffcaps = capabilities();
-  //     expect('--headless' in ffcaps.get('moz:firefoxOptions').args).toBe(!v);
-  //   });
-  // });
+      process.env.LOBSTER_E2E_BROWSER = 'firefox';
+      const ffcaps = capabilities();
+      expect(caps.get('chromeOptions').args.includes('--headless')).toBe(!v);
+    });
+  });
 });
