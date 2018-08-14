@@ -121,9 +121,9 @@ describe('e2e', function() {
 
       done();
     } catch (err) {
-      // done.fail(err);
+      done.fail(err);
     } finally {
-      // await driver.quit();
+      await driver.quit();
     }
   }, 60000);
 
