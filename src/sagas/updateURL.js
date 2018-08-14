@@ -4,7 +4,7 @@ import queryString from '../thirdparty/query-string';
 import { select } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import * as selectors from '../selectors';
-import type { Highlight, Filter } from '../models';
+import type { Highlight, Filter, LogIdentity } from '../models';
 
 function boolToInt(b: boolean): string {
   return b ? '1' : '0';
@@ -27,7 +27,7 @@ function makeHighlightURLString(highlight: Highlight): string {
 }
 
 export default function*(): Saga<void> {
-  const identity = yield select(selectors.getLogIdentity);
+  const identity: LogIdentity  = yield select(selectors.getLogIdentity);
   const filters = yield select(selectors.getLogViewerFilters);
   const highlights = yield select(selectors.getLogViewerHighlights);
   const bookmarks = yield select(selectors.getLogViewerBookmarks);

@@ -176,7 +176,7 @@ export type EvergreenLog = EvergreenTaskLog
 export type LobsterLog = $ReadOnly<{
   type: 'lobster',
   server: string,
-  file: string
+  url: string
 }>
 
 export type LogkeeperLog = $ReadOnly<{
