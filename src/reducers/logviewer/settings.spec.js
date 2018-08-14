@@ -1,5 +1,5 @@
 import settings from './settings';
-import * as actions from '../actions/logviewer';
+import * as actions from '../../actions/logviewer';
 
 describe('settings', function() {
   const initialState = {
