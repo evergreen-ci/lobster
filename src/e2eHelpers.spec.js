@@ -369,17 +369,5 @@ describe('capabilities', () => {
       const ffcaps = capabilities();
       expect(ffcaps.get('moz:firefoxOptions').args.includes('--headless')).toBe(v);
     });
-
-    test(`is-headless-headless-false-ci-${JSON.stringify(v)}`, () => {
-      process.env.CI = JSON.stringify(v);
-      process.env.LOBSTER_E2E_HEADLESS = 'false';
-      process.env.LOBSTER_E2E_BROWSER = 'chrome';
-      const caps = capabilities();
-      expect(caps.get('chromeOptions').args.includes('--headless')).toBe(!v);
-
-      process.env.LOBSTER_E2E_BROWSER = 'firefox';
-      const ffcaps = capabilities();
-      expect(ffcaps.get('chromeOptions').args.includes('--headless')).toBe(!v);
-    });
   });
 });

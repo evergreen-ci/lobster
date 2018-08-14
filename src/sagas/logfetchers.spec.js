@@ -5,6 +5,7 @@ import * as evergreenApi from '../api/evergreen';
 import * as actions from '../actions';
 import logfetchers from './logfetchers';
 import { readFromCache, writeToCache } from './lobstercage';
+import type { LobsterLog } from '../models';
 
 describe('fetchLobster', function() {
   afterEach(() => sinon.restore());
@@ -14,12 +15,8 @@ describe('fetchLobster', function() {
     const mock = sinon.stub().resolves(resp);
     sinon.replace(api, 'fetchLobster', mock);
 
-    const action = actions.loadLog({
-      type: 'lobster',
-      server: 'domain.invalid',
-      file: 'simple.log'
-    });
-    const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
+    const identity = { type: 'lobster', server: 'domain.invalid', url: 'simple.log' };
+    const action: LobsterLog = actions.loadLog(identity);
     return expectSaga(logfetchers, action)
       .withState({
         log: {
@@ -54,12 +51,8 @@ describe('fetchLobster', function() {
     const mock = sinon.stub().resolves(resp);
     sinon.replace(api, 'fetchLobster', mock);
 
-    const action = actions.loadLog({
-      type: 'lobster',
-      server: 'domain.invalid',
-      file: 'simple.log'
-    });
-    const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
+    const identity = { type: 'lobster', server: 'domain.invalid', url: 'simple.log' };
+    const action: LobsterLog = actions.loadLog(identity);
     return expectSaga(logfetchers, action)
       .withState({
         log: {
@@ -91,12 +84,8 @@ describe('fetchLobster', function() {
     const mock = sinon.stub().rejects('error');
     sinon.replace(api, 'fetchLobster', mock);
 
-    const action = actions.loadLog({
-      type: 'lobster',
-      server: 'domain.invalid',
-      file: 'simple.log'
-    });
-    const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
+    const identity = { type: 'lobster', server: 'domain.invalid', url: 'simple.log' };
+    const action: LobsterLog = actions.loadLog(identity);
     return expectSaga(logfetchers, action)
       .withState({
         log: {

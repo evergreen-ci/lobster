@@ -43,29 +43,6 @@ describe('EvergreenLogViewer', () => {
 
 
 ['hash', 'search'].forEach((field) => {
-  describe(`LogkeeperLogViewer-${field}`, () => {
-    test('test-lobster', () => {
-      const loc = {
-        pathname: '/lobster',
-        search: ''
-      };
-      loc[field] = field === 'search' ? '?' : '#';
-      loc[field] += `server=${encodeURIComponent('localhost:9000/api/log')}&url=simple.log`;
-      const wrapper = Enzyme.shallow(
-        <LogkeeperLogViewer
-          location={loc}
-          match={{
-            path: '/lobster',
-            params: {}
-          }}
-        />);
-
-      expect(wrapper.prop('logIdentity').type).toBe('lobster');
-      expect(wrapper.prop('logIdentity').server).toBe('localhost:9000/api/log');
-      expect(wrapper.prop('logIdentity').file).toBe('simple.log');
-    });
-  });
-
   test(`test-params-${field}`, () => {
     const loc = {
       pathname: '/lobster/build/build1234/all'
