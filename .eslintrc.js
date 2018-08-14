@@ -79,6 +79,21 @@ module.exports = {
       'globals': {
         '__dirname': true
       }
+    },
+    {
+      'files': ['reporter.js'],
+      'env': {
+        'node': true
+      },
+      'parserOptions': {
+        'sourceType': 'script'
+      },
+      'rules': {
+        'no-sync': 0
+      },
+      'globals': {
+        '__dirname': true
+      }
     }
   ],
   'rules': {

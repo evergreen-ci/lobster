@@ -8,4 +8,4 @@ module.exports = function() {
   }
 
   return require(base + '/node_modules/jest-junit').apply(this, arguments);
-}
+};
