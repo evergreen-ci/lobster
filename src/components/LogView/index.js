@@ -99,7 +99,7 @@ class LogView extends React.PureComponent<Props, State> {
     });
   }
 
-  genList = (index, key) => {
+  genList = (index) => {
     return (
       <FullLogLine
         lineRefCallback={this.lineRefCallback}

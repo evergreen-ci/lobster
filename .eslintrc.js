@@ -141,7 +141,7 @@ module.exports = {
     'react/no-this-in-sfc': 2,
     'react/require-optimization': 2,
     'react/no-access-state-in-setstate': 2,
-    'react/require-default-props': 1,
+    'react/require-default-props': 2,
 
     // work towards enabling
     // 'react/jsx-sort-props': 0,
