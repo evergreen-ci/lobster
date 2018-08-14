@@ -1,8 +1,7 @@
 // @flow strict
 
-import { LOGVIEWER_CHANGE_FINDIDX, LOGVIEWER_CHANGE_SEARCH, LOGVIEWER_CHANGE_HIGHLIGHT, LOGVIEWER_CHANGE_FILTER } from '../actions/logviewer';
-import type { Action } from '../actions';
-import type { Find } from '../models';
+import { LOGVIEWER_CHANGE_FINDIDX, LOGVIEWER_CHANGE_SEARCH, LOGVIEWER_CHANGE_HIGHLIGHT, LOGVIEWER_CHANGE_FILTER, type Action } from '../../actions';
+import type { Find } from '../../models';
 
 const initialState: Find = {
   findIdx: -1,

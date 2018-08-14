@@ -1,8 +1,7 @@
 // @flow strict
 
-import { LOGVIEWER_CHANGE_BOOKMARK, LOGVIEWER_LOAD_BOOKMARKS, LOGVIEWER_ENSURE_BOOKMARK } from '../actions/logviewer';
-import type { Action } from '../actions';
-import type { Bookmark } from '../models';
+import { LOGVIEWER_CHANGE_BOOKMARK, LOGVIEWER_LOAD_BOOKMARKS, LOGVIEWER_ENSURE_BOOKMARK, type Action } from '../../actions/logviewer';
+import type { Bookmark } from '../../models';
 
 const initialState: Bookmark[] = [];
 

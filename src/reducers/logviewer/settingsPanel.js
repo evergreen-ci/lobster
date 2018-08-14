@@ -1,7 +1,6 @@
 // @flow strict
 
-import type { Action } from '../actions';
-import { LOGVIEWER_TOGGLE_SETTINGS_PANEL } from '../actions/logviewer';
+import { type Action, LOGVIEWER_TOGGLE_SETTINGS_PANEL } from '../../actions';
 
 const initialState = false;
 

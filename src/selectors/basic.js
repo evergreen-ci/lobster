@@ -21,4 +21,4 @@ export const getLogViewerSearchTermError = (state: ReduxState) => getLogViewerFi
 export const getLogViewerSettings = (state: ReduxState) => getLogViewer(state).settings;
 
 export const getIsLogViewerSettingsPanel = (state: ReduxState) => getLogViewer(state).settingsPanel;
-export const getLogViewerScrollLine = (state: ReduxState) => getLogViewer(state).initialLine;
+export const getLogViewerScrollLine = (state: ReduxState) => getLogViewer(state).scrollLine;

@@ -6,7 +6,7 @@ import bookmarks from './bookmarks';
 import find from './find';
 import settings from './settings';
 import settingsPanel from './settingsPanel';
-import initialLine from './initialLine';
+import scrollLine from './scrollLine';
 import { combineReducers } from 'redux';
 
 export default combineReducers({
@@ -16,5 +16,5 @@ export default combineReducers({
   find: find,
   settings: settings,
   settingsPanel: settingsPanel,
-  initialLine: initialLine
+  scrollLine: scrollLine
 });

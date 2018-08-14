@@ -239,7 +239,7 @@ export type LogViewerState = $Exact<$ReadOnly<{
   find: Find,
   settings: Settings,
   settingsPanel: boolean,
-  initialLine: number
+  scrollLine: number
 }>>
 
 export type ReduxState = $Exact<$ReadOnly<{
