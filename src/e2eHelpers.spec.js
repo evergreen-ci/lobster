@@ -2,7 +2,8 @@ import { Builder, Capabilities, By, until, Condition } from 'selenium-webdriver'
 import path from 'path';
 import { existsSync } from 'fs';
 
-const caseToggleXPath = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div/div[1]/div[2]';
+// xpaths to elements
+const caseToggle = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div/div[1]/div[2]';
 const cacheNever = '//*[@id="root"]/div/div/div/div/div/div[3]/button[1]';
 const cacheYes = '//*[@id="root"]/div/div/div/div/div/div[3]/button[3]';
 const showDetails = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/button[4]';
@@ -15,15 +16,14 @@ const logicToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/for
 const caseToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]';
 const dropArea = '//*[@id="root"]/div/main/div/div';
 const processLogButton = '//*[@id="root"]/div/main/div/div/p[2]/button';
-
-const lobsterURL = (file = 'simple.log') => {
-  return `http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}/lobster?server=localhost:${process.env.LOBSTER_E2E_SERVER_PORT}%2Fapi%2Flog&url=${file}`;
-};
-
 // const logLineList = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div';
 const firstLine = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div/div[1]';
 // const bookmarks = '//*[@id="root"]/div/main/div/div[1]/div';
 const cacheModal = '//*[@id="root"]/div/div/div/div';
+
+export const lobsterURL = (file = 'simple.log') => {
+  return `http://localhost:${process.env.LOBSTER_E2E_SERVER_PORT}/lobster?server=localhost:${process.env.LOBSTER_E2E_SERVER_PORT}%2Fapi%2Flog&url=${file}`;
+};
 
 export class Lobster {
   constructor(driver) {
@@ -86,6 +86,10 @@ export class Lobster {
     }
   }
 
+  async get(url) {
+    await this._driver.get(url);
+  }
+
   async browserHasFilesystemAPI() {
     const res = await this._driver.executeScript(
       'return window.requestFileSystem != null');
@@ -108,11 +112,11 @@ export class Lobster {
   async showDetails() {
     const details = await this._driver.wait(until.elementLocated(By.xpath(showDetails)));
     await details.click();
-    const caseToggle = await this._driver.wait(until.elementLocated(By.xpath(caseToggleXPath)));
+    const caseToggleButton = await this._driver.wait(until.elementLocated(By.xpath(caseToggle)));
     if (this._showdetails) {
-      await this._driver.wait(until.elementIsNotVisible(caseToggle));
+      await this._driver.wait(until.elementIsNotVisible(caseToggleButton));
     } else {
-      await this._driver.wait(until.elementIsVisible(caseToggle));
+      await this._driver.wait(until.elementIsVisible(caseToggleButton));
     }
 
     this._showdetails = !this._showdetails;

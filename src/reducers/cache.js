@@ -1,13 +1,9 @@
 // @flow strict
 
 import * as actions from '../actions';
+import type { CacheState } from '../models';
 
-export type CacheSettings = {
-  status: actions.CacheStatus,
-  size: number
-};
-
-const cacheSettings = () => {
+const cacheSettings = (): CacheState => {
   window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
   window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL ||
     window.webkitResolveLocalFileSystemURL;
@@ -28,9 +24,9 @@ const cacheSettings = () => {
   };
 };
 
-const initialState: CacheSettings = cacheSettings();
+const initialState: CacheState = cacheSettings();
 
-export default function(state: CacheSettings = initialState, action: actions.SetupCache): CacheSettings {
+export default function(state: CacheState = initialState, action: actions.SetupCache): CacheState {
   if (action.type !== actions.SETUP_CACHE) {
     return state;
   }

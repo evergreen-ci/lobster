@@ -28,7 +28,12 @@ export class Bookmarks extends React.PureComponent<Props> {
   }
 }
 
-export const Bookmark = (props: BookmarkType) => {
+export type BookmarkProps = {
+  lineNumber: number,
+  scrollFunc: (event: SyntheticMouseEvent<HTMLInputElement>) => void
+}
+
+export const Bookmark = (props: BookmarkProps) => {
   return (
     <div onClick={props.scrollFunc} key={props.lineNumber}>
       {props.lineNumber}

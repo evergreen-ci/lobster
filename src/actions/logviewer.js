@@ -12,6 +12,9 @@ export const LOGVIEWER_LOAD_BOOKMARKS = 'logviewer:load-bookmarks';
 export const LOGVIEWER_ENSURE_BOOKMARK = 'logviewer:ensure-bookmark';
 export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
 export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
+export const LOGVIEWER_TOGGLE_SETTINGS_PANEL = 'logviewer:toggle-settings-panel';
+export const LOGVIEWER_SEARCH_EVENT = 'logviewer:search-event';
+export const LOGVIEWER_SCROLL_TO_LINE = 'logviewer:scroll-to-line';
 
 export type ChangeSetting = {|
   type: 'logviewer:change-setting',
@@ -68,7 +71,7 @@ export type ChangeFindIdx = {|
 export type ChangeSearch = {|
   type: 'logviewer:change-search',
   +payload: {|
-    +text: RegExp
+    +text: string
   |}
 |}
 
@@ -86,6 +89,32 @@ export type LoadFilters = {|
   |}
 |}
 
+export type ToggleSettingsPanel = $Exact<{
+  type: 'logviewer:toggle-settings-panel',
+  +payload: {}
+}>
+
+export type SearchEventDirection = $Exact<$ReadOnly<{
+  action: 'next' | 'prev'
+}>>
+
+export type SearchEventSetTerm = $Exact<$ReadOnly<{
+  action: 'search',
+  term: string
+}>>
+
+export type SearchEvent= $Exact<{
+  type: 'logviewer:search-event',
+  +payload: SearchEventDirection | SearchEventSetTerm
+}>
+
+export type ScrollToLine= $Exact<{
+  type: 'logviewer:scroll-to-line',
+  +payload: $Exact<$ReadOnly<{
+    line: number
+  }>>
+}>
+
 export type Action = ChangeSetting
   | ChangeFilter
   | ChangeHighlight
@@ -96,6 +125,8 @@ export type Action = ChangeSetting
   | ChangeSearch
   | LoadHighlights
   | LoadFilters
+  | ToggleSettingsPanel
+  | ScrollToLine
 
 function toggleSetting(setting: string): ChangeSetting {
   return {
@@ -225,11 +256,36 @@ export function changeFindIdx(index: number): ChangeFindIdx {
   };
 }
 
-export function changeSearch(text: RegExp): ChangeSearch {
+export function changeSearch(text: string): ChangeSearch {
   return {
     type: LOGVIEWER_CHANGE_SEARCH,
     payload: {
       text: text
+    }
+  };
+}
+
+export function toggleSettingsPanel(): ToggleSettingsPanel {
+  return {
+    type: LOGVIEWER_TOGGLE_SETTINGS_PANEL,
+    payload: {}
+  };
+}
+
+export function search(action: 'next' | 'prev'): SearchEvent {
+  return {
+    type: LOGVIEWER_SEARCH_EVENT,
+    payload: {
+      action: action
+    }
+  };
+}
+
+export function scrollToLine(n: number): ScrollToLine {
+  return {
+    type: LOGVIEWER_SCROLL_TO_LINE,
+    payload: {
+      line: n
     }
   };
 }

@@ -1,6 +1,5 @@
 // @flow strict
 
-import assert from 'assert';
 import reducer from './processData';
 import { processData, processDataError } from '../actions';
 
@@ -13,14 +12,14 @@ describe('log', function() {
 
     const state = reducer(undefined, processData(data.join('\n'), 'resmoke'));
 
-    assert.deepEqual(state.lines.length, 2);
-    assert.deepEqual(Object.keys(state.colorMap).length, 0);
+    expect(state.lines).toHaveLength(2);
+    expect(Object.keys(state.colorMap)).toHaveLength(0);
   });
 
   test('logkeeperDataResponse-error', function() {
     const action = processDataError('error');
     const state = reducer(undefined, action);
-    assert.deepEqual(state.lines.length, 0);
-    assert.deepEqual(state.colorMap.size, 0);
+    expect(state.lines).toHaveLength(0);
+    expect(state.colorMap.size).toBe(0);
   });
 });

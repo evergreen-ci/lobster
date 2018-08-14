@@ -21,11 +21,16 @@ describe('fetchLobster', function() {
     });
     const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
     return expectSaga(logfetchers, action)
+      .withState({
+        log: {
+          lines: [{}]
+        }
+      })
       .run()
       .then((result) => {
         const { effects } = result;
         expect(effects).not.toHaveProperty('take');
-        expect(effects.put).toHaveLength(1);
+        expect(effects.put).toHaveLength(2);
 
         const v = effects.put[0].PUT.action;
         expect(v.error).toBe(false);
@@ -40,7 +45,8 @@ describe('fetchLobster', function() {
         expect(result.toJSON()).toMatchSnapshot();
 
         done();
-      });
+      })
+      .catch(e => done.fail(e));
   });
 
   test('resolves-404', function(done) {
@@ -55,11 +61,16 @@ describe('fetchLobster', function() {
     });
     const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
     return expectSaga(logfetchers, action)
+      .withState({
+        log: {
+          lines: [{}, {}]
+        }
+      })
       .run()
       .then((result) => {
         const { effects } = result;
         expect(effects).not.toHaveProperty('take');
-        expect(effects.put).toHaveLength(1);
+        expect(effects.put).toHaveLength(3);
 
         const v = effects.put[0].PUT.action;
         expect(v.error).toBe(true);
@@ -87,11 +98,16 @@ describe('fetchLobster', function() {
     });
     const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
     return expectSaga(logfetchers, action)
+      .withState({
+        log: {
+          lines: [{}, {}]
+        }
+      })
       .run()
       .then((result) => {
         const { effects } = result;
         expect(effects).not.toHaveProperty('take');
-        expect(effects.put).toHaveLength(1);
+        expect(effects.put).toHaveLength(3);
 
         const v = effects.put[0].PUT.action;
         expect(v.error).toBe(true);
@@ -125,6 +141,9 @@ describe('fetchLogkeeper', function() {
     const action = actions.loadLog(identity);
     return expectSaga(logfetchers, action)
       .withState({
+        log: {
+          lines: [{}, {}]
+        },
         cache: {
           status: 'unsupported'
         }
@@ -133,7 +152,7 @@ describe('fetchLogkeeper', function() {
       .then((result) => {
         const { effects } = result;
         expect(effects).not.toHaveProperty('take');
-        expect(effects.put).toHaveLength(1);
+        expect(effects.put).toHaveLength(3);
 
         const v = effects.put[0].PUT.action;
         expect(v.error).toBe(false);
@@ -167,6 +186,9 @@ describe('fetchLogkeeper', function() {
     const action = actions.loadLog(identity);
     return expectSaga(logfetchers, action)
       .withState({
+        log: {
+          lines: [{}, {}]
+        },
         cache: {
           status: 'unsupported'
         }
@@ -175,7 +197,7 @@ describe('fetchLogkeeper', function() {
       .then((result) => {
         const { effects } = result;
         expect(effects).not.toHaveProperty('take');
-        expect(effects.put).toHaveLength(1);
+        expect(effects.put).toHaveLength(3);
 
         const v = effects.put[0].PUT.action;
         expect(v.error).toBe(false);
@@ -213,6 +235,9 @@ describe('fetchEvergreen', function() {
     const action = actions.loadLog(identity);
     return expectSaga(logfetchers, action)
       .withState({
+        log: {
+          lines: [{}, {}]
+        },
         cache: {
           status: 'unsupported'
         }
@@ -221,7 +246,7 @@ describe('fetchEvergreen', function() {
       .then((result) => {
         const { effects } = result;
         expect(effects).not.toHaveProperty('take');
-        expect(effects.put).toHaveLength(1);
+        expect(effects.put).toHaveLength(3);
 
         const v = effects.put[0].PUT.action;
         expect(v.error).toBe(false);
@@ -256,11 +281,16 @@ describe('fetchEvergreen', function() {
     };
     const action = actions.loadLog(identity);
     return expectSaga(logfetchers, action)
+      .withState({
+        log: {
+          lines: [{}, {}]
+        }
+      })
       .run()
       .then((result) => {
         const { effects } = result;
         expect(effects).not.toHaveProperty('take');
-        expect(effects.put).toHaveLength(1);
+        expect(effects.put).toHaveLength(3);
 
         const v = effects.put[0].PUT.action;
         expect(v.error).toBe(false);

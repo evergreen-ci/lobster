@@ -1,5 +1,4 @@
 import React from 'react';
-import assert from 'assert';
 import Enzyme from 'enzyme';
 import { LogDrop } from '.';
 import sinon from 'sinon';
@@ -9,7 +8,7 @@ describe('LogDrop', function() {
     const process = sinon.fake();
     const wrapper = Enzyme.mount(<LogDrop processLog={ process } />);
 
-    assert.strictEqual(wrapper.contains(<select />), false);
+    expect(wrapper.contains(<select />)).toBe(false);
   });
 
   test('drop', function() {
@@ -26,16 +25,16 @@ describe('LogDrop', function() {
       }
     });
 
-    assert.strictEqual(wrapper.state('files').length, 1);
-    assert.strictEqual(wrapper.state('files')[0], f);
-    assert.strictEqual(wrapper.state('processing'), false);
-    assert.strictEqual(wrapper.state('error'), null);
-    assert.strictEqual(process.callCount, 0);
+    expect(wrapper.state('files')).toHaveLength(1);
+    expect(wrapper.state('files')[0]).toBe(f);
+    expect(wrapper.state('processing')).toBe(false);
+    expect(wrapper.state('error')).toBe(null);
+    expect(process.callCount).toBe(0);
 
     wrapper.instance().upload();
-    assert.strictEqual(wrapper.state('files').length, 1);
-    assert.strictEqual(wrapper.state('files')[0], f);
-    assert.strictEqual(wrapper.state('processing'), true);
-    assert.strictEqual(wrapper.state('error'), null);
+    expect(wrapper.state('files')).toHaveLength(1);
+    expect(wrapper.state('files')[0]).toBe(f);
+    expect(wrapper.state('processing')).toBe(true);
+    expect(wrapper.state('error')).toBe(null);
   });
 });

@@ -1,5 +1,5 @@
 import { Key } from 'selenium-webdriver';
-import { Lobster, makeDriver } from './e2eHelpers.spec';
+import { Lobster, makeDriver, lobsterURL } from './e2eHelpers.spec';
 
 describe('e2e', function() {
   e2e('search', async (done) => {
@@ -81,8 +81,10 @@ describe('e2e', function() {
       const l = new Lobster(driver);
       await l.init();
 
+      console.log('start search');
       await l.search('Line ');
       await l.search(Key.ENTER);
+      console.log('end search');
 
       await l.addFilter();
 
@@ -96,8 +98,10 @@ describe('e2e', function() {
       divs = await l.lines();
       expect(divs).toHaveLength(2);
 
+      console.log('start search 2');
       await l.search('2');
       await l.search(Key.ENTER);
+      console.log('end search 2');
 
       await l.addFilter();
 
@@ -208,7 +212,8 @@ describe('e2e', function() {
         const expected = ['FIND_THIS_TOKEN', 'line 446999', 'line 447000'];
         expect(expected.includes(token)).toBe(true);
       } else {
-        expect(token).toBe('FIND_THIS_TOKEN');
+        const expected = ['FIND_THIS_TOKEN', 'line 1600000', 'line 1599999'];
+        expect(expected.includes(token)).toBe(true);
       }
 
       await l.init(undefined, { url: `perf-${table[1]}.special.log` });
@@ -218,6 +223,28 @@ describe('e2e', function() {
       token = await lines[lines.length - 1].getText();
       expect(token).not.toBe('FIND_THIS_TOKEN');
       expect(token.match('line [0-8]+')).not.toEqual(null);
+
+      done();
+    } catch (e) {
+      done.fail(e);
+    } finally {
+      await driver.quit();
+    }
+  }, 60000);
+
+  e2e('changeurl', async (done) => {
+    const driver = await makeDriver(done);
+    try {
+      const l = new Lobster(driver);
+      await l.init();
+
+      await l.get(`${lobsterURL('simple.log')}#bookmarks=0,6&f=10Line&h=11Line 4`);
+
+      const lines = await l.lines();
+      const highlights = await l.highlightedLines();
+      expect(lines).toHaveLength(6);
+      expect(await (lines[4].getText())).toBe('line 4');
+      expect(highlights).toHaveLength(1);
 
       done();
     } catch (e) {

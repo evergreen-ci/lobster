@@ -2,7 +2,6 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import { CollapseMenu } from './CollapseMenu';
 import { ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
-import assert from 'assert';
 import Button from 'react-bootstrap/lib/Button';
 import sinon from 'sinon';
 
@@ -48,15 +47,15 @@ describe('CollapseMenu', () => {
     const wrapper = makeWrapper(logIdentity);
     const rawUrl = '/build/' + wrapper.prop('build') + '/all?raw=1';
     const HTMLUrl = '/build/' + wrapper.prop('build') + '/all?html=1';
-    assert.ok(wrapper.containsAllMatchingElements([
+    expect(wrapper.containsAllMatchingElements([
       <Button href={rawUrl}>Raw</Button>,
       <Button href={HTMLUrl}>HTML</Button>
-    ]));
+    ])).toBe(true);
 
     // Test existence of toggle buttons
     const toggleButtons = wrapper.find('ToggleButtonGroup');
-    assert.equal(toggleButtons.length, 3);
-    assert.ok(wrapper.containsAllMatchingElements([
+    expect(toggleButtons).toHaveLength(3);
+    expect(wrapper.containsAllMatchingElements([
       <ToggleButtonGroup name={'wrap-on-off'}>
         <ToggleButton value={true}>on</ToggleButton>
         <ToggleButton value={false}>off</ToggleButton>
@@ -69,12 +68,12 @@ describe('CollapseMenu', () => {
         <ToggleButton value={true}>and</ToggleButton>
         <ToggleButton value={false}>or</ToggleButton>
       </ToggleButtonGroup>
-    ]));
+    ])).toBe(true);
 
     // Test button toggling
-    assert(!wrapper.prop('toggleSettings').toggleWrap.called);
-    assert(!wrapper.prop('toggleSettings').toggleCaseSensitive.called);
-    assert(!wrapper.prop('toggleSettings').toggleFilterIntersection.called);
+    expect(wrapper.prop('toggleSettings').toggleWrap.called).toBe(false);
+    expect(wrapper.prop('toggleSettings').toggleCaseSensitive.called).toBe(false);
+    expect(wrapper.prop('toggleSettings').toggleFilterIntersection.called).toBe(false);
   });
 
   test('logkeeper-build-test', function() {
@@ -86,10 +85,10 @@ describe('CollapseMenu', () => {
     const wrapper = makeWrapper(logIdentity);
     const rawUrl = '/build/' + wrapper.prop('build') + '/test/12345?raw=1';
     const HTMLUrl = '/build/' + wrapper.prop('build') + '/test/12345?html=1';
-    assert.ok(wrapper.containsAllMatchingElements([
+    expect(wrapper.containsAllMatchingElements([
       <Button href={rawUrl}>Raw</Button>,
       <Button href={HTMLUrl}>HTML</Button>
-    ]));
+    ])).toBe(true);
   });
 
   test('evergreen-task', function() {
@@ -103,10 +102,10 @@ describe('CollapseMenu', () => {
     const taskURL = 'http://evergreen.invalid/task/task-1234/12345';
     const rawURL = 'http://evergreen.invalid/task_log_raw/task-1234/12345?type=ALL&text=true';
     const HTMLURL = 'http://evergreen.invalid/task_log_raw/task-1234/12345?type=ALL';
-    assert.ok(wrapper.containsAllMatchingElements([
+    expect(wrapper.containsAllMatchingElements([
       <Button href={taskURL}>Task</Button>,
       <Button href={rawURL}>Raw</Button>,
       <Button href={HTMLURL}>HTML</Button>
-    ]));
+    ])).toBe(true);
   });
 });

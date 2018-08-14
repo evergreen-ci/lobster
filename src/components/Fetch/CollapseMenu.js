@@ -6,8 +6,12 @@ import './style.css';
 import { Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
-import type { LogIdentity, Highlight, Filter, Settings } from '../../models';
+import type { Settings } from '../../models';
 import * as api from '../../api';
+import * as actions from '../../actions';
+import { connect } from 'react-redux';
+import * as selectors from '../../selectors';
+import type { ReduxState, LogIdentity, Highlight, Filter, Bookmark } from '../../models';
 
 type Props = {
   settings: Settings,
@@ -26,28 +30,26 @@ type Props = {
     toggleHighlight: (string) => void,
     toggleHighlightLine: (string) => void
   },
+  loadLogByIdentity: (LogIdentity) => void,
+  loadBookmarks: (Bookmark[]) => void,
+  changeFindIdx: (number) => void,
   wipeCache: () => void,
   filterList: Filter[],
   highlightList: Highlight[],
   detailsOpen: boolean,
-  handleSubmit: (SyntheticEvent<HTMLButtonElement>) => void,
-  server?: string,
-  url?: string,
-  build: string,
-  setURLRef: (?HTMLInputElement) => void,
   valueJIRA: string,
-  logIdentity: ?LogIdentity
+  logIdentity: ?LogIdentity,
 }
 
-function showLogBox(server: ?string, url: ?string, setURLRef: (?HTMLInputElement) => void): ?ReactNode {
-  if (server) {
+function showLogBox(id: ?LogIdentity, setURLRef: (?HTMLInputElement) => void): ?ReactNode {
+  if (id && id.type === 'lobster') {
     return (
       <FormGroup controlId="urlInput">
         <Col componentClass={ControlLabel} lg={1}>Log</Col>
         <Col lg={6}>
           <FormControl
             type="text"
-            defaultValue={url}
+            defaultValue={id.file}
             placeholder="optional. custom file location iff used with local server"
             inputRef={setURLRef}
           />
@@ -98,12 +100,38 @@ function showDetailButtons(id: ?LogIdentity, clearCache: ?() => void): ?ReactNod
 }
 
 export class CollapseMenu extends React.PureComponent<Props> {
+  urlInput: ?HTMLInputElement;
+
+  setURLRef = (ref: ?HTMLInputElement) => {
+    this.urlInput = ref;
+  }
+
+  handleSubmit = (event: SyntheticEvent<HTMLButtonElement>) => {
+    console.log('handleSubmit');
+    event.preventDefault();
+    if (!this.urlInput || this.props.logIdentity == null ||
+      this.props.logIdentity.type !== 'lobster') {
+      return;
+    }
+    const { file, server } = this.props.logIdentity;
+    const { value } = this.urlInput;
+    if (value !== this.props.logIdentity.file) {
+      this.props.changeFindIdx(-1);
+      this.props.loadBookmarks([]);
+      this.props.loadLogByIdentity({
+        type: 'lobster',
+        server: server,
+        file: file
+      });
+    }
+  }
+
   render() {
     return (
       <Collapse className="collapse-menu" in={this.props.detailsOpen}>
         <div>
-          <Form horizontal onSubmit={this.props.handleSubmit}>
-            {showLogBox(this.props.server, this.props.url, this.props.setURLRef)}
+          <Form horizontal onSubmit={this.handleSubmit}>
+            {showLogBox(this.props.logIdentity, this.setURLRef)}
             <FormGroup controlId="collapseButtons">
               <Col lg={5}>
                 <span className="far-left-label">Wrap</span>
@@ -163,4 +191,45 @@ export class CollapseMenu extends React.PureComponent<Props> {
   }
 }
 
-export default CollapseMenu;
+function mapStateToProps(state: ReduxState, ownProps) {
+  return {
+    ...ownProps,
+    settings: selectors.getLogViewerSettings(state),
+    filterList: selectors.getLogViewerFilters(state),
+    highlightList: selectors.getLogViewerHighlights(state),
+    findIdx: selectors.getLogViewerFindIdx(state),
+    logIdentity: selectors.getLogIdentity(state),
+    valueJIRA: selectors.getJiraTemplate(state),
+    detailsOpen: selectors.getIsLogViewerSettingsPanel(state)
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
+  const filterActions = {
+    toggleFilter: (text) => dispatch(actions.toggleFilter(text)),
+    toggleFilterInverse: (text) => dispatch(actions.toggleFilterInverse(text)),
+    removeFilter: (text) => dispatch(actions.removeFilter(text))
+  };
+  const highlightActions = {
+    toggleHighlight: (text) => dispatch(actions.toggleHighlight(text)),
+    toggleHighlightLine: (text) => dispatch(actions.toggleHighlightLine(text)),
+    removeHighlight: (text) => dispatch(actions.removeHighlight(text))
+  };
+  const toggleSettings = {
+    toggleWrap: () => dispatch(actions.toggleLineWrap()),
+    toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
+    toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection())
+  };
+
+  return {
+    ...ownProps,
+    toggleSettings: toggleSettings,
+    filterActions, highlightActions,
+    changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
+    wipeCache: () => dispatch(actions.wipeCache()),
+    loadLogByIdentity: (identity: LogIdentity) => dispatch(actions.loadLog(identity)),
+    loadBookmarks: (bookmarksArr) => dispatch(actions.loadBookmarks(bookmarksArr))
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CollapseMenu);

@@ -1,6 +1,5 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import assert from 'assert';
 import { Bookmarks, Bookmark } from './Bookmarks';
 
 test('Bookmarks', function() {
@@ -20,19 +19,19 @@ test('Bookmarks', function() {
   data.map(function(bkmark, index) {
     const bookmarkWrapper = wrapper.find('div').find('div').find('div').children().at(index + 1);
     bookmarkWrapper.simulate('click', {});
-    assert.equal(scrollTo, bkmark.lineNumber);
+    expect(scrollTo).toBe(bkmark.lineNumber);
   });
 
-  assert.ok(wrapper.containsAllMatchingElements([
+  expect(wrapper.containsAllMatchingElements([
     <Bookmark lineNumber={0} />,
     <Bookmark lineNumber={5} />,
     <Bookmark lineNumber={10} />,
     <Bookmark lineNumber={20} />
-  ]));
-  assert.ok(!wrapper.containsAllMatchingElements([
+  ])).toBe(true);
+  expect(wrapper.containsAllMatchingElements([
     <Bookmark lineNumber={1} />,
     <Bookmark lineNumber={6} />
-  ]));
+  ])).toBe(false);
 });
 
 test('Bookmark', function() {
@@ -46,5 +45,5 @@ test('Bookmark', function() {
 
   const wrapper = Enzyme.mount(<Bookmark lineNumber={5} scrollFunc={scroll} />);
   wrapper.simulate('click', {});
-  assert.equal(scrollTo, 5);
+  expect(scrollTo).toBe(5);
 });

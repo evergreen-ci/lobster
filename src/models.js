@@ -9,28 +9,27 @@ export type Line = $Exact<$ReadOnly<{
 
 export type ColorMap = $ReadOnly<{ [string]: string }>
 
-export type Settings = {|
-  +wrap: boolean,
-  +caseSensitive: boolean,
-  +filterIntersection: boolean
-|}
+export type Settings = $ReadOnly<$Exact<{
+  wrap: boolean,
+  caseSensitive: boolean,
+  filterIntersection: boolean
+}>>
 
 export type Bookmark = {|
-  lineNumber: number,
-  scrollFunc?: (SyntheticMouseEvent<HTMLInputElement>) => void
+  lineNumber: number
 |}
 
-export type Filter = {|
+export type Filter = $Exact<$ReadOnly<{
   text: string,
   on: boolean,
   inverse: boolean
-|}
+}>>
 
-export type Highlight = {|
+export type Highlight = $Exact<$ReadOnly<{
   text: string,
   on: boolean,
   line: boolean
-|}
+}>>
 
 export type MongoLine = {|
   +ts: ?Date,
@@ -200,5 +199,51 @@ export type Log = $Exact<$ReadOnly<{
 
 export type Find = $Exact<$ReadOnly<{
   findIdx: number,
-  searchRegex: RegExp
+  searchTerm: string,
+  regexError: ?Error
+}>>
+
+export type Logviewer = $Exact<$ReadOnly<{
+  filters: Filter[],
+  highlights: Highlight[],
+  bookmarks: Bookmark[],
+  find: Find,
+  settings: Settings,
+}>>
+
+export type VisualLineData = $Exact<$ReadOnly<{
+  filteredLines: Line[],
+  indexMap: Map<number, number>,
+  highlights: Set<number>
+}>>
+
+export type LineData = $Exact<$ReadOnly<{
+  indexMap: Map<number, number>,
+  findResults: number[],
+  filteredLines: Line[],
+  highlightLines: Line[],
+  highlightText: string[]
+}>>
+
+export type CacheStatus = 'ok' | 'error' | 'never' | 'later' | 'unsupported' | null;
+
+export type CacheState = $Exact<$ReadOnly<{
+  status: CacheStatus,
+  size: number
+}>>
+
+export type LogViewerState = $Exact<$ReadOnly<{
+  filters: Filter[],
+  highlights: Highlight[],
+  bookmarks: Bookmark[],
+  find: Find,
+  settings: Settings,
+  settingsPanel: boolean,
+  scrollLine: number
+}>>
+
+export type ReduxState = $Exact<$ReadOnly<{
+  cache: CacheState,
+  log: Log,
+  logviewer: LogViewerState
 }>>

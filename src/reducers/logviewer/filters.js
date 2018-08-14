@@ -1,8 +1,7 @@
 // @flow strict
 
-import { LOGVIEWER_CHANGE_FILTER, LOGVIEWER_LOAD_FILTERS } from '../actions/logviewer';
-import type { Action } from '../actions';
-import type { Filter } from '../models';
+import { LOGVIEWER_CHANGE_FILTER, LOGVIEWER_LOAD_FILTERS, type Action } from '../../actions';
+import type { Filter } from '../../models';
 
 const initialState: Filter[] = [];
 

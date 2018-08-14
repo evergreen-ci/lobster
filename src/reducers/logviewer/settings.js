@@ -1,8 +1,7 @@
 // @flow strict
 
-import { LOGVIEWER_CHANGE_SETTING } from '../actions/logviewer';
-import type { Action } from '../actions';
-import type { Settings } from '../models';
+import { LOGVIEWER_CHANGE_SETTING, type Action } from '../../actions/logviewer';
+import type { Settings } from '../../models';
 
 const initialState: Settings = {
   wrap: false,
@@ -21,6 +20,10 @@ export default function(state: Settings = initialState, action: Action): Setting
 
   if (action.payload.setting === 'case-sensitive') {
     return { ...state, caseSensitive: !state.caseSensitive };
+  }
+
+  if (action.payload.setting === 'filter-intersection') {
+    return { ...state, filterIntersection: !state.filterIntersection };
   }
 
   if (action.payload.setting === 'filter-intersection') {
