@@ -43,11 +43,8 @@ export class Fetch extends React.PureComponent<Props> {
     if (!this.props.lines) {
       return <div />;
     }
-    const findLine = this.props.lineData.findResults[this.props.findIdx];
     return (
       <LogView
-        bookmarks={this.props.bookmarks}
-        findLine={findLine ? findLine : -1}
         lineData={this.props.lineData}
       />);
   }

@@ -30,6 +30,7 @@ export default function*(action: SearchEvent | ChangeSearch): Saga<void> {
       if (newIdx >= numLines) {
         newIdx = 0;
       }
+      console.log(newIdx);
       yield put(actions.changeFindIdx(newIdx));
     } else if (action.payload.action === 'prev') {
       let newIdx = findIndex - 1;
@@ -37,6 +38,7 @@ export default function*(action: SearchEvent | ChangeSearch): Saga<void> {
         newIdx = numLines - 1;
       }
 
+      console.log(newIdx);
       yield put(actions.changeFindIdx(newIdx));
     }
   }

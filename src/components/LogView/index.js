@@ -11,7 +11,7 @@ import type { ReduxState, ColorMap, Line, LineData, Bookmark } from '../../model
 import './style.css';
 
 type Props = {
-  findLine: number,
+  searchFindIdx: number,
   bookmarks: Bookmark[],
   wrap: boolean,
   toggleBookmark: (number[]) => void,
@@ -102,7 +102,7 @@ class LogView extends React.PureComponent<Props, State> {
       <FullLogLine
         lineRefCallback={this.lineRefCallback}
         key={key}
-        found={this.props.lineData.filteredLines[index].lineNumber === this.props.findLine}
+        found={this.props.lineData.filteredLines[index].lineNumber === this.props.lineData.findResults[this.props.searchFindIdx]}
         bookmarked={this.findBookmark(this.props.bookmarks, this.props.lineData.filteredLines[index].lineNumber) !== -1}
         highlight={this.props.lineData.highlightLines.includes(this.props.lineData.filteredLines[index])}
         wrap={this.props.wrap}
@@ -121,6 +121,7 @@ class LogView extends React.PureComponent<Props, State> {
 
   scrollToLine(lineNumber) {
     const visibleIndex = this.props.lineData.indexMap.get(lineNumber);
+    console.log(visibleIndex);
     if (visibleIndex === null || visibleIndex === undefined) {
       return;
     }
@@ -136,17 +137,13 @@ class LogView extends React.PureComponent<Props, State> {
   }
 
   scrollFindIntoView() {
-    const line = this.state.lineMap.get(this.props.findLine);
-    if (this.props.findLine < 0 || line == null) {
-      if (this.props.findLine >= 0) {
-        this.props.scrollToLine(this.props.findLine);
-      }
-      return;
-    }
+    const renderedLineNum = this.props.lineData.findResults[this.props.searchFindIdx];
+    const line = this.state.lineMap.get(renderedLineNum);
+    this.props.scrollToLine(renderedLineNum);
     if (line == null) {
       return;
     }
-    const findElements = line.getElementsByClassName('findResult' + this.props.findLine);
+    const findElements = line.getElementsByClassName('findResult' + renderedLineNum);
     if (findElements.length > 0) {
       const elem = findElements[0];
       const position = elem.getBoundingClientRect();
@@ -168,7 +165,7 @@ class LogView extends React.PureComponent<Props, State> {
     }
 
     // If the find index changed, scroll to the right if necessary.
-    if (this.props.findLine !== prevProps.findLine || this.props.searchTerm !== prevProps.searchTerm) {
+    if (this.props.searchFindIdx !== -1 && (this.props.searchFindIdx !== prevProps.searchFindIdx|| this.props.searchTerm !== prevProps.searchTerm)) {
       this.scrollFindIntoView();
     }
   }
@@ -200,7 +197,8 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Pro
     caseSensitive: settings.caseSensitive,
     wrap: settings.wrap,
     searchTerm: selectors.getLogViewerSearchTerm(state),
-    scrollLine: selectors.getLogViewerScrollLine(state)
+    scrollLine: selectors.getLogViewerScrollLine(state),
+    searchFindIdx: selectors.getLogViewerFindIdx(state)
   };
 }
 

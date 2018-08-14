@@ -50,9 +50,9 @@ export class Toolbar extends React.PureComponent<Props> {
     }
   }
 
-  handleSearchClickFind = (event: SyntheticEvent<HTMLButtonElement>) => {
+  handleSearchClickFind = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    if (event.shiftKey) {
+    if (event.shiftKey === true) {
       this.props.prevFind();
     } else {
       this.props.nextFind();
