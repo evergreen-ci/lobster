@@ -103,7 +103,7 @@ class LogView extends React.PureComponent<Props, State> {
     return (
       <FullLogLine
         lineRefCallback={this.lineRefCallback}
-        key={key}
+        key={index}
         found={this.props.lineData.filteredLines[index].lineNumber === this.props.lineData.findResults[this.props.searchFindIdx]}
         bookmarked={this.findBookmark(this.props.bookmarks, this.props.lineData.filteredLines[index].lineNumber) !== -1}
         highlight={this.props.lineData.highlightLines.includes(this.props.lineData.filteredLines[index])}
