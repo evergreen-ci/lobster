@@ -62,13 +62,15 @@ class LogView extends React.PureComponent<Props, State> {
   }
 
   updateSelectEndIndex = (index: number) => {
-    const newClicks = this.state.clicks.slice();
     if (this.state.selectStartIndex === null || this.state.selectStartIndex === undefined) {
       return;
     }
-    const clickElem = [this.state.selectStartIndex, index];
-    newClicks.push(clickElem);
-    this.setState({ clicks: newClicks, selectEndIndex: index });
+    this.setState((state: State) => {
+      const clickElem = [state.selectStartIndex, index];
+      const newClicks = state.clicks.slice();
+      newClicks.push(clickElem);
+      return { ...state, clicks: newClicks, selectEndIndex: index };
+    });
   }
 
   handleDoubleClick = () => {
@@ -119,7 +121,7 @@ class LogView extends React.PureComponent<Props, State> {
     );
   }
 
-  scrollToLine(lineNumber) {
+  scrollToLine(lineNumber: number) {
     const visibleIndex = this.props.lineData.indexMap.get(lineNumber);
     console.log(visibleIndex);
     if (visibleIndex === null || visibleIndex === undefined) {
@@ -162,7 +164,7 @@ class LogView extends React.PureComponent<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     if (this.props.scrollLine !== null && this.props.scrollLine >= 0 && this.props.scrollLine !== prevProps.scrollLine) {
       this.scrollToLine(this.props.scrollLine);
     }

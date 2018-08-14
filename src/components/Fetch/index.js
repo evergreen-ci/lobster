@@ -35,10 +35,6 @@ export class Fetch extends React.PureComponent<Props> {
     }
   }
 
-  setScroll = (lineNum: number) => {
-    this.props.scrollToLine(lineNum);
-  }
-
   showLines(): ?ReactNode {
     if (!this.props.lines) {
       return <div />;
@@ -52,7 +48,7 @@ export class Fetch extends React.PureComponent<Props> {
   render() {
     return (
       <div>
-        <Bookmarks bookmarks={this.props.bookmarks} setScroll={this.setScroll} />
+        <Bookmarks bookmarks={this.props.bookmarks} setScroll={this.props.scrollToLine} />
         <div className="main">
           <Toolbar
             lineData={this.props.lineData}
