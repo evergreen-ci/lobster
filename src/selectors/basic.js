@@ -5,6 +5,7 @@ import type { ReduxState } from '../models';
 export const getLog = (state: ReduxState) => state.log;
 export const getLogLines = (state: ReduxState) => getLog(state).lines;
 export const getLogIdentity = (state: ReduxState) => getLog(state).identity;
+export const getLogColorMap = (state: ReduxState) => getLog(state).colorMap;
 
 export const getLogViewer = (state: ReduxState) => state.logviewer;
 
@@ -20,3 +21,4 @@ export const getLogViewerSearchTermError = (state: ReduxState) => getLogViewerFi
 export const getLogViewerSettings = (state: ReduxState) => getLogViewer(state).settings;
 
 export const getIsLogViewerSettingsPanel = (state: ReduxState) => getLogViewer(state).settingsPanel;
+export const getLogViewerScrollLine = (state: ReduxState) => getLogViewer(state).initialLine;

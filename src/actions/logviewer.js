@@ -14,6 +14,7 @@ export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
 export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
 export const LOGVIEWER_TOGGLE_SETTINGS_PANEL = 'logviewer:toggle-settings-panel';
 export const LOGVIEWER_SEARCH_EVENT = 'logviewer:search-event';
+export const LOGVIEWER_SCROLL_TO_LINE = 'logviewer:scroll-to-line';
 
 export type ChangeSetting = {|
   type: 'logviewer:change-setting',
@@ -102,10 +103,16 @@ export type SearchEventSetTerm = $Exact<$ReadOnly<{
   term: string
 }>>
 
-
 export type SearchEvent= $Exact<{
   type: 'logviewer:search-event',
   +payload: SearchEventDirection | SearchEventSetTerm
+}>
+
+export type ScrollToLine= $Exact<{
+  type: 'logviewer:scroll-to-line',
+  +payload: $Exact<$ReadOnly<{
+    line: number
+  }>>
 }>
 
 export type Action = ChangeSetting
@@ -119,6 +126,7 @@ export type Action = ChangeSetting
   | LoadHighlights
   | LoadFilters
   | ToggleSettingsPanel
+  | ScrollToLine
 
 function toggleSetting(setting: string): ChangeSetting {
   return {
@@ -269,6 +277,15 @@ export function search(action: 'next' | 'prev'): SearchEvent {
     type: LOGVIEWER_SEARCH_EVENT,
     payload: {
       action: action
+    }
+  };
+}
+
+export function scrollToLine(n: number): ScrollToLine {
+  return {
+    type: LOGVIEWER_SCROLL_TO_LINE,
+    payload: {
+      line: n
     }
   };
 }

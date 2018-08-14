@@ -4,7 +4,8 @@ import React from 'react';
 import ReactList from 'react-list';
 import FullLogLine from './FullLogLine';
 import { connect } from 'react-redux';
-import { toggleBookmark } from '../../actions';
+import { scrollToLine, toggleBookmark } from '../../actions';
+import * as selectors from '../../selectors';
 import type { ReduxState, ColorMap, Line, LineData, Bookmark } from '../../models';
 
 import './style.css';
@@ -21,14 +22,14 @@ type Props = {
   lineData: LineData,
   highlightLines: Line[],
   highlightText: string[],
+  scrollToLine: (number) => void
 };
 
 type State = {
   lineMap: Map<number, HTMLSpanElement>,
   selectStartIndex: ?number,
   selectEndIndex: ?number,
-  clicks: (number[])[],
-  scrollLine: ?number
+  clicks: (number[])[]
 };
 
 class LogView extends React.PureComponent<Props, State> {
@@ -40,8 +41,7 @@ class LogView extends React.PureComponent<Props, State> {
       lineMap: new Map(),
       selectStartIndex: null,
       selectEndIndex: null,
-      clicks: [],
-      scrollLine: null
+      clicks: []
     };
   }
 
@@ -54,9 +54,6 @@ class LogView extends React.PureComponent<Props, State> {
       this.state.lineMap.delete(line);
     } else if (element) {
       this.state.lineMap.set(line, element);
-      if (this.state.scrollLine != null && line === this.state.scrollLine) {
-        this.scrollFindIntoView();
-      }
     }
   };
 
@@ -138,49 +135,14 @@ class LogView extends React.PureComponent<Props, State> {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.scrollLine !== null && nextProps.scrollLine >= 0 &&
-        this.props.scrollLine !== nextProps.scrollLine) {
-      this.scrollToLine(nextProps.scrollLine);
-    }
-
-    if (nextProps.lineData !== this.props.lineData) {
-      return true;
-    }
-    if (nextProps.bookmarks !== this.props.bookmarks) {
-      return true;
-    }
-    if (nextProps.searchTerm !== this.props.searchTerm) {
-      return true;
-    }
-    if (nextProps.findLine !== this.props.findLine) {
-      return true;
-    }
-    if (nextProps.wrap !== this.props.wrap) {
-      return true;
-    }
-    if (nextProps.caseSensitive !== this.props.caseSensitive) {
-      return true;
-    }
-    if (nextState.clicks !== this.state.clicks) {
-      return true;
-    }
-    if (nextProps.highlightText !== this.props.highlightText) {
-      return true;
-    }
-
-    return false;
-  }
-
   scrollFindIntoView() {
-    if (this.props.findLine < 0 || !(this.props.findLine in this.state.lineMap)) {
+    const line = this.state.lineMap.get(this.props.findLine);
+    if (this.props.findLine < 0 || line == null) {
       if (this.props.findLine >= 0) {
-        this.setState({ scrollLine: this.props.findLine });
+        this.props.scrollToLine(this.props.findLine);
       }
       return;
     }
-    // console.log(this.props.findLine);
-    const line = this.state.lineMap.get(this.props.findLine);
     if (line == null) {
       return;
     }
@@ -200,7 +162,7 @@ class LogView extends React.PureComponent<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps, _prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (this.props.scrollLine !== null && this.props.scrollLine >= 0 && this.props.scrollLine !== prevProps.scrollLine) {
       this.scrollToLine(this.props.scrollLine);
     }
@@ -231,19 +193,22 @@ class LogView extends React.PureComponent<Props, State> {
 }
 
 function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Props> {
+  const settings = selectors.getLogViewerSettings(state);
   return {
     ...ownProps,
-    colorMap: state.log.colorMap,
-    caseSensitive: state.logviewer.settings.caseSensitive,
-    wrap: state.logviewer.settings.wrap,
-    searchTerm: state.logviewer.find.searchTerm
+    colorMap: selectors.getLogColorMap(state),
+    caseSensitive: settings.caseSensitive,
+    wrap: settings.wrap,
+    searchTerm: selectors.getLogViewerSearchTerm(state),
+    scrollLine: selectors.getLogViewerScrollLine(state)
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
   return {
     ...ownProps,
-    toggleBookmark: (bk: number[]) => dispatch(toggleBookmark(bk))
+    toggleBookmark: (bk: number[]) => dispatch(toggleBookmark(bk)),
+    scrollToLine: (n: number) => dispatch(scrollToLine(n))
   };
 }
 

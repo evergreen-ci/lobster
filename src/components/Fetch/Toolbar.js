@@ -30,19 +30,6 @@ type Props = {
 
 export class Toolbar extends React.PureComponent<Props> {
   findInput: ?HTMLInputElement
-  formElement: ?ReactNode
-
-  constructor(props: Props) {
-    super(props);
-    this.formElement = (
-      <FormControl
-        inputRef={this.setFindInputRef}
-        type="text"
-        placeholder="optional. regexp to search for"
-        onChange={this.handleChangeFindEvent}
-      />
-    );
-  }
 
   showFind = () => {
     if (this.props.searchTerm !== '') {
@@ -63,7 +50,16 @@ export class Toolbar extends React.PureComponent<Props> {
     }
   }
 
-  submit = (event: KeyboardEvent) => {
+  handleSearchClickFind = (event: SyntheticEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if (event.shiftKey) {
+      this.props.prevFind();
+    } else {
+      this.props.nextFind();
+    }
+  }
+
+  handleSearchEnterKey = (event: KeyboardEvent) => {
     if (event.keyCode === 13) {
       event.preventDefault();
       if (event.shiftKey) {
@@ -81,7 +77,7 @@ export class Toolbar extends React.PureComponent<Props> {
     }
   }
 
-  handleKeyDown = (event: KeyboardEvent) => {
+  handleSearchShortcut = (event: KeyboardEvent) => {
     switch (event.keyCode) {
       case 114: // F3
         this.focusOnFind(event);
@@ -123,15 +119,15 @@ export class Toolbar extends React.PureComponent<Props> {
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keydown', this.handleSearchShortcut);
     if (this.findInput) {
-      this.findInput.addEventListener('keydown', this.submit);
+      this.findInput.addEventListener('keydown', this.handleSearchEnterKey);
     }
   }
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('keydown', this.handleSearchEnterKey);
     if (this.findInput) {
-      this.findInput.removeEventListener('keydown', this.submit);
+      this.findInput.removeEventListener('keydown', this.handleSearchEnterKey);
     }
   }
 
@@ -147,7 +143,7 @@ export class Toolbar extends React.PureComponent<Props> {
     return (
       <Col lg={11} lgOffset={1}>
         <div className="find-box">
-          <Form horizontal onSubmit={this.submit}>
+          <Form horizontal>
             <FormGroup controlId="findInput" className="filter-header" validationState={this.regexValidationState()}>
               <Overlay
                 show={this.props.searchTermError != null}
@@ -161,10 +157,15 @@ export class Toolbar extends React.PureComponent<Props> {
                 </Popover>
               </Overlay>
               <Col lg={6} >
-                {this.formElement}
+                <FormControl
+                  inputRef={this.setFindInputRef}
+                  type="text"
+                  placeholder="optional. regexp to search for"
+                  onChange={this.handleChangeFindEvent}
+                />
               </Col>
               <ButtonToolbar>
-                <Button id="formSubmit" type="submit">Find</Button>
+                <Button id="formSubmit" onClick={this.handleSearchClickFind}>Find</Button>
                 {this.showFind()}
                 <Button onClick={this.addFilter}>Add Filter</Button>
                 <Button onClick={this.addHighlight}>Add Highlight</Button>

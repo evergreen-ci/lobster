@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 
 import React from 'react';
 import type { Node as ReactNode } from 'react';
@@ -7,7 +7,6 @@ import './style.css';
 import LogView from '../LogView/index';
 import { Bookmarks } from './Bookmarks';
 import { connect } from 'react-redux';
-import queryString from '../../thirdparty/query-string';
 import Toolbar from './Toolbar';
 import * as selectors from '../../selectors';
 import type { Dispatch } from 'redux';
@@ -21,32 +20,23 @@ type Props = {
   lineData: LineData,
   logIdentity: ?LogIdentity,
   loadLogByIdentity: (LogIdentity) => void,
+  scrollToLine: (number) => void
 } & ContextRouter
 
-type State = {
-  scrollLine: number
-}
-
-export class Fetch extends React.PureComponent<Props, State> {
+export class Fetch extends React.PureComponent<Props> {
   static defaultProps = {
     bookmarks: []
   }
 
   constructor(props: Props) {
     super(props);
-    const locationSearch = props.location.search;
-    const parsed = queryString.parse(locationSearch === '' ? props.location.hash : locationSearch);
-    this.state = {
-      scrollLine: parseInt(parsed.scroll, 10)
-    };
     if (this.props.logIdentity != null) {
       this.props.loadLogByIdentity(this.props.logIdentity);
     }
   }
 
-
   setScroll = (lineNum: number) => {
-    this.setState({ scrollLine: lineNum });
+    this.props.scrollToLine(lineNum);
   }
 
   showLines(): ?ReactNode {
@@ -56,7 +46,6 @@ export class Fetch extends React.PureComponent<Props, State> {
     const findLine = this.props.lineData.findResults[this.props.findIdx];
     return (
       <LogView
-        scrollLine={this.state.scrollLine}
         bookmarks={this.props.bookmarks}
         findLine={findLine ? findLine : -1}
         lineData={this.props.lineData}
@@ -95,7 +84,8 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>) {
 function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   return {
     ...ownProps,
-    loadLogByIdentity: (identity: LogIdentity) => dispatch(actions.loadLog(identity))
+    loadLogByIdentity: (identity: LogIdentity) => dispatch(actions.loadLog(identity)),
+    scrollToLine: (line: number) => dispatch(actions.scrollToLine(line))
   };
 }
 

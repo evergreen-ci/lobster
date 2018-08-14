@@ -16,8 +16,7 @@ export type Settings = $ReadOnly<$Exact<{
 }>>
 
 export type Bookmark = {|
-  lineNumber: number,
-  scrollFunc?: (SyntheticMouseEvent<HTMLInputElement>) => void
+  lineNumber: number
 |}
 
 export type Filter = $Exact<$ReadOnly<{
@@ -239,7 +238,8 @@ export type LogViewerState = $Exact<$ReadOnly<{
   bookmarks: Bookmark[],
   find: Find,
   settings: Settings,
-  settingsPanel: boolean
+  settingsPanel: boolean,
+  initialLine: number
 }>>
 
 export type ReduxState = $Exact<$ReadOnly<{
