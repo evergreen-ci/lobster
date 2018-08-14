@@ -159,13 +159,13 @@ class LogView extends React.PureComponent<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (this.props.scrollLine !== null && this.props.scrollLine >= 0 && this.props.scrollLine !== prevProps.scrollLine) {
       this.scrollToLine(this.props.scrollLine);
     }
 
     // If the find index changed, scroll to the right if necessary.
-    if (this.props.searchFindIdx !== -1 && (this.props.searchFindIdx !== prevProps.searchFindIdx|| this.props.searchTerm !== prevProps.searchTerm)) {
+    if (this.props.searchFindIdx !== -1 && (this.props.searchFindIdx !== prevProps.searchFindIdx || this.props.searchTerm !== prevProps.searchTerm)) {
       this.scrollFindIntoView();
     }
   }
