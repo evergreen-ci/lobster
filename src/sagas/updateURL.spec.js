@@ -24,11 +24,11 @@ describe('updateURL', () => {
         'build': 'b1234',
         'test': 't1234'
       })
-      .select(selectors.getFilters)
+      .select(selectors.getLogViewerFilters)
       .next([])
-      .select(selectors.getHighlights)
+      .select(selectors.getLogViewerHighlights)
       .next([])
-      .select(selectors.getBookmarks)
+      .select(selectors.getLogViewerBookmarks)
       .next([])
       .isDone();
 
@@ -44,7 +44,7 @@ describe('updateURL', () => {
         'build': 'b1234',
         'test': 't1234'
       })
-      .select(selectors.getFilters)
+      .select(selectors.getLogViewerFilters)
       .next([
         {
           'text': 'filter0',
@@ -57,7 +57,7 @@ describe('updateURL', () => {
           'inverse': true
         }
       ])
-      .select(selectors.getHighlights)
+      .select(selectors.getLogViewerHighlights)
       .next([
         {
           'text': 'highlight0',
@@ -70,7 +70,7 @@ describe('updateURL', () => {
           'line': true
         }
       ])
-      .select(selectors.getBookmarks)
+      .select(selectors.getLogViewerBookmarks)
       .next([
         {
           lineNumber: 0
@@ -102,7 +102,7 @@ describe('updateURL', () => {
         'server': 'localhost:9000/api/log',
         'url': 'simple.log'
       })
-      .select(selectors.getFilters)
+      .select(selectors.getLogViewerFilters)
       .next([
         {
           'text': 'filter0',
@@ -115,7 +115,7 @@ describe('updateURL', () => {
           'inverse': true
         }
       ])
-      .select(selectors.getHighlights)
+      .select(selectors.getLogViewerHighlights)
       .next([
         {
           'text': 'highlight0',
@@ -128,7 +128,7 @@ describe('updateURL', () => {
           'line': true
         }
       ])
-      .select(selectors.getBookmarks)
+      .select(selectors.getLogViewerBookmarks)
       .next([
         {
           lineNumber: 0
