@@ -254,17 +254,19 @@ describe('e2e', function() {
     }
   }, 60000);
 
-  e2e('applyNewLog', async (done) => {
+  e2e('apply-new-log', async (done) => {
     const driver = await makeDriver(done);
     try {
       const l = new Lobster(driver);
       await l.init();
 
       let lines = await l.lines();
-      expect(lines).toHaveLength(6);
+      expect(lines).toHaveLength(7);
 
-      await l.setNewLobsterServerFile('clap.txt');
+      await l.showDetails();
+      await l.setNewLobsterServerLogFile('clap.txt');
       await l.submitLobsterServerLogFile();
+      await l.showDetails();
 
       lines = await l.lines();
       expect(lines).toHaveLength(5);

@@ -39,6 +39,7 @@ export class Lobster {
 
   async setNewLobsterServerLogFile(file: string) {
     const field = await this._driver.wait(until.elementLocated(By.xpath(logURLField)));
+    await field.clear();
     await field.sendKeys(file);
   }
 
