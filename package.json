@@ -32,7 +32,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "test:ci": "react-scripts test --reporters=default --reporters=jest-junit --env=jsdom",
+    "test:ci": "react-scripts test --testResultsProcessor=./reporter --env=jsdom",
     "test:e2e": "node ./e2e.js",
     "flow": "flow",
     "lint": "eslint --ext .js,.jsx -- .",
