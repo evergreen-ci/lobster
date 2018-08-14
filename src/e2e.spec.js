@@ -81,10 +81,10 @@ describe('e2e', function() {
       const l = new Lobster(driver);
       await l.init();
 
-      console.log('start search')
+      console.log('start search');
       await l.search('Line ');
       await l.search(Key.ENTER);
-      console.log('end search')
+      console.log('end search');
 
       await l.addFilter();
 
@@ -98,10 +98,10 @@ describe('e2e', function() {
       divs = await l.lines();
       expect(divs).toHaveLength(2);
 
-      console.log('start search 2')
+      console.log('start search 2');
       await l.search('2');
       await l.search(Key.ENTER);
-      console.log('end search 2')
+      console.log('end search 2');
 
       await l.addFilter();
 
@@ -121,9 +121,9 @@ describe('e2e', function() {
 
       done();
     } catch (err) {
-      //done.fail(err);
+      // done.fail(err);
     } finally {
-      //await driver.quit();
+      // await driver.quit();
     }
   }, 60000);
 
