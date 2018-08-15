@@ -49,7 +49,7 @@ function showLogBox(id: ?LogIdentity, setURLRef: (?HTMLInputElement) => void): ?
         <Col lg={6}>
           <FormControl
             type="text"
-            defaultValue={id.file}
+            defaultValue={id.url}
             placeholder="optional. custom file location iff used with local server"
             inputRef={setURLRef}
           />
@@ -107,21 +107,20 @@ export class CollapseMenu extends React.PureComponent<Props> {
   }
 
   handleSubmit = (event: SyntheticEvent<HTMLButtonElement>) => {
-    console.log('handleSubmit');
     event.preventDefault();
     if (!this.urlInput || this.props.logIdentity == null ||
       this.props.logIdentity.type !== 'lobster') {
       return;
     }
-    const { file, server } = this.props.logIdentity;
+    const { url, server } = this.props.logIdentity;
     const { value } = this.urlInput;
-    if (value !== this.props.logIdentity.file) {
+    if (url !== value) {
       this.props.changeFindIdx(-1);
       this.props.loadBookmarks([]);
       this.props.loadLogByIdentity({
         type: 'lobster',
         server: server,
-        file: file
+        url: value
       });
     }
   }

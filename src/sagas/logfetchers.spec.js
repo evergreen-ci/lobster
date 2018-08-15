@@ -1,3 +1,5 @@
+// @flow
+
 import sinon from 'sinon';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as api from '../api/logkeeper';
@@ -5,6 +7,7 @@ import * as evergreenApi from '../api/evergreen';
 import * as actions from '../actions';
 import logfetchers from './logfetchers';
 import { readFromCache, writeToCache } from './lobstercage';
+import type { LogIdentity, LobsterLog } from '../models';
 
 describe('fetchLobster', function() {
   afterEach(() => sinon.restore());
@@ -14,12 +17,8 @@ describe('fetchLobster', function() {
     const mock = sinon.stub().resolves(resp);
     sinon.replace(api, 'fetchLobster', mock);
 
-    const action = actions.loadLog({
-      type: 'lobster',
-      server: 'domain.invalid',
-      file: 'simple.log'
-    });
-    const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
+    const identity: LobsterLog = { type: 'lobster', server: 'domain.invalid', url: 'simple.log' };
+    const action = actions.loadLog(identity);
     return expectSaga(logfetchers, action)
       .withState({
         log: {
@@ -54,12 +53,8 @@ describe('fetchLobster', function() {
     const mock = sinon.stub().resolves(resp);
     sinon.replace(api, 'fetchLobster', mock);
 
-    const action = actions.loadLog({
-      type: 'lobster',
-      server: 'domain.invalid',
-      file: 'simple.log'
-    });
-    const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
+    const identity: LobsterLog = { type: 'lobster', server: 'domain.invalid', url: 'simple.log' };
+    const action = actions.loadLog(identity);
     return expectSaga(logfetchers, action)
       .withState({
         log: {
@@ -91,12 +86,8 @@ describe('fetchLobster', function() {
     const mock = sinon.stub().rejects('error');
     sinon.replace(api, 'fetchLobster', mock);
 
-    const action = actions.loadLog({
-      type: 'lobster',
-      server: 'domain.invalid',
-      file: 'simple.log'
-    });
-    const identity = { type: 'lobster', server: 'domain.invalid', file: 'simple.log' };
+    const identity: LobsterLog = { type: 'lobster', server: 'domain.invalid', url: 'simple.log' };
+    const action = actions.loadLog(identity);
     return expectSaga(logfetchers, action)
       .withState({
         log: {
@@ -133,7 +124,7 @@ describe('fetchLogkeeper', function() {
     const mock = sinon.stub().resolves(resp);
     sinon.replace(api, 'fetchLogkeeper', mock);
 
-    const identity = {
+    const identity: LogIdentity = {
       type: 'logkeeper',
       build: 'build',
       test: 'test'

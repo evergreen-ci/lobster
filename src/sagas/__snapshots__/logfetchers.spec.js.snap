@@ -257,9 +257,9 @@ Object {
       "CALL": Object {
         "args": Array [
           Object {
-            "file": "simple.log",
             "server": "domain.invalid",
             "type": "lobster",
+            "url": "simple.log",
           },
         ],
         "context": null,
@@ -352,9 +352,9 @@ Object {
       "CALL": Object {
         "args": Array [
           Object {
-            "file": "simple.log",
             "server": "domain.invalid",
             "type": "lobster",
+            "url": "simple.log",
           },
         ],
         "context": null,
@@ -433,9 +433,9 @@ Object {
       "CALL": Object {
         "args": Array [
           Object {
-            "file": "simple.log",
             "server": "domain.invalid",
             "type": "lobster",
+            "url": "simple.log",
           },
         ],
         "context": null,
