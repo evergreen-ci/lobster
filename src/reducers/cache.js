@@ -9,7 +9,7 @@ const cacheSettings = (): CacheState => {
     window.webkitResolveLocalFileSystemURL;
 
   if (!window.requestFileSystem) {
-    console.log('No FileSystem API available. Lobster will NOT cache');
+    console.info('No FileSystem API available. Lobster will NOT cache');
   }
   if (!window.localStorage || !window.requestFileSystem) {
     return {
@@ -34,7 +34,7 @@ export default function(state: CacheState = initialState, action: actions.SetupC
   if (action.payload.status === 'never') {
     window.localStorage.setItem('lobster-cache-status', action.payload.status);
   } else if (action.payload.status === 'error') {
-    console.log('Failed to setup FileSystem');
+    console.error('Failed to setup FileSystem');
   } else if (action.payload.status === 'ok') {
     window.localStorage.setItem('lobster-cache-status', action.payload.status);
     window.localStorage.setItem('lobster-cache-size', action.payload.size);
