@@ -1,12 +1,15 @@
 // @flow strict
 
-import { put, call } from 'redux-saga/effects';
+import { put, call, select } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import type { LogProcessor, LogkeeperLog, EvergreenLog, LobsterLog } from '../models';
 import * as actions from '../actions';
+import { ensureBookmark } from '../actions/logviewer';
 import * as api from '../api';
 import { fetchEvergreen } from '../api/evergreen';
 import { writeToCache, readFromCache } from './lobstercage';
+import { getLogLines } from '../selectors';
+
 
 // $FlowFixMe
 function* cacheFetch(f: string, processor: LogProcessor, ...args: any[]): Saga<void> {
@@ -36,7 +39,7 @@ function* cacheFetch(f: string, processor: LogProcessor, ...args: any[]): Saga<v
 }
 
 export function* logkeeperLoadData(identity: LogkeeperLog): Saga<void> {
-  console.log('fetch (logkeeper)', identity.build, identity.test);
+  console.info('fetch (logkeeper)', identity.build, identity.test);
   const test = identity.test || 'all';
   const f = `fetchLogkeeper-${identity.build}-${test}.json`;
 
@@ -44,10 +47,10 @@ export function* logkeeperLoadData(identity: LogkeeperLog): Saga<void> {
 }
 
 export function* lobsterLoadData(identity: LobsterLog): Saga<void> {
-  const { server, file } = identity;
-  console.log('fetch (lobster server)', server, file);
+  const { server, url } = identity;
+  console.info('fetch (lobster server)', server, url);
   try {
-    const resp = yield call(api.fetchLobster, server, file);
+    const resp = yield call(api.fetchLobster, server, url);
     if (resp.status !== 200) {
       throw resp;
     }
@@ -60,7 +63,7 @@ export function* lobsterLoadData(identity: LobsterLog): Saga<void> {
 }
 
 export function* evergreenLoadData(identity: EvergreenLog): Saga<void> {
-  console.log(`fetch (evergreen) ${JSON.stringify(identity)}`);
+  console.info(`fetch (evergreen) ${JSON.stringify(identity)}`);
   // DO NOT cache Evergreen task logs without checking if the task is done
   if (identity.type === 'evergreen-test') {
     const f = `fetchEvergreen-test-${identity.id}.json`;
@@ -97,5 +100,13 @@ export default function*(action: actions.LoadLog): Saga<void> {
       break;
 
     // no default
+  }
+
+  const lines = yield select(getLogLines);
+  if (lines.length > 0) {
+    yield put(ensureBookmark(0));
+    if (lines.length > 1) {
+      yield put(ensureBookmark(lines[lines.length - 1].lineNumber));
+    }
   }
 }

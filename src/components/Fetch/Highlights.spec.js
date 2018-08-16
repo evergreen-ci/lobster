@@ -1,4 +1,3 @@
-import assert from 'assert';
 import Enzyme from 'enzyme';
 import { Highlights, Highlight } from './Highlights';
 import React from 'react';
@@ -38,7 +37,7 @@ test('Highlights', function() {
       toggleHighlightLine={toggleHighlightLine}
     />);
 
-  assert.ok(wrapper.containsAllMatchingElements([
+  expect(wrapper.containsAllMatchingElements([
     <Highlight
       highlight={data[0]}
       removeHighlight={removeHighlight}
@@ -52,14 +51,14 @@ test('Highlights', function() {
       toggleHighlightLine={toggleHighlightLine}
     />
   ]
-  ));
+  )).toBe(true);
 
   const buttons = wrapper.find('Button');
-  assert.equal(buttons.length, 10);
+  expect(buttons).toHaveLength(10);
   buttons.at(0).simulate('click', {});
-  assert.equal(data.length, 1);
+  expect(data).toHaveLength(1);
   wrapper.setProps({ highlights: data });
-  assert.equal(wrapper.find('Button').length, 5);
+  expect(wrapper.find('Button')).toHaveLength(5);
 });
 
 test('Highlight', function() {
@@ -87,12 +86,12 @@ test('Highlight', function() {
       toggleHighlightLine={toggleHighlightLine}
     />);
 
-  assert.ok(wrapper.containsAllMatchingElements([
+  expect(wrapper.containsAllMatchingElements([
     <span>Hello</span>
-  ]));
+  ])).toBe(true);
 
   const buttons = wrapper.find('Button');
-  assert.equal(buttons.length, 5);
+  expect(buttons).toHaveLength(5);
   buttons.map(function(e, index) {
     data = {
       text: 'Hello',
@@ -101,16 +100,16 @@ test('Highlight', function() {
     };
 
     if (index === 0) {
-      assert.ok(data !== null);
+      expect(data).not.toBe(null);
       e.simulate('click', {});
-      assert.ok(data === null);
+      expect(data).toBe(null);
     }
   });
-  assert.ok(data.on === true);
+  expect(data.on).toBe(true);
   wrapper.instance().toggleHighlight();
   wrapper.update();
-  assert.ok(data.on === false);
-  assert.ok(data.line === true);
+  expect(data.on).toBe(false);
+  expect(data.line).toBe(true);
   wrapper.instance().toggleHighlightLine();
-  assert.ok(data.line === false);
+  expect(data.line).toBe(false);
 });

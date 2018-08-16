@@ -1,4 +1,4 @@
-// @flow strict-local
+// @flow
 
 import React from 'react';
 import type { Node as ReactNode } from 'react';
@@ -87,7 +87,10 @@ export class ClusterVisualizer extends React.PureComponent<Props, State> {
     this.baseDiv = div;
   }
 
-  withSpec = (filename: string, events: Event[]) => {
+  withSpec = (filename: string, events: ?Event[]) => {
+    if (events == null) {
+      return;
+    }
     const fileRequest = new Request('/' + filename);
     fetch(fileRequest)
       .then((response) => {

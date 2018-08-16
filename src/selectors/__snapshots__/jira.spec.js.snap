@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`selectors-jira 1`] = `
+"{noformat}
+line 0
+...
+line 3
+...
+line 5
+...
+{noformat}"
+`;

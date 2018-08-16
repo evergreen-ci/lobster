@@ -15,6 +15,12 @@ module.exports = {
   'plugins': ['flowtype', 'dependencies'],
   'overrides': [
     {
+      'files': ['src/config.js', 'src/config/**/*.js', 'src/e2eHelpers.spec.js', 'src/setupTests.js'],
+      'globals': {
+        'process': true
+      }
+    },
+    {
       'files': ['src/**/*.js', 'src/**/*.jsx'],
       'excludedFiles': ['src/**/*.spec.js*', 'src/**/*.test.js*', 'src/setupTests.js'],
       'env': {
@@ -37,7 +43,8 @@ module.exports = {
     {
       'files': ['src/**/*.spec.js*', 'src/**/*.test.js*', 'src/setupTests.js'],
       'env': {
-        'browser': true
+        'browser': true,
+        'node': true
       },
       'plugins': ['babel', 'react', 'jest'],
       'parserOptions': {
@@ -59,12 +66,27 @@ module.exports = {
       }
     },
     {
-      'files': ['server/**/*.js', 'generate-tasks.js', 'e2e.js', 'reporter.js', '.eslintrc.js'],
+      'files': ['server/**/*.js', 'generate-tasks.js', 'e2e.js', '.eslintrc.js'],
       'env': {
-        'node': true,
-        'parserOptions': {
-          'sourceType': 'scripts'
-        }
+        'node': true
+      },
+      'parserOptions': {
+        'sourceType': 'script'
+      },
+      'rules': {
+        'no-sync': 0
+      },
+      'globals': {
+        '__dirname': true
+      }
+    },
+    {
+      'files': ['reporter.js'],
+      'env': {
+        'node': true
+      },
+      'parserOptions': {
+        'sourceType': 'script'
       },
       'rules': {
         'no-sync': 0
@@ -117,20 +139,17 @@ module.exports = {
     'react/self-closing-comp': [2, { 'html': false, 'component': true }],
     'react/jsx-first-prop-new-line': [2, 'multiline'],
     'react/no-this-in-sfc': 2,
-
-    // work towards making these errors
-    'react/no-access-state-in-setstate': 1,
-    'react/require-optimization': 1,
+    'react/require-optimization': 2,
+    'react/no-access-state-in-setstate': 2,
+    'react/require-default-props': 2,
 
     // work towards enabling
-    // 'react/require-default-props': 1,
     // 'react/jsx-sort-props': 0,
     // 'react/sort-prop-types': 0,
     // 'react/sort-comp': 0,
 
     'react/no-set-state': 0,
 
-    // might hurt development performance
     'react/forbid-prop-types': 0,
     // not sure about these yet
     'react/jsx-no-literals': 0,
@@ -154,8 +173,8 @@ module.exports = {
     // as we're using create-react-app/react-scripts, sticking to this might be
     // a good call
     'react/jsx-filename-extension': [2, { 'extensions': ['.js'] }],
-    // Prevents us from setting classes on buttons. TODO actually do CSS
-    // properly
+    // Prevents us from setting classes on buttons.
+    // TODO actually do CSS properly
     'react/forbid-component-props': 0
   },
   'settings': {

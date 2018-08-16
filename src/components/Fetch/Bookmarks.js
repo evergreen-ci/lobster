@@ -1,17 +1,17 @@
+// @flow strict
+
 import React from 'react';
-import PropTypes from 'prop-types';
+import type { Bookmark as BookmarkType } from '../../models';
 
-export class Bookmarks extends React.PureComponent {
-  static propTypes = {
-    bookmarks: PropTypes.arrayOf(PropTypes.shape({
-      lineNumber: PropTypes.number.isRequired
-    })).isRequired,
-    setScroll: PropTypes.func.isRequired
-  }
+type Props = {|
+  bookmarks: BookmarkType[],
+  setScroll: (number) => void
+|}
 
-  scroll = (event) => {
-    if (event.target.innerHTML) {
-      this.props.setScroll(parseInt(event.target.innerHTML, 10));
+export class Bookmarks extends React.PureComponent<Props> {
+  scroll = (event: SyntheticMouseEvent<HTMLInputElement>) => {
+    if (event.currentTarget.innerHTML != null) {
+      this.props.setScroll(parseInt(event.currentTarget.innerHTML, 10));
     }
   }
 
@@ -28,15 +28,15 @@ export class Bookmarks extends React.PureComponent {
   }
 }
 
-export const Bookmark = (props) => {
+export type BookmarkProps = {
+  lineNumber: number,
+  scrollFunc: (event: SyntheticMouseEvent<HTMLInputElement>) => void
+}
+
+export const Bookmark = (props: BookmarkProps) => {
   return (
     <div onClick={props.scrollFunc} key={props.lineNumber}>
       {props.lineNumber}
     </div>
   );
-};
-
-Bookmark.propTypes = {
-  lineNumber: PropTypes.number.isRequired,
-  scrollFunc: PropTypes.func.isRequired
 };

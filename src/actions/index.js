@@ -1,7 +1,7 @@
 // @flow strict
 
 import type { Action as LogviewerAction } from './logviewer';
-import type { Log, LogIdentity, LogProcessor } from '../models';
+import type { CacheStatus, Log, LogIdentity, LogProcessor } from '../models';
 
 export const PROCESS_RESPONSE = 'process-response';
 export const LOAD_LOG = 'load-log-by-identity';
@@ -71,8 +71,6 @@ export function loadCachedData(data: Log): LoadCachedData {
   };
 }
 
-export type CacheStatus = 'ok' | 'error' | 'never' | 'later' | 'unsupported' | null;
-
 export type SetupCache = {|
   +type: 'setup-cache',
   +payload: {
@@ -140,3 +138,5 @@ export type Action = ProcessResponse
   | WipeCache
   | LogviewerAction
   | LoadLog
+
+export * from './logviewer';

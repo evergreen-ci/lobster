@@ -1,6 +1,5 @@
 // @flow
 
-import assert from 'assert';
 import resmoke from './resmoke';
 import resmokeTestEvents from './resmokeTestEvents';
 import path from 'path';
@@ -22,7 +21,6 @@ describe('events', function() {
     const comparisonJSON = JSON.parse(comparisonFile);
     const comparisonEvents = resmokeTestEvents(state.lines);
     expect(comparisonEvents).toEqual(comparisonJSON);
-    assert.equal(comparisonEvents.length, comparisonJSON.length);
   });
 
   test('validate-collections', function() {
@@ -40,6 +38,5 @@ describe('events', function() {
     const validateCollectionsJSON = JSON.parse(validateCollectionsFile);
     const validateCollectionEvents = resmokeTestEvents(state.lines);
     expect(validateCollectionEvents).toEqual(validateCollectionsJSON);
-    assert.equal(validateCollectionEvents.length, validateCollectionsJSON.length);
   });
 });

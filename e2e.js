@@ -78,20 +78,25 @@ const cleanup = () => {
     listener.close();
   }
   processes.forEach((p) => {
-    p.kill('SIGINT');
+    p.kill('SIGTERM');
   });
   processes = [];
 };
-process.on('SIGINT', () => {
+process.on('SIGTERM', () => {
   cleanup();
-  process.exit(130);
+  process.exit(143);
 });
 process.on('exit', () => {
   cleanup();
 });
 
 function test() {
-  const e2eProcess = child.spawn('npm', ['run', 'test', '--', '-t', argv.t, ...argv._], {
+  let testcmd = 'test';
+  if (process.env.CI === 'true') {
+    testcmd = 'test:ci';
+  }
+
+  const e2eProcess = child.spawn('npm', ['run', testcmd, '--', '-t', argv.t, ...argv._], {
     'env': {
       ...process.env,
       ...this

@@ -9,6 +9,28 @@ export type Line = $Exact<$ReadOnly<{
 
 export type ColorMap = $ReadOnly<{ [string]: string }>
 
+export type Settings = $ReadOnly<$Exact<{
+  wrap: boolean,
+  caseSensitive: boolean,
+  filterIntersection: boolean
+}>>
+
+export type Bookmark = {|
+  lineNumber: number
+|}
+
+export type Filter = $Exact<$ReadOnly<{
+  text: string,
+  on: boolean,
+  inverse: boolean
+}>>
+
+export type Highlight = $Exact<$ReadOnly<{
+  text: string,
+  on: boolean,
+  line: boolean
+}>>
+
 export type MongoLine = {|
   +ts: ?Date,
   +rawTs: string,
@@ -154,7 +176,7 @@ export type EvergreenLog = EvergreenTaskLog
 export type LobsterLog = $ReadOnly<{
   type: 'lobster',
   server: string,
-  file: string
+  url: string
 }>
 
 export type LogkeeperLog = $ReadOnly<{
@@ -172,4 +194,54 @@ export type Log = $Exact<$ReadOnly<{
   lines: Line[],
   colorMap: ColorMap,
   isDone: boolean
+}>>
+
+export type Find = $Exact<$ReadOnly<{
+  findIdx: number,
+  searchTerm: string,
+  regexError: ?Error
+}>>
+
+export type Logviewer = $Exact<$ReadOnly<{
+  filters: Filter[],
+  highlights: Highlight[],
+  bookmarks: Bookmark[],
+  find: Find,
+  settings: Settings,
+}>>
+
+export type ScrollView = $Exact<$ReadOnly<{
+  startDate: ?Date,
+  endDate: ?Date
+}>>
+
+export type LineData = $Exact<$ReadOnly<{
+  indexMap: Map<number, number>,
+  findResults: number[],
+  filteredLines: Line[],
+  highlightLines: Line[],
+  highlightText: string[]
+}>>
+
+export type CacheStatus = 'ok' | 'error' | 'never' | 'later' | 'unsupported' | null;
+
+export type CacheState = $Exact<$ReadOnly<{
+  status: CacheStatus,
+  size: number
+}>>
+
+export type LogViewerState = $Exact<$ReadOnly<{
+  filters: Filter[],
+  highlights: Highlight[],
+  bookmarks: Bookmark[],
+  find: Find,
+  settings: Settings,
+  settingsPanel: boolean,
+  scrollLine: number
+}>>
+
+export type ReduxState = $Exact<$ReadOnly<{
+  cache: CacheState,
+  log: Log,
+  logviewer: LogViewerState
 }>>

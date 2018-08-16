@@ -1,5 +1,7 @@
 // @flow strict
 
+import type { Bookmark, Highlight, Filter } from '../models';
+
 export const LOGVIEWER_CHANGE_SETTING = 'logviewer:change-setting';
 export const LOGVIEWER_CHANGE_FILTER = 'logviewer:change-filter';
 export const LOGVIEWER_LOAD_FILTERS = 'logviewer:load-filters';
@@ -10,27 +12,14 @@ export const LOGVIEWER_LOAD_BOOKMARKS = 'logviewer:load-bookmarks';
 export const LOGVIEWER_ENSURE_BOOKMARK = 'logviewer:ensure-bookmark';
 export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
 export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
+export const LOGVIEWER_TOGGLE_SETTINGS_PANEL = 'logviewer:toggle-settings-panel';
+export const LOGVIEWER_SEARCH_EVENT = 'logviewer:search-event';
+export const LOGVIEWER_SCROLL_TO_LINE = 'logviewer:scroll-to-line';
 export const LOGVIEWER_CLEAR_LINE_LIST = 'clear-line-list';
 export const LOGVIEWER_ADD_LINE = 'add-line';
 
-export type Filter = {|
-  text: string,
-  on: boolean,
-  inverse: boolean
-|}
-
-export type Highlight = {|
-  text: string,
-  on: boolean,
-  line: boolean
-|}
-
-export type Bookmark = {|
-  lineNumber: number,
-|}
-
 export type ChangeSetting = {|
-  +type: 'logviewer:change-setting',
+  type: 'logviewer:change-setting',
   +payload: {|
     +setting: string,
     +value: string
@@ -38,7 +27,7 @@ export type ChangeSetting = {|
 |}
 
 export type ChangeFilter = {|
-  +type: 'logviewer:change-filter',
+  type: 'logviewer:change-filter',
   +payload: {|
     +field: string,
     +text: string
@@ -46,7 +35,7 @@ export type ChangeFilter = {|
 |}
 
 export type ChangeHighlight = {|
-  +type: 'logviewer:change-highlight',
+  type: 'logviewer:change-highlight',
   +payload: {|
     +field: string,
     +text: string
@@ -54,49 +43,49 @@ export type ChangeHighlight = {|
 |}
 
 export type ChangeBookmark = {|
-  +type: 'logviewer:change-bookmark',
+  type: 'logviewer:change-bookmark',
   +payload: {|
     +lineNumArray: number[]
   |}
 |}
 
 export type EnsureBookmark = {|
-  +type: 'logviewer:ensure-bookmark',
+  type: 'logviewer:ensure-bookmark',
   +payload: {|
     +lineNum: number
   |}
 |}
 
 export type LoadBookmarks = {|
-  +type: 'logviewer:load-bookmarks',
+  type: 'logviewer:load-bookmarks',
   +payload: {|
     +bookmarksArr: Bookmark[]
   |}
 |}
 
 export type ChangeFindIdx = {|
-  +type: 'logviewer:change-findidx',
+  type: 'logviewer:change-findidx',
   +payload: {|
     +index: number
   |}
 |}
 
 export type ChangeSearch = {|
-  +type: 'logviewer:change-search',
+  type: 'logviewer:change-search',
   +payload: {|
     +text: string
   |}
 |}
 
 export type LoadHighlights = {|
-  +type: 'logviewer:load-highlights',
+  type: 'logviewer:load-highlights',
   +payload: {|
     +initialHighlights: Highlight[]
   |}
 |}
 
 export type LoadFilters = {|
-  +type: 'logviewer:load-filters',
+  type: 'logviewer:load-filters',
   +payload: {|
     +initialFilters: Filter[]
   |}
@@ -114,6 +103,32 @@ export type AddLine = $Exact<{
   }>>
 }>
 
+export type ToggleSettingsPanel = $Exact<{
+  type: 'logviewer:toggle-settings-panel',
+  +payload: {}
+}>
+
+export type SearchEventDirection = $Exact<$ReadOnly<{
+  action: 'next' | 'prev'
+}>>
+
+export type SearchEventSetTerm = $Exact<$ReadOnly<{
+  action: 'search',
+  term: string
+}>>
+
+export type SearchEvent= $Exact<{
+  type: 'logviewer:search-event',
+  +payload: SearchEventDirection | SearchEventSetTerm
+}>
+
+export type ScrollToLine= $Exact<{
+  type: 'logviewer:scroll-to-line',
+  +payload: $Exact<$ReadOnly<{
+    line: number
+  }>>
+}>
+
 export type Action = ChangeSetting
   | ChangeFilter
   | ChangeHighlight
@@ -126,6 +141,8 @@ export type Action = ChangeSetting
   | LoadFilters
   | ClearLineList
   | AddLine
+  | ToggleSettingsPanel
+  | ScrollToLine
 
 function toggleSetting(setting: string): ChangeSetting {
   return {
@@ -149,7 +166,7 @@ export function toggleFilterIntersection(): ChangeSetting {
   return toggleSetting('filter-intersection');
 }
 
-export function loadInitialFilters(initialFilters: Filter[]): loadInitialFilters {
+export function loadInitialFilters(initialFilters: Filter[]): LoadFilters {
   return {
     type: LOGVIEWER_LOAD_FILTERS,
     payload: {
@@ -184,7 +201,7 @@ export function removeFilter(text: string): ChangeFilter {
   return changeFilter('remove', text);
 }
 
-export function loadInitialHighlights(initialHighlights: Highlight[]): loadInitialHighlights {
+export function loadInitialHighlights(initialHighlights: Highlight[]): LoadHighlights {
   return {
     type: LOGVIEWER_LOAD_HIGHLIGHTS,
     payload: {
@@ -260,6 +277,31 @@ export function changeSearch(text: string): ChangeSearch {
     type: LOGVIEWER_CHANGE_SEARCH,
     payload: {
       text: text
+    }
+  };
+}
+
+export function toggleSettingsPanel(): ToggleSettingsPanel {
+  return {
+    type: LOGVIEWER_TOGGLE_SETTINGS_PANEL,
+    payload: {}
+  };
+}
+
+export function search(action: 'next' | 'prev'): SearchEvent {
+  return {
+    type: LOGVIEWER_SEARCH_EVENT,
+    payload: {
+      action: action
+    }
+  };
+}
+
+export function scrollToLine(n: number): ScrollToLine {
+  return {
+    type: LOGVIEWER_SCROLL_TO_LINE,
+    payload: {
+      line: n
     }
   };
 }

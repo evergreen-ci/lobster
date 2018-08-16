@@ -1,22 +1,21 @@
 // @flow strict
 
-import { LOGVIEWER_CHANGE_BOOKMARK, LOGVIEWER_LOAD_BOOKMARKS, LOGVIEWER_ENSURE_BOOKMARK } from '../actions/logviewer';
-import type { Action } from '../actions';
-import type { Bookmark } from '../actions/logviewer';
+import { LOGVIEWER_CHANGE_BOOKMARK, LOGVIEWER_LOAD_BOOKMARKS, LOGVIEWER_ENSURE_BOOKMARK, type Action } from '../../actions/logviewer';
+import type { Bookmark } from '../../models';
 
 const initialState: Bookmark[] = [];
 
-function findBookmark(bookmarkList, lineNum) {
+function findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
   return bookmarkList.findIndex(function(bookmark) {
     return bookmark.lineNumber === lineNum;
   });
 }
 
-function bookmarkSort(b1, b2) {
+function bookmarkSort(b1: Bookmark, b2: Bookmark): number {
   return b1.lineNumber - b2.lineNumber;
 }
 
-function ensureBookmark(lineNum, bookmarks) {
+function ensureBookmark(lineNum: number, bookmarks: Bookmark[]): Bookmark[] {
   const newBookmarks = bookmarks.slice();
   const i = findBookmark(newBookmarks, lineNum);
   if (i === -1) {

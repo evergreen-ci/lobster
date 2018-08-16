@@ -1,263 +1,79 @@
+// @flow strict
+
 import React from 'react';
 import ReactList from 'react-list';
-import Highlighter from 'react-highlight-words';
-import PropTypes from 'prop-types';
+import FullLogLine from './FullLogLine';
 import { connect } from 'react-redux';
-import * as logviewerActions from '../../actions/logviewer';
+import * as actions from '../../actions';
+import * as selectors from '../../selectors';
+import type { ReduxState, ColorMap, Line, LineData, Bookmark } from '../../models';
 
 import './style.css';
 
+type Props = {
+  searchFindIdx: number,
+  bookmarks: Bookmark[],
+  wrap: boolean,
+  toggleBookmark: (number[]) => void,
+  colorMap: ColorMap,
+  searchTerm: string,
+  caseSensitive: boolean,
+  scrollLine: number,
+  lineData: LineData,
+  highlightLines: Line[],
+  highlightText: string[],
+  scrollToLine: (number) => void,
+  clearLineList: () => void,
+  addLine: (line: number, text: string) => void
+};
 
-class LogLineText extends React.Component {
-  static propTypes = {
-    caseSensitive: PropTypes.bool,
-    colorMap: PropTypes.object,
-    find: PropTypes.string,
-    lineNumber: PropTypes.number,
-    lineRefCallback: PropTypes.func,
-    port: PropTypes.string,
-    text: PropTypes.string,
-    highlightText: PropTypes.array
-  };
+type State = {
+  lineMap: Map<number, HTMLSpanElement>,
+  selectStartIndex: ?number,
+  selectEndIndex: ?number,
+  clicks: (number[])[]
+};
+
+class LogView extends React.PureComponent<Props, State> {
+  logListRef: ?ReactList = null;
 
   constructor(props) {
     super(props);
     this.state = {
-      startSelect: false,
-      endSelect: false
-    };
-    this.lineRef = null;
-    this.setRef = element => {
-      this.lineRef = element;
-    };
-  }
-
-  componentDidUpdate() {
-    if (this.lineRef) {
-      this.props.lineRefCallback(this.lineRef, this.props.lineNumber);
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.lineRef) {
-      this.props.lineRefCallback(this.lineRef, this.props.lineNumber, true);
-    }
-  }
-
-  updateHighlightAndFind() {
-    const newHighlight = this.props.highlightText.slice();
-    newHighlight.push(this.props.find);
-    return newHighlight;
-  }
-
-  render() {
-    const style = { color: this.props.colorMap[this.props.port] };
-    const highlightAndFind = this.updateHighlightAndFind();
-    const highlightStyle = { color: this.props.colorMap[this.props.port], 'backgroundImage': 'inherit', 'backgroundColor': 'pink' };
-    return (
-      <span ref={this.setRef}>
-        <Highlighter
-          highlightClassName={'findResult' + this.props.lineNumber}
-          caseSensitive={this.props.caseSensitive}
-          unhighlightStyle={style}
-          highlightStyle={highlightStyle}
-          textToHighlight={this.props.text}
-          searchWords={this.props.highlightText.length === 0 ? [this.props.find] : highlightAndFind}
-        />
-      </span>
-    );
-  }
-}
-
-class LineNumber extends React.Component {
-  static propTypes = {
-    toggleBookmark: PropTypes.func,
-    lineNumber: PropTypes.number,
-    handleDoubleClick: PropTypes.func.isRequired
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  render() {
-    const style = { width: '60px', display: 'inline-block' };
-    return <span data-pseudo-content={this.props.lineNumber} className="padded-text" style={style} onDoubleClick={this.props.handleDoubleClick}></span>;
-  }
-}
-
-class LogOptions extends React.Component {
-  static propTypes = {
-    gitRef: PropTypes.string
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  handleClick = () => {
-    if (this.props.gitRef) {
-      window.open(this.props.gitRef);
-    }
-  }
-
-  render() {
-    const style = { width: '30px', display: 'inline-block' };
-    if (this.props.gitRef) {
-      return <span style={style} data-pseudo-content="&nbsp;&#128279;&nbsp;" onClick={this.handleClick}></span>;
-    }
-    return <span style={style}></span>;
-  }
-}
-
-class FullLogLine extends React.Component {
-  static propTypes = {
-    bookmarked: PropTypes.bool,
-    caseSensitive: PropTypes.bool,
-    colorMap: PropTypes.object,
-    find: PropTypes.string.isRequired,
-    found: PropTypes.bool.isRequired,
-    highlight: PropTypes.bool.isRequired,
-    line: PropTypes.shape({
-      gitRef: PropTypes.string,
-      lineNumber: PropTypes.number,
-      port: PropTypes.string,
-      text: PropTypes.string
-    }),
-    lineRefCallback: PropTypes.func,
-    toggleBookmark: PropTypes.func,
-    wrap: PropTypes.bool,
-    updateSelectStartIndex: PropTypes.func,
-    updateSelectEndIndex: PropTypes.func,
-    highlightText: PropTypes.array.isRequired,
-    handleDoubleClick: PropTypes.func.isRequired,
-    addLine: PropTypes.func,
-    scrollLine: PropTypes.number
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  handleMouseUp = () => {
-    let endIndex = this.props.line.lineNumber;
-    const selection = window.getSelection();
-    if (selection.type === 'Range') {
-      const selectionString = selection.toString();
-      if (selectionString !== '') {
-        const lastTwo = selectionString.substr(-1);
-        if (lastTwo === '\n') {
-          endIndex = this.props.line.lineNumber - 1;
-        }
-      }
-    }
-    this.props.updateSelectEndIndex(endIndex);
-  }
-
-  handleMouseDown = () => {
-    this.props.updateSelectStartIndex(this.props.line.lineNumber);
-  }
-
-  render() {
-    let className = 'monospace hover-highlight inline';
-    if (this.props.bookmarked) {
-      className += ' bookmark-line';
-    }
-    if (!this.props.wrap) {
-      className += ' no-wrap';
-    } else {
-      className += ' wrap';
-    }
-    if (this.props.found) {
-      className += ' highlighted';
-    }
-    if (this.props.highlight) {
-      className += ' filtered';
-    }
-    return (
-      <div className={className} onMouseUp={this.handleMouseUp} onMouseDown={this.handleMouseDown} >
-        <LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} handleDoubleClick={this.props.handleDoubleClick} />
-        <LogOptions gitRef={this.props.line.gitRef} />
-        <LogLineText
-          lineRefCallback={this.props.lineRefCallback}
-          text={this.props.line.text}
-          lineNumber={this.props.line.lineNumber}
-          port={this.props.line.port}
-          colorMap={this.props.colorMap}
-          find={this.props.find}
-          caseSensitive={this.props.caseSensitive}
-          highlightText={this.props.highlightText}
-        />
-      </div>
-    );
-  }
-}
-
-class LogView extends React.Component {
-  static propTypes = {
-    findBookmark: PropTypes.func,
-    findLine: PropTypes.number.isRequired,
-    bookmarks: PropTypes.array,
-    wrap: PropTypes.bool.isRequired,
-    toggleBookmark: PropTypes.func.isRequired,
-    colorMap: PropTypes.object.isRequired,
-    find: PropTypes.string,
-    caseSensitive: PropTypes.bool.isRequired,
-    scrollLine: PropTypes.number.isRequired,
-    lines: PropTypes.array.isRequired,
-    filter: PropTypes.array.isRequired,
-    inverseFilter: PropTypes.array,
-    highlight: PropTypes.array.isRequired,
-    highlightText: PropTypes.array,
-    highlightLine: PropTypes.array.isRequired,
-    shouldPrintLine: PropTypes.func.isRequired,
-    shouldHighlightLine: PropTypes.func.isRequired,
-    clearLineList: PropTypes.func,
-    addLine: PropTypes.func
-  };
-  constructor(props) {
-    super(props);
-    this.state = {
-      processed: '',
       lineMap: new Map(),
       selectStartIndex: null,
       selectEndIndex: null,
-      clicks: [],
-      scrollLine: null
+      clicks: []
     };
-    this.logListRef = null;
-    this.indexMap = {};
-    this.setLogListRef = element => {
-      this.logListRef = element;
-      this.lineViewHandler();
-    };
-    this.lineRefCallback = (element, line, isUnmount) => {
-      if (isUnmount === true) {
-        this.state.lineMap.delete(line);
-      } else {
-        this.state.lineMap[line] = element;
-        if (this.state.scrollLine && line === this.state.scrollLine) {
-          this.scrollFindIntoView();
-        }
-      }
-    };
-    this.filteredLines = [];
-    this.highlightLines = [];
   }
 
-  updateSelectStartIndex = (index) => {
+  setLogListRef = (element) => {
+    this.logListRef = element;
+    this.lineViewHandler();
+  };
+
+  lineRefCallback = (element: ?HTMLSpanElement, line: number, isUnmount?: boolean): void => {
+    if (isUnmount === true) {
+      this.state.lineMap.delete(line);
+    } else if (element) {
+      this.state.lineMap.set(line, element);
+    }
+  };
+
+  updateSelectStartIndex = (index: number) => {
     this.setState({ selectStartIndex: index });
   }
 
-  updateSelectEndIndex = (index) => {
-    this.setState({ selectEndIndex: index });
-    const newClicks = this.state.clicks.slice();
-    const clickElem = [this.state.selectStartIndex, index];
-    newClicks.push(clickElem);
-    this.setState({ clicks: newClicks });
+  updateSelectEndIndex = (index: number) => {
+    this.setState((state: State) => {
+      if (state.selectStartIndex === null || state.selectStartIndex === undefined) {
+        return state;
+      }
+      const clickElem = [state.selectStartIndex, index];
+      const newClicks = state.clicks.slice();
+      newClicks.push(clickElem);
+      return { ...state, clicks: newClicks, selectEndIndex: index };
+    });
   }
 
   handleDoubleClick = () => {
@@ -280,20 +96,26 @@ class LogView extends React.Component {
     }
   }
 
-  genList = (index, key) => {
+  findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
+    return bookmarkList.findIndex(function(bookmark) {
+      return bookmark.lineNumber === lineNum;
+    });
+  }
+
+  genList = (index) => {
     return (
       <FullLogLine
         lineRefCallback={this.lineRefCallback}
-        key={key}
-        found={this.filteredLines[index].lineNumber === this.props.findLine}
-        bookmarked={this.props.findBookmark(this.props.bookmarks, this.filteredLines[index].lineNumber) !== -1}
-        highlight={this.highlightLines.includes(this.filteredLines[index])}
+        key={index}
+        found={this.props.lineData.filteredLines[index].lineNumber === this.props.lineData.findResults[this.props.searchFindIdx]}
+        bookmarked={this.findBookmark(this.props.bookmarks, this.props.lineData.filteredLines[index].lineNumber) !== -1}
+        highlight={this.props.lineData.highlightLines.includes(this.props.lineData.filteredLines[index])}
         wrap={this.props.wrap}
-        line={this.filteredLines[index]}
+        line={this.props.lineData.filteredLines[index]}
         toggleBookmark={this.props.toggleBookmark}
         colorMap={this.props.colorMap}
-        find={this.props.find}
-        highlightText={this.props.highlightText}
+        searchTerm={this.props.searchTerm}
+        highlightText={this.props.lineData.highlightText}
         caseSensitive={this.props.caseSensitive}
         updateSelectStartIndex={this.updateSelectStartIndex}
         updateSelectEndIndex={this.updateSelectEndIndex}
@@ -304,66 +126,41 @@ class LogView extends React.Component {
     );
   }
 
-  scrollToLine(lineNumber) {
-    let scrollIndex = this.indexMap[lineNumber] - 20;
+  scrollToLine(lineNumber: number) {
+    const visibleIndex = this.props.lineData.indexMap.get(lineNumber);
+    console.log(visibleIndex);
+    if (visibleIndex === null || visibleIndex === undefined) {
+      return;
+    }
+    let scrollIndex = visibleIndex - 20;
     if (scrollIndex < 0) {
       scrollIndex = 0;
     }
-    this.logListRef.scrollTo(scrollIndex);
+    if (this.logListRef != null) {
+      this.logListRef.scrollTo(scrollIndex);
 
-    window.scrollBy(0, -45);
+      window.scrollBy(0, -45);
+    }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.scrollLine !== null && nextProps.scrollLine >= 0 &&
-        this.props.scrollLine !== nextProps.scrollLine) {
-      this.scrollToLine(nextProps.scrollLine);
-    }
-
-    if (nextProps.lines !== this.props.lines) {
-      return true;
-    }
-    if (nextProps.bookmarks !== this.props.bookmarks) {
-      return true;
-    }
-    if (nextProps.filter !== this.props.filter) {
-      return true;
-    }
-    if (nextProps.inverseFilter !== this.props.inverseFilter) {
-      return true;
-    }
-    if (nextProps.find !== this.props.find) {
-      return true;
-    }
-    if (nextProps.findLine !== this.props.findLine) {
-      return true;
-    }
-    if (nextProps.wrap !== this.props.wrap) {
-      return true;
-    }
-    if (nextProps.caseSensitive !== this.props.caseSensitive) {
-      return true;
-    }
-    if (nextState.clicks !== this.state.clicks) {
-      return true;
-    }
-    if (nextProps.highlight !== this.props.highlight) {
-      return true;
-    }
-
-    return false;
+  componentDidMount() {
+    window.addEventListener('scroll', this.lineViewHandler);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.lineViewHandler);
   }
 
   scrollFindIntoView() {
-    if (this.props.findLine < 0 || !(this.props.findLine in this.state.lineMap)) {
-      if (this.props.findLine >= 0) {
-        this.setState({ scrollLine: this.props.findLine });
-      }
+    const renderedLineNum = this.props.lineData.findResults[this.props.searchFindIdx];
+    if (renderedLineNum < 0 || renderedLineNum === undefined || renderedLineNum === null) {
       return;
     }
-    // console.log(this.props.findLine);
-    const findElements = this.state.lineMap[this.props.findLine]
-      .getElementsByClassName('findResult' + this.props.findLine);
+    const line = this.state.lineMap.get(renderedLineNum);
+    this.props.scrollToLine(renderedLineNum);
+    if (line == null) {
+      return;
+    }
+    const findElements = line.getElementsByClassName('findResult' + renderedLineNum);
     if (findElements.length > 0) {
       const elem = findElements[0];
       const position = elem.getBoundingClientRect();
@@ -379,13 +176,13 @@ class LogView extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps, _prevState) {
+  componentDidUpdate(prevProps: Props) {
     if (this.props.scrollLine !== null && this.props.scrollLine >= 0 && this.props.scrollLine !== prevProps.scrollLine) {
       this.scrollToLine(this.props.scrollLine);
     }
 
     // If the find index changed, scroll to the right if necessary.
-    if (this.props.findLine !== prevProps.findLine || this.props.find !== prevProps.find) {
+    if (this.props.searchFindIdx !== -1 && (this.props.searchFindIdx !== prevProps.searchFindIdx || this.props.searchTerm !== prevProps.searchTerm)) {
       this.scrollFindIntoView();
     }
   }
@@ -401,41 +198,26 @@ class LogView extends React.Component {
       console.log(start);
       console.log(end);
       if (start && end) {
-        this.props.addLine(this.props.lines[start].lineNumber, this.props.lines[start].text);
-        this.props.addLine(this.props.lines[end].lineNumber, this.props.lines[end].text);
+        this.props.addLine(this.props.lineData.filteredLines[start].lineNumber, this.props.lineData.filteredLines[start].text);
+        this.props.addLine(this.props.lineData.filteredLines[end].lineNumber, this.props.lineData.filteredLines[end].text);
       } else {
-        this.props.addLine(this.props.lines[this.logListRef.state.from].lineNumber, this.props.lines[this.logListRef.state.from].text);
-        this.props.addLine(this.props.lines[this.logListRef.state.size].lineNumber, this.props.lines[this.logListRef.state.size].text);
+        this.props.addLine(this.props.lineData.filteredLines[this.logListRef.state.from].lineNumber, this.props.lineData.filteredLines[this.logListRef.state.from].text);
+        this.props.addLine(this.props.lineData.filteredLines[this.logListRef.state.size].lineNumber, this.props.lineData.filteredLines[this.logListRef.state.size].text);
       }
     }
   }
 
   render() {
-    window.addEventListener('scroll', this.lineViewHandler);
-    let j = 0;
-    this.indexMap = {};
-    this.highlightLines = [];
-    this.filteredLines = this.props.lines.filter((line, i) => {
-      if (!this.props.shouldPrintLine(this.props.bookmarks, line, this.props.filter, this.props.inverseFilter)) {
-        return false;
-      }
-      this.indexMap[i] = j++;
-      if (this.props.highlight.length > 0
-        && this.props.shouldHighlightLine(line, this.props.highlight, this.props.highlightLine)) {
-        this.highlightLines.push(line);
-      }
-      return true;
-    });
-    if (this.filteredLines.length !== 0) {
+    if (this.props.lineData.filteredLines.length !== 0) {
       return (
-        <div onScroll={this.lineViewHandler}>
+        <div>
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
-            length={this.filteredLines.length}
+            length={this.props.lineData.filteredLines.length}
             initialIndex={this.props.scrollLine}
             type={this.props.wrap ? 'variable' : 'uniform'}
-            useStaticSize={true}
+            useStaticSize={!this.props.wrap}
           />
         </div>
       );
@@ -444,20 +226,27 @@ class LogView extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return { ...state, ...ownProps,
-    colorMap: state.log.colorMap, lines: state.log.lines,
-    caseSensitive: state.settings.caseSensitive,
-    wrap: state.settings.wrap,
-    find: state.find.searchRegex
+function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Props> {
+  const settings = selectors.getLogViewerSettings(state);
+  return {
+    ...ownProps,
+    colorMap: selectors.getLogColorMap(state),
+    caseSensitive: settings.caseSensitive,
+    wrap: settings.wrap,
+    searchTerm: selectors.getLogViewerSearchTerm(state),
+    scrollLine: selectors.getLogViewerScrollLine(state),
+    searchFindIdx: selectors.getLogViewerFindIdx(state),
+    bookmarks: selectors.getLogViewerBookmarks(state)
   };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
   return {
-    clearLineList: () => dispatch(logviewerActions.clearLineList()),
-    addLine: (line, text) => dispatch(logviewerActions.addLine(line, text)),
-    ...ownProps
+    ...ownProps,
+    clearLineList: () => dispatch(actions.clearLineList()),
+    addLine: (line, text) => dispatch(actions.addLine(line, text)),
+    toggleBookmark: (bk: number[]) => dispatch(actions.toggleBookmark(bk)),
+    scrollToLine: (n: number) => dispatch(actions.scrollToLine(n))
   };
 }
 
