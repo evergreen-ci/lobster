@@ -22,3 +22,5 @@ export const getLogViewerSettings = (state: ReduxState) => getLogViewer(state).s
 
 export const getIsLogViewerSettingsPanel = (state: ReduxState) => getLogViewer(state).settingsPanel;
 export const getLogViewerScrollLine = (state: ReduxState) => getLogViewer(state).scrollLine;
+
+export const getCache = (state: ReduxState) => state.cache;

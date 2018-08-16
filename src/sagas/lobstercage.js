@@ -2,8 +2,10 @@
 
 import { put, call, select } from 'redux-saga/effects';
 import * as actions from '../actions';
+import * as selectors from '../selectors';
 import type { Saga } from 'redux-saga';
 
+// Change this when changing filenames, or the format of data on disk
 const VERSION = 'v1';
 
 const fname = (f: string) => `${VERSION}-${f}`;
@@ -62,11 +64,11 @@ const write = (fs: DOMFileSystem, f: string, blob: Blob) => {
 };
 
 export function* writeToCache(f: string): Saga<void> {
-  const state = yield select((s) => s.cache);
+  const state = yield select(selectors.getCache);
   if (state.status !== 'ok') {
     return;
   }
-  const data = yield select((s) => s.log);
+  const data = yield select(selectors.getLog);
   if (!data.isDone) {
     return;
   }
@@ -104,7 +106,7 @@ const fsReadPromise = (fs: DOMFileSystem, f: string) => {
 };
 
 export function* readFromCache(f: string): Saga<void> {
-  const state = yield select((s) => s.cache);
+  const state = yield select(selectors.getCache);
   if (state.status !== 'ok') {
     throw state;
   }
@@ -126,7 +128,7 @@ const entryPromise = (e: FileSystemEntry) => {
 };
 
 export function* wipeCache(): Saga<void> {
-  const state = yield select((s) => s.cache);
+  const state = yield select(selectors.getCache);
   if (state.status !== 'ok') {
     console.info('Caching is not set up; assuming no data in filesystem');
     return;
@@ -153,7 +155,7 @@ function remove(fs: DOMFileSystem, f: string) {
 }
 
 function* wipeFileFromCache(f: string): Saga<void> {
-  const state = yield select((s) => s.cache);
+  const state = yield select(selectors.getCache);
   if (state.status !== 'ok') {
     console.info('Caching is not set up; assuming no data in filesystem');
     return;
