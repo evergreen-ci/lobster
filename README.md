@@ -1,5 +1,15 @@
 # Lobster
 
+## Quick Start
+* `git clone https://github.com/evergreen-ci/lobster.git`
+* `cd lobster`
+* `npm install`
+* `npm build`
+* `node server --logs ./path/to/local/logs`
+You can now view lobster by going to `http://localhost:9000/lobster?server=localhost:9000/api/log`.
+
+Type `node server --help` for additional options, including binding to 0.0.0.0
+
 ## What is Lobster
 Lobster is a log viewer implemented as a React-based frontend. As such its an easy to extend system.
 It also includes a node based dummy backend to load files from the provided URI and optionally cache them locally.
@@ -20,13 +30,13 @@ in the Log field and click on the navy colored lines to get to the corresponding
 * `git clone https://github.com/evergreen-ci/lobster.git`
 * `cd lobster`
 * `npm install`
+* `npm build`
 * `node server`
-* You can now view lobster by going to `http://<Host>:<Port>/lobster?server=<Host>:<Port>/api/log`.
+* You can now view lobster by going to `http://localhost:9000/lobster?server=localhost:9000/api/log`.
+
 The root directory for the local server is build`./build `, so you can place local log files in this directory to allow them to be resolved by the local server.
 
-
 # Dev Guide
-
 ## Running locally
 For development use, after running `npm install`, simply run `npm start`. This
 will automatically recompile your code and refresh the browser
@@ -35,14 +45,21 @@ will automatically recompile your code and refresh the browser
 `npm build` will place build artifacts inside the `build` directory
 
 ## Testing
-
-The testing framework is Jest, with Enzyme. See src/components/Fetch/search.spec.js for a sample
-of how to test with these tools
+The testing framework is Jest, with Enzyme.
 
 To run in local development:
 `npm test`
 
 This will watch the lobster development directory for changes, and automatically retest your code
 
+The end-to-end tests can be run with `npm run-scripts test:e2e`.
+`chromedriver` must be your system's path. You can also run these tests with
+Firefox with `npm run-scripts test:e2e -- --browser firefox`
+
+## Flow
+
+Flow is Facebook's static typing system for Javascript. You can run this
+with `npm run-scripts flow`.
+
 ## Linting
-`npm run-scripts lint`
+`npm run-scripts lint` to run the linter; `npm run-scripts lint:fix` will fix automatically fixable lints
