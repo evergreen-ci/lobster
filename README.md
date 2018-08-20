@@ -53,8 +53,9 @@ To run in local development:
 This will watch the lobster development directory for changes, and automatically retest your code
 
 The end-to-end tests can be run with `npm run-scripts test:e2e`.
-`chromedriver` must be your system's path. You can also run these tests with
-Firefox with `npm run-scripts test:e2e -- --browser firefox`
+`chromedriver` must be your system's path, and it must be able to start Chrome.
+You can also run these tests with Firefox with `npm run-scripts test:e2e -- --browser firefox`,
+but `geckodriver` must be in your path.
 
 ## Flow
 
