@@ -136,9 +136,9 @@ export type LogProcessor = $Keys<typeof logProcessors_>
 const evergreenTaskLogTypes: { [string]: string } = {
   'all': 'ALL',
   'task': 'T',
-  'agent': 'A',
+  'agent': 'E',
   'system': 'S'
-  // 'event': 'E' // Not actually supported by the api
+  // 'event': '?' // Not actually supported by the api
 };
 
 export type EvergreenTaskLogType = $Keys<typeof evergreenTaskLogTypes>;

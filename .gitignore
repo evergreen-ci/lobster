@@ -23,3 +23,4 @@ yarn-error.log*
 
 logs/
 e2e_srv.log
+coverage

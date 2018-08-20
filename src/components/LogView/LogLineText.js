@@ -52,9 +52,14 @@ export default class LogLineText extends React.Component<Props, State> {
     }
   }
 
-  updateHighlightAndFind() {
+  getSearchWords() {
     const newHighlight = this.props.highlightText.slice();
-    newHighlight.push(this.props.searchTerm);
+    try {
+      RegExp(this.props.searchTerm);
+      newHighlight.push(this.props.searchTerm);
+    } catch (_e) {
+      // no error
+    }
     return newHighlight;
   }
 
@@ -64,7 +69,6 @@ export default class LogLineText extends React.Component<Props, State> {
 
   render() {
     const style = {};
-    const highlightAndFind = this.updateHighlightAndFind();
     const highlightStyle = { color: '', 'backgroundImage': 'inherit', 'backgroundColor': 'pink' };
     if (this.props.port != null) {
       style.color = this.props.colorMap[this.props.port];
@@ -78,7 +82,7 @@ export default class LogLineText extends React.Component<Props, State> {
           unhighlightStyle={style}
           highlightStyle={highlightStyle}
           textToHighlight={this.props.text}
-          searchWords={this.props.highlightText.length === 0 ? [this.props.searchTerm] : highlightAndFind}
+          searchWords={this.getSearchWords()}
         />
       </span>
     );

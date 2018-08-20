@@ -1,5 +1,6 @@
 // @flow strict
 
+// This file is for selectors to access reducer state
 import type { ReduxState } from '../models';
 
 export const getLog = (state: ReduxState) => state.log;

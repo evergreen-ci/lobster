@@ -23,6 +23,11 @@ describe('e2e', function() {
 
       await l.notFound();
 
+      await l.search('c++');
+      await l.notFound();
+      results = await l.searchAndWordHighlights();
+      expect(results).toHaveLength(0);
+
       done();
     } catch (err) {
       done.fail(err);

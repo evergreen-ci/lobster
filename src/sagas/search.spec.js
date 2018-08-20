@@ -1,6 +1,5 @@
 import { testSaga } from 'redux-saga-test-plan';
 import search from './search';
-import { getFilteredLineData, getLogViewerFindIdx } from '../selectors';
 import * as actions from '../actions';
 
 const emptyData = (action) => {
@@ -12,7 +11,7 @@ const emptyData = (action) => {
       findResults: [],
       filteredLines: [],
       highlightLines: [],
-      highlightText: [],
+      highlightText: []
     });
 };
 
@@ -72,7 +71,7 @@ const runLinesSelector = () => {
   };
 
   return getFilteredLineData(state);
-}
+};
 
 const withSearchTerm = (action, index = -1) => {
   return testSaga(search, action)
@@ -132,4 +131,4 @@ describe('search-event', function() {
       .next()
       .isDone();
   });
-})
+});

@@ -31,6 +31,7 @@ export default function(state: Find = initialState, action: Action): Find {
     } catch (e) {
       return {
         ...state,
+        searchTerm: text,
         regexError: e
       };
     }
