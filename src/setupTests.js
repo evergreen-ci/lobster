@@ -38,18 +38,12 @@ if (process.env.LOBSTER_E2E_SERVER_PORT) {
   const envDeadline = process.env.CI === 'true' ? 60000 : 15000;
   process.env.LOBSTER_E2E_SERVER_PORT = parseInt(process.env.LOBSTER_E2E_SERVER_PORT, 10);
   global.e2e = (name, f, deadline, ...tail) => {
-    if (deadline === undefined) {
-      deadline = envDeadline;
-    }
-    return test(`e2e-${name}`, f, deadline, ...tail);
+    return test(`e2e-${name}`, f, deadline || envDeadline, ...tail);
   };
 
   if (process.env.LOBSTER_E2E_BROWSER === 'chrome' || process.env.LOBSTER_E2E_BROWSER === undefined) {
     global.e2eChrome = (name, f, deadline, ...tail) => {
-      if (deadline === undefined) {
-        deadline = envDeadline;
-      }
-      return test(`e2e-${name}`, f, deadline, ...tail);
+      return test(`e2e-${name}`, f, deadline || envDeadline, ...tail);
     };
   }
 } else {

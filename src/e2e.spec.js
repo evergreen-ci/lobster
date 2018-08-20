@@ -34,7 +34,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   e2e('highlight', async (done) => {
     const driver = await makeDriver(done);
@@ -79,7 +79,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   e2e('filter', async (done) => {
     const driver = await makeDriver(done);
@@ -134,7 +134,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   e2e('logdrop', async (done) => {
     // Allow webdriver to interact with the dropFile elements in Firefox
@@ -159,7 +159,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   e2eChrome('lobstercage', async (done) => {
     const driver = await makeDriver(done);
@@ -191,7 +191,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   // react-list works by creating a div with height
   // (# of elements) * (height of each element). Given a large number of
@@ -261,7 +261,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   e2e('apply-new-log', async (done) => {
     const driver = await makeDriver(done);
@@ -286,7 +286,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 });
 
 // Test that each logviewer page can actually download logs
@@ -317,5 +317,5 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 });
