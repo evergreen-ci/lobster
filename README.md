@@ -8,7 +8,8 @@
 * `node server --logs ./path/to/local/logs`
 You can now view lobster by going to `http://localhost:9000/lobster?server=localhost:9000/api/log`.
 
-Type `node server --help` for additional options, including binding to 0.0.0.0
+Type `node server --help` for additional options, including the option to bind
+to 0.0.0.0
 
 ## What is Lobster
 Lobster is a log viewer implemented as a React-based frontend. As such its an easy to extend system.
@@ -37,6 +38,18 @@ in the Log field and click on the navy colored lines to get to the corresponding
 The root directory for the local server is build`./build `, so you can place local log files in this directory to allow them to be resolved by the local server.
 
 # Dev Guide
+## Structure
+* ./src/actions: Redux actions, including their typedefs
+* ./src/api: functions for interacting with APIs
+* ./src/components: React components
+* ./src/models: typedefs for various structures that are not actions
+* ./src/reducers: Redux action processors aka. reducers
+* ./src/selectors: Redux selectors (functions to compute derived state, or simply
+  get state from the store)
+* ./src/sagas: redux sagas (asynchronous code like API fetches)
+* ./src/thirdparty: directory for vendoring 3rd party code that requires an
+  ES6 compatible minifier (which create-react-app doesn't support)
+
 ## Running locally
 For development use, after running `npm install`, simply run `npm start`. This
 will automatically recompile your code and refresh the browser
