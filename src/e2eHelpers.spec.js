@@ -28,10 +28,9 @@ const logURLApplyButton = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/fo
 export const lobsterServer = () => {
   const port = process.env.LOBSTER_E2E_SERVER_PORT || 9000;
   return `localhost:${port}`;
-}
+};
 
 export const lobsterURL = (file: string = 'simple.log') => {
-  const port = process.env.LOBSTER_E2E_SERVER_PORT || 9000;
   return `http://${lobsterServer()}/lobster?server=${lobsterServer()}%2Fapi%2Flog&url=${file}`;
 };
 
