@@ -123,7 +123,6 @@ class LogView extends React.PureComponent<Props, State> {
 
   scrollToLine(lineNumber: number) {
     const visibleIndex = this.props.lineData.indexMap.get(lineNumber);
-    console.log(visibleIndex);
     if (visibleIndex === null || visibleIndex === undefined) {
       return;
     }

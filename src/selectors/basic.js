@@ -1,5 +1,6 @@
 // @flow strict
 
+// This file is for selectors to access reducer state
 import type { ReduxState } from '../models';
 
 export const getLog = (state: ReduxState) => state.log;
@@ -22,3 +23,5 @@ export const getLogViewerSettings = (state: ReduxState) => getLogViewer(state).s
 
 export const getIsLogViewerSettingsPanel = (state: ReduxState) => getLogViewer(state).settingsPanel;
 export const getLogViewerScrollLine = (state: ReduxState) => getLogViewer(state).scrollLine;
+
+export const getCache = (state: ReduxState) => state.cache;

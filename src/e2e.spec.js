@@ -1,5 +1,5 @@
 import { Key } from 'selenium-webdriver';
-import { Lobster, makeDriver, lobsterURL } from './e2eHelpers.spec';
+import { Lobster, makeDriver, lobsterURL, lobsterServer } from './e2eHelpers.spec';
 
 describe('e2e', function() {
   e2e('search', async (done) => {
@@ -23,13 +23,18 @@ describe('e2e', function() {
 
       await l.notFound();
 
+      await l.search('c++');
+      await l.notFound();
+      results = await l.searchAndWordHighlights();
+      expect(results).toHaveLength(0);
+
       done();
     } catch (err) {
       done.fail(err);
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   e2e('highlight', async (done) => {
     const driver = await makeDriver(done);
@@ -45,6 +50,7 @@ describe('e2e', function() {
 
       // Add a highlight
       await l.addHighlight();
+      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&h=10Line%20&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
 
       await l.showDetails();
       await l.highlightLine();
@@ -73,7 +79,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   e2e('filter', async (done) => {
     const driver = await makeDriver(done);
@@ -87,6 +93,8 @@ describe('e2e', function() {
       console.log('end search');
 
       await l.addFilter();
+
+      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f=10Line%20&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
 
       let divs = await l.lines();
       expect(divs).toHaveLength(6);
@@ -104,6 +112,7 @@ describe('e2e', function() {
       console.log('end search 2');
 
       await l.addFilter();
+      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f=10Line%20&f=102&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
 
       await l.showDetails();
       await l.caseToggle();
@@ -125,7 +134,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   e2e('logdrop', async (done) => {
     // Allow webdriver to interact with the dropFile elements in Firefox
@@ -150,7 +159,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   e2eChrome('lobstercage', async (done) => {
     const driver = await makeDriver(done);
@@ -182,7 +191,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   // react-list works by creating a div with height
   // (# of elements) * (height of each element). Given a large number of
@@ -252,7 +261,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 
   e2e('apply-new-log', async (done) => {
     const driver = await makeDriver(done);
@@ -308,5 +317,5 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  });
 });

@@ -81,7 +81,7 @@ export default function*(): Saga<void> {
     try {
       window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 }

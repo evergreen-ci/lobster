@@ -3,3 +3,5 @@ build/
 flow-typed
 src/thirdparty/**/*
 src/thirdparty/**/.*
+coverage/**/*
+coverage/**/.*

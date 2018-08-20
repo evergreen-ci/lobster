@@ -1,6 +1,6 @@
 // @flow strict
 
-import * as actions from '../actions/logviewer';
+import * as actions from '../actions';
 import { type SearchEvent, type ChangeSearch, LOGVIEWER_SEARCH_EVENT, LOGVIEWER_CHANGE_SEARCH } from '../actions';
 import { put, select } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
@@ -19,8 +19,7 @@ export default function*(action: SearchEvent | ChangeSearch): Saga<void> {
     if (action.payload.text === '') {
       yield put(actions.changeFindIdx(-1));
     } else {
-      const newFindIndex = yield select(getLogViewerFindIdx);
-      if (lines.findResults.length > 0 && newFindIndex === -1) {
+      if (findIndex === -1) {
         yield put(actions.changeFindIdx(0));
       }
     }
@@ -30,7 +29,6 @@ export default function*(action: SearchEvent | ChangeSearch): Saga<void> {
       if (newIdx >= numLines) {
         newIdx = 0;
       }
-      console.log(newIdx);
       yield put(actions.changeFindIdx(newIdx));
     } else if (action.payload.action === 'prev') {
       let newIdx = findIndex - 1;
@@ -38,7 +36,6 @@ export default function*(action: SearchEvent | ChangeSearch): Saga<void> {
         newIdx = numLines - 1;
       }
 
-      console.log(newIdx);
       yield put(actions.changeFindIdx(newIdx));
     }
   }

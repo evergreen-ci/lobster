@@ -6,15 +6,19 @@ import { shouldPrintLine, mergeActiveFilters, mergeActiveInverseFilters } from '
 import { getHighlightText, shouldHighlightLine, mergeActiveHighlights, mergeActiveHighlightLines } from './highlights';
 import * as selectors from '../basic';
 
-function makeRegexp(regexp: ?string, caseSensitive: boolean) {
-  if (regexp == null || regexp === '') {
-    return new RegExp('');
-  }
+function makeRegexp(regexp: ?string, caseSensitive: boolean): ?RegExp {
+  try {
+    if (regexp == null || regexp === '') {
+      return new RegExp('');
+    }
 
-  if (!caseSensitive) {
-    return new RegExp(regexp, 'i');
+    if (!caseSensitive) {
+      return new RegExp(regexp, 'i');
+    }
+    return new RegExp(regexp);
+  } catch (_e) {
+    return null;
   }
-  return new RegExp(regexp);
 }
 
 const getFilteredLineData = createSelector(
@@ -43,7 +47,7 @@ const getFilteredLineData = createSelector(
         return;
       }
       filteredLines.push(line);
-      if (findRegexp.test(line.text)) {
+      if (findRegexp != null && findRegexp.test(line.text)) {
         findResults.push(line.lineNumber);
       }
       indexMap.set(i, j++);
