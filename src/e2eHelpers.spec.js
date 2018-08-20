@@ -25,9 +25,14 @@ const cacheModal = '//*[@id="root"]/div/div/div/div';
 const logURLField = '//*[@id="urlInput"]';
 const logURLApplyButton = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[1]/div[2]/button';
 
+export const lobsterServer = () => {
+  const port = process.env.LOBSTER_E2E_SERVER_PORT || 9000;
+  return `localhost:${port}`;
+}
+
 export const lobsterURL = (file: string = 'simple.log') => {
   const port = process.env.LOBSTER_E2E_SERVER_PORT || 9000;
-  return `http://localhost:${port}/lobster?server=localhost:${port}%2Fapi%2Flog&url=${file}`;
+  return `http://${lobsterServer()}/lobster?server=${lobsterServer()}%2Fapi%2Flog&url=${file}`;
 };
 
 export class Lobster {
