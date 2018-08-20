@@ -1,5 +1,6 @@
 import { testSaga } from 'redux-saga-test-plan';
 import search from './search';
+import { getFilteredLineData, getLogViewerFindIdx } from '../selectors';
 import * as actions from '../actions';
 
 const emptyData = (action) => {

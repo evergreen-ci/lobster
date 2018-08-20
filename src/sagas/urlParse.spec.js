@@ -1,6 +1,5 @@
 import { testSaga } from 'redux-saga-test-plan';
 import urlParse from './urlParse';
-import { getFilteredLineData, getLogViewerFindIdx } from '../selectors';
 import * as actions from '../actions';
 
 describe('urlParse', function() {
