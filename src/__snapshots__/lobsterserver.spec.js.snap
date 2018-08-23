@@ -34,6 +34,24 @@ something else
 enumerate: 0"
 `;
 
+exports[`lobsterserver-default-args e2e-evergreen-test-by-name 1`] = `
+"taskid1234
+5
+testid1234
+line 0
+line 1
+line 2
+line 3
+line 4
+line 5
+line 6
+line 7
+line 8
+line 9
+something else
+enumerate: 0"
+`;
+
 exports[`lobsterserver-default-args e2e-fetch-ok 1`] = `
 "line 0
 line 1

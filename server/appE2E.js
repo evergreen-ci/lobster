@@ -37,9 +37,19 @@ function logkeeper(req, res) {
 }
 
 function evergreen(req, res) {
-  if (req.params.execution && (req.query.type === undefined || req.query.text !== 'true')) {
-    return res.status(404).send();
-  } else if (!req.params.execution && req.query.raw !== '1') {
+  if (req.route.path === '/evergreen/test_log/:id/:execution/:test') {
+    if (!Number.isFinite(parseInt(req.params.execution, 10)) || req.params.test == null || req.params.id == null || req.query.raw !== '1') {
+      return res.status(404).send();
+    }
+  } else if (req.route.path === '/evergreen/test_log/:id') {
+    if (req.params.id === undefined || req.query.raw !== '1') {
+      return res.status(404).send();
+    }
+  } else if (req.route.path === '/evergreen/task_log_raw/:id/:execution') {
+    if (req.query.type === undefined || req.query.text !== 'true') {
+      return res.status(404).send();
+    }
+  } else {
     return res.status(404).send();
   }
 
@@ -49,7 +59,13 @@ function evergreen(req, res) {
   if (req.params.execution) {
     res.write(req.params.execution);
     res.write('\n');
+  }
+  if (req.query.type) {
     res.write(req.query.type);
+    res.write('\n');
+  }
+  if (req.params.test) {
+    res.write(req.params.test);
     res.write('\n');
   }
   makeLines(req, res);
@@ -88,6 +104,8 @@ function e2e(app) {
   app.get('/evergreen/task_log_raw/:id/:execution', evergreen);
   app.options('/evergreen/test_log/:id', cors);
   app.get('/evergreen/test_log/:id', evergreen);
+  app.options('/evergreen/test_log/:id/:execution/:test', cors);
+  app.get('/evergreen/test_log/:id/:execution/:test', evergreen);
 
   app.options('/logkeeper/build/:build/all', cors);
   app.get('/logkeeper/build/:build/all', logkeeper);

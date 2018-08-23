@@ -27,7 +27,6 @@ if (!global.window) {
 }
 
 // Skip end-to-end tests by default
-
 const skip = (name, ...tail) => {
   return test.skip(`e2e-${name}`, ...tail);
 };
