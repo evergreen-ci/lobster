@@ -170,8 +170,16 @@ export type EvergreenTestLog = $ReadOnly<{
   id: string
 }>
 
+export type EvergreenTestByNameLog = $ReadOnly<{
+  type: 'evergreen-test-by-name',
+  task: string,
+  execution: number,
+  test: string
+}>
+
 export type EvergreenLog = EvergreenTaskLog
   | EvergreenTestLog
+  | EvergreenTestByNameLog
 
 export type LobsterLog = $ReadOnly<{
   type: 'lobster',

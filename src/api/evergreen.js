@@ -21,6 +21,14 @@ export function testLogRawURL(id: string): string {
   return `${testLogURL(id)}?raw=1`;
 }
 
+export function testLogByNameURL(task: string, execution: number, testName: string): string {
+  return `${EVERGREEN_BASE}/test_log/${task}/${execution}/${testName}`;
+}
+
+export function testLogByNameRawURL(task: string, execution: number, testName: string): string {
+  return `${testLogByNameURL(task, execution, testName)}?raw=1`;
+}
+
 export function taskURL(taskID: string, execution: ?number): string {
   const base = `${EVERGREEN_BASE}/task/${taskID}`;
 
@@ -38,6 +46,8 @@ export function fetchEvergreen(log: EvergreenLog): Promise<Response> {
     req = new Request(taskLogRawURL(log.id, log.execution, log.log), init);
   } else if (log.type === 'evergreen-test') {
     req = new Request(testLogRawURL(log.id), init);
+  } else if (log.type === 'evergreen-test-by-name') {
+    req = new Request(testLogByNameRawURL(log.task, log.execution, log.test), init);
   }
 
   return window.fetch(req);

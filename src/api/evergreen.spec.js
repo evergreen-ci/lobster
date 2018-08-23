@@ -14,6 +14,11 @@ describe('evergreen', () => {
     expect(api.testLogRawURL('test0')).toBe('http://evergreen.invalid/test_log/test0?raw=1');
   });
 
+  test('testLogURL', () => {
+    expect(api.testLogByNameURL('test0', 5, 'mytest')).toBe('http://evergreen.invalid/test_log/test0/5/mytest');
+    expect(api.testLogByNameRawURL('test0', 5, 'mytest')).toBe('http://evergreen.invalid/test_log/test0/5/mytest?raw=1');
+  });
+
   test('taskURL', () => {
     expect(api.taskURL('task0')).toBe('http://evergreen.invalid/task/task0');
     expect(api.taskURL('task0', 1)).toBe('http://evergreen.invalid/task/task0/1');
@@ -42,6 +47,20 @@ describe('evergreen', () => {
     api.fetchEvergreen({
       type: 'evergreen-test',
       id: 'task0'
+    });
+  });
+
+  test('fetchEvergreen-test-by-name', (done) => {
+    sinon.replace(window, 'fetch', (req) => {
+      expect(req.url).toBe(api.testLogByNameRawURL('task0', 5, 'mytest'));
+      done();
+    });
+
+    api.fetchEvergreen({
+      type: 'evergreen-test-by-name',
+      task: 'task0',
+      execution: 5,
+      test: 'mytest'
     });
   });
 });
