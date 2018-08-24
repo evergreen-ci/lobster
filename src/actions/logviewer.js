@@ -181,6 +181,10 @@ export function toggleFilter(text: string): ChangeFilter {
   return changeFilter('on', text);
 }
 
+export function toggleCaseSensitive(text: string): ChangeFilter {
+  return changeFilter('caseSensitive', text);
+}
+
 export function removeFilter(text: string): ChangeFilter {
   return changeFilter('remove', text);
 }

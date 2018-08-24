@@ -35,7 +35,8 @@ export default function(state: Highlight[] = initialState, action: Action): High
       {
         text: action.payload.text,
         on: true,
-        line: false
+        line: false,
+        caseSensitive: false
       }
     ];
   }

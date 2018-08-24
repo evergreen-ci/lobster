@@ -17,12 +17,12 @@ type Props = {
   settings: Settings,
   toggleSettings: {
     toggleWrap: () => void,
-    toggleCaseSensitive: () => void,
     toggleFilterIntersection: () => void
   },
   filterActions: {
     removeFilter: (string) => void,
     toggleFilter: (string) => void,
+    toggleCaseSensitive: (string) => void,
     toggleFilterInverse: (string) => void
   },
   highlightActions: {
@@ -144,17 +144,6 @@ export class CollapseMenu extends React.PureComponent<Props> {
                   <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
                   <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
                 </ToggleButtonGroup>
-                <span className="toggle-label">Case Sensitive</span>
-                <ToggleButtonGroup
-                  className="toggle-buttons"
-                  type="radio"
-                  name="case-sensitive-on-off"
-                  value={this.props.settings.caseSensitive}
-                  onChange={this.props.toggleSettings.toggleCaseSensitive}
-                >
-                  <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
-                  <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
-                </ToggleButtonGroup>
                 <span className="toggle-label">Filter Logic</span>
                 <ToggleButtonGroup
                   className="toggle-buttons"
@@ -176,6 +165,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
             filters={this.props.filterList}
             removeFilter={this.props.filterActions.removeFilter}
             toggleFilter={this.props.filterActions.toggleFilter}
+            toggleCaseSensitive={this.props.filterActions.toggleCaseSensitive}
             toggleFilterInverse={this.props.filterActions.toggleFilterInverse}
           />
           <Highlights
@@ -207,6 +197,7 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   const filterActions = {
     toggleFilter: (text) => dispatch(actions.toggleFilter(text)),
     toggleFilterInverse: (text) => dispatch(actions.toggleFilterInverse(text)),
+    toggleCaseSensitive: (text) => dispatch(actions.toggleCaseSensitive(text)),
     removeFilter: (text) => dispatch(actions.removeFilter(text))
   };
   const highlightActions = {
@@ -216,7 +207,6 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   };
   const toggleSettings = {
     toggleWrap: () => dispatch(actions.toggleLineWrap()),
-    toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
     toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection())
   };
 
