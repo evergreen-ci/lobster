@@ -50,7 +50,7 @@ describe('e2e', function() {
 
       // Add a highlight
       await l.addHighlight();
-      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&h=10Line%20&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
+      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&h=100~Line%20&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
 
       await l.showDetails();
       await l.highlightLine();
@@ -94,7 +94,7 @@ describe('e2e', function() {
 
       await l.addFilter();
 
-      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f=10Line%20&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
+      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f=100~Line%20&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
 
       let divs = await l.lines();
       expect(divs).toHaveLength(6);
@@ -112,7 +112,7 @@ describe('e2e', function() {
       console.log('end search 2');
 
       await l.addFilter();
-      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f=10Line%20&f=102&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
+      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f=100~Line%20&f=100~2&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
 
       await l.showDetails();
       await l.caseToggle();
@@ -318,4 +318,4 @@ describe('e2e', function() {
       await driver.quit();
     }
   });
-});
+})
