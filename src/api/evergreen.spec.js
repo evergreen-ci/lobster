@@ -14,7 +14,7 @@ describe('evergreen', () => {
     expect(api.testLogRawURL('test0')).toBe('http://evergreen.invalid/test_log/test0?raw=1');
   });
 
-  test('testLogURL', () => {
+  test('testLogByNameURL', () => {
     expect(api.testLogByNameURL('test0', 5, 'mytest')).toBe('http://evergreen.invalid/test_log/test0/5/mytest');
     expect(api.testLogByNameRawURL('test0', 5, 'mytest')).toBe('http://evergreen.invalid/test_log/test0/5/mytest?raw=1');
   });

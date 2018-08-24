@@ -5,31 +5,30 @@ import Fetch from '.';
 import { stringToEvergreenTaskLogType, type LogIdentity } from '../../models';
 import type { ContextRouter } from 'react-router-dom';
 
-function makeEvergreenLogID(is_test: boolean, id: ?string, type: ?string, execution: ?string): ?LogIdentity {
+function makeEvergreenLogID(isTest: boolean, id: ?string, type: ?string, execution: ?string): ?LogIdentity {
   if (id == null) {
     return null;
   }
 
   if (type != null) {
-    if (is_test) {
+    if (isTest) {
       return {
         type: 'evergreen-test-by-name',
         task: id,
         execution: parseInt(execution, 10),
         test: type
       };
-    } else {
-      const logType = stringToEvergreenTaskLogType(type);
-      if (logType == null) {
-        return null;
-      }
-      return {
-        type: 'evergreen-task',
-        id: id,
-        execution: parseInt(execution, 10) || 0,
-        log: logType
-      };
     }
+    const logType = stringToEvergreenTaskLogType(type);
+    if (logType == null) {
+      return null;
+    }
+    return {
+      type: 'evergreen-task',
+      id: id,
+      execution: parseInt(execution, 10) || 0,
+      log: logType
+    };
   }
 
   return {
@@ -48,7 +47,7 @@ const EvergreenLogViewer = (props: ContextRouter) => {
     newProps.location.hash = `#scroll=${line}&bookmarks=${line}`;
   }
   const { id, type, execution } = props.match.params;
-  const logID = makeEvergreenLogID(props.location.pathname.startsWith("/lobster/evergreen/test/"), id, type, execution);
+  const logID = makeEvergreenLogID(props.location.pathname.startsWith('/lobster/evergreen/test/'), id, type, execution);
 
   return (<Fetch {...newProps} logIdentity={logID} />);
 };
