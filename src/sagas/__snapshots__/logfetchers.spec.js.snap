@@ -249,6 +249,161 @@ Object {
 }
 `;
 
+exports[`fetchEvergreen resolves-200-test-by-name 1`] = `
+Object {
+  "call": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "execution": 5,
+            "task": "taskid",
+            "test": "testid",
+            "type": "evergreen-test-by-name",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/evergreenLoadData",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "fetchEvergreen-test-taskid-5-testid.json",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/readFromCache",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {
+            "execution": 5,
+            "task": "taskid",
+            "test": "testid",
+            "type": "evergreen-test-by-name",
+          },
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/proxy",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          "fetchEvergreen-test-taskid-5-testid.json",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/writeToCache",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "CALL": Object {
+        "args": Array [
+          Object {},
+          "@@redux-saga-test-plan/json/function/refineYieldedValue",
+        ],
+        "context": null,
+        "fn": "@@redux-saga-test-plan/json/function/sagaWrapper",
+      },
+    },
+  ],
+  "put": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "error": false,
+          "payload": Object {
+            "data": "evergreen-test-by-name",
+            "isDone": true,
+            "type": "raw",
+          },
+          "type": "process-response",
+        },
+        "channel": null,
+        "resolve": true,
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": 0,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "lineNum": undefined,
+          },
+          "type": "logviewer:ensure-bookmark",
+        },
+        "channel": null,
+      },
+    },
+  ],
+  "select": Array [
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
+    Object {
+      "@@redux-saga/IO": true,
+      "SELECT": Object {
+        "args": Array [],
+        "selector": "@@redux-saga-test-plan/json/function/<anonymous>",
+      },
+    },
+  ],
+}
+`;
+
 exports[`fetchLobster rejects 1`] = `
 Object {
   "call": Array [
