@@ -73,7 +73,9 @@ export class Toolbar extends React.PureComponent<Props> {
   focusOnFind(event: KeyboardEvent) {
     event.preventDefault();
     if (this.findInput) {
-      this.findInput.focus();
+      const i = this.findInput;
+      i.focus();
+      i.select();
     }
   }
 
