@@ -42,11 +42,11 @@ function evergreen(req, res) {
       return res.status(404).send();
     }
   } else if (req.route.path === '/evergreen/test_log/:id') {
-    if (req.params.id === undefined || req.query.raw !== '1') {
+    if (req.params.id == null || req.query.raw !== '1') {
       return res.status(404).send();
     }
   } else if (req.route.path === '/evergreen/task_log_raw/:id/:execution') {
-    if (req.query.type === undefined || req.query.text !== 'true') {
+    if (req.query.type == null || req.query.text !== 'true') {
       return res.status(404).send();
     }
   } else {
