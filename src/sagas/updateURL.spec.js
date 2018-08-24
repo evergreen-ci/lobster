@@ -49,12 +49,14 @@ describe('updateURL', () => {
         {
           'text': 'filter0',
           'on': true,
-          'inverse': false
+          'inverse': false,
+          'caseSensitive': false
         },
         {
           'text': 'filter1',
           'on': false,
-          'inverse': true
+          'inverse': true,
+          'caseSensitive': true
         }
       ])
       .select(selectors.getLogViewerHighlights)
@@ -62,12 +64,14 @@ describe('updateURL', () => {
         {
           'text': 'highlight0',
           'on': true,
-          'line': false
+          'line': false,
+          'caseSensitive': false
         },
         {
           'text': 'highlight1',
           'on': false,
-          'line': true
+          'line': true,
+          'caseSensitive': true
         }
       ])
       .select(selectors.getLogViewerBookmarks)
@@ -90,7 +94,7 @@ describe('updateURL', () => {
     expect(mock.callCount).toBe(1);
     expect(mock.lastCall.args[0]).toEqual({});
     expect(mock.lastCall.args[1]).toBe('');
-    expect(mock.lastCall.args[2]).toBe('/my/path#bookmarks=0%2C58%2C55%2C120&f=10filter0&f=01filter1&h=10highlight0&h=01highlight1');
+    expect(mock.lastCall.args[2]).toBe('/my/path#bookmarks=0%2C58%2C55%2C120&f=100~filter0&f=011~filter1&h=100~highlight0&h=011~highlight1');
   });
 
   test('lobster-withdata', function() {
@@ -107,12 +111,14 @@ describe('updateURL', () => {
         {
           'text': 'filter0',
           'on': true,
-          'inverse': false
+          'inverse': false,
+          'caseSensitive': false
         },
         {
           'text': 'filter1',
           'on': false,
-          'inverse': true
+          'inverse': true,
+          'caseSensitive': true
         }
       ])
       .select(selectors.getLogViewerHighlights)
@@ -120,12 +126,14 @@ describe('updateURL', () => {
         {
           'text': 'highlight0',
           'on': true,
-          'line': false
+          'line': false,
+          'caseSensitive': false
         },
         {
           'text': 'highlight1',
           'on': false,
-          'line': true
+          'line': true,
+          'caseSensitive': true
         }
       ])
       .select(selectors.getLogViewerBookmarks)
@@ -148,6 +156,6 @@ describe('updateURL', () => {
     expect(mock.callCount).toBe(1);
     expect(mock.lastCall.args[0]).toEqual({});
     expect(mock.lastCall.args[1]).toBe('');
-    expect(mock.lastCall.args[2]).toBe('/my/path#bookmarks=0%2C58%2C55%2C120&f=10filter0&f=01filter1&h=10highlight0&h=01highlight1&server=localhost%3A9000%2Fapi%2Flog&url=simple.log');
+    expect(mock.lastCall.args[2]).toBe('/my/path#bookmarks=0%2C58%2C55%2C120&f=100~filter0&f=011~filter1&h=100~highlight0&h=011~highlight1&server=localhost%3A9000%2Fapi%2Flog&url=simple.log');
   });
 });

@@ -14,6 +14,8 @@ function makeFilterURLString(filter: Filter): string {
   let res = '';
   res += boolToInt(filter.on);
   res += boolToInt(filter.inverse);
+  res += boolToInt(filter.caseSensitive);
+  res += '~';
   res += filter.text;
   return res;
 }
@@ -22,6 +24,8 @@ function makeHighlightURLString(highlight: Highlight): string {
   let res = '';
   res += boolToInt(highlight.on);
   res += boolToInt(highlight.line);
+  res += boolToInt(highlight.caseSensitive);
+  res += '~';
   res += highlight.text;
   return res;
 }
