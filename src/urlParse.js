@@ -27,7 +27,7 @@ function charToBool(s: string): ?boolean {
   return null;
 }
 
-function parseSingleFilter(s: string): ?[boolean, boolean, string] {
+function parseSingleFilter(s: string): ?[boolean, boolean, boolean, string] {
   if (s == null || s.length < 3) {
     return null;
   }
@@ -40,9 +40,16 @@ function parseSingleFilter(s: string): ?[boolean, boolean, string] {
   if (str1 == null) {
     return null;
   }
+  if (s.length >= 4 && s[3] == "|") {
+    const str2 = charToBool(s.charAt(2));
+    if (str2 != null) {
+      const text = s.substring(4);
+      return [str0, str1, str2, text];
+    }
+  }
   const text = s.substring(2);
 
-  return [str0, str1, text];
+  return [str0, str1, false, text];
 }
 
 function parseFilters(filters: string[]): Filter[] {
@@ -53,11 +60,11 @@ function parseFilters(filters: string[]): Filter[] {
     if (parsed == null) {
       return;
     }
-    const [on, inverse, text] = parsed;
+    const [on, inverse, caseSensitive, text] = parsed;
     if (!dedup.has(text)) {
       dedup.add(text);
       ret.push({
-        text, on, inverse
+        text, on, inverse, caseSensitive
       });
     }
   });
@@ -73,11 +80,11 @@ function parseHighlights(highlights: string[]): Highlight[] {
     if (parsed == null) {
       return;
     }
-    const [on, line, text] = parsed;
+    const [on, line, caseSensitive, text] = parsed;
     if (!dedup.has(text)) {
       dedup.add(text);
       ret.push({
-        text, on, line
+        text, on, line, caseSensitive
       });
     }
   });

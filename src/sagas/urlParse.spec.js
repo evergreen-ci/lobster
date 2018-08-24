@@ -15,7 +15,8 @@ describe('urlParse', function() {
         {
           on: false,
           inverse: false,
-          text: 'boop'
+          text: 'boop',
+          caseSensitive: false
         }
       ]))
       .next()

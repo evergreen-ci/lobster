@@ -22,13 +22,15 @@ export type Bookmark = {|
 export type Filter = $Exact<$ReadOnly<{
   text: string,
   on: boolean,
-  inverse: boolean
+  inverse: boolean,
+  caseSensitive: boolean
 }>>
 
 export type Highlight = $Exact<$ReadOnly<{
   text: string,
   on: boolean,
-  line: boolean
+  line: boolean,
+  caseSensitive: boolean
 }>>
 
 export type MongoLine = {|

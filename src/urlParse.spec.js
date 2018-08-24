@@ -2,7 +2,49 @@
 
 import urlParse from './urlParse';
 
+
 describe('urlParse', function() {
+  test('multi-filter', function() {
+    const queryParams = '?f=110|text&f=100|text&f=110||doop&h=01doop&h=001||boop';
+    const hash = '#f=010|text&f=010|text';
+
+    const out = urlParse(hash, queryParams);
+    expect([...out.filters])
+      .toEqual(expect.arrayContaining([
+        {
+          text: 'text',
+          on: false,
+          inverse: true,
+          caseSensitive: false
+        },
+        {
+          text: '|doop',
+          on: true,
+          inverse: true,
+          caseSensitive: false
+        }
+      ]));
+
+    expect([...out.highlights])
+      .toEqual(expect.arrayContaining([
+        {
+          text: 'doop',
+          on: false,
+          line: true,
+          caseSensitive: false
+        },
+
+        {
+          text: '|boop',
+          on: false,
+          line: false,
+          caseSensitive: true
+        }
+      ]));
+  });
+});
+
+describe('urlParse-legacy', function() {
   test('merge', function() {
     const queryParams = 'http://domain.invalid/?scroll=99&bookmarks=0,1,2&url=urlserver&server=serverserver';
     const hash = '#scroll=0&bookmarks=2,4,5&url=urlhash&server=serverhash';
@@ -24,12 +66,14 @@ describe('urlParse', function() {
         {
           text: 'text',
           on: false,
-          line: true
+          line: true,
+          caseSensitive: false
         },
         {
           text: 'doop',
           on: true,
-          line: true
+          line: true,
+          caseSensitive: false
         }
       ]));
 
@@ -38,7 +82,8 @@ describe('urlParse', function() {
         {
           text: 'doop',
           on: false,
-          inverse: true
+          inverse: true,
+          caseSensitive: false
         }
       ]));
     expect(out.url).toBe(undefined);
@@ -55,12 +100,14 @@ describe('urlParse', function() {
         {
           text: 'text',
           on: false,
-          inverse: true
+          inverse: true,
+          caseSensitive: false
         },
         {
           text: 'doop',
           on: true,
-          inverse: true
+          inverse: true,
+          caseSensitive: false
         }
       ]));
 
@@ -69,7 +116,8 @@ describe('urlParse', function() {
         {
           text: 'doop',
           on: false,
-          line: true
+          line: true,
+          caseSensitive: false
         }
       ]));
   });
@@ -84,7 +132,8 @@ describe('urlParse', function() {
         {
           text: 'text',
           on: false,
-          inverse: true
+          inverse: true,
+          caseSensitive: false
         }
       ]);
     expect([...out.highlights])
@@ -92,7 +141,8 @@ describe('urlParse', function() {
         {
           text: 'doop',
           on: true,
-          line: false
+          line: false,
+          caseSensitive: false
         }
       ]);
   });
