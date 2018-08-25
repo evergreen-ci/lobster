@@ -4,7 +4,7 @@ import { LOGVIEWER_CHANGE_SETTING, type Action } from '../../actions/logviewer';
 import type { Settings } from '../../models';
 
 const initialState: Settings = {
-  wrap: false,
+  wrap: window.localStorage.getItem('lobster-line-wrap') === 'true',
   caseSensitive: false,
   filterIntersection: false
 };
@@ -15,6 +15,7 @@ export default function(state: Settings = initialState, action: Action): Setting
   }
 
   if (action.payload.setting === 'line-wrap') {
+    window.localStorage.setItem('lobster-line-wrap', !state.wrap);
     return { ...state, wrap: !state.wrap };
   }
 

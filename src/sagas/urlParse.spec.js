@@ -1,7 +1,7 @@
 import { testSaga } from 'redux-saga-test-plan';
 import urlParse from './urlParse';
 import * as actions from '../actions';
-import { getLogViewerSettings }  from '../selectors';
+import { getLogViewerSettings } from '../selectors';
 
 describe('urlParse', function() {
   test('urlParse', () => {

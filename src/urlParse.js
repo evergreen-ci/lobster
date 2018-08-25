@@ -145,6 +145,6 @@ export default function(hashString: ?string = '', queryParams: ?string = ''): UR
   return {
     bookmarks, scroll, filters, highlights, server, url,
     caseSensitive: charToBool(hash.query.c),
-    filterIsIntersection: charToBool(hash.query.l),
+    filterIsIntersection: charToBool(hash.query.l)
   };
 }
