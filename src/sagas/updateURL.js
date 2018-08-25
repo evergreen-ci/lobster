@@ -35,6 +35,7 @@ export default function*(): Saga<void> {
   const filters = yield select(selectors.getLogViewerFilters);
   const highlights = yield select(selectors.getLogViewerHighlights);
   const bookmarks = yield select(selectors.getLogViewerBookmarks);
+  const settings = yield select(selectors.getLogViewerSettings);
 
   const parsed = {};
   parsed.f = [];
@@ -81,6 +82,10 @@ export default function*(): Saga<void> {
       parsed.url = identity.url;
     }
   }
+  if (settings.filterIntersection === true) {
+    parsed.l = boolToInt(true);
+  }
+
   if (Object.keys(parsed).length !== 0) {
     try {
       window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));

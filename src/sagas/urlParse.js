@@ -1,7 +1,7 @@
 // @flow
 
 import urlParse from '../urlParse';
-import { toggleCaseSensitivity, scrollToLine, ensureBookmark, loadBookmarks, loadInitialFilters, loadInitialHighlights } from '../actions';
+import { toggleFilterIntersection, toggleCaseSensitivity, scrollToLine, ensureBookmark, loadBookmarks, loadInitialFilters, loadInitialHighlights } from '../actions';
 import { put, select } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import { getLogViewerSettings } from '../selectors';
@@ -18,10 +18,16 @@ export default function*(): Saga<void> {
     yield put(ensureBookmark(scroll));
   }
 
+  const settings = yield select(getLogViewerSettings);
   if (urlData.caseSensitive !== null && urlData.caseSensitive !== undefined) {
-    const settings = yield select(getLogViewerSettings);
     if (settings !== urlData.caseSensitive) {
-      yield put(toggleCaseSensitivity);
+      yield put(toggleCaseSensitivity());
+    }
+  }
+
+  if (urlData.filterIsIntersection !== null && urlData.filterIsIntersection !== undefined) {
+    if (settings !== urlData.filterIsIntersection) {
+      yield put(toggleFilterIntersection());
     }
   }
 }
