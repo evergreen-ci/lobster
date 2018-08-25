@@ -94,6 +94,12 @@ function showDetailButtons(id: ?LogIdentity, clearCache: ?() => void): ?ReactNod
       <Col key={1} lg={1}><Button href={api.testLogRawURL(id.id)}>Raw</Button></Col>,
       <Col key={2} lg={1}><Button href={api.testLogURL(id.id)}>HTML</Button></Col>
     ]);
+  } else if (id.type === 'evergreen-test-by-name') {
+    buttons.push(...[
+      <Col key={0} lg={1}><Button href={api.taskURL(id.task, id.execution)}>Task</Button></Col>,
+      <Col key={1} lg={1}><Button href={api.testLogByNameRawURL(id.task, id.execution, id.test)}>Raw</Button></Col>,
+      <Col key={2} lg={1}><Button href={api.testLogByNameURL(id.task, id.execution, id.test)}>HTML</Button></Col>
+    ]);
   }
   if (clearCache != null) {
     buttons.push(<Col key={3} lg={1}><Button bsStyle="danger" onClick={clearCache}>Clear Cache</Button></Col>);

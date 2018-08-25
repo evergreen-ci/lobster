@@ -132,9 +132,9 @@ describe('CollapseMenu', () => {
       test: 'test1234'
     };
     const wrapper = makeWrapper(logIdentity);
-    const taskURL = 'http://evergreen.invalid/task/task-1234/12345';
-    const rawURL = 'http://evergreen.invalid/task_log_raw/task-1234/12345?type=ALL&text=true';
-    const HTMLURL = 'http://evergreen.invalid/task_log_raw/task-1234/12345?type=ALL';
+    const taskURL = api.taskURL(logIdentity.task, logIdentity.execution);
+    const rawURL = api.testLogByNameRawURL(logIdentity.task, logIdentity.execution, logIdentity.test);
+    const HTMLURL = api.testLogByNameURL(logIdentity.task, logIdentity.execution, logIdentity.test);
     expect(wrapper.containsAllMatchingElements([
       <Button href={taskURL}>Task</Button>,
       <Button href={rawURL}>Raw</Button>,
