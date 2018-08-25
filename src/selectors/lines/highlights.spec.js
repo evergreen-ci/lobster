@@ -13,8 +13,8 @@ test('selectors-shouldHighlightLine', function() {
   ];
 
   const highlights = [
-    { on: true, text: 'Line ', line: true },
-    { on: true, text: 'Line 4', line: false }
+    { on: true, text: 'Line ', line: true, caseSensitive: false },
+    { on: true, text: 'Line 4', line: false, caseSensitive: false }
   ];
 
   const settings = {
@@ -28,6 +28,8 @@ test('selectors-shouldHighlightLine', function() {
   lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(true));
 
 
+  highlights[0].caseSensitive = true;
+  highlights[1].caseSensitive = true;
   highlightRegexps = mergeActiveHighlights(highlights);
   highlightLinesRegexp = mergeActiveHighlightLines(highlights);
   lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(false));
@@ -43,8 +45,8 @@ test('selectors-shouldHighlightLine', function() {
 
 test('selectors-getHighlightText', function() {
   const highlights = [
-    { on: true, text: 'Line ', line: true },
-    { on: true, text: 'Line 4', line: false }
+    { on: true, text: 'Line ', line: true, caseSensitive: false },
+    { on: true, text: 'Line 4', line: false, caseSensitive: false }
   ];
 
   expect(getHighlightText(highlights)).toEqual(expect.arrayContaining(['Line 4']));
