@@ -5,7 +5,7 @@ import urlParse from './urlParse';
 
 describe('urlParse', function() {
   test('multi-filter', function() {
-    const queryParams = '?f=110|text&f=100~text&f=110~~doop&h=01doop&h=001~~boop';
+    const queryParams = '?f=110~text&f=100~text&f=110~~doop&h=01doop&h=001~~boop';
     const hash = '#f=010~text&f=010~text&l=0';
 
     const out = urlParse(hash, queryParams);
