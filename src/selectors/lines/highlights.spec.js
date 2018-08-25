@@ -20,21 +20,21 @@ test('selectors-shouldHighlightLine', function() {
   const settings = {
     filterIntersection: false,
     wrap: false,
-    caseSensitive: false
+    caseSensitive: false,
   };
 
-  let highlightRegexps = mergeActiveHighlights(highlights, false);
-  let highlightLinesRegexp = mergeActiveHighlightLines(highlights, false);
+  let highlightRegexps = mergeActiveHighlights(highlights);
+  let highlightLinesRegexp = mergeActiveHighlightLines(highlights);
   lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(true));
 
 
-  highlightRegexps = mergeActiveHighlights(highlights, true);
-  highlightLinesRegexp = mergeActiveHighlightLines(highlights, true);
+  highlightRegexps = mergeActiveHighlights(highlights);
+  highlightLinesRegexp = mergeActiveHighlightLines(highlights);
   lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(false));
 
   highlights[0].on = false;
-  highlightRegexps = mergeActiveHighlights(highlights, false);
-  highlightLinesRegexp = mergeActiveHighlightLines(highlights, false);
+  highlightRegexps = mergeActiveHighlights(highlights);
+  highlightLinesRegexp = mergeActiveHighlightLines(highlights);
   lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(false));
 
   highlights[1].line = true;

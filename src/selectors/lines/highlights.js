@@ -19,16 +19,16 @@ export function shouldHighlightLine(line: Line, highlight: RegExp[], highlightLi
   return false;
 }
 
-export function mergeActiveHighlights(highlightList: Highlight[], caseSensitive: boolean): RegExp[] {
+export function mergeActiveHighlights(highlightList: Highlight[]): RegExp[] {
   return highlightList
     .filter((elem) => elem.on)
-    .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
+    .map((elem) => elem.caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
 }
 
-export function mergeActiveHighlightLines(highlightList: Highlight[], caseSensitive: boolean): RegExp[] {
+export function mergeActiveHighlightLines(highlightList: Highlight[]): RegExp[] {
   return highlightList
     .filter((elem) => elem.on && elem.line)
-    .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
+    .map((elem) => elem.caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
 }
 
 export function getHighlightText(highlightList: Highlight[]): string[] {

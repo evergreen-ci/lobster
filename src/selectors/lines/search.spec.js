@@ -18,13 +18,13 @@ test('selectors-shouldPrintLine', function() {
     { lineNumber: 0 },
     { lineNumber: 5 }
   ];
-  let filtersRegexps = mergeActiveFilters(filters, false);
-  let inverseFilters = mergeActiveInverseFilters(filters, false);
+  let filtersRegexps = mergeActiveFilters(filters);
+  let inverseFilters = mergeActiveInverseFilters(filters);
 
   lines.forEach((line) => expect(shouldPrintLine(bookmarks, line, false, filtersRegexps, inverseFilters)).toBe(true));
 
-  filtersRegexps = mergeActiveFilters(filters, true);
-  inverseFilters = mergeActiveInverseFilters(filters, true);
+  filtersRegexps = mergeActiveFilters(filters);
+  inverseFilters = mergeActiveInverseFilters(filters);
   [lines[0], lines[5]].forEach((line) => expect(shouldPrintLine(bookmarks, line, false, filtersRegexps, inverseFilters)).toBe(true));
   [lines[1], lines[2], lines[3], lines[4]].forEach((line) => expect(shouldPrintLine(bookmarks, line, false, filtersRegexps, inverseFilters)).toBe(false));
 
@@ -34,8 +34,8 @@ test('selectors-shouldPrintLine', function() {
 
   filters[0].on = false;
   filters[0].inverse = true;
-  filtersRegexps = mergeActiveFilters(filters, false);
-  inverseFilters = mergeActiveInverseFilters(filters, false);
+  filtersRegexps = mergeActiveFilters(filters);
+  inverseFilters = mergeActiveInverseFilters(filters);
   [lines[0], lines[4], lines[5]].forEach((line) => expect(shouldPrintLine(bookmarks, line, true, filtersRegexps, inverseFilters)).toBe(true));
   [lines[1], lines[2], lines[3]].forEach((line) => expect(shouldPrintLine(bookmarks, line, true, filtersRegexps, inverseFilters)).toBe(false));
 });

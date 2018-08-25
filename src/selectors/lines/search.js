@@ -2,16 +2,16 @@
 
 import type { Line, Bookmark, Filter } from '../../models';
 
-export function mergeActiveFilters(filterList: Filter[], caseSensitive: boolean): RegExp[] {
+export function mergeActiveFilters(filterList: Filter[]): RegExp[] {
   return filterList
     .filter((elem) => elem.on && !elem.inverse)
-    .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
+    .map((elem) => elem.caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
 }
 
-export function mergeActiveInverseFilters(filterList: Filter[], caseSensitive: boolean): RegExp[] {
+export function mergeActiveInverseFilters(filterList: Filter[]): RegExp[] {
   return filterList
     .filter((elem) => elem.on && elem.inverse)
-    .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
+    .map((elem) => elem.caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
 }
 
 function findBookmark(bookmarkList: Bookmark[], lineNum: number): number {

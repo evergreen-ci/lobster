@@ -17,6 +17,7 @@ type Props = {
   settings: Settings,
   toggleSettings: {
     toggleWrap: () => void,
+    toggleCaseSensitive: () => void,
     toggleFilterIntersection: () => void
   },
   filterActions: {
@@ -28,6 +29,7 @@ type Props = {
   highlightActions: {
     removeHighlight: (string) => void,
     toggleHighlight: (string) => void,
+    toggleCaseSensitive: (string) => void,
     toggleHighlightLine: (string) => void
   },
   loadLogByIdentity: (LogIdentity) => void,
@@ -144,6 +146,17 @@ export class CollapseMenu extends React.PureComponent<Props> {
                   <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
                   <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
                 </ToggleButtonGroup>
+                <span className="toggle-label">Case Sensitive Search</span>
+                <ToggleButtonGroup
+                  className="toggle-buttons"
+                  type="radio"
+                  name="case-sensitive-on-off"
+                  value={this.props.settings.caseSensitive}
+                  onChange={this.props.toggleSettings.toggleCaseSensitive}
+                >
+                  <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
+                  <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
+                </ToggleButtonGroup>
                 <span className="toggle-label">Filter Logic</span>
                 <ToggleButtonGroup
                   className="toggle-buttons"
@@ -172,6 +185,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
             highlights={this.props.highlightList}
             removeHighlight={this.props.highlightActions.removeHighlight}
             toggleHighlight={this.props.highlightActions.toggleHighlight}
+            toggleCaseSensitive={this.props.highlightActions.toggleCaseSensitive}
             toggleHighlightLine={this.props.highlightActions.toggleHighlightLine}
           />
         </div>
@@ -197,16 +211,18 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   const filterActions = {
     toggleFilter: (text) => dispatch(actions.toggleFilter(text)),
     toggleFilterInverse: (text) => dispatch(actions.toggleFilterInverse(text)),
-    toggleCaseSensitive: (text) => dispatch(actions.toggleCaseSensitive(text)),
+    toggleCaseSensitive: (text) => dispatch(actions.toggleFilterCaseSensitive(text)),
     removeFilter: (text) => dispatch(actions.removeFilter(text))
   };
   const highlightActions = {
     toggleHighlight: (text) => dispatch(actions.toggleHighlight(text)),
     toggleHighlightLine: (text) => dispatch(actions.toggleHighlightLine(text)),
+    toggleCaseSensitive: (text) => dispatch(actions.toggleHighlightCaseSensitive(text)),
     removeHighlight: (text) => dispatch(actions.removeHighlight(text))
   };
   const toggleSettings = {
     toggleWrap: () => dispatch(actions.toggleLineWrap()),
+    toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
     toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection())
   };
 

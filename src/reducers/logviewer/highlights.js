@@ -29,6 +29,11 @@ export default function(state: Highlight[] = initialState, action: Action): High
       (highlight.text !== action.payload.text));
   }
 
+  if (action.payload.field === 'caseSensitive') {
+    return state.map(highlight =>
+      (highlight.text === action.payload.text) ? { ...highlight, caseSensitive: !highlight.caseSensitive} : highlight);
+  }
+
   if (action.payload.field === 'add') {
     return [
       ...state,

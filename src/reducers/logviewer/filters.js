@@ -41,7 +41,7 @@ export default function(state: Filter[] = initialState, action: Action): Filter[
         text: action.payload.text,
         on: true,
         inverse: false,
-        caseSensitive: false
+        caseSensitive: action.payload.caseSensitive || false
       }
     ];
   }

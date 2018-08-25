@@ -30,10 +30,10 @@ const getFilteredLineData = createSelector(
   selectors.getLogViewerSettings,
   function(searchTerm: ?string, lines: Line[], filters: Filter[], highlights: Highlight[], bookmarks: Bookmark[], settings: Settings): LineData {
     const findRegexp = makeRegexp(searchTerm, settings.caseSensitive);
-    const filter = mergeActiveFilters(filters, settings.caseSensitive);
-    const inverseFilter = mergeActiveInverseFilters(filters, settings.caseSensitive);
-    const highlight = mergeActiveHighlights(highlights, settings.caseSensitive);
-    const highlightLine = mergeActiveHighlightLines(highlights, settings.caseSensitive);
+    const filter = mergeActiveFilters(filters);
+    const inverseFilter = mergeActiveInverseFilters(filters);
+    const highlight = mergeActiveHighlights(highlights);
+    const highlightLine = mergeActiveHighlightLines(highlights);
     const highlightText = getHighlightText(highlights);
 
     const indexMap = new Map();

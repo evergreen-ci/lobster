@@ -14,8 +14,8 @@ type Props = {
   settings: Settings,
   searchTerm: string,
   searchTermError: ?Error,
-  addFilter: (string) => void,
-  addHighlight: (string) => void,
+  addFilter: (string, bool) => void,
+  addHighlight: (string, bool) => void,
   wipeCache: () => void,
   togglePanel: () => void,
   detailsOpen: boolean,
@@ -104,7 +104,7 @@ export class Toolbar extends React.PureComponent<Props> {
     }
     const { value } = this.findInput;
 
-    this.props.addFilter(value);
+    this.props.addFilter(value, this.props.settings.caseSensitive);
     // $FlowFixMe
     this.findInput.value = '';
   }
@@ -115,7 +115,7 @@ export class Toolbar extends React.PureComponent<Props> {
     }
     const { value } = this.findInput;
 
-    this.props.addHighlight(value);
+    this.props.addHighlight(value, this.props.settings.caseSensitive);
     // $FlowFixMe
     this.findInput.value = '';
   }
@@ -201,8 +201,8 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
     nextFind: () => dispatch(search('next')),
     prevFind: () => dispatch(search('prev')),
     changeSearch: (value: string) => dispatch(changeSearch(value)),
-    addFilter: (text) => dispatch(addFilter(text)),
-    addHighlight: (text) => dispatch(addHighlight(text))
+    addFilter: (text: string, caseSensitive: boolean) => dispatch(addFilter(text, caseSensitive)),
+    addHighlight: (text: string, caseSensitive: boolean) => dispatch(addHighlight(text, caseSensitive))
   };
 }
 
