@@ -4,8 +4,8 @@ import * as actions from '../actions';
 
 describe('urlParse', function() {
   test('urlParse', () => {
-    window.location.href = 'http://domain.invalid/?scroll=99&bookmarks=0,1,2&url=urlserver&server=serverserver&f=11doop';
-    window.location.hash = '#scroll=0&bookmarks=2,4,5&url=urlhash&server=serverhash&f=00boop';
+    window.location.href = 'http://domain.invalid/?scroll=99&bookmarks=0,1,2&url=urlserver&server=serverserver&f=11doop&c=0';
+    window.location.hash = '#scroll=0&bookmarks=2,4,5&url=urlhash&server=serverhash&f=00boop&c=1';
 
     testSaga(urlParse)
       .next()

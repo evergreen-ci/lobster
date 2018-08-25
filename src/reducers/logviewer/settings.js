@@ -26,9 +26,5 @@ export default function(state: Settings = initialState, action: Action): Setting
     return { ...state, filterIntersection: !state.filterIntersection };
   }
 
-  if (action.payload.setting === 'filter-intersection') {
-    return { ...state, filterIntersection: !state.filterIntersection };
-  }
-
   return state;
 }

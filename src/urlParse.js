@@ -113,7 +113,8 @@ export type URLParseData = $Exact<$ReadOnly<{
   highlights: Highlight[],
   scroll: ?number,
   server: ?string,
-  url: ?string
+  url: ?string,
+  caseSensitive: ?boolean
 }>>
 
 export default function(hashString: ?string = '', queryParams: ?string = ''): URLParseData {
@@ -140,5 +141,5 @@ export default function(hashString: ?string = '', queryParams: ?string = ''): UR
   const server = parseOptionalString(hash.query.server || query.query.server);
   const url = parseOptionalString(hash.query.url || query.query.url);
 
-  return { bookmarks, scroll, filters, highlights, server, url };
+  return { bookmarks, scroll, filters, highlights, server, url, caseSensitive: charToBool(hash.query.c) };
 }

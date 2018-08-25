@@ -1,9 +1,10 @@
 // @flow
 
 import urlParse from '../urlParse';
-import { scrollToLine, ensureBookmark, loadBookmarks, loadInitialFilters, loadInitialHighlights } from '../actions';
-import { put } from 'redux-saga/effects';
+import { toggleCaseSensitivity, scrollToLine, ensureBookmark, loadBookmarks, loadInitialFilters, loadInitialHighlights } from '../actions';
+import { put, select } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
+import { getLogViewerSettings } from '../selectors';
 
 export default function*(): Saga<void> {
   const urlData = urlParse(window.location.hash, window.location.href);
@@ -15,5 +16,12 @@ export default function*(): Saga<void> {
     const { scroll } = urlData;
     yield put(scrollToLine(scroll));
     yield put(ensureBookmark(scroll));
+  }
+
+  if (urlData.caseSensitive !== null && urlData.caseSensitive !== undefined) {
+    const settings = yield select(getLogViewerSettings);
+    if (settings != urlData.caseSensitive) {
+      yield put(toggleCaseSensitivity);
+    }
   }
 }
