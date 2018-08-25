@@ -33,6 +33,7 @@ const Main = () => (
       <Route path="/lobster/build/:build/all" render={logviewer} />
       <Route exact path="/lobster/evergreen/task/:id/:execution/:type" render={evergreenLogviewer} />
       <Route exact path="/lobster/evergreen/test/:id" render={evergreenLogviewer} />
+      <Route exact path="/lobster/evergreen/test/:id/:execution/:type" render={evergreenLogviewer} />
       <Route path="/lobster/logdrop" render={logviewer} />
       <Route path="/lobster" render={logdrop} />
       <Route path="*" render={notfound} />

@@ -34,7 +34,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  });
+  }, 75000);
 
   e2e('highlight', async (done) => {
     const driver = await makeDriver(done);
@@ -239,7 +239,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 60000);
+  }, 75000);
 
   e2e('changeurl', async (done) => {
     const driver = await makeDriver(done);
@@ -292,6 +292,7 @@ describe('e2e', function() {
 // Test that each logviewer page can actually download logs
 [
   ['/lobster/evergreen/test/testid1234', 13],
+  ['/lobster/evergreen/test/taskid1234/5/testid1234', 15],
   ['/lobster/evergreen/task/taskid1234/1234/all', 15],
   ['/lobster/build/build1234/all', 14],
   ['/lobster/build/build1234/test/test1234', 15]
