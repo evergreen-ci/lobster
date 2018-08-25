@@ -35,6 +35,11 @@ export default function(state: Filter[] = initialState, action: Action): Filter[
   }
 
   if (action.payload.field === 'add') {
+    for (let i = 0; i < state.length; ++i) {
+      if (action.payload.text === state[i].text) {
+        return state;
+      }
+    }
     return [
       ...state,
       {

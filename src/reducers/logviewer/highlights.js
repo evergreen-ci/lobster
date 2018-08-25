@@ -35,13 +35,18 @@ export default function(state: Highlight[] = initialState, action: Action): High
   }
 
   if (action.payload.field === 'add') {
+    for (let i = 0; i < state.length; ++i) {
+      if (action.payload.text === state[i].text) {
+        return state;
+      }
+    }
     return [
       ...state,
       {
         text: action.payload.text,
         on: true,
         line: false,
-        caseSensitive: false
+        caseSensitive: action.payload.caseSensitive || false
       }
     ];
   }
