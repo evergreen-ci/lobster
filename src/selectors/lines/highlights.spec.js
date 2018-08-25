@@ -20,7 +20,7 @@ test('selectors-shouldHighlightLine', function() {
   const settings = {
     filterIntersection: false,
     wrap: false,
-    caseSensitive: false,
+    caseSensitive: false
   };
 
   let highlightRegexps = mergeActiveHighlights(highlights);

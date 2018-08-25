@@ -31,7 +31,7 @@ export default function(state: Filter[] = initialState, action: Action): Filter[
 
   if (action.payload.field === 'caseSensitive') {
     return state.map(filter =>
-      (filter.text === action.payload.text) ? { ...filter, caseSensitive: !filter.caseSensitive} : filter);
+      (filter.text === action.payload.text) ? { ...filter, caseSensitive: !filter.caseSensitive } : filter);
   }
 
   if (action.payload.field === 'add') {

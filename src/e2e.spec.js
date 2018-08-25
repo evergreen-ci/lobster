@@ -319,4 +319,4 @@ describe('e2e', function() {
       await driver.quit();
     }
   });
-})
+});

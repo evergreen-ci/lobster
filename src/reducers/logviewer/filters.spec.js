@@ -4,30 +4,30 @@ import filters from './filters';
 describe('filters', () => {
   test('add', () => {
     const out = filters([], actions.addFilter('text', true));
-    expect(out).toHaveLength(1)
+    expect(out).toHaveLength(1);
     expect(out[0]).toMatchSnapshot();
 
     const out2 = filters(out, actions.addFilter('text', false));
-    expect(out2).toHaveLength(1)
+    expect(out2).toHaveLength(1);
     expect(out2[0].caseSensitive).toBe(true);
-  })
+  });
 
   test('caseSensitive', () => {
     const out = filters(filters([], actions.addFilter('text', true)), actions.toggleFilterCaseSensitive('text'));
-    expect(out).toHaveLength(1)
+    expect(out).toHaveLength(1);
     expect(out[0].caseSensitive).toBe(false);
 
     const out2 = filters(out, actions.toggleFilterCaseSensitive('text'));
-    expect(out2).toHaveLength(1)
+    expect(out2).toHaveLength(1);
     expect(out2[0].caseSensitive).toBe(true);
   });
 
   test('remove', () => {
     const out = filters([], actions.addFilter('text', true));
-    expect(out).toHaveLength(1)
+    expect(out).toHaveLength(1);
 
     const out2 = filters(out, actions.removeFilter('text'));
-    expect(out2).toHaveLength(0)
+    expect(out2).toHaveLength(0);
   });
 
   test('inverse', () => {
@@ -65,7 +65,7 @@ describe('filters', () => {
         'on': true,
         'line': 'true',
         'caseSensitive': true
-      },
+      }
     ]));
     expect(out).toHaveLength(2);
   });

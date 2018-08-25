@@ -116,8 +116,8 @@ describe('CollapseMenu', () => {
       id: 'task-1234'
     };
     const wrapper = makeWrapper(logIdentity);
-    const rawURL = api.testLogRawURL(logIdentity.id)
-    const HTMLURL = api.testLogURL(logIdentity.id)
+    const rawURL = api.testLogRawURL(logIdentity.id);
+    const HTMLURL = api.testLogURL(logIdentity.id);
     expect(wrapper.containsAllMatchingElements([
       <Button href={rawURL}>Raw</Button>,
       <Button href={HTMLURL}>HTML</Button>

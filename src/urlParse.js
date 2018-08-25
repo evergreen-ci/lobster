@@ -40,7 +40,7 @@ function parseSingleFilter(s: string): ?[boolean, boolean, boolean, string] {
   if (str1 == null) {
     return null;
   }
-  if (s.length >= 4 && s[3] === "~") {
+  if (s.length >= 4 && s[3] === '~') {
     const str2 = charToBool(s.charAt(2));
     if (str2 != null) {
       const text = s.substring(4);

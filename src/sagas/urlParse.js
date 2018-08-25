@@ -20,7 +20,7 @@ export default function*(): Saga<void> {
 
   if (urlData.caseSensitive !== null && urlData.caseSensitive !== undefined) {
     const settings = yield select(getLogViewerSettings);
-    if (settings != urlData.caseSensitive) {
+    if (settings !== urlData.caseSensitive) {
       yield put(toggleCaseSensitivity);
     }
   }

@@ -172,7 +172,7 @@ function changeFilter(field: string, text: string, caseSensitive?: boolean): Cha
   };
 }
 
-export function addFilter(text: string, caseSensitive: bool): ChangeFilter {
+export function addFilter(text: string, caseSensitive: boolean): ChangeFilter {
   return changeFilter('add', text, caseSensitive);
 }
 
@@ -212,7 +212,7 @@ function changeHighlight(field: string, text: string, caseSensitive?: boolean): 
   };
 }
 
-export function addHighlight(text: string, caseSensitive: bool): ChangeHighlight {
+export function addHighlight(text: string, caseSensitive: boolean): ChangeHighlight {
   return changeHighlight('add', text, caseSensitive);
 }
 
