@@ -67,7 +67,7 @@ describe('e2e', function() {
       expect(results).toHaveLength(0);
 
       await l.showDetails();
-      await l.caseToggle();
+      await l.caseToggleHighlight(1);
       await l.showDetails();
 
       const highlighted = await l.highlightedLines();

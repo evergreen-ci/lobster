@@ -162,6 +162,12 @@ export class Lobster {
     await button.click();
   }
 
+  async caseToggleHighlight(n: number) {
+    const group = await this._driver.wait(until.elementLocated(By.xpath(highlightCaseToggleGroup(n))));
+    const button = await group.findElement(By.xpath('.//label[not(contains(@class, " active"))]'));
+    await button.click();
+  }
+
   async logicToggle() {
     const lgroup = await this._driver.wait(until.elementLocated(By.xpath(logicToggleGroup)));
     const button = await lgroup.findElement(By.xpath('.//label[not(contains(@class, " active"))]'));
