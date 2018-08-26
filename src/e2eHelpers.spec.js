@@ -25,7 +25,7 @@ const cacheModal = '//*[@id="root"]/div/div/div/div';
 const logURLField = '//*[@id="urlInput"]';
 const logURLApplyButton = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[1]/div[2]/button';
 const filterCaseToggleGroup = (n: number) => {
- return `//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/div[1]/div/div[${n}]/div[3]`;
+  return `//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/div[1]/div/div[${n}]/div[3]`;
 };
 const highlightCaseToggleGroup = (n: number) => {
   return `//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/div[2]/div/div[${n}]/div[3]`;
