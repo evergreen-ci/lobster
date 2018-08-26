@@ -1,4 +1,5 @@
 // @flow
+
 import { shouldPrintLine, mergeActiveFilters, mergeActiveInverseFilters } from './search';
 
 test('selectors-shouldPrintLine', function() {
@@ -13,7 +14,7 @@ test('selectors-shouldPrintLine', function() {
 
   const filters = [
     { on: true, text: 'Line ', inverse: false, caseSensitive: false },
-    { on: true, text: 'Line 4', inverse: false, caseSensitive: false  }
+    { on: true, text: 'Line 4', inverse: false, caseSensitive: false }
   ];
   const bookmarks = [
     { lineNumber: 0 },
