@@ -159,12 +159,14 @@ export class Lobster {
   async caseToggleFilter(n: number) {
     const group = await this._driver.wait(until.elementLocated(By.xpath(filterCaseToggleGroup(n))));
     const button = await group.findElement(By.xpath('.//label[not(contains(@class, " active"))]'));
+    await this._driver.wait(until.elementIsVisible(button));
     await button.click();
   }
 
   async caseToggleHighlight(n: number) {
     const group = await this._driver.wait(until.elementLocated(By.xpath(highlightCaseToggleGroup(n))));
     const button = await group.findElement(By.xpath('.//label[not(contains(@class, " active"))]'));
+    await this._driver.wait(until.elementIsVisible(button));
     await button.click();
   }
 
