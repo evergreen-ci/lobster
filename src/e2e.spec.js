@@ -100,7 +100,7 @@ describe('e2e', function() {
       expect(divs).toHaveLength(6);
 
       await l.showDetails();
-      await l.caseToggle();
+      await l.caseToggleFilter(1);
       await l.showDetails();
 
       divs = await l.lines();
@@ -112,10 +112,9 @@ describe('e2e', function() {
       console.log('end search 2');
 
       await l.addFilter();
-      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f=100~Line%20&f=100~2&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
-
+      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f=101~Line%20&f=100~2&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
       await l.showDetails();
-      await l.caseToggle();
+      await l.caseToggleFilter(1);
       await l.showDetails();
 
       divs = await l.lines();
