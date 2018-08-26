@@ -34,7 +34,7 @@ describe('e2e', function() {
     } finally {
       await driver.quit();
     }
-  }, 75000);
+  });
 
   e2e('highlight', async (done) => {
     const driver = await makeDriver(done);
@@ -87,10 +87,8 @@ describe('e2e', function() {
       const l = new Lobster(driver);
       await l.init();
 
-      console.log('start search');
       await l.search('Line ');
       await l.search(Key.ENTER);
-      console.log('end search');
 
       await l.addFilter();
 
@@ -106,10 +104,8 @@ describe('e2e', function() {
       divs = await l.lines();
       expect(divs).toHaveLength(2);
 
-      console.log('start search 2');
       await l.search('2');
       await l.search(Key.ENTER);
-      console.log('end search 2');
 
       await l.addFilter();
       expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f=101~Line%20&f=100~2&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);

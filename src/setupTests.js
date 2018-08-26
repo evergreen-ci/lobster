@@ -34,7 +34,7 @@ const skip = (name, ...tail) => {
 global.e2e = skip;
 global.e2eChrome = skip;
 if (process.env.LOBSTER_E2E_SERVER_PORT) {
-  const envDeadline = process.env.CI === 'true' ? 60000 : 20000;
+  const envDeadline = process.env.CI === 'true' ? 120000 : 30000;
   process.env.LOBSTER_E2E_SERVER_PORT = parseInt(process.env.LOBSTER_E2E_SERVER_PORT, 10);
   global.e2e = (name, f, deadline, ...tail) => {
     return test(`e2e-${name}`, f, deadline || envDeadline, ...tail);
