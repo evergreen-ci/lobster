@@ -144,7 +144,7 @@ export class Lobster {
     this._showdetails = !this._showdetails;
   }
 
-  async caseToggle() {
+  async caseToggleSearch() {
     const group = await this._driver.wait(until.elementLocated(By.xpath(caseToggleGroup)));
     const button = await group.findElement(By.xpath('.//label[not(contains(@class, " active"))]'));
     await button.click();

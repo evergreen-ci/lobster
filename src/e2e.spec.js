@@ -14,7 +14,7 @@ describe('e2e', function() {
       expect(results).toHaveLength(5);
 
       await l.showDetails();
-      await l.caseToggle();
+      await l.caseToggleSearch();
       await l.showDetails();
 
       // assert no search results
