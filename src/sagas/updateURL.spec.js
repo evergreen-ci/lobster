@@ -106,7 +106,7 @@ describe('updateURL', () => {
     expect(mock.callCount).toBe(1);
     expect(mock.lastCall.args[0]).toEqual({});
     expect(mock.lastCall.args[1]).toBe('');
-    expect(mock.lastCall.args[2]).toBe('/my/path#bookmarks=0%2C58%2C55%2C120&f=100~filter0&f=011~filter1&h=100~highlight0&h=011~highlight1&l=1');
+    expect(mock.lastCall.args[2]).toBe('/my/path#bookmarks=0%2C58%2C55%2C120&f~=100~filter0&f~=011~filter1&h~=100~highlight0&h~=011~highlight1&l=1');
   });
 
   test('lobster-withdata', function() {
@@ -174,6 +174,6 @@ describe('updateURL', () => {
     expect(mock.callCount).toBe(1);
     expect(mock.lastCall.args[0]).toEqual({});
     expect(mock.lastCall.args[1]).toBe('');
-    expect(mock.lastCall.args[2]).toBe('/my/path#bookmarks=0%2C58%2C55%2C120&f=100~filter0&f=011~filter1&h=100~highlight0&h=011~highlight1&l=1&server=localhost%3A9000%2Fapi%2Flog&url=simple.log');
+    expect(mock.lastCall.args[2]).toBe('/my/path#bookmarks=0%2C58%2C55%2C120&f~=100~filter0&f~=011~filter1&h~=100~highlight0&h~=011~highlight1&l=1&server=localhost%3A9000%2Fapi%2Flog&url=simple.log');
   });
 });

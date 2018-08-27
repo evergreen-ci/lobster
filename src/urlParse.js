@@ -27,7 +27,7 @@ function charToBool(s: string): ?boolean {
   return null;
 }
 
-function parseSingleFilter(s: string): ?[boolean, boolean, boolean, string] {
+function parseSingleLegacyFilter(s: string): ?[boolean, boolean, boolean, string] {
   if (s == null || s.length < 3) {
     return null;
   }
@@ -40,19 +40,33 @@ function parseSingleFilter(s: string): ?[boolean, boolean, boolean, string] {
   if (str1 == null) {
     return null;
   }
-  if (s.length >= 4 && s[3] === '~') {
-    const str2 = charToBool(s.charAt(2));
-    if (str2 != null) {
-      const text = s.substring(4);
-      return [str0, str1, str2, text];
-    }
-  }
   const text = s.substring(2);
 
   return [str0, str1, false, text];
 }
 
-function parseFilters(filters: string[]): Filter[] {
+function parseSingleFilter(s: string): ?[boolean, boolean, boolean, string] {
+  if (s == null || s.length < 4 || s[3] !== '~') {
+    return null;
+  }
+
+  const str0 = charToBool(s.charAt(0));
+  if (str0 == null) {
+    return null;
+  }
+  const str1 = charToBool(s.charAt(1));
+  if (str1 == null) {
+    return null;
+  }
+  const str2 = charToBool(s.charAt(2));
+  if (str2 == null) {
+    return null;
+  }
+  const text = s.substring(4);
+  return [str0, str1, str2, text];
+}
+
+function parseFilters(filters: string[], oldFilters: string[]): Filter[] {
   const dedup = new Set();
   const ret = [];
   filters.forEach((f) => {
@@ -69,14 +83,42 @@ function parseFilters(filters: string[]): Filter[] {
     }
   });
 
+  oldFilters.forEach((f) => {
+    const parsed = parseSingleLegacyFilter(f);
+    if (parsed == null) {
+      return;
+    }
+    const [on, inverse, caseSensitive, text] = parsed;
+    if (!dedup.has(text)) {
+      dedup.add(text);
+      ret.push({
+        text, on, inverse, caseSensitive
+      });
+    }
+  });
+
   return ret;
 }
 
-function parseHighlights(highlights: string[]): Highlight[] {
+function parseHighlights(highlights: string[], oldHighlights: string[]): Highlight[] {
   const dedup = new Set();
   const ret = [];
   highlights.forEach((h) => {
     const parsed = parseSingleFilter(h);
+    if (parsed == null) {
+      return;
+    }
+    const [on, line, caseSensitive, text] = parsed;
+    if (!dedup.has(text)) {
+      dedup.add(text);
+      ret.push({
+        text, on, line, caseSensitive
+      });
+    }
+  });
+
+  oldHighlights.forEach((h) => {
+    const parsed = parseSingleLegacyFilter(h);
     if (parsed == null) {
       return;
     }
@@ -124,7 +166,9 @@ export default function(hashString: ?string = '', queryParams: ?string = ''): UR
 
   [hash, query].forEach((obj) => {
     arrayify(obj.query, 'f');
+    arrayify(obj.query, 'f~');
     arrayify(obj.query, 'h');
+    arrayify(obj.query, 'h~');
   });
 
   const bookmarks: Set<number> = new Set([
@@ -137,8 +181,8 @@ export default function(hashString: ?string = '', queryParams: ?string = ''): UR
     scroll = undefined;
   }
 
-  const filters = parseFilters([...hash.query.f, ...query.query.f]);
-  const highlights = parseHighlights([...hash.query.h, ...query.query.h]);
+  const filters = parseFilters(hash.query['f~'], [...hash.query.f, ...query.query.f]);
+  const highlights = parseHighlights(hash.query['h~'], [...hash.query.h, ...query.query.h]);
   const server = parseOptionalString(hash.query.server || query.query.server);
   const url = parseOptionalString(hash.query.url || query.query.url);
 

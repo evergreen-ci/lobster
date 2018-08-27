@@ -4,8 +4,8 @@ import urlParse from './urlParse';
 
 describe('urlParse', function() {
   test('multi-filter', function() {
-    const queryParams = '?f=110~text&f=100~text&f=110~~doop&h=01doop&h=001~~boop';
-    const hash = '#f=010~text&f=010~text&l=0';
+    const queryParams = '?f~=110~text&f~=100~text&f=110~~doop&h=001~~boop';
+    const hash = '#f~=010~text&f~=010~text&l=0&h~=011~doop';
 
     const out = urlParse(hash, queryParams);
     expect([...out.filters])
@@ -17,7 +17,7 @@ describe('urlParse', function() {
           caseSensitive: false
         },
         {
-          text: '~doop',
+          text: '0~~doop',
           on: true,
           inverse: true,
           caseSensitive: false
@@ -30,13 +30,13 @@ describe('urlParse', function() {
           text: 'doop',
           on: false,
           line: true,
-          caseSensitive: false
+          caseSensitive: true
         },
         {
-          text: '~boop',
+          text: '1~~boop',
           on: false,
           line: false,
-          caseSensitive: true
+          caseSensitive: false
         }
       ]));
   });

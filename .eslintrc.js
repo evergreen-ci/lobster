@@ -110,6 +110,7 @@ module.exports = {
       'asyncArrow': 'always'
     }],
     'no-lonely-if': 0,
+    'no-mixed-operators': 2,
 
     'dependencies/case-sensitive': 2,
     'dependencies/no-unresolved': 2,

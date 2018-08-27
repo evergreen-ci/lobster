@@ -38,13 +38,13 @@ export default function*(): Saga<void> {
   const settings = yield select(selectors.getLogViewerSettings);
 
   const parsed = {};
-  parsed.f = [];
-  parsed.h = [];
+  parsed['f~'] = [];
+  parsed['h~'] = [];
   for (let i = 0; i < filters.length; i++) {
-    parsed.f.push(makeFilterURLString(filters[i]));
+    parsed['f~'].push(makeFilterURLString(filters[i]));
   }
   for (let i = 0; i < highlights.length; i++) {
-    parsed.h.push(makeHighlightURLString(highlights[i]));
+    parsed['h~'].push(makeHighlightURLString(highlights[i]));
   }
   if (bookmarks.length > 0) {
     let bookmarkStr = '';
