@@ -54,11 +54,11 @@ test('Filters', function() {
   )).toBe(true);
 
   const buttons = wrapper.find('Button');
-  expect(buttons).toHaveLength(10);
+  expect(buttons).toHaveLength(14);
   buttons.at(0).simulate('click', {});
   expect(data).toHaveLength(1);
   wrapper.setProps({ filters: data });
-  expect(wrapper.find('Button')).toHaveLength(5);
+  expect(wrapper.find('Button')).toHaveLength(7);
 });
 
 test('Filter', function() {
@@ -91,7 +91,7 @@ test('Filter', function() {
   ])).toBe(true);
 
   const buttons = wrapper.find('Button');
-  expect(buttons).toHaveLength(5);
+  expect(buttons).toHaveLength(7);
   buttons.map(function(e, index) {
     data = {
       text: 'Hello',

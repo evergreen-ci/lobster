@@ -8,6 +8,7 @@ type HighlightProps = {
   highlight: HighlightType,
   removeHighlight: (string) => void,
   toggleHighlight: (string) => void,
+  toggleCaseSensitive: (string) => void,
   toggleHighlightLine: (string) => void
 }
 
@@ -15,6 +16,7 @@ type HighlightsProps = {
   highlights: HighlightType[],
   removeHighlight: (string) => void,
   toggleHighlight: (string) => void,
+  toggleCaseSensitive: (string) => void,
   toggleHighlightLine: (string) => void
 }
 
@@ -28,6 +30,7 @@ export const Highlights = (props: HighlightsProps) => {
             highlight={highlight}
             removeHighlight={props.removeHighlight}
             toggleHighlight={props.toggleHighlight}
+            toggleCaseSensitive={props.toggleCaseSensitive}
             toggleHighlightLine={props.toggleHighlightLine}
           />
         );
@@ -40,6 +43,7 @@ export const Highlights = (props: HighlightsProps) => {
 export class Highlight extends React.PureComponent<HighlightProps> {
   removeHighlight = () => this.props.removeHighlight(this.props.highlight.text);
   toggleHighlight = () => this.props.toggleHighlight(this.props.highlight.text);
+  toggleCaseSensitive= () => this.props.toggleCaseSensitive(this.props.highlight.text);
   toggleHighlightLine = () => this.props.toggleHighlightLine(this.props.highlight.text);
 
   render() {
@@ -73,6 +77,20 @@ export class Highlight extends React.PureComponent<HighlightProps> {
           </ToggleButton>
           <ToggleButton value={true} bsSize="small" bsStyle="primary">
             line
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <ToggleButtonGroup
+          className="toggle-buttons"
+          type="radio"
+          name="highlight-line-word"
+          value={this.props.highlight.caseSensitive}
+          onChange={this.toggleCaseSensitive}
+        >
+          <ToggleButton value={true} bsSize="small" bsStyle="info">
+            case sensitive
+          </ToggleButton>
+          <ToggleButton value={false} bsSize="small" bsStyle="info">
+            case insensitive
           </ToggleButton>
         </ToggleButtonGroup>
         <span className="filter-highlight-text">{this.props.highlight.text}</span>

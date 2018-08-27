@@ -29,13 +29,24 @@ export default function(state: Filter[] = initialState, action: Action): Filter[
       (filter.text !== action.payload.text));
   }
 
+  if (action.payload.field === 'caseSensitive') {
+    return state.map(filter =>
+      (filter.text === action.payload.text) ? { ...filter, caseSensitive: !filter.caseSensitive } : filter);
+  }
+
   if (action.payload.field === 'add') {
+    for (let i = 0; i < state.length; ++i) {
+      if (action.payload.text === state[i].text) {
+        return state;
+      }
+    }
     return [
       ...state,
       {
         text: action.payload.text,
         on: true,
-        inverse: false
+        inverse: false,
+        caseSensitive: action.payload.caseSensitive || false
       }
     ];
   }

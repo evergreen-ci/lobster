@@ -14,6 +14,8 @@ function makeFilterURLString(filter: Filter): string {
   let res = '';
   res += boolToInt(filter.on);
   res += boolToInt(filter.inverse);
+  res += boolToInt(filter.caseSensitive);
+  res += '~';
   res += filter.text;
   return res;
 }
@@ -22,6 +24,8 @@ function makeHighlightURLString(highlight: Highlight): string {
   let res = '';
   res += boolToInt(highlight.on);
   res += boolToInt(highlight.line);
+  res += boolToInt(highlight.caseSensitive);
+  res += '~';
   res += highlight.text;
   return res;
 }
@@ -31,15 +35,16 @@ export default function*(): Saga<void> {
   const filters = yield select(selectors.getLogViewerFilters);
   const highlights = yield select(selectors.getLogViewerHighlights);
   const bookmarks = yield select(selectors.getLogViewerBookmarks);
+  const settings = yield select(selectors.getLogViewerSettings);
 
   const parsed = {};
-  parsed.f = [];
-  parsed.h = [];
+  parsed['f~'] = [];
+  parsed['h~'] = [];
   for (let i = 0; i < filters.length; i++) {
-    parsed.f.push(makeFilterURLString(filters[i]));
+    parsed['f~'].push(makeFilterURLString(filters[i]));
   }
   for (let i = 0; i < highlights.length; i++) {
-    parsed.h.push(makeHighlightURLString(highlights[i]));
+    parsed['h~'].push(makeHighlightURLString(highlights[i]));
   }
   if (bookmarks.length > 0) {
     let bookmarkStr = '';
@@ -77,6 +82,10 @@ export default function*(): Saga<void> {
       parsed.url = identity.url;
     }
   }
+  if (settings.filterIntersection === true) {
+    parsed.l = boolToInt(true);
+  }
+
   if (Object.keys(parsed).length !== 0) {
     try {
       window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));

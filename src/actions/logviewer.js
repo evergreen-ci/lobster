@@ -28,7 +28,8 @@ export type ChangeFilter = {|
   type: 'logviewer:change-filter',
   +payload: {|
     +field: string,
-    +text: string
+    +text: string,
+    +caseSensitive?: boolean
   |}
 |}
 
@@ -36,7 +37,8 @@ export type ChangeHighlight = {|
   type: 'logviewer:change-highlight',
   +payload: {|
     +field: string,
-    +text: string
+    +text: string,
+    +caseSensitive?: boolean
   |}
 |}
 
@@ -159,18 +161,19 @@ export function loadInitialFilters(initialFilters: Filter[]): LoadFilters {
   };
 }
 
-function changeFilter(field: string, text: string): ChangeFilter {
+function changeFilter(field: string, text: string, caseSensitive?: boolean): ChangeFilter {
   return {
     type: LOGVIEWER_CHANGE_FILTER,
     payload: {
       field: field,
-      text: text
+      text: text,
+      caseSensitive: caseSensitive
     }
   };
 }
 
-export function addFilter(text: string): ChangeFilter {
-  return changeFilter('add', text);
+export function addFilter(text: string, caseSensitive: boolean): ChangeFilter {
+  return changeFilter('add', text, caseSensitive);
 }
 
 export function toggleFilterInverse(text: string): ChangeFilter {
@@ -179,6 +182,10 @@ export function toggleFilterInverse(text: string): ChangeFilter {
 
 export function toggleFilter(text: string): ChangeFilter {
   return changeFilter('on', text);
+}
+
+export function toggleFilterCaseSensitive(text: string): ChangeFilter {
+  return changeFilter('caseSensitive', text);
 }
 
 export function removeFilter(text: string): ChangeFilter {
@@ -194,18 +201,19 @@ export function loadInitialHighlights(initialHighlights: Highlight[]): LoadHighl
   };
 }
 
-function changeHighlight(field: string, text: string): ChangeHighlight {
+function changeHighlight(field: string, text: string, caseSensitive?: boolean): ChangeHighlight {
   return {
     type: LOGVIEWER_CHANGE_HIGHLIGHT,
     payload: {
       field: field,
-      text: text
+      text: text,
+      caseSensitive: caseSensitive
     }
   };
 }
 
-export function addHighlight(text: string): ChangeHighlight {
-  return changeHighlight('add', text);
+export function addHighlight(text: string, caseSensitive: boolean): ChangeHighlight {
+  return changeHighlight('add', text, caseSensitive);
 }
 
 export function toggleHighlightLine(text: string): ChangeHighlight {
@@ -214,6 +222,10 @@ export function toggleHighlightLine(text: string): ChangeHighlight {
 
 export function toggleHighlight(text: string): ChangeHighlight {
   return changeHighlight('on', text);
+}
+
+export function toggleHighlightCaseSensitive(text: string): ChangeHighlight {
+  return changeHighlight('caseSensitive', text);
 }
 
 export function removeHighlight(text: string): ChangeHighlight {

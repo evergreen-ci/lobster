@@ -6,12 +6,13 @@ import path from 'path';
 // Enzyme boilerplate for react
 import Adapter from 'enzyme-adapter-react-16';
 import Enzyme from 'enzyme';
-Enzyme.configure({ adapter: new Adapter() });
 
 // Polyfills
 import 'babel-polyfill';
 import 'url-search-params-polyfill';
 import localStorageMemory from 'localstorage-memory';
+
+Enzyme.configure({ adapter: new Adapter() });
 
 if (!global.window) {
   global.window = {};
@@ -34,7 +35,7 @@ const skip = (name, ...tail) => {
 global.e2e = skip;
 global.e2eChrome = skip;
 if (process.env.LOBSTER_E2E_SERVER_PORT) {
-  const envDeadline = process.env.CI === 'true' ? 60000 : 15000;
+  const envDeadline = process.env.CI === 'true' ? 120000 : 30000;
   process.env.LOBSTER_E2E_SERVER_PORT = parseInt(process.env.LOBSTER_E2E_SERVER_PORT, 10);
   global.e2e = (name, f, deadline, ...tail) => {
     return test(`e2e-${name}`, f, deadline || envDeadline, ...tail);

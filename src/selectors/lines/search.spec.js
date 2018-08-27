@@ -1,30 +1,34 @@
+// @flow
+
 import { shouldPrintLine, mergeActiveFilters, mergeActiveInverseFilters } from './search';
 
 test('selectors-shouldPrintLine', function() {
   const lines = [
-    { lineNumber: 0, text: 'line 0' },
-    { lineNumber: 1, text: 'line 1' },
-    { lineNumber: 2, text: 'line 2' },
-    { lineNumber: 3, text: 'line 3' },
-    { lineNumber: 4, text: 'line 4' },
-    { lineNumber: 5, text: 'line 5' }
+    { lineNumber: 0, text: 'line 0', gitRef: null, port: null },
+    { lineNumber: 1, text: 'line 1', gitRef: null, port: null },
+    { lineNumber: 2, text: 'line 2', gitRef: null, port: null },
+    { lineNumber: 3, text: 'line 3', gitRef: null, port: null },
+    { lineNumber: 4, text: 'line 4', gitRef: null, port: null },
+    { lineNumber: 5, text: 'line 5', gitRef: null, port: null }
   ];
 
   const filters = [
-    { on: true, text: 'Line ', inverse: false },
-    { on: true, text: 'Line 4', inverse: false }
+    { on: true, text: 'Line ', inverse: false, caseSensitive: false },
+    { on: true, text: 'Line 4', inverse: false, caseSensitive: false }
   ];
   const bookmarks = [
     { lineNumber: 0 },
     { lineNumber: 5 }
   ];
-  let filtersRegexps = mergeActiveFilters(filters, false);
-  let inverseFilters = mergeActiveInverseFilters(filters, false);
+  let filtersRegexps = mergeActiveFilters(filters);
+  let inverseFilters = mergeActiveInverseFilters(filters);
 
   lines.forEach((line) => expect(shouldPrintLine(bookmarks, line, false, filtersRegexps, inverseFilters)).toBe(true));
 
-  filtersRegexps = mergeActiveFilters(filters, true);
-  inverseFilters = mergeActiveInverseFilters(filters, true);
+  filters[0].caseSensitive = true;
+  filters[1].caseSensitive = true;
+  filtersRegexps = mergeActiveFilters(filters);
+  inverseFilters = mergeActiveInverseFilters(filters);
   [lines[0], lines[5]].forEach((line) => expect(shouldPrintLine(bookmarks, line, false, filtersRegexps, inverseFilters)).toBe(true));
   [lines[1], lines[2], lines[3], lines[4]].forEach((line) => expect(shouldPrintLine(bookmarks, line, false, filtersRegexps, inverseFilters)).toBe(false));
 
@@ -34,8 +38,10 @@ test('selectors-shouldPrintLine', function() {
 
   filters[0].on = false;
   filters[0].inverse = true;
-  filtersRegexps = mergeActiveFilters(filters, false);
-  inverseFilters = mergeActiveInverseFilters(filters, false);
+  filters[0].caseSensitive = false;
+  filters[1].caseSensitive = false;
+  filtersRegexps = mergeActiveFilters(filters);
+  inverseFilters = mergeActiveInverseFilters(filters);
   [lines[0], lines[4], lines[5]].forEach((line) => expect(shouldPrintLine(bookmarks, line, true, filtersRegexps, inverseFilters)).toBe(true));
   [lines[1], lines[2], lines[3]].forEach((line) => expect(shouldPrintLine(bookmarks, line, true, filtersRegexps, inverseFilters)).toBe(false));
 });
