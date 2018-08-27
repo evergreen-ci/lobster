@@ -48,6 +48,7 @@
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^5.2.0",
     "eslint-config-mongodb-js": "^3.0.1",
+    "eslint-config-react-app": "^2.1.0",
     "eslint-junit": "^1.0.1",
     "eslint-plugin-babel": "^5.1.0",
     "eslint-plugin-dependencies": "^2.4.0",
