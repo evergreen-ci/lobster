@@ -196,7 +196,7 @@ describe('e2e', function() {
   // ~1.67 million*height). An infinite list implementation that does not rely
   // on a giant div is going to be necessary to fix this, but I haven't looked
   // into whether one exists, nor whether or not it's possible to make one
-  e2eChrome('render-stress', async (done) => {
+  e2e('render-stress', async (done) => {
     const driver = await makeDriver(done);
     try {
       // Element 0: Large number close to the maximum number of lines
