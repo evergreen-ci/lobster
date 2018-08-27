@@ -6,12 +6,13 @@ import path from 'path';
 // Enzyme boilerplate for react
 import Adapter from 'enzyme-adapter-react-16';
 import Enzyme from 'enzyme';
-Enzyme.configure({ adapter: new Adapter() });
 
 // Polyfills
 import 'babel-polyfill';
 import 'url-search-params-polyfill';
 import localStorageMemory from 'localstorage-memory';
+
+Enzyme.configure({ adapter: new Adapter() });
 
 if (!global.window) {
   global.window = {};
