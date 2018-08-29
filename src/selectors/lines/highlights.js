@@ -1,6 +1,6 @@
 // @flow strict
 
-import { createSelector } from 'reselect';
+import { defaultMemoize } from 'reselect';
 import shouldLineMemoizer from './shouldLineMemoizer';
 import type { Line, Highlight, Settings } from '../../models';
 
@@ -23,8 +23,7 @@ export const shouldHighlightLine = shouldLineMemoizer(
   }
 );
 
-export const getHighlightText = createSelector(
-  (s) => s,
+export const getHighlightText = defaultMemoize(
   function(highlightList: Highlight[]): string[] {
     const highlight = [];
     highlightList.forEach((element) => {
