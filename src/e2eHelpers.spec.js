@@ -130,6 +130,10 @@ export class Lobster {
 
   async search(text: string) {
     const find = this._driver.findElement(By.id('findInput'));
+    // wait for debounce to expire
+    await this._driver.wait(new Promise((resolve) => {
+      return setTimeout(resolve, 150);
+    }));
     await find.sendKeys(text);
   }
 
