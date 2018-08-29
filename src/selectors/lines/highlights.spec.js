@@ -1,6 +1,7 @@
 // @flow
 
-import { getHighlightText, shouldHighlightLine, mergeActiveHighlights, mergeActiveHighlightLines } from './highlights';
+import { getHighlightText, shouldHighlightLine } from './highlights';
+import { activeHighlights, activeHighlightLines } from './merge';
 
 test('selectors-shouldHighlightLine', function() {
   const lines = [
@@ -23,20 +24,20 @@ test('selectors-shouldHighlightLine', function() {
     caseSensitive: false
   };
 
-  let highlightRegexps = mergeActiveHighlights(highlights);
-  let highlightLinesRegexp = mergeActiveHighlightLines(highlights);
+  let highlightRegexps = activeHighlights(highlights);
+  let highlightLinesRegexp = activeHighlightLines(highlights);
   lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(true));
 
 
   highlights[0].caseSensitive = true;
   highlights[1].caseSensitive = true;
-  highlightRegexps = mergeActiveHighlights(highlights);
-  highlightLinesRegexp = mergeActiveHighlightLines(highlights);
+  highlightRegexps = activeHighlights(highlights.slice());
+  highlightLinesRegexp = activeHighlightLines(highlights.slice());
   lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(false));
 
   highlights[0].on = false;
-  highlightRegexps = mergeActiveHighlights(highlights);
-  highlightLinesRegexp = mergeActiveHighlightLines(highlights);
+  highlightRegexps = activeHighlights(highlights.slice());
+  highlightLinesRegexp = activeHighlightLines(highlights.slice());
   lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(false));
 
   highlights[1].line = true;

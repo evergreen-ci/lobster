@@ -2,8 +2,9 @@
 
 import { createSelector } from 'reselect';
 import type { ReduxState, Line, LineData, Filter, Highlight, Bookmark, Settings } from '../../models';
-import { shouldPrintLine, mergeActiveFilters, mergeActiveInverseFilters } from './search';
-import { getHighlightText, shouldHighlightLine, mergeActiveHighlights, mergeActiveHighlightLines } from './highlights';
+import { shouldPrintLine } from './search';
+import * as merge from './merge';
+import { getHighlightText, shouldHighlightLine } from './highlights';
 import * as selectors from '../basic';
 
 function makeRegexp(regexp: ?string, caseSensitive: boolean): ?RegExp {
@@ -30,10 +31,10 @@ const getFilteredLineData = createSelector(
   selectors.getLogViewerSettings,
   function(searchTerm: ?string, lines: Line[], filters: Filter[], highlights: Highlight[], bookmarks: Bookmark[], settings: Settings): LineData {
     const findRegexp = makeRegexp(searchTerm, settings.caseSensitive);
-    const filter = mergeActiveFilters(filters);
-    const inverseFilter = mergeActiveInverseFilters(filters);
-    const highlight = mergeActiveHighlights(highlights);
-    const highlightLine = mergeActiveHighlightLines(highlights);
+    const filter = merge.activeFilters(filters);
+    const inverseFilter = merge.activeInverseFilters(filters);
+    const highlight = merge.activeHighlights(highlights);
+    const highlightLine = merge.activeHighlightLines(highlights);
     const highlightText = getHighlightText(highlights);
 
     const indexMap = new Map();
@@ -43,7 +44,7 @@ const getFilteredLineData = createSelector(
 
     let j = 0;
     lines.forEach((line, i) => {
-      if (!shouldPrintLine(bookmarks, line, settings.filterIntersection, filter, inverseFilter)) {
+      if (!shouldPrintLine(line, bookmarks, settings.filterIntersection, filter, inverseFilter)) {
         return;
       }
       filteredLines.push(line);
