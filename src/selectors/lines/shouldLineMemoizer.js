@@ -2,7 +2,7 @@
 
 import type { Line } from '../../models';
 
-// eslint-disable flowtype/no-flow-fix-me-comments
+/* eslint-disable flowtype/no-flow-fix-me-comments,flowtype/no-weak-types */
 
 // $FlowFixMe
 function defaultEqualityCheck(a, b) {

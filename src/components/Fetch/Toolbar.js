@@ -7,6 +7,7 @@ import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
 import { addFilter, addHighlight, search, toggleSettingsPanel, changeSearch } from '../../actions';
 import * as selectors from '../../selectors';
+import debounce from '../../debounce';
 import type { ReduxState, Settings, LineData } from '../../models';
 
 type Props = {
@@ -44,11 +45,11 @@ export class Toolbar extends React.PureComponent<Props> {
     }
   }
 
-  handleChangeFindEvent = () => {
+  handleChangeFindEvent = debounce(() => {
     if (this.findInput != null) {
       this.props.changeSearch(this.findInput.value);
     }
-  }
+  }, 100)
 
   handleSearchClickFind = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
