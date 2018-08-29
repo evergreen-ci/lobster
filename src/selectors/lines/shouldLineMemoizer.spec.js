@@ -9,7 +9,7 @@ function terrifyingGlobalFunc() {
 }
 
 test('linememo', function() {
-  const l: Line = [
+  const l: Line[] = [
     {
       lineNumber: 0,
       text: 'asd',
@@ -33,6 +33,8 @@ test('linememo', function() {
   expect(x).toBe(1);
 
   // shallow compare means this shouldn't call the memoised func
+  // eslint-disable-next-line flowtype/no-flow-fix-me-comments
+  // $FlowFixMe
   l.text = 'something else';
   expect(f(l[0])).toBe(1);
   expect(x).toBe(1);

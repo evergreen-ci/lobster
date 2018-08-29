@@ -43,20 +43,20 @@ const getFilteredLineData = createSelector(
     const filteredLines = [];
 
     let j = 0;
-    lines.forEach((line, i) => {
-      if (!shouldPrintLine(line, bookmarks, settings.filterIntersection, filter, inverseFilter)) {
-        return;
+    for (let i = 0; i < lines.length; ++i) {
+      if (!shouldPrintLine(lines[i], bookmarks, settings.filterIntersection, filter, inverseFilter)) {
+        continue;
       }
-      filteredLines.push(line);
-      if (findRegexp != null && findRegexp.test(line.text)) {
-        findResults.push(line.lineNumber);
+      filteredLines.push(lines[i]);
+      if (findRegexp != null && findRegexp.test(lines[i].text)) {
+        findResults.push(lines[i].lineNumber);
       }
       indexMap.set(i, j++);
       if (highlight.length > 0
-        && shouldHighlightLine(line, highlight, highlightLine, settings)) {
-        highlightLines.push(line);
+        && shouldHighlightLine(lines[i], highlight, highlightLine, settings)) {
+        highlightLines.push(lines[i]);
       }
-    });
+    }
 
     return {
       indexMap: indexMap,
