@@ -10,6 +10,7 @@ export default function*(action: SearchEvent | ChangeSearch): Saga<void> {
   const findResults = yield select(getFindResults);
   const numLines = findResults.length;
   if (numLines === 0) {
+    yield put(actions.changeFindIdx(-1));
     return;
   }
 

@@ -67,6 +67,9 @@ class LogView extends React.Component<Props, State> {
     if (this.props.findResults !== nextProps.findResults) {
       return true;
     }
+    if (this.props.searchFindIdx !== nextProps.searchFindIdx) {
+      return true;
+    }
 
     return false;
   }
