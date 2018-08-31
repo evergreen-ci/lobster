@@ -80,6 +80,8 @@ const withSearchTerm = (action, index = -1) => {
 describe('search-change', function() {
   test('noresults', () => {
     emptyData(actions.changeSearch('noresults 0'))
+      .put(actions.changeFindIdx(-1))
+      .next()
       .isDone();
 
     withSearchTerm(actions.changeSearch('noresults'))
@@ -99,6 +101,8 @@ describe('search-change', function() {
 describe('search-event', function() {
   test('next', () => {
     emptyData(actions.search('next'))
+      .put(actions.changeFindIdx(-1))
+      .next()
       .isDone();
 
     withSearchTerm(actions.search('next'), 0)
@@ -114,6 +118,8 @@ describe('search-event', function() {
 
   test('prev', () => {
     emptyData(actions.search('prev'))
+      .put(actions.changeFindIdx(-1))
+      .next()
       .isDone();
 
     withSearchTerm(actions.search('prev'), 0)
