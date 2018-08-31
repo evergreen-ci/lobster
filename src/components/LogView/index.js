@@ -131,7 +131,7 @@ class LogView extends React.Component<Props, State> {
   }
 
   genList = (index) => {
-    const line= this.props.filterData.filteredLines[index]
+    const line = this.props.filterData.filteredLines[index];
     const lineNumber = line.lineNumber;
     return (
       <FullLogLine
