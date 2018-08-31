@@ -7,7 +7,6 @@ import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
 import { addFilter, addHighlight, search, toggleSettingsPanel, changeSearch } from '../../actions';
 import * as selectors from '../../selectors';
-import debounce from '../../debounce';
 import type { ReduxState, Settings, SearchResults } from '../../models';
 
 type Props = {

@@ -6,7 +6,7 @@ import FullLogLine from './FullLogLine';
 import { connect } from 'react-redux';
 import { scrollToLine, toggleBookmark } from '../../actions';
 import * as selectors from '../../selectors';
-import type { ReduxState, ColorMap, Line, SearchResults, HighlightLineData, FilteredLineData, Bookmark } from '../../models';
+import type { ReduxState, ColorMap, SearchResults, HighlightLineData, FilteredLineData, Bookmark } from '../../models';
 
 import './style.css';
 

@@ -1,7 +1,7 @@
 // @flow strict
 
 import * as actions from '../actions';
-import { type SearchEvent, type ChangeSearch, LOGVIEWER_SEARCH_EVENT, LOGVIEWER_CHANGE_SEARCH } from '../actions';
+import { type SearchEvent, LOGVIEWER_SEARCH_EVENT } from '../actions';
 import { put, select } from 'redux-saga/effects';
 import type { Saga } from 'redux-saga';
 import * as selectors from '../selectors';

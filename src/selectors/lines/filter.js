@@ -1,25 +1,9 @@
 // @flow strict
 
 import { createSelector } from 'reselect';
-import type { ReduxState, Line, FilteredLineData, Filter, Highlight, Bookmark, Settings } from '../../models';
+import type { ReduxState, Line, FilteredLineData, Filter, Bookmark } from '../../models';
 import * as merge from './merge';
-import { getHighlightText, shouldHighlightLine } from './highlights';
 import * as selectors from '../basic';
-
-function makeRegexp(regexp: ?string, caseSensitive: boolean): ?RegExp {
-  try {
-    if (regexp == null || regexp === '') {
-      return new RegExp('');
-    }
-
-    if (!caseSensitive) {
-      return new RegExp(regexp, 'i');
-    }
-    return new RegExp(regexp);
-  } catch (_e) {
-    return null;
-  }
-}
 
 function findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
   return bookmarkList.findIndex(function(bookmark) {

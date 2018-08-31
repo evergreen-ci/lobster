@@ -1,10 +1,9 @@
 // @flow strict
 
 import { createSelector } from 'reselect';
-import shouldLineMemoizer from './shouldLineMemoizer';
 import * as selectors from '../basic';
 import getFilteredLineData from './filter';
-import type { FilteredLineData, Line, Bookmark, SearchResults } from '../../models';
+import type { FilteredLineData, SearchResults } from '../../models';
 
 function makeRegexp(regexp: ?string, caseSensitive: boolean): ?RegExp {
   try {
@@ -21,7 +20,7 @@ function makeRegexp(regexp: ?string, caseSensitive: boolean): ?RegExp {
   }
 }
 
-export default createSelector(
+const search = createSelector(
   selectors.getLogViewerSearchTerm,
   getFilteredLineData,
   selectors.getLogViewerSettingsCaseSensitive,
@@ -36,3 +35,7 @@ export default createSelector(
       .map((line) => line.lineNumber);
   }
 );
+
+export default function(state: ReduxState): SearchResults {
+  return search(state);
+}

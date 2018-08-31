@@ -1,7 +1,6 @@
 // @flow strict
 
 import { defaultMemoize, createSelector } from 'reselect';
-import shouldLineMemoizer from './shouldLineMemoizer';
 import * as merge from './merge';
 import * as selectors from '../basic';
 import type { Line, Highlight, HighlightLineData } from '../../models';

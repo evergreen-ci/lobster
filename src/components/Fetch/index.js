@@ -22,7 +22,7 @@ type Props = {
   scrollToLine: (number) => void
 } & ContextRouter
 
-export class Fetch extends React.Component<Props> {
+export class Fetch extends React.PureComponent<Props> {
   static defaultProps = {
     bookmarks: []
   }
