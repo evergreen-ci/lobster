@@ -46,7 +46,7 @@ class LogView extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps) {
-    if (this.props.bookmark !== nextProps.bookmark) {
+    if (this.props.bookmarks !== nextProps.bookmarks) {
       return true;
     }
     if (this.props.searchTerm !== nextProps.searchTerm) {
