@@ -23,11 +23,13 @@ type Props = {
   filterActions: {
     removeFilter: (string) => void,
     toggleFilter: (string) => void,
+    toggleCaseSensitive: (string) => void,
     toggleFilterInverse: (string) => void
   },
   highlightActions: {
     removeHighlight: (string) => void,
     toggleHighlight: (string) => void,
+    toggleCaseSensitive: (string) => void,
     toggleHighlightLine: (string) => void
   },
   loadLogByIdentity: (LogIdentity) => void,
@@ -92,6 +94,12 @@ function showDetailButtons(id: ?LogIdentity, clearCache: ?() => void): ?ReactNod
       <Col key={1} lg={1}><Button href={api.testLogRawURL(id.id)}>Raw</Button></Col>,
       <Col key={2} lg={1}><Button href={api.testLogURL(id.id)}>HTML</Button></Col>
     ]);
+  } else if (id.type === 'evergreen-test-by-name') {
+    buttons.push(...[
+      <Col key={0} lg={1}><Button href={api.taskURL(id.task, id.execution)}>Task</Button></Col>,
+      <Col key={1} lg={1}><Button href={api.testLogByNameRawURL(id.task, id.execution, id.test)}>Raw</Button></Col>,
+      <Col key={2} lg={1}><Button href={api.testLogByNameURL(id.task, id.execution, id.test)}>HTML</Button></Col>
+    ]);
   }
   if (clearCache != null) {
     buttons.push(<Col key={3} lg={1}><Button bsStyle="danger" onClick={clearCache}>Clear Cache</Button></Col>);
@@ -144,7 +152,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
                   <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
                   <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
                 </ToggleButtonGroup>
-                <span className="toggle-label">Case Sensitive</span>
+                <span className="toggle-label">Case Sensitive Search</span>
                 <ToggleButtonGroup
                   className="toggle-buttons"
                   type="radio"
@@ -176,12 +184,14 @@ export class CollapseMenu extends React.PureComponent<Props> {
             filters={this.props.filterList}
             removeFilter={this.props.filterActions.removeFilter}
             toggleFilter={this.props.filterActions.toggleFilter}
+            toggleCaseSensitive={this.props.filterActions.toggleCaseSensitive}
             toggleFilterInverse={this.props.filterActions.toggleFilterInverse}
           />
           <Highlights
             highlights={this.props.highlightList}
             removeHighlight={this.props.highlightActions.removeHighlight}
             toggleHighlight={this.props.highlightActions.toggleHighlight}
+            toggleCaseSensitive={this.props.highlightActions.toggleCaseSensitive}
             toggleHighlightLine={this.props.highlightActions.toggleHighlightLine}
           />
         </div>
@@ -207,11 +217,13 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   const filterActions = {
     toggleFilter: (text) => dispatch(actions.toggleFilter(text)),
     toggleFilterInverse: (text) => dispatch(actions.toggleFilterInverse(text)),
+    toggleCaseSensitive: (text) => dispatch(actions.toggleFilterCaseSensitive(text)),
     removeFilter: (text) => dispatch(actions.removeFilter(text))
   };
   const highlightActions = {
     toggleHighlight: (text) => dispatch(actions.toggleHighlight(text)),
     toggleHighlightLine: (text) => dispatch(actions.toggleHighlightLine(text)),
+    toggleCaseSensitive: (text) => dispatch(actions.toggleHighlightCaseSensitive(text)),
     removeHighlight: (text) => dispatch(actions.removeHighlight(text))
   };
   const toggleSettings = {

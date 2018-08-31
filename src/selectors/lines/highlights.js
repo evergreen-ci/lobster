@@ -1,6 +1,10 @@
 // @flow strict
 
-import type { Line, Highlight, Settings } from '../../models';
+import { defaultMemoize, createSelector } from 'reselect';
+import * as merge from './merge';
+import * as selectors from '../basic';
+import getFilteredLineData from './filter';
+import type { Line, FilteredLineData, Highlight, HighlightLineData } from '../../models';
 
 function matchFilters(filter: RegExp[], string: string, isIntersection: boolean): boolean {
   if (isIntersection) {
@@ -9,34 +13,58 @@ function matchFilters(filter: RegExp[], string: string, isIntersection: boolean)
   return filter.some(regex => string.match(regex));
 }
 
-export function shouldHighlightLine(line: Line, highlight: RegExp[], highlightLine: RegExp[], settings: Settings): boolean {
+export const shouldHighlightLine = function(line: Line, highlight: RegExp[], highlightLine: RegExp[], filterIntersection: boolean): boolean {
   if (!highlight || highlight.length === 0) {
     return false;
   }
-  if (matchFilters(highlight, line.text, settings.filterIntersection) && matchFilters(highlightLine, line.text, settings.filterIntersection)) {
+  if (matchFilters(highlight, line.text, filterIntersection) && matchFilters(highlightLine, line.text, filterIntersection)) {
     return true;
   }
   return false;
-}
+};
 
-export function mergeActiveHighlights(highlightList: Highlight[], caseSensitive: boolean): RegExp[] {
-  return highlightList
-    .filter((elem) => elem.on)
-    .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
-}
+export const getHighlightText = defaultMemoize(
+  function(highlights: Highlight[]): string[] {
+    return highlights.filter((element) => element.on && !element.line).map((e) => e.text);
+  }
+);
 
-export function mergeActiveHighlightLines(highlightList: Highlight[], caseSensitive: boolean): RegExp[] {
-  return highlightList
-    .filter((elem) => elem.on && elem.line)
-    .map((elem) => caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
-}
+const getHighlights = createSelector(
+  getFilteredLineData,
+  selectors.getLogViewerHighlights,
+  selectors.getLogViewerSettingsFilterLogic,
+  function(lines: FilteredLineData, highlights: Highlight[], filterIntersection: boolean): HighlightLineData {
+    console.log('highlights-selector');
+    const highlight = merge.activeHighlights(highlights);
+    const highlightLine = merge.activeHighlightLines(highlights);
+    const highlightText = getHighlightText(highlights);
 
-export function getHighlightText(highlightList: Highlight[]): string[] {
-  const highlight = [];
-  highlightList.forEach((element) => {
-    if (element.on && !element.line) {
-      highlight.push(element.text);
+    const highlightLines = lines.filteredLines.filter((line) => {
+      return shouldHighlightLine(line, highlight, highlightLine, filterIntersection);
+    });
+
+    return {
+      highlightLines: highlightLines,
+      highlightText: highlightText
+    };
+  }
+);
+
+export default createSelector(
+  selectors.getLogViewerSearchTerm,
+  getHighlights,
+  function(searchTerm: string, highlights: HighlightLineData): HighlightLineData {
+    if (!searchTerm) {
+      return highlights;
     }
-  });
-  return highlight;
-}
+    try {
+      RegExp(searchTerm);
+      return {
+        ...highlights,
+        highlightText: highlights.highlightText.concat([searchTerm])
+      };
+    } catch (_e) {
+      return highlights;
+    }
+  }
+);

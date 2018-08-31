@@ -32,6 +32,10 @@ describe('lobsterserver-default-args', function() {
   const tmp = tmpdir() + '/lobster.txt';
   let c;
   beforeAll(async () => {
+    // XXX: jest bug; beforeAll is always run, even if there are no tests
+    if (!process.env.LOBSTER_E2E_SERVER_PORT) {
+      return Promise.resolve();
+    }
     return new Promise(function(resolve) {
       c = startServer(['--logs', path.dirname(__dirname) + '/e2e', '--e2e']);
       expect(c).not.toEqual(null);
@@ -96,6 +100,21 @@ describe('lobsterserver-default-args', function() {
     return api.fetchEvergreen({
       type: 'evergreen-test',
       id: 'testid1234'
+    }).then((resp) => {
+      expect(resp.status).toBe(200);
+      return resp.text().then((log) => {
+        expect(log.slice(0, -1)).toMatchSnapshot();
+        done();
+      });
+    }).catch((e) => done.fail(e));
+  }, 10000);
+
+  e2e('evergreen-test-by-name', (done) => {
+    return api.fetchEvergreen({
+      type: 'evergreen-test-by-name',
+      task: 'taskid1234',
+      execution: 5,
+      test: 'testid1234'
     }).then((resp) => {
       expect(resp.status).toBe(200);
       return resp.text().then((log) => {

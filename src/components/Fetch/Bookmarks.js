@@ -1,7 +1,10 @@
 // @flow strict
 
 import React from 'react';
-import type { Bookmark as BookmarkType } from '../../models';
+import { connect } from 'react-redux';
+import * as actions from '../../actions';
+import * as selectors from '../../selectors';
+import type { ReduxState, Bookmark as BookmarkType, LogIdentity } from '../../models';
 
 type Props = {|
   bookmarks: BookmarkType[],
@@ -40,3 +43,21 @@ export const Bookmark = (props: BookmarkProps) => {
     </div>
   );
 };
+
+function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>) {
+  return {
+    ...ownProps,
+    bookmarks: selectors.getLogViewerBookmarks(state)
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
+  return {
+    ...ownProps,
+    loadLogByIdentity: (identity: LogIdentity) => dispatch(actions.loadLog(identity)),
+    scrollToLine: (line: number) => dispatch(actions.scrollToLine(line))
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Bookmarks);
+

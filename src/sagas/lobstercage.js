@@ -2,8 +2,10 @@
 
 import { put, call, select } from 'redux-saga/effects';
 import * as actions from '../actions';
+import * as selectors from '../selectors';
 import type { Saga } from 'redux-saga';
 
+// Change this when changing filenames, or the format of data on disk
 const VERSION = 'v1';
 
 const fname = (f: string) => `${VERSION}-${f}`;
@@ -28,7 +30,7 @@ function fsUp(size: number) {
 
     navigator.webkitPersistentStorage.queryUsageAndQuota((_used, limit) => {
       if (limit < size) {
-        console.log(`Requesting quota increase to ${limit}`);
+        console.info(`Requesting quota increase to ${limit}`);
         // $FlowFixMe
         navigator.webkitPersistentStorage.requestQuota(size, function(grant) {
           window.requestFileSystem(window.PERSISTENT, grant, fsh, errh);
@@ -47,7 +49,7 @@ const write = (fs: DOMFileSystem, f: string, blob: Blob) => {
     fs.root.getFile(f, { create: true }, function(fileEntry) {
       fileEntry.createWriter(function(fileWriter) {
         fileWriter.onwriteend = function() {
-          console.log(`Added to cache: ${f}`);
+          console.info(`Added to cache: ${f}`);
           resolve();
         };
 
@@ -62,11 +64,11 @@ const write = (fs: DOMFileSystem, f: string, blob: Blob) => {
 };
 
 export function* writeToCache(f: string): Saga<void> {
-  const state = yield select((s) => s.cache);
+  const state = yield select(selectors.getCache);
   if (state.status !== 'ok') {
     return;
   }
-  const data = yield select((s) => s.log);
+  const data = yield select(selectors.getLog);
   if (!data.isDone) {
     return;
   }
@@ -91,7 +93,7 @@ const fsReadPromise = (fs: DOMFileSystem, f: string) => {
         const reader = new FileReader();
 
         reader.onloadend = function() {
-          console.log(`Read processed log data from cache: ${f}`);
+          console.info(`Read processed log data from cache: ${f}`);
           resolve(JSON.parse(this.result));
         };
         reader.onerror = (e) => reject(e);
@@ -104,7 +106,7 @@ const fsReadPromise = (fs: DOMFileSystem, f: string) => {
 };
 
 export function* readFromCache(f: string): Saga<void> {
-  const state = yield select((s) => s.cache);
+  const state = yield select(selectors.getCache);
   if (state.status !== 'ok') {
     throw state;
   }
@@ -126,9 +128,9 @@ const entryPromise = (e: FileSystemEntry) => {
 };
 
 export function* wipeCache(): Saga<void> {
-  const state = yield select((s) => s.cache);
+  const state = yield select(selectors.getCache);
   if (state.status !== 'ok') {
-    console.log('Caching is not set up; assuming no data in filesystem');
+    console.info('Caching is not set up; assuming no data in filesystem');
     return;
   }
   try {
@@ -153,9 +155,9 @@ function remove(fs: DOMFileSystem, f: string) {
 }
 
 function* wipeFileFromCache(f: string): Saga<void> {
-  const state = yield select((s) => s.cache);
+  const state = yield select(selectors.getCache);
   if (state.status !== 'ok') {
-    console.log('Caching is not set up; assuming no data in filesystem');
+    console.info('Caching is not set up; assuming no data in filesystem');
     return;
   }
   try {
@@ -170,11 +172,11 @@ export function* boil(action: actions.WipeCache): Saga<void> {
   try {
     const { file } = action.payload;
     if (file == null) {
-      console.log('Attempting to clear lobster local cache');
+      console.info('Attempting to clear lobster local cache');
       window.localStorage.clear();
       yield call(wipeCache);
     } else {
-      console.log(`Attempting to remove '${file}'lobster local cache`);
+      console.info(`Attempting to remove '${file}'lobster local cache`);
       yield call(wipeFileFromCache, file);
     }
     window.location.reload();

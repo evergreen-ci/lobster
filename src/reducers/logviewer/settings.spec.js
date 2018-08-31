@@ -16,10 +16,13 @@ describe('settings', function() {
     expect(state0.caseSensitive).toBe(false);
     expect(state0.filterIntersection).toBe(false);
 
+    expect(window.localStorage.getItem('lobster-line-wrap')).toBe('true');
+
     const state1 = settings(state0, action);
     expect(state1.wrap).toBe(false);
     expect(state1.caseSensitive).toBe(false);
     expect(state1.filterIntersection).toBe(false);
+    expect(window.localStorage.getItem('lobster-line-wrap')).toBe('false');
   });
 
   test('case-sensitivity', function() {

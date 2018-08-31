@@ -8,6 +8,7 @@ type FilterProps = {
   filter: FilterType,
   removeFilter: (string) => void,
   toggleFilter: (string) => void,
+  toggleCaseSensitive: (string) => void,
   toggleFilterInverse: (string) => void
 }
 
@@ -15,6 +16,7 @@ type FiltersProps = {
   filters: FilterType[],
   removeFilter: (string) => void,
   toggleFilter: (string) => void,
+  toggleCaseSensitive: (string) => void,
   toggleFilterInverse: (string) => void
 }
 
@@ -28,6 +30,7 @@ export const Filters = (props: FiltersProps) => {
             filter={filter}
             removeFilter={props.removeFilter}
             toggleFilter={props.toggleFilter}
+            toggleCaseSensitive={props.toggleCaseSensitive}
             toggleFilterInverse={props.toggleFilterInverse}
           />
         );
@@ -40,6 +43,7 @@ export const Filters = (props: FiltersProps) => {
 export class Filter extends React.PureComponent<FilterProps> {
   removeFilter = () => this.props.removeFilter(this.props.filter.text);
   toggleFilter = () => this.props.toggleFilter(this.props.filter.text);
+  toggleCaseSensitive = () => this.props.toggleCaseSensitive(this.props.filter.text);
   toggleFilterInverse = () => this.props.toggleFilterInverse(this.props.filter.text);
 
   render() {
@@ -73,6 +77,20 @@ export class Filter extends React.PureComponent<FilterProps> {
           </ToggleButton>
           <ToggleButton value={true} bsSize="small" bsStyle="success">
             inverse
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <ToggleButtonGroup
+          className="toggle-buttons"
+          type="radio"
+          name="case-sensitive"
+          value={this.props.filter.caseSensitive}
+          onChange={this.toggleCaseSensitive}
+        >
+          <ToggleButton value={true} bsSize="small" bsStyle="info">
+            case sensitive
+          </ToggleButton>
+          <ToggleButton value={false} bsSize="small" bsStyle="info">
+            case insensitive
           </ToggleButton>
         </ToggleButtonGroup>
         <span className="filter-highlight-text">{this.props.filter.text}</span>

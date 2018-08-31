@@ -6,7 +6,8 @@ module.exports = {
     'eslint-config-mongodb-js/rules/ecmascript-6',
     'plugin:flowtype/recommended',
     'plugin:react/recommended',
-    'plugin:jest/recommended'
+    'plugin:jest/recommended',
+    'eslint-config-react-app'
   ],
   'root': true,
   'env': {

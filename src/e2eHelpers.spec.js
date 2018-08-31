@@ -24,10 +24,20 @@ const firstLine = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div/di
 const cacheModal = '//*[@id="root"]/div/div/div/div';
 const logURLField = '//*[@id="urlInput"]';
 const logURLApplyButton = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[1]/div[2]/button';
+const filterCaseToggleGroup = (n: number) => {
+  return `//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/div[1]/div/div[${n}]/div[3]`;
+};
+const highlightCaseToggleGroup = (n: number) => {
+  return `//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/div[2]/div/div[${n}]/div[3]`;
+};
+
+export const lobsterServer = () => {
+  const port = process.env.LOBSTER_E2E_SERVER_PORT || 9000;
+  return `localhost:${port}`;
+};
 
 export const lobsterURL = (file: string = 'simple.log') => {
-  const port = process.env.LOBSTER_E2E_SERVER_PORT || 9000;
-  return `http://localhost:${port}/lobster?server=localhost:${port}%2Fapi%2Flog&url=${file}`;
+  return `http://${lobsterServer()}/lobster?server=${lobsterServer()}%2Fapi%2Flog&url=${file}`;
 };
 
 export class Lobster {
@@ -120,6 +130,10 @@ export class Lobster {
 
   async search(text: string) {
     const find = this._driver.findElement(By.id('findInput'));
+    // wait for debounce to expire
+    await this._driver.wait(new Promise((resolve) => {
+      return setTimeout(resolve, 150);
+    }));
     await find.sendKeys(text);
   }
 
@@ -140,9 +154,23 @@ export class Lobster {
     this._showdetails = !this._showdetails;
   }
 
-  async caseToggle() {
+  async caseToggleSearch() {
     const group = await this._driver.wait(until.elementLocated(By.xpath(caseToggleGroup)));
     const button = await group.findElement(By.xpath('.//label[not(contains(@class, " active"))]'));
+    await button.click();
+  }
+
+  async caseToggleFilter(n: number) {
+    const group = await this._driver.wait(until.elementLocated(By.xpath(filterCaseToggleGroup(n))));
+    const button = await group.findElement(By.xpath('.//label[not(contains(@class, " active"))]'));
+    await this._driver.wait(until.elementIsVisible(button));
+    await button.click();
+  }
+
+  async caseToggleHighlight(n: number) {
+    const group = await this._driver.wait(until.elementLocated(By.xpath(highlightCaseToggleGroup(n))));
+    const button = await group.findElement(By.xpath('.//label[not(contains(@class, " active"))]'));
+    await this._driver.wait(until.elementIsVisible(button));
     await button.click();
   }
 

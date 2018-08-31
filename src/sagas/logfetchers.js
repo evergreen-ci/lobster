@@ -69,6 +69,10 @@ export function* evergreenLoadData(identity: EvergreenLog): Saga<void> {
     const f = `fetchEvergreen-test-${identity.id}.json`;
     yield cacheFetch(f, 'raw', api.fetchEvergreen, identity);
     return;
+  } else if (identity.type === 'evergreen-test-by-name') {
+    const f = `fetchEvergreen-test-${identity.task}-${identity.execution}-${identity.test}.json`;
+    yield cacheFetch(f, 'raw', api.fetchEvergreen, identity);
+    return;
   }
   try {
     const resp = yield call(fetchEvergreen, identity);
@@ -87,6 +91,7 @@ export default function*(action: actions.LoadLog): Saga<void> {
   const { identity } = action.payload;
   switch (identity.type) {
     case 'evergreen-test':
+    case 'evergreen-test-by-name':
     case 'evergreen-task':
       yield call(evergreenLoadData, identity);
       break;

@@ -701,7 +701,7 @@ function parseTestLog(processed: Processed[]): {[key: string]: FixtureLogList} {
 export default function(processed: Processed[]): Event[] {
   const events = []; // Event[] type
   let tmpEvents = {};
-  console.log('Processing test logs');
+  // console.log('Processing test logs');
   const fixtureLogLists = parseTestLog(processed);
   const fixtureIdList = fixtureLogLists ? Object.keys(fixtureLogLists) : [];
   for (let i = 0; i < fixtureIdList.length; i++) {
@@ -712,7 +712,7 @@ export default function(processed: Processed[]): Event[] {
     } else if (logList.isMongos) {
       fixtureId = fixtureId + ' - mongos';
     }
-    console.log('Reading events for fixture ' + fixtureId);
+    // console.log('Reading events for fixture ' + fixtureId);
     // Add event for duration of logs
     events.push(makeEvent(LOG, logList.logStart, logList.logEnd, fixtureId));
     tmpEvents = {};

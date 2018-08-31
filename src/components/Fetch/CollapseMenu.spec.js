@@ -4,6 +4,7 @@ import { CollapseMenu } from './CollapseMenu';
 import { ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import Button from 'react-bootstrap/lib/Button';
 import sinon from 'sinon';
+import * as api from '../../api';
 
 function makeWrapper(id) {
   return Enzyme.mount(
@@ -102,6 +103,38 @@ describe('CollapseMenu', () => {
     const taskURL = 'http://evergreen.invalid/task/task-1234/12345';
     const rawURL = 'http://evergreen.invalid/task_log_raw/task-1234/12345?type=ALL&text=true';
     const HTMLURL = 'http://evergreen.invalid/task_log_raw/task-1234/12345?type=ALL';
+    expect(wrapper.containsAllMatchingElements([
+      <Button href={taskURL}>Task</Button>,
+      <Button href={rawURL}>Raw</Button>,
+      <Button href={HTMLURL}>HTML</Button>
+    ])).toBe(true);
+  });
+
+  test('evergreen-test', function() {
+    const logIdentity = {
+      type: 'evergreen-test',
+      id: 'task-1234'
+    };
+    const wrapper = makeWrapper(logIdentity);
+    const rawURL = api.testLogRawURL(logIdentity.id);
+    const HTMLURL = api.testLogURL(logIdentity.id);
+    expect(wrapper.containsAllMatchingElements([
+      <Button href={rawURL}>Raw</Button>,
+      <Button href={HTMLURL}>HTML</Button>
+    ])).toBe(true);
+  });
+
+  test('evergreen-test-by-name', function() {
+    const logIdentity = {
+      type: 'evergreen-test-by-name',
+      task: 'task-1234',
+      execution: 12345,
+      test: 'test1234'
+    };
+    const wrapper = makeWrapper(logIdentity);
+    const taskURL = api.taskURL(logIdentity.task, logIdentity.execution);
+    const rawURL = api.testLogByNameRawURL(logIdentity.task, logIdentity.execution, logIdentity.test);
+    const HTMLURL = api.testLogByNameURL(logIdentity.task, logIdentity.execution, logIdentity.test);
     expect(wrapper.containsAllMatchingElements([
       <Button href={taskURL}>Task</Button>,
       <Button href={rawURL}>Raw</Button>,

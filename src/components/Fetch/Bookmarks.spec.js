@@ -16,7 +16,7 @@ test('Bookmarks', function() {
   ];
 
   const wrapper = Enzyme.mount(<Bookmarks bookmarks={data} setScroll={scroll} />);
-  data.map(function(bkmark, index) {
+  data.forEach(function(bkmark, index) {
     const bookmarkWrapper = wrapper.find('div').find('div').find('div').children().at(index + 1);
     bookmarkWrapper.simulate('click', {});
     expect(scrollTo).toBe(bkmark.lineNumber);

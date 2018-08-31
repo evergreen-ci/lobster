@@ -259,6 +259,53 @@ describe('fetchEvergreen', function() {
       });
   });
 
+  test('resolves-200-test-by-name', function(done) {
+    const resp = new Response(new Blob(['evergreen-test-by-name']), { status: 200 });
+    const mock = sinon.stub().resolves(resp);
+    sinon.replace(evergreenApi, 'fetchEvergreen', mock);
+
+    const identity = {
+      type: 'evergreen-test-by-name',
+      task: 'taskid',
+      execution: 5,
+      test: 'testid'
+    };
+    const action = actions.loadLog(identity);
+    return expectSaga(logfetchers, action)
+      .withState({
+        log: {
+          lines: [{}, {}]
+        },
+        cache: {
+          status: 'unsupported'
+        }
+      })
+      .run()
+      .then((result) => {
+        const { effects } = result;
+        expect(effects).not.toHaveProperty('take');
+        expect(effects.put).toHaveLength(3);
+
+        const v = effects.put[0].PUT.action;
+        expect(v.error).toBe(false);
+        expect(v.type).toBe(actions.PROCESS_RESPONSE);
+        expect(v.payload.type).toBe('raw');
+        expect(v.payload.data).toBe('evergreen-test-by-name');
+        expect(v.payload.isDone).toBe(true);
+
+        expect(effects.call).toHaveLength(7);
+        expect(effects.call[0].CALL.args).toEqual([identity]);
+        expect(effects.call[2].CALL.fn).toBe(readFromCache);
+        expect(effects.call[2].CALL.args).toEqual(['fetchEvergreen-test-taskid-5-testid.json']);
+        expect(effects.call[5].CALL.fn).toBe(writeToCache);
+        expect(effects.call[5].CALL.args).toEqual(['fetchEvergreen-test-taskid-5-testid.json']);
+
+        expect(result.toJSON()).toMatchSnapshot();
+
+        done();
+      });
+  });
+
   test('resolves-200-task', function(done) {
     const resp = new Response(new Blob(['evergreen-task']), { status: 200 });
     const mock = sinon.stub().resolves(resp);

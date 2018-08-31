@@ -29,13 +29,24 @@ export default function(state: Highlight[] = initialState, action: Action): High
       (highlight.text !== action.payload.text));
   }
 
+  if (action.payload.field === 'caseSensitive') {
+    return state.map(highlight =>
+      (highlight.text === action.payload.text) ? { ...highlight, caseSensitive: !highlight.caseSensitive } : highlight);
+  }
+
   if (action.payload.field === 'add') {
+    for (let i = 0; i < state.length; ++i) {
+      if (action.payload.text === state[i].text) {
+        return state;
+      }
+    }
     return [
       ...state,
       {
         text: action.payload.text,
         on: true,
-        line: false
+        line: false,
+        caseSensitive: action.payload.caseSensitive || false
       }
     ];
   }

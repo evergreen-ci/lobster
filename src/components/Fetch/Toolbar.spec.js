@@ -5,7 +5,6 @@ import Enzyme from 'enzyme';
 import Button from 'react-bootstrap/lib/Button';
 import { Toolbar } from './Toolbar';
 import { Col, ControlLabel } from 'react-bootstrap';
-import type { LineData } from '../../models';
 
 const linesArr = [
   { lineNumber: 1, text: '[cpp_integration_test:connection_pool_asio_integration_test] 2018-05-09T17:20:31.322+0000 Starting C++ integration test build', gitRef: null, port: null },
@@ -58,7 +57,7 @@ function makeWrapper(state) {
       build={'4191390ec6c7ee9bdea4e45f9cc94d31'}
       setURLRef={jest.fn()}
       valueJIRA={'asdfghjkl'}
-      lineData={state}
+      findResults={state}
       changeFindIdx={jest.fn()}
       changeSearch={jest.fn()}
       nextFind={jest.fn()}
@@ -74,14 +73,7 @@ function makeWrapper(state) {
 }
 
 test('Toolbar-Search', function() {
-  const data: LineData = {
-    indexMap: new Map(),
-    findResults: [],
-    filteredLines: linesArr,
-    highlightLines: [],
-    highlightText: []
-  };
-  const wrapper = makeWrapper(data);
+  const wrapper = makeWrapper([]);
   expect(wrapper.containsAllMatchingElements([
     <Button onClick={wrapper.instance().props.nextFind}>Next</Button>,
     <Button onClick={wrapper.instance().props.prevFind}>Prev</Button>
@@ -90,14 +82,14 @@ test('Toolbar-Search', function() {
   // Testing change in search bar with results
 
   // Manually change find results to see if next/prev buttons render
-  wrapper.setProps({ lineData: { ...data, findResults: [0] }, searchTerm: '2018', findIdx: 0 });
+  wrapper.setProps({ findResults: [0], searchTerm: '2018', findIdx: 0 });
   expect(wrapper.containsAllMatchingElements([
     <Col lg={1} componentClass={ControlLabel} className="next-prev" >1/1</Col>,
     <Button>Next</Button>,
     <Button>Prev</Button>
   ])).toBe(true);
 
-  wrapper.setProps({ lineData: { ...data, findResults: [] }, searchTerm: '2018' });
+  wrapper.setProps({ findResults: [], searchTerm: '2018' });
   expect(wrapper.containsAllMatchingElements([
     <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>
   ])).toBe(true);

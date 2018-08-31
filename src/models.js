@@ -22,13 +22,15 @@ export type Bookmark = {|
 export type Filter = $Exact<$ReadOnly<{
   text: string,
   on: boolean,
-  inverse: boolean
+  inverse: boolean,
+  caseSensitive: boolean
 }>>
 
 export type Highlight = $Exact<$ReadOnly<{
   text: string,
   on: boolean,
-  line: boolean
+  line: boolean,
+  caseSensitive: boolean
 }>>
 
 export type MongoLine = {|
@@ -136,9 +138,9 @@ export type LogProcessor = $Keys<typeof logProcessors_>
 const evergreenTaskLogTypes: { [string]: string } = {
   'all': 'ALL',
   'task': 'T',
-  'agent': 'A',
+  'agent': 'E',
   'system': 'S'
-  // 'event': 'E' // Not actually supported by the api
+  // 'event': '?' // Not actually supported by the api
 };
 
 export type EvergreenTaskLogType = $Keys<typeof evergreenTaskLogTypes>;
@@ -170,8 +172,16 @@ export type EvergreenTestLog = $ReadOnly<{
   id: string
 }>
 
+export type EvergreenTestByNameLog = $ReadOnly<{
+  type: 'evergreen-test-by-name',
+  task: string,
+  execution: number,
+  test: string
+}>
+
 export type EvergreenLog = EvergreenTaskLog
   | EvergreenTestLog
+  | EvergreenTestByNameLog
 
 export type LobsterLog = $ReadOnly<{
   type: 'lobster',
@@ -215,13 +225,17 @@ export type ScrollView = $Exact<$ReadOnly<{
   endDate: ?Date
 }>>
 
-export type LineData = $Exact<$ReadOnly<{
-  indexMap: Map<number, number>,
-  findResults: number[],
-  filteredLines: Line[],
+export type HighlightLineData = $Exact<$ReadOnly<{
   highlightLines: Line[],
   highlightText: string[]
 }>>
+
+export type FilteredLineData = $Exact<$ReadOnly<{
+  indexMap: Map<number, number>,
+  filteredLines: Line[],
+}>>
+
+export type SearchResults = number[]
 
 export type CacheStatus = 'ok' | 'error' | 'never' | 'later' | 'unsupported' | null;
 
