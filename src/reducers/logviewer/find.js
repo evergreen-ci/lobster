@@ -19,7 +19,7 @@ export default function(state: Find = initialState, action: Action): Find {
   if (action.type === LOGVIEWER_CHANGE_SEARCH) {
     const { text } = action.payload;
     if (!text) {
-      return { ...state, searchTerm: '' };
+      return { ...state, searchTerm: '', findIdx: -1 };
     }
     try {
       RegExp(text);
@@ -32,7 +32,8 @@ export default function(state: Find = initialState, action: Action): Find {
       return {
         ...state,
         searchTerm: text,
-        regexError: e
+        regexError: e,
+        findIdx: -1
       };
     }
   }

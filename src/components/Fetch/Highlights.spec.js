@@ -92,7 +92,7 @@ test('Highlight', function() {
 
   const buttons = wrapper.find('Button');
   expect(buttons).toHaveLength(7);
-  buttons.map(function(e, index) {
+  buttons.forEach(function(e, index) {
     data = {
       text: 'Hello',
       on: true,

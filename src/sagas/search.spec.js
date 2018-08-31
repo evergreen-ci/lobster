@@ -1,19 +1,13 @@
 import { testSaga } from 'redux-saga-test-plan';
 import search from './search';
-import { getFilteredLineData, getLogViewerFindIdx } from '../selectors';
+import { getFindResults, getLogViewerFindIdx } from '../selectors';
 import * as actions from '../actions';
 
 const emptyData = (action) => {
   return testSaga(search, action)
     .next()
-    .select(getFilteredLineData)
-    .next({
-      indexMap: new Map(),
-      findResults: [],
-      filteredLines: [],
-      highlightLines: [],
-      highlightText: []
-    });
+    .select(getFindResults)
+    .next([]);
 };
 
 const runLinesSelector = () => {
@@ -71,13 +65,13 @@ const runLinesSelector = () => {
     }
   };
 
-  return getFilteredLineData(state);
+  return getFindResults(state);
 };
 
 const withSearchTerm = (action, index = -1) => {
   return testSaga(search, action)
     .next()
-    .select(getFilteredLineData)
+    .select(getFindResults)
     .next(runLinesSelector())
     .select(getLogViewerFindIdx)
     .next(index);
@@ -86,6 +80,8 @@ const withSearchTerm = (action, index = -1) => {
 describe('search-change', function() {
   test('noresults', () => {
     emptyData(actions.changeSearch('noresults 0'))
+      .put(actions.changeFindIdx(-1))
+      .next()
       .isDone();
 
     withSearchTerm(actions.changeSearch('noresults'))
@@ -105,6 +101,8 @@ describe('search-change', function() {
 describe('search-event', function() {
   test('next', () => {
     emptyData(actions.search('next'))
+      .put(actions.changeFindIdx(-1))
+      .next()
       .isDone();
 
     withSearchTerm(actions.search('next'), 0)
@@ -120,6 +118,8 @@ describe('search-event', function() {
 
   test('prev', () => {
     emptyData(actions.search('prev'))
+      .put(actions.changeFindIdx(-1))
+      .next()
       .isDone();
 
     withSearchTerm(actions.search('prev'), 0)

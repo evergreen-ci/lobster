@@ -1,60 +1,42 @@
 // @flow strict
 
-import type { Line, Bookmark, Filter } from '../../models';
+import { createSelector } from 'reselect';
+import * as selectors from '../basic';
+import getFilteredLineData from './filter';
+import type { ReduxState, FilteredLineData, SearchResults } from '../../models';
 
-export function mergeActiveFilters(filterList: Filter[]): RegExp[] {
-  return filterList
-    .filter((elem) => elem.on && !elem.inverse)
-    .map((elem) => elem.caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
-}
-
-export function mergeActiveInverseFilters(filterList: Filter[]): RegExp[] {
-  return filterList
-    .filter((elem) => elem.on && elem.inverse)
-    .map((elem) => elem.caseSensitive ? new RegExp(elem.text) : new RegExp(elem.text, 'i'));
-}
-
-function findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
-  return bookmarkList.findIndex(function(bookmark) {
-    return bookmark.lineNumber === lineNum;
-  });
-}
-
-function matchFilters(filter: RegExp[], string: string, isIntersection: boolean): boolean {
-  if (isIntersection) {
-    return filter.every(regex => string.match(regex));
-  }
-  return filter.some(regex => string.match(regex));
-}
-
-export function shouldPrintLine(bookmarks: Bookmark[], line: Line, filterIntersection: boolean, filter: RegExp[], inverseFilter: RegExp[]): boolean {
-  if (findBookmark(bookmarks, line.lineNumber) !== -1) {
-    return true;
-  }
-
-  if ((!filter && !inverseFilter) || (filter.length === 0 && inverseFilter.length === 0)) {
-    return true;
-  } else if (!filter || filter.length === 0) {
-    if (matchFilters(inverseFilter, line.text, filterIntersection)) {
-      return false;
+function makeRegexp(regexp: ?string, caseSensitive: boolean): ?RegExp {
+  try {
+    if (regexp == null || regexp === '') {
+      return new RegExp('');
     }
-    return true;
-  } else if (!inverseFilter || inverseFilter.length === 0) {
-    if (matchFilters(filter, line.text, filterIntersection)) {
-      return true;
+
+    if (!caseSensitive) {
+      return new RegExp(regexp, 'i');
     }
-    return false;
+    return new RegExp(regexp);
+  } catch (_e) {
+    return null;
   }
-  // If there are both types of filters, it has to match the filter and not match
-  // the inverseFilter.
-  if (filterIntersection) {
-    if (matchFilters(filter, line.text, filterIntersection) &&
-          !matchFilters(inverseFilter, line.text, filterIntersection)) {
-      return true;
+}
+
+const search = createSelector(
+  selectors.getLogViewerSearchTerm,
+  getFilteredLineData,
+  selectors.getLogViewerSettingsCaseSensitive,
+  function(searchTerm: string, lineData: FilteredLineData, caseSensitive: boolean): SearchResults {
+    console.log('search-selector');
+    const { filteredLines } = lineData;
+    const findRegexp = makeRegexp(searchTerm, caseSensitive);
+    if (findRegexp == null) {
+      return [];
     }
-  } else if (matchFilters(filter, line.text, filterIntersection) ||
-        !matchFilters(inverseFilter, line.text, filterIntersection)) {
-    return true;
+    return filteredLines
+      .filter((line) => findRegexp.test(line.text))
+      .map((line) => line.lineNumber);
   }
-  return false;
+);
+
+export default function(state: ReduxState): SearchResults {
+  return search(state);
 }

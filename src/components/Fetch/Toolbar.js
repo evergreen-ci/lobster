@@ -7,7 +7,7 @@ import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
 import { addFilter, addHighlight, search, toggleSettingsPanel, changeSearch } from '../../actions';
 import * as selectors from '../../selectors';
-import type { ReduxState, Settings, LineData } from '../../models';
+import type { ReduxState, Settings, SearchResults } from '../../models';
 
 type Props = {
   setFormRef: (?HTMLInputElement) => void,
@@ -25,7 +25,7 @@ type Props = {
   nextFind: () => void,
   prevFind: () => void,
   changeSearch: (value: string) => void,
-  lineData: LineData
+  findResults: SearchResults
 };
 
 export class Toolbar extends React.PureComponent<Props> {
@@ -33,9 +33,9 @@ export class Toolbar extends React.PureComponent<Props> {
 
   showFind = () => {
     if (this.props.searchTerm !== '') {
-      if (this.props.lineData.findResults.length > 0) {
+      if (this.props.findResults.length > 0) {
         return (
-          <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.props.findIdx + 1}/{this.props.lineData.findResults.length}</Col>
+          <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.props.findIdx + 1}/{this.props.findResults.length}</Col>
             <Button onClick={this.props.nextFind}>Next</Button>
             <Button onClick={this.props.prevFind}>Prev</Button>
           </span>);
@@ -46,7 +46,8 @@ export class Toolbar extends React.PureComponent<Props> {
 
   handleChangeFindEvent = () => {
     if (this.findInput != null) {
-      this.props.changeSearch(this.findInput.value);
+      const { value } = this.findInput;
+      this.props.changeSearch(value);
     }
   }
 
@@ -190,7 +191,7 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Pro
     searchTerm: selectors.getLogViewerSearchTerm(state),
     searchTermError: selectors.getLogViewerSearchTermError(state),
     detailsOpen: selectors.getIsLogViewerSettingsPanel(state),
-    lineData: selectors.getFilteredLineData(state)
+    findResults: selectors.getFindResults(state)
   };
 }
 

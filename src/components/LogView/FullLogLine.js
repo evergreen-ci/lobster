@@ -23,7 +23,7 @@ type Props = {
   handleDoubleClick: () => void
 };
 
-export default class FullLogLine extends React.Component<Props> {
+export default class FullLogLine extends React.PureComponent<Props> {
   handleMouseUp = () => {
     let endIndex = this.props.line.lineNumber;
     const selection = window.getSelection();

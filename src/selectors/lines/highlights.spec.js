@@ -1,6 +1,7 @@
 // @flow
 
-import { getHighlightText, shouldHighlightLine, mergeActiveHighlights, mergeActiveHighlightLines } from './highlights';
+import { getHighlightText, shouldHighlightLine } from './highlights';
+import { activeHighlights, activeHighlightLines } from './merge';
 
 test('selectors-shouldHighlightLine', function() {
   const lines = [
@@ -17,30 +18,24 @@ test('selectors-shouldHighlightLine', function() {
     { on: true, text: 'Line 4', line: false, caseSensitive: false }
   ];
 
-  const settings = {
-    filterIntersection: false,
-    wrap: false,
-    caseSensitive: false
-  };
-
-  let highlightRegexps = mergeActiveHighlights(highlights);
-  let highlightLinesRegexp = mergeActiveHighlightLines(highlights);
-  lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(true));
+  let highlightRegexps = activeHighlights(highlights);
+  let highlightLinesRegexp = activeHighlightLines(highlights);
+  lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, false)).toBe(true));
 
 
   highlights[0].caseSensitive = true;
   highlights[1].caseSensitive = true;
-  highlightRegexps = mergeActiveHighlights(highlights);
-  highlightLinesRegexp = mergeActiveHighlightLines(highlights);
-  lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(false));
+  highlightRegexps = activeHighlights(highlights.slice());
+  highlightLinesRegexp = activeHighlightLines(highlights.slice());
+  lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, false)).toBe(false));
 
   highlights[0].on = false;
-  highlightRegexps = mergeActiveHighlights(highlights);
-  highlightLinesRegexp = mergeActiveHighlightLines(highlights);
-  lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(false));
+  highlightRegexps = activeHighlights(highlights.slice());
+  highlightLinesRegexp = activeHighlightLines(highlights.slice());
+  lines.forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, false)).toBe(false));
 
   highlights[1].line = true;
-  [lines[0], lines[2], lines[3], lines[4], lines[5]].forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, settings)).toBe(false));
+  [lines[0], lines[2], lines[3], lines[4], lines[5]].forEach((line) => expect(shouldHighlightLine(line, highlightRegexps, highlightLinesRegexp, false)).toBe(false));
 });
 
 test('selectors-getHighlightText', function() {
