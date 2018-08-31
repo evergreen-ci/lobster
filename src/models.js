@@ -221,19 +221,17 @@ export type Logviewer = $Exact<$ReadOnly<{
   settings: Settings,
 }>>
 
-export type VisualLineData = $Exact<$ReadOnly<{
-  filteredLines: Line[],
-  indexMap: Map<number, number>,
-  highlights: Set<number>
-}>>
-
-export type LineData = $Exact<$ReadOnly<{
-  indexMap: Map<number, number>,
-  findResults: number[],
-  filteredLines: Line[],
+export type HighlightLineData = $Exact<$ReadOnly<{
   highlightLines: Line[],
   highlightText: string[]
 }>>
+
+export type FilteredLineData = $Exact<$ReadOnly<{
+  indexMap: Map<number, number>,
+  filteredLines: Line[],
+}>>
+
+export type SearchResults = number[]
 
 export type CacheStatus = 'ok' | 'error' | 'never' | 'later' | 'unsupported' | null;
 

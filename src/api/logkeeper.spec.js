@@ -1,3 +1,4 @@
+import assert from 'assert';
 import sinon from 'sinon';
 import * as logkeeper from './logkeeper';
 

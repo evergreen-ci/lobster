@@ -25,7 +25,7 @@ type State = {
   scrollLine: ?number
 }
 
-export default class LogLineText extends React.Component<Props, State> {
+export default class LogLineText extends React.PureComponent<Props, State> {
   lineRef: ?HTMLSpanElement = null;
 
   constructor(props: Props) {

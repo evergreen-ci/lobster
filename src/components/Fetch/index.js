@@ -10,20 +10,19 @@ import { connect } from 'react-redux';
 import Toolbar from './Toolbar';
 import * as selectors from '../../selectors';
 import type { Dispatch } from 'redux';
-import type { ReduxState, LineData, LogIdentity, Bookmark, Line } from '../../models';
+import type { ReduxState, LogIdentity, Bookmark, Line } from '../../models';
 import type { ContextRouter } from 'react-router-dom';
 
 type Props = {
   lines: Line[],
   bookmarks: Bookmark[],
   findIdx: number,
-  lineData: LineData,
   logIdentity: ?LogIdentity,
   loadLogByIdentity: (LogIdentity) => void,
   scrollToLine: (number) => void
 } & ContextRouter
 
-export class Fetch extends React.PureComponent<Props> {
+export class Fetch extends React.Component<Props> {
   static defaultProps = {
     bookmarks: []
   }
@@ -40,9 +39,7 @@ export class Fetch extends React.PureComponent<Props> {
       return <div />;
     }
     return (
-      <LogView
-        lineData={this.props.lineData}
-      />);
+      <LogView />);
   }
 
   render() {
@@ -50,9 +47,7 @@ export class Fetch extends React.PureComponent<Props> {
       <div>
         <Bookmarks bookmarks={this.props.bookmarks} setScroll={this.props.scrollToLine} />
         <div className="main">
-          <Toolbar
-            lineData={this.props.lineData}
-          />
+          <Toolbar />
           <div className="log-list">
             {this.showLines()}
           </div>
@@ -69,8 +64,7 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>) {
     ...ownProps,
     lines: selectors.getLogLines(state),
     findIdx: selectors.getLogViewerFindIdx(state),
-    bookmarks: selectors.getLogViewerBookmarks(state),
-    lineData: selectors.getFilteredLineData(state)
+    bookmarks: selectors.getLogViewerBookmarks(state)
   };
 }
 

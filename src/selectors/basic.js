@@ -20,6 +20,9 @@ export const getLogViewerSearchTerm = (state: ReduxState) => getLogViewerFind(st
 export const getLogViewerSearchTermError = (state: ReduxState) => getLogViewerFind(state).regexError;
 
 export const getLogViewerSettings = (state: ReduxState) => getLogViewer(state).settings;
+export const getLogViewerSettingsWrap = (state: ReduxState) => getLogViewerSettings(state).wrap;
+export const getLogViewerSettingsFilterLogic = (state: ReduxState) => getLogViewerSettings(state).filterIntersection;
+export const getLogViewerSettingsCaseSensitive = (state: ReduxState) => getLogViewerSettings(state).caseSensitive;
 
 export const getIsLogViewerSettingsPanel = (state: ReduxState) => getLogViewer(state).settingsPanel;
 export const getLogViewerScrollLine = (state: ReduxState) => getLogViewer(state).scrollLine;

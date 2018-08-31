@@ -6,7 +6,7 @@ import FullLogLine from './FullLogLine';
 import { connect } from 'react-redux';
 import { scrollToLine, toggleBookmark } from '../../actions';
 import * as selectors from '../../selectors';
-import type { ReduxState, ColorMap, Line, LineData, Bookmark } from '../../models';
+import type { ReduxState, ColorMap, Line, SearchResults, HighlightLineData, FilteredLineData, Bookmark } from '../../models';
 
 import './style.css';
 
@@ -14,14 +14,14 @@ type Props = {
   searchFindIdx: number,
   bookmarks: Bookmark[],
   wrap: boolean,
-  toggleBookmark: (number[]) => void,
   colorMap: ColorMap,
   searchTerm: string,
   caseSensitive: boolean,
   scrollLine: number,
-  lineData: LineData,
-  highlightLines: Line[],
-  highlightText: string[],
+  highlights: HighlightLineData,
+  filterData: FilteredLineData,
+  findResults: SearchResults,
+  toggleBookmark: (number[]) => void,
   scrollToLine: (number) => void
 };
 
@@ -100,20 +100,20 @@ class LogView extends React.PureComponent<Props, State> {
   }
 
   genList = (index) => {
-    const lineNumber = this.props.lineData.filteredLines[index].lineNumber;
+    const lineNumber = this.props.filterData.filteredLines[index].lineNumber;
     return (
       <FullLogLine
         lineRefCallback={this.lineRefCallback}
         key={lineNumber}
-        found={lineNumber === this.props.lineData.findResults[this.props.searchFindIdx]}
-        bookmarked={this.findBookmark(this.props.bookmarks, this.props.lineData.filteredLines[index].lineNumber) !== -1}
-        highlight={this.props.lineData.highlightLines.includes(this.props.lineData.filteredLines[index])}
+        found={lineNumber === this.props.findResults[this.props.searchFindIdx]}
+        bookmarked={this.findBookmark(this.props.bookmarks, this.props.filterData.filteredLines[index].lineNumber) !== -1}
+        highlight={this.props.highlights.highlightLines.includes(this.props.filterData.filteredLines[index])}
         wrap={this.props.wrap}
-        line={this.props.lineData.filteredLines[index]}
+        line={this.props.filterData.filteredLines[index]}
         toggleBookmark={this.props.toggleBookmark}
         colorMap={this.props.colorMap}
         searchTerm={this.props.searchTerm}
-        highlightText={this.props.lineData.highlightText}
+        highlightText={this.props.highlights.highlightText}
         caseSensitive={this.props.caseSensitive}
         updateSelectStartIndex={this.updateSelectStartIndex}
         updateSelectEndIndex={this.updateSelectEndIndex}
@@ -123,7 +123,7 @@ class LogView extends React.PureComponent<Props, State> {
   }
 
   scrollToLine(lineNumber: number) {
-    const visibleIndex = this.props.lineData.indexMap.get(lineNumber);
+    const visibleIndex = this.props.filterData.indexMap.get(lineNumber);
     if (visibleIndex === null || visibleIndex === undefined) {
       return;
     }
@@ -139,7 +139,7 @@ class LogView extends React.PureComponent<Props, State> {
   }
 
   scrollFindIntoView() {
-    const renderedLineNum = this.props.lineData.findResults[this.props.searchFindIdx];
+    const renderedLineNum = this.props.findResults[this.props.searchFindIdx];
     if (renderedLineNum < 0 || renderedLineNum === undefined || renderedLineNum === null) {
       return;
     }
@@ -176,16 +176,16 @@ class LogView extends React.PureComponent<Props, State> {
   }
 
   render() {
-    if (this.props.lineData.filteredLines.length !== 0) {
+    if (this.props.filterData.filteredLines.length !== 0) {
       return (
         <div>
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
-            length={this.props.lineData.filteredLines.length}
+            length={this.props.filterData.filteredLines.length}
             initialIndex={this.props.scrollLine}
             type={this.props.wrap ? 'variable' : 'uniform'}
-            useStaticSize={!this.props.wrap}
+            useStaticSize={true}
           />
         </div>
       );
@@ -204,7 +204,10 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Pro
     searchTerm: selectors.getLogViewerSearchTerm(state),
     scrollLine: selectors.getLogViewerScrollLine(state),
     searchFindIdx: selectors.getLogViewerFindIdx(state),
-    bookmarks: selectors.getLogViewerBookmarks(state)
+    bookmarks: selectors.getLogViewerBookmarks(state),
+    highlights: selectors.getHighlights(state),
+    filterData: selectors.getFilteredLineData(state),
+    findResults: selectors.getFindResults(state)
   };
 }
 

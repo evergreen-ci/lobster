@@ -1,6 +1,6 @@
 // @flow
 
-import { shouldPrintLine } from './search';
+import { shouldPrintLine } from './filter';
 import { activeFilters, activeInverseFilters } from './merge';
 
 test('selectors-shouldPrintLine', function() {

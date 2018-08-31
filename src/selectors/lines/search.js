@@ -1,51 +1,38 @@
 // @flow strict
 
+import { createSelector } from 'reselect';
 import shouldLineMemoizer from './shouldLineMemoizer';
-import type { Line, Bookmark } from '../../models';
+import * as selectors from '../basic';
+import getFilteredLineData from './filter';
+import type { FilteredLineData, Line, Bookmark, SearchResults } from '../../models';
 
-function findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
-  return bookmarkList.findIndex(function(bookmark) {
-    return bookmark.lineNumber === lineNum;
-  });
-}
+function makeRegexp(regexp: ?string, caseSensitive: boolean): ?RegExp {
+  try {
+    if (regexp == null || regexp === '') {
+      return new RegExp('');
+    }
 
-function matchFilters(filter: RegExp[], string: string, isIntersection: boolean): boolean {
-  if (isIntersection) {
-    return filter.every(regex => string.match(regex));
+    if (!caseSensitive) {
+      return new RegExp(regexp, 'i');
+    }
+    return new RegExp(regexp);
+  } catch (_e) {
+    return null;
   }
-  return filter.some(regex => string.match(regex));
 }
 
-export const shouldPrintLine = shouldLineMemoizer(
-  function(line: Line, bookmarks: Bookmark[], filterIntersection: boolean, filter: RegExp[], inverseFilter: RegExp[]): boolean {
-    if (findBookmark(bookmarks, line.lineNumber) !== -1) {
-      return true;
+export default createSelector(
+  selectors.getLogViewerSearchTerm,
+  getFilteredLineData,
+  selectors.getLogViewerSettingsCaseSensitive,
+  function(searchTerm: string, lineData: FilteredLineData, caseSensitive: boolean): SearchResults {
+    const { filteredLines } = lineData;
+    const findRegexp = makeRegexp(searchTerm, caseSensitive);
+    if (findRegexp == null) {
+      return [];
     }
-
-    if ((!filter && !inverseFilter) || (filter.length === 0 && inverseFilter.length === 0)) {
-      return true;
-    } else if (!filter || filter.length === 0) {
-      if (matchFilters(inverseFilter, line.text, filterIntersection)) {
-        return false;
-      }
-      return true;
-    } else if (!inverseFilter || inverseFilter.length === 0) {
-      if (matchFilters(filter, line.text, filterIntersection)) {
-        return true;
-      }
-      return false;
-    }
-    // If there are both types of filters, it has to match the filter and not match
-    // the inverseFilter.
-    if (filterIntersection) {
-      if (matchFilters(filter, line.text, filterIntersection) &&
-            !matchFilters(inverseFilter, line.text, filterIntersection)) {
-        return true;
-      }
-    } else if (matchFilters(filter, line.text, filterIntersection) ||
-          !matchFilters(inverseFilter, line.text, filterIntersection)) {
-      return true;
-    }
-    return false;
+    return filteredLines
+      .filter((line) => findRegexp.test(line.text))
+      .map((line) => line.lineNumber);
   }
 );
