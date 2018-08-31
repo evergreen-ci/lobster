@@ -26,7 +26,6 @@ type Props = {
 };
 
 type State = {
-  lineMap: Map<number, HTMLSpanElement>,
   selectStartIndex: ?number,
   selectEndIndex: ?number,
   clicks: (number[])[]
@@ -34,11 +33,11 @@ type State = {
 
 class LogView extends React.Component<Props, State> {
   logListRef: ?ReactList = null;
+  lineMap: Map<number, HTMLSpanElement> = new Map();
 
   constructor(props) {
     super(props);
     this.state = {
-      lineMap: new Map(),
       selectStartIndex: null,
       selectEndIndex: null,
       clicks: []
@@ -67,6 +66,9 @@ class LogView extends React.Component<Props, State> {
     if (this.props.findResults !== nextProps.findResults) {
       return true;
     }
+    if (this.props.wrap !== nextProps.wrap) {
+      return true;
+    }
     if (this.props.searchFindIdx !== nextProps.searchFindIdx) {
       return true;
     }
@@ -80,9 +82,9 @@ class LogView extends React.Component<Props, State> {
 
   lineRefCallback = (element: ?HTMLSpanElement, line: number, isUnmount?: boolean): void => {
     if (isUnmount === true) {
-      this.state.lineMap.delete(line);
+      this.lineMap.delete(line);
     } else if (element) {
-      this.state.lineMap.set(line, element);
+      this.lineMap.set(line, element);
     }
   };
 
@@ -129,16 +131,17 @@ class LogView extends React.Component<Props, State> {
   }
 
   genList = (index) => {
-    const lineNumber = this.props.filterData.filteredLines[index].lineNumber;
+    const line= this.props.filterData.filteredLines[index]
+    const lineNumber = line.lineNumber;
     return (
       <FullLogLine
         lineRefCallback={this.lineRefCallback}
         key={lineNumber}
         found={lineNumber === this.props.findResults[this.props.searchFindIdx]}
         bookmarked={this.findBookmark(this.props.bookmarks, lineNumber) !== -1}
-        highlight={this.props.highlights.highlightLines.includes(this.props.filterData.filteredLines[index])}
+        highlight={this.props.highlights.highlightLines.includes(line)}
         wrap={this.props.wrap}
-        line={this.props.filterData.filteredLines[index]}
+        line={line}
         toggleBookmark={this.props.toggleBookmark}
         colorMap={this.props.colorMap}
         searchTerm={this.props.searchTerm}
@@ -172,7 +175,7 @@ class LogView extends React.Component<Props, State> {
     if (renderedLineNum < 0 || renderedLineNum === undefined || renderedLineNum === null) {
       return;
     }
-    const line = this.state.lineMap.get(renderedLineNum);
+    const line = this.lineMap.get(renderedLineNum);
     this.props.scrollToLine(renderedLineNum);
     if (line == null) {
       return;

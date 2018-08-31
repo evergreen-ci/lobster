@@ -16,29 +16,8 @@ type Props = {
   highlightText: string[]
 }
 
-type State = {
-  startSelect: boolean,
-  endSelect: boolean,
-  clicks: number[],
-  selectStartIndex: ?number,
-  selectEndIndex: ?number,
-  scrollLine: ?number
-}
-
-export default class LogLineText extends React.PureComponent<Props, State> {
+export default class LogLineText extends React.PureComponent<Props> {
   lineRef: ?HTMLSpanElement = null;
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      startSelect: false,
-      endSelect: false,
-      clicks: [],
-      selectStartIndex: null,
-      selectEndIndex: null,
-      scrollLine: null
-    };
-  }
 
   componentDidUpdate() {
     if (this.lineRef) {
@@ -50,17 +29,6 @@ export default class LogLineText extends React.PureComponent<Props, State> {
     if (this.lineRef) {
       this.props.lineRefCallback(this.lineRef, this.props.lineNumber, true);
     }
-  }
-
-  getSearchWords() {
-    const newHighlight = this.props.highlightText.slice();
-    try {
-      RegExp(this.props.searchTerm);
-      newHighlight.push(this.props.searchTerm);
-    } catch (_e) {
-      // no error
-    }
-    return newHighlight;
   }
 
   setRef = (element: ?HTMLSpanElement) => {
@@ -82,7 +50,7 @@ export default class LogLineText extends React.PureComponent<Props, State> {
           unhighlightStyle={style}
           highlightStyle={highlightStyle}
           textToHighlight={this.props.text}
-          searchWords={this.getSearchWords()}
+          searchWords={this.props.highlightText}
         />
       </span>
     );

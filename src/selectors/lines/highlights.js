@@ -29,7 +29,7 @@ export const getHighlightText = defaultMemoize(
   }
 );
 
-export default createSelector(
+const getHighlights = createSelector(
   getFilteredLineData,
   selectors.getLogViewerHighlights,
   selectors.getLogViewerSettingsFilterLogic,
@@ -47,5 +47,24 @@ export default createSelector(
       highlightLines: highlightLines,
       highlightText: highlightText
     };
+  }
+);
+
+export default createSelector(
+  selectors.getLogViewerSearchTerm,
+  getHighlights,
+  function(searchTerm: string, highlights: HighlightLineData): HighlightLineData {
+    if (!searchTerm) {
+      return highlights;
+    }
+    try {
+      RegExp(searchTerm);
+      return {
+        ...highlights,
+        highlightText: highlights.highlightText.concat([searchTerm])
+      };
+    } catch (_e) {
+      return highlights;
+    }
   }
 );
