@@ -57,6 +57,7 @@ const getFilteredLineData = createSelector(
   selectors.getLogViewerBookmarks,
   selectors.getLogViewerSettingsFilterLogic,
   function(lines: Line[], filters: Filter[], bookmarks: Bookmark[], filterIntersection: boolean): FilteredLineData {
+    console.log('filters-selector');
     const filter = merge.activeFilters(filters);
     const inverseFilter = merge.activeInverseFilters(filters);
 

@@ -3,7 +3,8 @@
 import { defaultMemoize, createSelector } from 'reselect';
 import * as merge from './merge';
 import * as selectors from '../basic';
-import type { Line, Highlight, HighlightLineData } from '../../models';
+import getFilteredLineData from './filter';
+import type { Line, FilteredLineData, Highlight, HighlightLineData } from '../../models';
 
 function matchFilters(filter: RegExp[], string: string, isIntersection: boolean): boolean {
   if (isIntersection) {
@@ -29,15 +30,16 @@ export const getHighlightText = defaultMemoize(
 );
 
 export default createSelector(
-  selectors.getLogLines,
+  getFilteredLineData,
   selectors.getLogViewerHighlights,
   selectors.getLogViewerSettingsFilterLogic,
-  function(lines: Line[], highlights: Highlight[], filterIntersection: boolean): HighlightLineData {
+  function(lines: FilteredLineData, highlights: Highlight[], filterIntersection: boolean): HighlightLineData {
+    console.log('highlights-selector');
     const highlight = merge.activeHighlights(highlights);
     const highlightLine = merge.activeHighlightLines(highlights);
     const highlightText = getHighlightText(highlights);
 
-    const highlightLines = lines.filter((line) => {
+    const highlightLines = lines.filteredLines.filter((line) => {
       return shouldHighlightLine(line, highlight, highlightLine, filterIntersection);
     });
 

@@ -32,7 +32,7 @@ type State = {
   clicks: (number[])[]
 };
 
-class LogView extends React.PureComponent<Props, State> {
+class LogView extends React.Component<Props, State> {
   logListRef: ?ReactList = null;
 
   constructor(props) {
@@ -43,6 +43,32 @@ class LogView extends React.PureComponent<Props, State> {
       selectEndIndex: null,
       clicks: []
     };
+  }
+
+  shouldComponentUpdate(nextProps) {
+    if (this.props.bookmark !== nextProps.bookmark) {
+      return true;
+    }
+    if (this.props.searchTerm !== nextProps.searchTerm) {
+      return true;
+    }
+    if (this.props.caseSensitive !== nextProps.caseSensitive) {
+      return true;
+    }
+    if (this.props.scrollLine !== nextProps.scrollLine) {
+      return true;
+    }
+    if (this.props.highlights !== nextProps.highlights) {
+      return true;
+    }
+    if (this.props.filterData !== nextProps.filterData) {
+      return true;
+    }
+    if (this.props.findResults !== nextProps.findResults) {
+      return true;
+    }
+
+    return false;
   }
 
   setLogListRef = (element) => {
@@ -106,7 +132,7 @@ class LogView extends React.PureComponent<Props, State> {
         lineRefCallback={this.lineRefCallback}
         key={lineNumber}
         found={lineNumber === this.props.findResults[this.props.searchFindIdx]}
-        bookmarked={this.findBookmark(this.props.bookmarks, this.props.filterData.filteredLines[index].lineNumber) !== -1}
+        bookmarked={this.findBookmark(this.props.bookmarks, lineNumber) !== -1}
         highlight={this.props.highlights.highlightLines.includes(this.props.filterData.filteredLines[index])}
         wrap={this.props.wrap}
         line={this.props.filterData.filteredLines[index]}
