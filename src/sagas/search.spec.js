@@ -1,19 +1,13 @@
 import { testSaga } from 'redux-saga-test-plan';
 import search from './search';
-import { getFilteredLineData, getLogViewerFindIdx } from '../selectors';
+import { getFindResults, getLogViewerFindIdx } from '../selectors';
 import * as actions from '../actions';
 
 const emptyData = (action) => {
   return testSaga(search, action)
     .next()
-    .select(getFilteredLineData)
-    .next({
-      indexMap: new Map(),
-      findResults: [],
-      filteredLines: [],
-      highlightLines: [],
-      highlightText: []
-    });
+    .select(getFindResults)
+    .next([]);
 };
 
 const runLinesSelector = () => {
@@ -71,13 +65,13 @@ const runLinesSelector = () => {
     }
   };
 
-  return getFilteredLineData(state);
+  return getFindResults(state);
 };
 
 const withSearchTerm = (action, index = -1) => {
   return testSaga(search, action)
     .next()
-    .select(getFilteredLineData)
+    .select(getFindResults)
     .next(runLinesSelector())
     .select(getLogViewerFindIdx)
     .next(index);
