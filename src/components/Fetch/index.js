@@ -59,7 +59,7 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>) {
 function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   return {
     ...ownProps,
-    loadLogByIdentity: (identity: LogIdentity) => dispatch(actions.loadLog(identity)),
+    loadLogByIdentity: (identity: LogIdentity) => dispatch(actions.loadLog(identity))
   };
 }
 
