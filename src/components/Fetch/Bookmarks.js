@@ -8,13 +8,13 @@ import type { ReduxState, Bookmark as BookmarkType, LogIdentity } from '../../mo
 
 type Props = {|
   bookmarks: BookmarkType[],
-  setScroll: (number) => void
+  scrollToLine: (number) => void
 |}
 
 export class Bookmarks extends React.PureComponent<Props> {
   scroll = (event: SyntheticMouseEvent<HTMLInputElement>) => {
     if (event.currentTarget.innerHTML != null) {
-      this.props.setScroll(parseInt(event.currentTarget.innerHTML, 10));
+      this.props.scrollToLine(parseInt(event.currentTarget.innerHTML, 10));
     }
   }
 
@@ -60,4 +60,3 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Bookmarks);
-
