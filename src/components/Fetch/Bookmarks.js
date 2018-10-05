@@ -8,7 +8,7 @@ import type { ReduxState, Bookmark as BookmarkType, LogIdentity } from '../../mo
 
 type Props = {|
   bookmarks: BookmarkType[],
-  setScroll: (number) => void
+  scrollToLine: (number) => void
 |}
 
 export class Bookmarks extends React.PureComponent<Props> {
