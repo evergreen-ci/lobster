@@ -14,7 +14,7 @@ type Props = {|
 export class Bookmarks extends React.PureComponent<Props> {
   scroll = (event: SyntheticMouseEvent<HTMLInputElement>) => {
     if (event.currentTarget.innerHTML != null) {
-      this.props.setScroll(parseInt(event.currentTarget.innerHTML, 10));
+      this.props.scrollToLine(parseInt(event.currentTarget.innerHTML, 10));
     }
   }
 
@@ -60,4 +60,3 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Bookmarks);
-
