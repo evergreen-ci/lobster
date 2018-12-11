@@ -16,7 +16,7 @@
 .env.test.local
 .env.production.local
 
-# ViM swap faile
+# VIm swap faile
 *.swp
 
 npm-debug.log*
