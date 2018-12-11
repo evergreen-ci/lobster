@@ -178,9 +178,14 @@ module.exports = {
     // TODO actually do CSS properly
     'react/forbid-component-props': 0
   },
-  'settings': {
-    'flowtype': {
-      'onlyFilesWithFlowAnnotation': true
+  settings: {
+    flowtype: {
+      onlyFilesWithFlowAnnotation: true
+    },
+    'import/resolver': {
+      node: {
+        moduleDirectory: ['node_modules', 'src/']
+      }
     }
   }
 };

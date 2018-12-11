@@ -24,7 +24,8 @@ import 'whatwg-fetch';
 const saga = createSagaMiddleware();
 const middlewares = [saga];
 if (!isProd) {
-  middlewares.push(logger);
+  (function(l: any){})(logger)
+  //middlewares.push(logger);
 }
 
 const store = createStore(lobster, applyMiddleware(...middlewares));

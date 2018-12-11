@@ -11,6 +11,7 @@ sketchy-null-string=off
 
 [options]
 esproposal.optional_chaining=enable
+module.name_mapper='^src\(.*\)$' -> '<PROJECT_ROOT>/src/\1'
 
 [strict]
 # recommended set per: https://flow.org/en/docs/strict/
