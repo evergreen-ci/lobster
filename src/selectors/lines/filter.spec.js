@@ -10,96 +10,97 @@ type LineTest = {
 }
 
 function f(text) { return new RegExp(text, 'i') }
-function line(text: string, expected: boolean): LineTest { return {
-  obj: {
-    lineNumber: 0,
-    text: text,
-    port: null,
-    gitRef: null,
-  },
-  _expected: expected,
-}}
+function makeLine(text: string, expected: boolean): LineTest {
+  return {
+    obj: {
+      lineNumber: 0,
+      text: text,
+      port: null,
+      gitRef: null,
+    },
+    _expected: expected,
+  }
+}
 
 const MODE_AND = true
 const MODE_OR = false
-const INVERSE = true
 
 test('selectors-inclusionary-and', function() {
-  let mode = MODE_AND
-  let filters = [f('A'), f('B')]
-  let invFilters = []
+  const mode = MODE_AND
+  const filters = [f('A'), f('B')]
+  const invFilters = []
   ;[
-    line('AA', false),
-    line('AB', true), // A AND B
-    line('C', false)
-  ].forEach(function(line) {
-    expect(shouldPrintLine(line.obj, [], mode, filters, invFilters)).toBe(line._expected)
+    makeLine('AA', false),
+    makeLine('AB', true), // A AND B
+    makeLine('C', false)
+  ].forEach(function(d) {
+    expect(shouldPrintLine(d.obj, [], mode, filters, invFilters)).toBe(d._expected)
   })
 })
 
 test('selectors-inclusionary-or', function() {
-  let mode = MODE_OR
-  let filters = [f('A'), f('B')]
-  let invFilters = []
+  const mode = MODE_OR
+  const filters = [f('A'), f('B')]
+  const invFilters = []
   ;[
-    line('AA', true), // A OR B
-    line('AB', true), // A OR B
-    line('C', false)
-  ].forEach(function(line) {
-    expect(shouldPrintLine(line.obj, [], mode, filters, invFilters)).toBe(line._expected)
+    makeLine('AA', true), // A OR B
+    makeLine('AB', true), // A OR B
+    makeLine('C',  false)
+  ].forEach(function(d) {
+    expect(shouldPrintLine(d.obj, [], mode, filters, invFilters)).toBe(d._expected)
   })
 })
 
 test('selectors-exclusionary-and', function() {
-  let mode = MODE_AND
-  let filters = []
-  let invFilters = [f('A'), f('B')]
+  const mode = MODE_AND
+  const filters = []
+  const invFilters = [f('A'), f('B')]
   ;[
-    line('AA', false),
-    line('AB', false),
-    line('C', true) // !A AND !B
-  ].forEach(function(line) {
-    expect(shouldPrintLine(line.obj, [], mode, filters, invFilters)).toBe(line._expected)
+    makeLine('AA', false),
+    makeLine('AB', false),
+    makeLine('C',  true) // !A AND !B
+  ].forEach(function(d) {
+    expect(shouldPrintLine(d.obj, [], mode, filters, invFilters)).toBe(d._expected)
   })
 })
 
 test('selectors-exclusionary-or', function() {
-  let mode = MODE_OR
-  let filters = []
-  let invFilters = [f('A'), f('B')]
+  const mode = MODE_OR
+  const filters = []
+  const invFilters = [f('A'), f('B')]
   ;[
-    line('AA', true), // !A OR !B
-    line('AB', false),
-    line('C',  true) // !A OR !B
-  ].forEach(function(line) {
-    expect(shouldPrintLine(line.obj, [], mode, filters, invFilters)).toBe(line._expected)
+    makeLine('AA', true), // !A OR !B
+    makeLine('AB', false),
+    makeLine('C',  true) // !A OR !B
+  ].forEach(function(d) {
+    expect(shouldPrintLine(d.obj, [], mode, filters, invFilters)).toBe(d._expected)
   })
 })
 
 test('selectors-mixed-and', function() {
-  let mode = MODE_AND
-  let filters = [f('A')]
-  let invFilters = [f('B')]
+  const mode = MODE_AND
+  const filters = [f('A')]
+  const invFilters = [f('B')]
   ;[
-    line('AA', true), // A AND !B
-    line('AB', false),
-    line('C', false)
-  ].forEach(function(line) {
-    expect(shouldPrintLine(line.obj, [], mode, filters, invFilters)).toBe(line._expected)
+    makeLine('AA', true), // A AND !B
+    makeLine('AB', false),
+    makeLine('C',  false)
+  ].forEach(function(d) {
+    expect(shouldPrintLine(d.obj, [], mode, filters, invFilters)).toBe(d._expected)
   })
 })
 
 test('selectors-mixed-or', function() {
-  let mode = MODE_OR
-  let filters = [f('A')]
-  let invFilters = [f('B')]
+  const mode = MODE_OR
+  const filters = [f('A')]
+  const invFilters = [f('B')]
   ;[
-    line('AA', true), // A OR !B
-    line('AB', true), // A OR !B
-    line('B', false),
-    line('C', true)  // A or !B
-  ].forEach(function(line) {
-    expect(shouldPrintLine(line.obj, [], mode, filters, invFilters)).toBe(line._expected)
+    makeLine('AA', true), // A OR !B
+    makeLine('AB', true), // A OR !B
+    makeLine('B',  false),
+    makeLine('C',  true)  // A or !B
+  ].forEach(function(d) {
+    expect(shouldPrintLine(d.obj, [], mode, filters, invFilters)).toBe(d._expected)
   })
 })
 

@@ -53,8 +53,8 @@ export const shouldPrintLine = function(line: Line, bookmarks: Bookmark[], filte
     return matchFilters(filter, line.text, filterIntersection)
   }
 
-  let hasInclusionaryMatch = matchFilters(filter, line.text, filterIntersection)
-  let hasExclusionaryMatch  = inverseMatchFilters(inverseFilter, line.text, filterIntersection)
+  const hasInclusionaryMatch = matchFilters(filter, line.text, filterIntersection)
+  const hasExclusionaryMatch  = inverseMatchFilters(inverseFilter, line.text, filterIntersection)
 
   // If there are both types of filters, it has to match the filter and not match
   // the inverseFilter.
