@@ -98,6 +98,7 @@ module.exports = {
     }
   ],
   'rules': {
+    'comma-dangle': 'off', // Nobody cares about it, really
     'complexity': 'off',
     'no-console': 'off',
     'no-unused-vars': ['error', { 'vars': 'all', 'argsIgnorePattern': '^_' }],
@@ -105,15 +106,18 @@ module.exports = {
     'object-curly-spacing': ['error', 'always'],
     'space-in-parens': ['error', 'never'],
     'no-param-reassign': 2,
+    'semi': 'off', // Just a waste of time due to ASI and Flow/linters
     'space-before-function-paren': ['error', {
       'anonymous': 'never',
       'named': 'never',
       'asyncArrow': 'always'
     }],
     'no-lonely-if': 0,
+    'no-multi-spaces': 'off', // I know how make my code readable
 
     'dependencies/case-sensitive': 2,
-    'dependencies/no-unresolved': 2,
+    'dependencies/no-unresolved': 0, // off in favor of flow and eslint-plugin-import
+    'import/no-unresolved': 2,
     'dependencies/no-cycles': [2, { 'types': true }],
 
     'flowtype/newline-after-flow-annotation': 2,
@@ -178,9 +182,14 @@ module.exports = {
     // TODO actually do CSS properly
     'react/forbid-component-props': 0
   },
-  'settings': {
-    'flowtype': {
-      'onlyFilesWithFlowAnnotation': true
+  settings: {
+    flowtype: {
+      onlyFilesWithFlowAnnotation: true
+    },
+    'import/resolver': {
+      node: {
+        paths: ['.'],
+      },
     }
   }
 };
