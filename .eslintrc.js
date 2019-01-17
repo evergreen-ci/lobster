@@ -115,6 +115,7 @@ module.exports = {
     }],
     'no-lonely-if': 0,
     'no-multi-spaces': 'off', // I know how make my code readable
+    'indent': 'off',
 
     'dependencies/case-sensitive': 2,
     'dependencies/no-unresolved': 0, // off in favor of flow and eslint-plugin-import
@@ -133,6 +134,7 @@ module.exports = {
     // 'flowtype/require-parameter-type': [2, {'excludeArrowFunctions': 'expressionsOnly'}],
     // 'flowtype/require-return-type': [2, {'excludeArrowFunctions': 'expressionsOnly'}],
     'flowtype/require-valid-file-annotation': [2, 'never', { 'annotationStyle': 'line' }],
+    'flowtype/space-after-type-colon': 'off',
 
     // Enable a more strict set of react lints
     'react/jsx-closing-bracket-location': 2,

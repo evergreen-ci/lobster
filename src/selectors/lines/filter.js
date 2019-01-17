@@ -75,11 +75,11 @@ const getFilteredLineData = createSelector(
   selectors.getLogViewerFilters,
   selectors.getLogViewerBookmarks,
   selectors.getLogViewerSettingsFilterLogic,
-  function(lines: Line[], filters: Filter[], bookmarks: Bookmark[], filterIntersection: boolean): Array<Line> {
+  function(lines: Line[], filters: Filter[], bookmarks: Bookmark[], filterIntersection: boolean): Line[] {
     const filter = merge.activeFilters(filters);
     const inverseFilter = merge.activeInverseFilters(filters);
 
-    lines.forEach((line, i) => {
+    lines.forEach((line) => {
       if (!shouldPrintLine(line, bookmarks, filterIntersection, filter, inverseFilter)) {
         line.isMatched = false
       } else {

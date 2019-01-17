@@ -22,7 +22,7 @@ type Props = {
   caseSensitive: boolean,
   scrollLine: number,
   highlights: HighlightLineData,
-  filteredLines: Array<Line>,
+  filteredLines: Line[],
   expandableFilterData: Array<Line | number>,
   findResults: SearchResults,
   toggleBookmark: (number[]) => void,
@@ -32,12 +32,12 @@ type Props = {
 type SkipLine = {|
   start: number,
   end:   number,
-  kind:  'SkipLine',
+  kind: 'SkipLine',
 |}
 
 // Just a helper
 function newSkipLine(start, end): SkipLine {
-  return {start: start, end: end, kind: 'SkipLine'}
+  return { start: start, end: end, kind: 'SkipLine' }
 }
 
 type State = {
@@ -100,17 +100,17 @@ class LogView extends React.Component<Props, State> {
         return this.findLineIdx(data, lineNumber, midIdx, end)
       }
     }
-    throw new Error(`Line number {lineNumber} not found!`)
+    throw new Error(`Line number ${lineNumber} not found!`)
   }
 
-  foldUnmatchedLines(lines: Array<Line>): Array<Line | SkipLine> {
+  foldUnmatchedLines(lines: Line[]): Array<Line | SkipLine> {
     const out: Array<Line | SkipLine> = []
     let inSkipState = false
     let skipStart: number = 0
-    let expandedRanges = this.state ? this.state.expandedRanges : []
+    const expandedRanges = this.state ? this.state.expandedRanges : []
 
     lines.forEach((line) => {
-      let lineNo = line.lineNumber
+      const lineNo = line.lineNumber
       let ignoreSkip: boolean = false
 
       expandedRanges.forEach((range) => {
@@ -134,7 +134,7 @@ class LogView extends React.Component<Props, State> {
       }
 
       // When matched line appears
-      if(!inSkipState || ignoreSkip) out.push(line)
+      if (!inSkipState || ignoreSkip) out.push(line)
     })
 
     // Finalization
@@ -204,9 +204,9 @@ class LogView extends React.Component<Props, State> {
   // the second is end index
   handleExpand = (ranges: Array<[number, number]>) => {
     // TODO collapse sequential ranges into one
-    this.setState({
-      expandedRanges: this.state.expandedRanges.concat(ranges),
-    })
+    this.setState((state) => ({
+      expandedRanges: state.expandedRanges.concat(ranges),
+    }))
   }
 
   genList = (index: number) => {
@@ -215,17 +215,17 @@ class LogView extends React.Component<Props, State> {
     if (item.kind === 'SkipLine') {
       // IF SkipLine
       const skipLine: SkipLine = item
-      return <ExpandableLogLine
-        key={skipLine.start}
-        start={skipLine.start}
-        end={skipLine.end}
-        onClick={this.handleExpand}
-      />
-    } else {
-      // IF Line
-      const line: Line = item
-      return this.genListRegularRow(line, line.lineNumber)
-    }
+      return (
+        <ExpandableLogLine
+          key={skipLine.start}
+          start={skipLine.start}
+          end={skipLine.end}
+          onClick={this.handleExpand}
+        />
+      )
+    } // IF Line
+    const line: Line = item
+    return this.genListRegularRow(line, line.lineNumber)
   }
 
   genListRegularRow = (line, lineNumber: number) => (
@@ -324,7 +324,7 @@ class LogView extends React.Component<Props, State> {
         </div>
       );
     }
-    return <div></div>
+    return (<div></div>)
   }
 }
 

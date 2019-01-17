@@ -24,7 +24,7 @@ const search = createSelector(
   selectors.getLogViewerSearchTerm,
   getFilteredLineData,
   selectors.getLogViewerSettingsCaseSensitive,
-  function(searchTerm: string, lines: Array<Line>, caseSensitive: boolean): SearchResults {
+  function(searchTerm: string, lines: Line[], caseSensitive: boolean): SearchResults {
     const filteredLines = lines;
     const findRegexp = makeRegexp(searchTerm, caseSensitive);
     if (findRegexp == null) {

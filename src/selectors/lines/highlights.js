@@ -33,7 +33,7 @@ const getHighlights = createSelector(
   getFilteredLineData,
   selectors.getLogViewerHighlights,
   selectors.getLogViewerSettingsFilterLogic,
-  function(lines: Array<Line>, highlights: Highlight[], filterIntersection: boolean): HighlightLineData {
+  function(lines: Line[], highlights: Highlight[], filterIntersection: boolean): HighlightLineData {
     console.log('highlights-selector');
     const highlight = merge.activeHighlights(highlights);
     const highlightLine = merge.activeHighlightLines(highlights);

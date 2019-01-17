@@ -23,7 +23,7 @@ export default class ExpandableLogLine extends React.PureComponent<Props> {
   }
 
   render() {
-    let skipped = this.props.end - this.props.start + 1
+    const skipped = this.props.end - this.props.start + 1
     return (
       <div
         className="expandable"
