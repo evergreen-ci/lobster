@@ -98,6 +98,7 @@ module.exports = {
     }
   ],
   'rules': {
+    'eqeqeq': 'off', // Makes no sense when using Flot
     'comma-dangle': 'off', // Nobody cares about it, really
     'complexity': 'off',
     'no-console': 'off',

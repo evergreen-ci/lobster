@@ -3,7 +3,7 @@
 import { createSelector } from 'reselect';
 import * as selectors from '../basic';
 import getFilteredLineData from './filter';
-import type { ReduxState, FilteredLineData, SearchResults } from '../../models';
+import type { ReduxState, SearchResults, Line } from 'src/models';
 
 function makeRegexp(regexp: ?string, caseSensitive: boolean): ?RegExp {
   try {
@@ -24,8 +24,8 @@ const search = createSelector(
   selectors.getLogViewerSearchTerm,
   getFilteredLineData,
   selectors.getLogViewerSettingsCaseSensitive,
-  function(searchTerm: string, lineData: FilteredLineData, caseSensitive: boolean): SearchResults {
-    const { filteredLines } = lineData;
+  function(searchTerm: string, lines: Array<Line>, caseSensitive: boolean): SearchResults {
+    const filteredLines = lines;
     const findRegexp = makeRegexp(searchTerm, caseSensitive);
     if (findRegexp == null) {
       return [];

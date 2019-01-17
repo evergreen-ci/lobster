@@ -1,10 +1,20 @@
 // @flow strict
 
-export type Line = $Exact<$ReadOnly<{
+// Could be used with types that might be filtered
+// Especially, when you want matched and not matched items at the same time
+export type FilterMatchAnnotation = {
+  isMatched: boolean,
+}
+
+type LineKind = {
+  kind: 'Line'
+}
+
+export type Line = $Exact<FilterMatchAnnotation & LineKind & $ReadOnly<{
   lineNumber: number,
   text: string,
-  port: ?string,
-  gitRef: ?string,
+  port: ?string, // resmoke related attribute
+  gitRef: ?string, // resmoke stuff again
 }>>
 
 export type ColorMap = $ReadOnly<{ [string]: string }>
@@ -224,11 +234,6 @@ export type Logviewer = $Exact<$ReadOnly<{
 export type HighlightLineData = $Exact<$ReadOnly<{
   highlightLines: Line[],
   highlightText: string[]
-}>>
-
-export type FilteredLineData = $Exact<$ReadOnly<{
-  indexMap: Map<number, number>,
-  filteredLines: Line[],
 }>>
 
 export type SearchResults = number[]

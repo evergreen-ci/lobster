@@ -1,7 +1,7 @@
 // @flow strict
 
 import { createSelector } from 'reselect';
-import type { ReduxState, Line, FilteredLineData, Filter, Bookmark } from '../../models';
+import type { ReduxState, Line, Filter, Bookmark } from '../../models';
 import * as merge from './merge';
 import * as selectors from '../basic';
 
@@ -75,27 +75,19 @@ const getFilteredLineData = createSelector(
   selectors.getLogViewerFilters,
   selectors.getLogViewerBookmarks,
   selectors.getLogViewerSettingsFilterLogic,
-  function(lines: Line[], filters: Filter[], bookmarks: Bookmark[], filterIntersection: boolean): FilteredLineData {
-    console.log('filters-selector');
+  function(lines: Line[], filters: Filter[], bookmarks: Bookmark[], filterIntersection: boolean): Array<Line> {
     const filter = merge.activeFilters(filters);
     const inverseFilter = merge.activeInverseFilters(filters);
 
-    const indexMap = new Map();
-
-    let j = 0;
-    const filteredLines = lines.filter((line, i) => {
+    lines.forEach((line, i) => {
       if (!shouldPrintLine(line, bookmarks, filterIntersection, filter, inverseFilter)) {
-        return false;
+        line.isMatched = false
+      } else {
+        line.isMatched = true
       }
-
-      indexMap.set(i, j++);
-      return true;
     });
 
-    return {
-      indexMap: indexMap,
-      filteredLines: filteredLines
-    };
+    return lines
   }
 );
 
