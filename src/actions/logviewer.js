@@ -152,6 +152,10 @@ export function toggleFilterIntersection(): ChangeSetting {
   return toggleSetting('filter-intersection');
 }
 
+export function toggleExpandableRows(): ChangeSetting {
+  return toggleSetting('expandable-rows');
+}
+
 export function loadInitialFilters(initialFilters: Filter[]): LoadFilters {
   return {
     type: LOGVIEWER_LOAD_FILTERS,

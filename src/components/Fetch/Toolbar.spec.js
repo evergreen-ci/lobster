@@ -29,7 +29,8 @@ function makeWrapper(state) {
       settings={{
         caseSensitive: false,
         wrap: false,
-        filterIntersection: false
+        filterIntersection: false,
+        expandableRows: false,
       }}
       filterList={[]}
       highlightList={[]}

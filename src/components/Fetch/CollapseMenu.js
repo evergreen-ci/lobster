@@ -3,10 +3,12 @@
 import React from 'react';
 import type { Node as ReactNode } from 'react';
 import './style.css';
-import { Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
+import {
+  Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse,
+  Row, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
-import type { Settings } from '../../models';
+import type { Settings } from 'src/models';
 import * as api from '../../api';
 import * as actions from '../../actions';
 import { connect } from 'react-redux';
@@ -18,7 +20,8 @@ type Props = {
   toggleSettings: {
     toggleWrap: () => void,
     toggleCaseSensitive: () => void,
-    toggleFilterIntersection: () => void
+    toggleFilterIntersection: () => void,
+    toggleExpandableRows: () => void,
   },
   filterActions: {
     removeFilter: (string) => void,
@@ -139,9 +142,9 @@ export class CollapseMenu extends React.PureComponent<Props> {
         <div>
           <Form horizontal onSubmit={this.handleSubmit}>
             {showLogBox(this.props.logIdentity, this.setURLRef)}
-            <FormGroup controlId="collapseButtons">
-              <Col lg={5}>
-                <span className="far-left-label">Wrap</span>
+            <Col lg={3}>
+              <FormGroup>
+                <label className="control-label col-sm-8">Wrap</label>
                 <ToggleButtonGroup
                   className="toggle-buttons"
                   type="radio"
@@ -152,7 +155,10 @@ export class CollapseMenu extends React.PureComponent<Props> {
                   <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
                   <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
                 </ToggleButtonGroup>
-                <span className="toggle-label">Case Sensitive Search</span>
+              </FormGroup>
+
+              <FormGroup>
+                <label className="control-label col-sm-8">Case Sensitive</label>
                 <ToggleButtonGroup
                   className="toggle-buttons"
                   type="radio"
@@ -163,7 +169,12 @@ export class CollapseMenu extends React.PureComponent<Props> {
                   <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
                   <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
                 </ToggleButtonGroup>
-                <span className="toggle-label">Filter Logic</span>
+              </FormGroup>
+            </Col>
+
+            <Col lg={3}>
+              <FormGroup>
+                <label className="control-label col-sm-8">Filter Logic</label>
                 <ToggleButtonGroup
                   className="toggle-buttons"
                   type="radio"
@@ -174,7 +185,24 @@ export class CollapseMenu extends React.PureComponent<Props> {
                   <ToggleButton value={true} bsSize="small" bsStyle="primary">and</ToggleButton>
                   <ToggleButton value={false} bsSize="small" bsStyle="primary">or</ToggleButton>
                 </ToggleButtonGroup>
-              </Col>
+              </FormGroup>
+
+              <FormGroup>
+                <label className="control-label col-sm-8">Expandable Rows</label>
+                <ToggleButtonGroup
+                  className="toggle-buttons"
+                  type="radio"
+                  name="expandable-rows-on-off"
+                  value={this.props.settings.expandableRows}
+                  onChange={this.props.toggleSettings.toggleExpandableRows}
+                >
+                  <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
+                  <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
+                </ToggleButtonGroup>
+              </FormGroup>
+            </Col>
+
+            <FormGroup>
               <Col componentClass={ControlLabel} lg={1}>JIRA</Col>
               <Col lg={1}><textarea readOnly className="unmoving" value={this.props.valueJIRA}></textarea></Col>
               {showDetailButtons(this.props.logIdentity, this.props.wipeCache)}
@@ -229,7 +257,8 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   const toggleSettings = {
     toggleWrap: () => dispatch(actions.toggleLineWrap()),
     toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
-    toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection())
+    toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection()),
+    toggleExpandableRows: () => dispatch(actions.toggleExpandableRows()),
   };
 
   return {

@@ -22,7 +22,8 @@ export type ColorMap = $ReadOnly<{ [string]: string }>
 export type Settings = $ReadOnly<$Exact<{
   wrap: boolean,
   caseSensitive: boolean,
-  filterIntersection: boolean
+  filterIntersection: boolean,
+  expandableRows: boolean,
 }>>
 
 export type Bookmark = {|

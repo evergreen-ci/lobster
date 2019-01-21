@@ -13,10 +13,13 @@ import type {
 
 import './style.css';
 
+const MAX_REC_DEPTH = 64 // Should be ok until there < 18446744073709551616 lines
+
 type Props = {
   searchFindIdx: number,
   bookmarks: Bookmark[],
   wrap: boolean,
+  expandableRows: boolean,
   colorMap: ColorMap,
   searchTerm: string,
   caseSensitive: boolean,
@@ -67,17 +70,35 @@ class LogView extends React.Component<Props, State> {
   // Use (improved) binary search to find line index by line number
   // :param start: internal (recursion)
   // :param end: internal (recursion)
+  // :param depth: internal (recursion) for exceptional cases
   // :returns: index of the item with defined line number
-  findLineIdx(
+  findLineIdx = (
     // Input parameters
     data: Array<Line | SkipLine>,
     lineNumber: number,
     // Recursion contextual parameteres
     start?: number = 0,
-    end?: number = data.length - 1
-  ): number {
-    const midIdx = (start === 0 && end === data.length - 1)
-      ? lineNumber // First run. Attemtp to guess the index
+    end?: number = data.length - 1,
+    depth?: number = MAX_REC_DEPTH,
+  ): number => {
+    console.log(lineNumber, start, end)
+    // For rare cases, when the line couldn't be found
+    // return expected position
+    if (start === end) {
+      return start
+    }
+
+    // When max recursion depth reached
+    // Should never happen, but in case of bugs it's better
+    // than infinite recursion loop
+    if (depth < 0) {
+      throw new Error('Max depth reached!')
+    }
+
+    const midIdx = (depth === MAX_REC_DEPTH)
+      // First run. Attemtp to guess the index.
+      // Use linear proportion for efficient index approximation
+      ? Math.floor(lineNumber * end / (this.props.filteredLines.length - 1))
       : Math.floor((end - start) / 2) + start // Middle idx calc
     const midItem = data[midIdx]
     // disjoint union refinement
@@ -85,9 +106,9 @@ class LogView extends React.Component<Props, State> {
       if (midItem.start <= lineNumber && lineNumber <= midItem.end) {
         return midIdx
       } else if (lineNumber < midItem.start) {
-        return this.findLineIdx(data, lineNumber, start, midIdx)
+        return this.findLineIdx(data, lineNumber, start, midIdx, depth - 1)
       } else if (lineNumber > midItem.end) {
-        return this.findLineIdx(data, lineNumber, midIdx, end)
+        return this.findLineIdx(data, lineNumber, midIdx, end, depth - 1)
       }
     } else { // kind == 'Line'
       // $FlowFixMe // intersection type issue
@@ -95,15 +116,22 @@ class LogView extends React.Component<Props, State> {
       if (line.lineNumber === lineNumber) {
         return midIdx
       } else if (lineNumber < line.lineNumber) {
-        return this.findLineIdx(data, lineNumber, start, midIdx)
+        return this.findLineIdx(data, lineNumber, start, midIdx, depth - 1)
       } else if (lineNumber > line.lineNumber) {
-        return this.findLineIdx(data, lineNumber, midIdx, end)
+        return this.findLineIdx(data, lineNumber, midIdx, end, depth - 1)
       }
     }
     throw new Error(`Line number ${lineNumber} not found!`)
   }
 
   foldUnmatchedLines(lines: Line[]): Array<Line | SkipLine> {
+    // If Expandable Rows settings is inactive completely
+    // don't display expandable rows
+    if (!this.props.expandableRows) {
+      // $FlowFixMe flow is just broken :'(
+      return lines.filter((line) => line.isMatched)
+    }
+
     const out: Array<Line | SkipLine> = []
     let inSkipState = false
     let skipStart: number = 0
@@ -335,6 +363,7 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Pro
     colorMap: selectors.getLogColorMap(state),
     caseSensitive: settings.caseSensitive,
     wrap: settings.wrap,
+    expandableRows: settings.expandableRows,
     searchTerm: selectors.getLogViewerSearchTerm(state),
     scrollLine: selectors.getLogViewerScrollLine(state),
     searchFindIdx: selectors.getLogViewerFindIdx(state),
