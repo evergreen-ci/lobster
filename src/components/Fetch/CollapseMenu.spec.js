@@ -55,7 +55,7 @@ describe('CollapseMenu', () => {
 
     // Test existence of toggle buttons
     const toggleButtons = wrapper.find('ToggleButtonGroup');
-    expect(toggleButtons).toHaveLength(3);
+    expect(toggleButtons).toHaveLength(4);
     expect(wrapper.containsAllMatchingElements([
       <ToggleButtonGroup name={'wrap-on-off'}>
         <ToggleButton value={true}>on</ToggleButton>

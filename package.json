@@ -1,6 +1,9 @@
 {
   "name": "lobster",
   "private": true,
+  "engines": {
+    "node": ">=8.6"
+  },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "body-parser": "^1.18.3",

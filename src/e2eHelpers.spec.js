@@ -5,7 +5,7 @@ import path from 'path';
 import { existsSync } from 'fs';
 
 // xpaths to elements
-const caseToggle = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div/div[1]/div[2]';
+const caseToggle = '//input[@name="case-sensitive-on-off"]';
 const cacheNever = '//*[@id="root"]/div/div/div/div/div/div[3]/button[1]';
 const cacheYes = '//*[@id="root"]/div/div/div/div/div/div[3]/button[3]';
 const showDetails = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/button[4]';
@@ -14,8 +14,8 @@ const addFilter = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2
 const addHighlight = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/div[2]/button[3]';
 const highlightLine = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/div[2]/div/div/div[2]/label[2]';
 const lines = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div';
-const logicToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[3]';
-const caseToggleGroup = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/form/div[2]/div[1]/div[2]';
+const logicToggleGroup = '(//input[@name="filter-intersection-and-or"])[1]/parent::*/parent::*';
+const caseToggleGroup = '(//input[@name="case-sensitive-on-off"])[1]/parent::*/parent::*';
 const dropArea = '//*[@id="root"]/div/main/div/div';
 const processLogButton = '//*[@id="root"]/div/main/div/div/p[2]/button';
 // const logLineList = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div';
