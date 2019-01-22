@@ -68,6 +68,10 @@ describe('CollapseMenu', () => {
       <ToggleButtonGroup name={'filter-intersection-and-or'}>
         <ToggleButton value={true}>and</ToggleButton>
         <ToggleButton value={false}>or</ToggleButton>
+      </ToggleButtonGroup>,
+      <ToggleButtonGroup name={'expandable-rows-on-off'}>
+        <ToggleButton value={true}>and</ToggleButton>
+        <ToggleButton value={false}>or</ToggleButton>
       </ToggleButtonGroup>
     ])).toBe(true);
 

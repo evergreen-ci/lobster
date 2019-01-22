@@ -5,7 +5,7 @@ import type { Node as ReactNode } from 'react';
 import './style.css';
 import {
   Button, Form, FormControl, FormGroup, Col, ControlLabel, Collapse,
-  Row, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
+  ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Filters } from './Filters';
 import { Highlights } from './Highlights';
 import type { Settings } from 'src/models';
