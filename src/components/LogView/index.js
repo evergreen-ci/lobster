@@ -81,7 +81,6 @@ class LogView extends React.Component<Props, State> {
     end?: number = data.length - 1,
     depth?: number = MAX_REC_DEPTH,
   ): number => {
-    console.log(lineNumber, start, end)
     // For rare cases, when the line couldn't be found
     // return expected position
     if (start === end) {
@@ -114,6 +113,9 @@ class LogView extends React.Component<Props, State> {
       // $FlowFixMe // intersection type issue
       const line: Line = midItem
       if (line.lineNumber === lineNumber) {
+        return midIdx
+      } else if (midIdx === start) {
+        // Not found. Exceptional case. Stop iterations
         return midIdx
       } else if (lineNumber < line.lineNumber) {
         return this.findLineIdx(data, lineNumber, start, midIdx, depth - 1)
