@@ -196,6 +196,7 @@ describe('e2e', function() {
   // ~1.67 million*height). An infinite list implementation that does not rely
   // on a giant div is going to be necessary to fix this, but I haven't looked
   // into whether one exists, nor whether or not it's possible to make one
+  // 2019-01-29 (Ruslan) -- reduced FF limit a little bit due to expandale rows
   e2e('render-stress', async (done) => {
     const driver = await makeDriver(done);
     try {
@@ -203,7 +204,7 @@ describe('e2e', function() {
       // Element 1: larger number that the browser gives up or can't render
       const table = [1600000, 1700000];
       if (process.env.LOBSTER_E2E_BROWSER === 'firefox') {
-        table[0] = 447000;
+        table[0] = 397000 // was 447000;
       }
       const l = new Lobster(driver);
       await l.init(undefined, { url: `perf-${table[0]}.special.log` });
@@ -213,7 +214,7 @@ describe('e2e', function() {
       let token = await lines[lines.length - 1].getText();
       if (process.env.LOBSTER_E2E_BROWSER === 'firefox') {
         // Firefox routinely returns one of these
-        const expected = ['FIND_THIS_TOKEN', 'line 446999', 'line 447000'];
+        const expected = ['FIND_THIS_TOKEN', 'line 396999', 'line 397000'];
         expect(expected.includes(token)).toBe(true);
       } else {
         const expected = ['FIND_THIS_TOKEN', 'line 1600000', 'line 1599999'];
