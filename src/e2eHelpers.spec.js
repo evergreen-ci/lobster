@@ -163,7 +163,7 @@ export class Lobster {
 
   async expandableRowsToggle(state?: boolean | 'unset' = 'unset') {
     const group = await this._driver.wait(until.elementLocated(By.xpath(expandableToggleGroup)));
-    let button = await group.findElement(By.xpath(state === 'unset'
+    const button = await group.findElement(By.xpath(state === 'unset'
       ? './/label[not(contains(@class, " active"))]'
       : `.//label[${state ? 1 : 2}]`
     ));
