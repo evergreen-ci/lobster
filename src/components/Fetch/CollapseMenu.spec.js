@@ -55,7 +55,7 @@ describe('CollapseMenu', () => {
 
     // Test existence of toggle buttons
     const toggleButtons = wrapper.find('ToggleButtonGroup');
-    expect(toggleButtons).toHaveLength(3);
+    expect(toggleButtons).toHaveLength(4);
     expect(wrapper.containsAllMatchingElements([
       <ToggleButtonGroup name={'wrap-on-off'}>
         <ToggleButton value={true}>on</ToggleButton>
@@ -68,6 +68,10 @@ describe('CollapseMenu', () => {
       <ToggleButtonGroup name={'filter-intersection-and-or'}>
         <ToggleButton value={true}>and</ToggleButton>
         <ToggleButton value={false}>or</ToggleButton>
+      </ToggleButtonGroup>,
+      <ToggleButtonGroup name={'expandable-rows-on-off'}>
+        <ToggleButton value={true}>on</ToggleButton>
+        <ToggleButton value={false}>off</ToggleButton>
       </ToggleButtonGroup>
     ])).toBe(true);
 

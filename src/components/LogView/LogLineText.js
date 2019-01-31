@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Highlighter from 'react-highlight-words';
-import type { ColorMap } from '../../models';
+import type { ColorMap } from 'src/models';
 
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
   lineRefCallback: (?HTMLSpanElement, number, isUnmount?: boolean) => void,
   port: ?string,
   text: string,
-  highlightText: string[]
+  highlightText: string[],
 }
 
 export default class LogLineText extends React.PureComponent<Props> {
@@ -42,6 +42,7 @@ export default class LogLineText extends React.PureComponent<Props> {
       style.color = this.props.colorMap[this.props.port];
       highlightStyle.color = this.props.colorMap[this.props.port];
     }
+
     return (
       <span ref={this.setRef}>
         <Highlighter

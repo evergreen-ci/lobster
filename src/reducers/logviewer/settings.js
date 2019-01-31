@@ -6,7 +6,8 @@ import type { Settings } from '../../models';
 const initialState: Settings = {
   wrap: window.localStorage.getItem('lobster-line-wrap') === 'true',
   caseSensitive: false,
-  filterIntersection: false
+  filterIntersection: false,
+  expandableRows: true,
 };
 
 export default function(state: Settings = initialState, action: Action): Settings {
@@ -25,6 +26,10 @@ export default function(state: Settings = initialState, action: Action): Setting
 
   if (action.payload.setting === 'filter-intersection') {
     return { ...state, filterIntersection: !state.filterIntersection };
+  }
+
+  if (action.payload.setting === 'expandable-rows') {
+    return { ...state, expandableRows: !state.expandableRows };
   }
 
   return state;

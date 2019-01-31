@@ -3,33 +3,54 @@
 import React from 'react';
 import ReactList from 'react-list';
 import FullLogLine from './FullLogLine';
+import ExpandableLogLine from './ExpandableLogLine';
 import { connect } from 'react-redux';
 import { scrollToLine, toggleBookmark } from '../../actions';
 import * as selectors from '../../selectors';
-import type { ReduxState, ColorMap, SearchResults, HighlightLineData, FilteredLineData, Bookmark } from '../../models';
+import type {
+  ReduxState, ColorMap, SearchResults, HighlightLineData, Bookmark, Line
+} from 'src/models';
 
 import './style.css';
+
+const MAX_REC_DEPTH = 64 // Should be ok until there < 18446744073709551616 lines
 
 type Props = {
   searchFindIdx: number,
   bookmarks: Bookmark[],
   wrap: boolean,
+  expandableRows: boolean,
   colorMap: ColorMap,
   searchTerm: string,
   caseSensitive: boolean,
   scrollLine: number,
   highlights: HighlightLineData,
-  filterData: FilteredLineData,
+  filteredLines: Line[],
+  expandableFilterData: Array<Line | number>,
   findResults: SearchResults,
   toggleBookmark: (number[]) => void,
   scrollToLine: (number) => void
 };
 
+type SkipLine = {|
+  start: number,
+  end:   number,
+  kind: 'SkipLine',
+|}
+
+// Just a helper
+function newSkipLine(start, end): SkipLine {
+  return { start: start, end: end, kind: 'SkipLine' }
+}
+
 type State = {
   selectStartIndex: ?number,
   selectEndIndex: ?number,
+  lines: Array<Line | SkipLine>,
+  expandedRanges: Array<[number, number]>,
   clicks: (number[])[]
 };
+
 
 class LogView extends React.Component<Props, State> {
   logListRef: ?ReactList = null;
@@ -40,40 +61,118 @@ class LogView extends React.Component<Props, State> {
     this.state = {
       selectStartIndex: null,
       selectEndIndex: null,
-      clicks: []
+      clicks: [],
+      lines: this.foldUnmatchedLines(props.filteredLines),
+      expandedRanges: [],
     };
   }
 
-  shouldComponentUpdate(nextProps) {
-    if (this.props.bookmarks !== nextProps.bookmarks) {
-      return true;
-    }
-    if (this.props.searchTerm !== nextProps.searchTerm) {
-      return true;
-    }
-    if (this.props.caseSensitive !== nextProps.caseSensitive) {
-      return true;
-    }
-    if (this.props.scrollLine !== nextProps.scrollLine) {
-      return true;
-    }
-    if (this.props.highlights !== nextProps.highlights) {
-      return true;
-    }
-    if (this.props.filterData !== nextProps.filterData) {
-      return true;
-    }
-    if (this.props.findResults !== nextProps.findResults) {
-      return true;
-    }
-    if (this.props.wrap !== nextProps.wrap) {
-      return true;
-    }
-    if (this.props.searchFindIdx !== nextProps.searchFindIdx) {
-      return true;
+  // Use (improved) binary search to find line index by line number
+  // :param start: internal (recursion)
+  // :param end: internal (recursion)
+  // :param depth: internal (recursion) for exceptional cases
+  // :returns: index of the item with defined line number
+  findLineIdx = (
+    // Input parameters
+    data: Array<Line | SkipLine>,
+    lineNumber: number,
+    // Recursion contextual parameteres
+    start?: number = 0,
+    end?: number = data.length - 1,
+    depth?: number = MAX_REC_DEPTH,
+  ): number => {
+    // For rare cases, when the line couldn't be found
+    // return expected position
+    if (start === end) {
+      return start
     }
 
-    return false;
+    // When max recursion depth reached
+    // Should never happen, but in case of bugs it's better
+    // than infinite recursion loop
+    if (depth < 0) {
+      throw new Error('Max depth reached!')
+    }
+
+    const midIdx = (depth === MAX_REC_DEPTH)
+      // First run. Attemtp to guess the index.
+      // Use linear proportion for efficient index approximation
+      ? Math.floor(lineNumber * end / (this.props.filteredLines.length - 1))
+      : Math.floor((end - start) / 2) + start // Middle idx calc
+    const midItem = data[midIdx]
+    // disjoint union refinement
+    if (midItem.kind === 'SkipLine') {
+      if (midItem.start <= lineNumber && lineNumber <= midItem.end) {
+        return midIdx
+      } else if (lineNumber < midItem.start) {
+        return this.findLineIdx(data, lineNumber, start, midIdx, depth - 1)
+      } else if (lineNumber > midItem.end) {
+        return this.findLineIdx(data, lineNumber, midIdx, end, depth - 1)
+      }
+    } else { // kind == 'Line'
+      // $FlowFixMe // intersection type issue
+      const line: Line = midItem
+      if (line.lineNumber === lineNumber) {
+        return midIdx
+      } else if (midIdx === start) {
+        // Not found. Exceptional case. Stop iterations
+        return midIdx
+      } else if (lineNumber < line.lineNumber) {
+        return this.findLineIdx(data, lineNumber, start, midIdx, depth - 1)
+      } else if (lineNumber > line.lineNumber) {
+        return this.findLineIdx(data, lineNumber, midIdx, end, depth - 1)
+      }
+    }
+    throw new Error(`Line number ${lineNumber} not found!`)
+  }
+
+  foldUnmatchedLines(lines: Line[]): Array<Line | SkipLine> {
+    // If Expandable Rows settings is inactive completely
+    // don't display expandable rows
+    if (!this.props.expandableRows) {
+      // $FlowFixMe flow is just broken :'(
+      return lines.filter((line) => line.isMatched)
+    }
+
+    const out: Array<Line | SkipLine> = []
+    let inSkipState = false
+    let skipStart: number = 0
+    const expandedRanges = this.state ? this.state.expandedRanges : []
+
+    lines.forEach((line) => {
+      const lineNo = line.lineNumber
+      let ignoreSkip: boolean = false
+
+      expandedRanges.forEach((range) => {
+        if (range[0] <= lineNo && lineNo <= range[1]) {
+          ignoreSkip = true
+        }
+      })
+
+      // Triggers when non-matched line appears
+      // $FlowFixMe isMatched defined through tye intersection
+      if (!ignoreSkip && !inSkipState && !line.isMatched) {
+        inSkipState = true
+        skipStart = line.lineNumber
+      }
+
+      // Triggers when matched line appears
+      // $FlowFixMe defined through tye intersection
+      if (inSkipState && (line.isMatched === true || ignoreSkip)) {
+        inSkipState = false
+        out.push(newSkipLine(skipStart, line.lineNumber - 1))
+      }
+
+      // When matched line appears
+      if (!inSkipState || ignoreSkip) out.push(line)
+    })
+
+    // Finalization
+    if (inSkipState) {
+      out.push(newSkipLine(skipStart, lines.length - 1))
+    }
+
+    return out
   }
 
   setLogListRef = (element) => {
@@ -130,32 +229,59 @@ class LogView extends React.Component<Props, State> {
     });
   }
 
-  genList = (index) => {
-    const line = this.props.filterData.filteredLines[index];
-    const lineNumber = line.lineNumber;
-    return (
-      <FullLogLine
-        lineRefCallback={this.lineRefCallback}
-        key={lineNumber}
-        found={lineNumber === this.props.findResults[this.props.searchFindIdx]}
-        bookmarked={this.findBookmark(this.props.bookmarks, lineNumber) !== -1}
-        highlight={this.props.highlights.highlightLines.includes(line)}
-        wrap={this.props.wrap}
-        line={line}
-        toggleBookmark={this.props.toggleBookmark}
-        colorMap={this.props.colorMap}
-        searchTerm={this.props.searchTerm}
-        highlightText={this.props.highlights.highlightText}
-        caseSensitive={this.props.caseSensitive}
-        updateSelectStartIndex={this.updateSelectStartIndex}
-        updateSelectEndIndex={this.updateSelectEndIndex}
-        handleDoubleClick={this.handleDoubleClick}
-      />
-    );
+  // :param ranges: list of 2d tuples
+  // The firt number in tuple means start line index, that will be expanded
+  // the second is end index
+  handleExpand = (ranges: Array<[number, number]>) => {
+    // TODO collapse sequential ranges into one
+    this.setState((state) => ({
+      expandedRanges: state.expandedRanges.concat(ranges),
+    }))
   }
 
+  genList = (index: number) => {
+    const item = this.state.lines[index]
+    // disjoint union refinement
+    if (item.kind === 'SkipLine') {
+      // IF SkipLine
+      const skipLine: SkipLine = item
+      return (
+        <ExpandableLogLine
+          key={skipLine.start}
+          start={skipLine.start}
+          end={skipLine.end}
+          onClick={this.handleExpand}
+        />
+      )
+    } // IF Line
+    const line: Line = item
+    return this.genListRegularRow(line, line.lineNumber)
+  }
+
+  genListRegularRow = (line, lineNumber: number) => (
+    <FullLogLine
+      lineRefCallback={this.lineRefCallback}
+      // $FlowFixMe
+      key={lineNumber + ':' + line.isMatched}
+      found={lineNumber === this.props.findResults[this.props.searchFindIdx]}
+      bookmarked={this.findBookmark(this.props.bookmarks, lineNumber) !== -1}
+      highlight={this.props.highlights.highlightLines.includes(line)}
+      wrap={this.props.wrap}
+      line={line}
+      isMatched={line.isMatched}
+      toggleBookmark={this.props.toggleBookmark}
+      colorMap={this.props.colorMap}
+      searchTerm={this.props.searchTerm}
+      highlightText={this.props.highlights.highlightText}
+      caseSensitive={this.props.caseSensitive}
+      updateSelectStartIndex={this.updateSelectStartIndex}
+      updateSelectEndIndex={this.updateSelectEndIndex}
+      handleDoubleClick={this.handleDoubleClick}
+    />
+  )
+
   scrollToLine(lineNumber: number) {
-    const visibleIndex = this.props.filterData.indexMap.get(lineNumber);
+    const visibleIndex = this.findLineIdx(this.state.lines, lineNumber)
     if (visibleIndex === null || visibleIndex === undefined) {
       return;
     }
@@ -196,7 +322,7 @@ class LogView extends React.Component<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     if (this.props.scrollLine !== null && this.props.scrollLine >= 0 && this.props.scrollLine !== prevProps.scrollLine) {
       this.scrollToLine(this.props.scrollLine);
     }
@@ -205,16 +331,22 @@ class LogView extends React.Component<Props, State> {
     if (this.props.searchFindIdx !== -1 && (this.props.searchFindIdx !== prevProps.searchFindIdx || this.props.searchTerm !== prevProps.searchTerm)) {
       this.scrollFindIntoView();
     }
+
+    if (this.props !== prevProps || this.state.expandedRanges !== prevState.expandedRanges) {
+      this.setState({
+        lines: this.foldUnmatchedLines(this.props.filteredLines)
+      })
+    }
   }
 
   render() {
-    if (this.props.filterData.filteredLines.length !== 0) {
+    if (this.state.lines.length !== 0) {
       return (
         <div>
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
-            length={this.props.filterData.filteredLines.length}
+            length={this.state.lines.length}
             initialIndex={this.props.scrollLine}
             type={this.props.wrap ? 'variable' : 'uniform'}
             useStaticSize={true}
@@ -222,7 +354,7 @@ class LogView extends React.Component<Props, State> {
         </div>
       );
     }
-    return (<div></div>);
+    return (<div></div>)
   }
 }
 
@@ -233,13 +365,15 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Pro
     colorMap: selectors.getLogColorMap(state),
     caseSensitive: settings.caseSensitive,
     wrap: settings.wrap,
+    expandableRows: settings.expandableRows,
     searchTerm: selectors.getLogViewerSearchTerm(state),
     scrollLine: selectors.getLogViewerScrollLine(state),
     searchFindIdx: selectors.getLogViewerFindIdx(state),
     bookmarks: selectors.getLogViewerBookmarks(state),
     highlights: selectors.getHighlights(state),
-    filterData: selectors.getFilteredLineData(state),
-    findResults: selectors.getFindResults(state)
+    filteredLines: selectors.getFilteredLineData(state),
+    findResults: selectors.getFindResults(state),
+    expandableFilterData: [],
   };
 }
 

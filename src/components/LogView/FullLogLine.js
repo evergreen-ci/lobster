@@ -4,7 +4,7 @@ import React from 'react';
 import LogLineText from './LogLineText';
 import LineNumber from './LineNumber';
 import LogOptions from './LogOptions';
-import type { Line, ColorMap } from '../../models';
+import type { Line, ColorMap, FilterMatchAnnotation } from 'src/models';
 
 type Props = {
   bookmarked: boolean,
@@ -21,7 +21,7 @@ type Props = {
   updateSelectEndIndex: (number) => void,
   highlightText: string[],
   handleDoubleClick: () => void
-};
+} & FilterMatchAnnotation;
 
 export default class FullLogLine extends React.PureComponent<Props> {
   handleMouseUp = () => {
@@ -59,9 +59,16 @@ export default class FullLogLine extends React.PureComponent<Props> {
     if (this.props.highlight) {
       className += ' filtered';
     }
+    if (!this.props.line.isMatched) {
+      className += ' no-match'
+    }
     return (
       <div className={className} onMouseUp={this.handleMouseUp} onMouseDown={this.handleMouseDown} >
-        <LineNumber lineNumber={this.props.line.lineNumber} toggleBookmark={this.props.toggleBookmark} handleDoubleClick={this.props.handleDoubleClick} />
+        <LineNumber
+          lineNumber={this.props.line.lineNumber}
+          toggleBookmark={this.props.toggleBookmark}
+          handleDoubleClick={this.props.handleDoubleClick}
+        />
         <LogOptions gitRef={this.props.line.gitRef} />
         <LogLineText
           lineRefCallback={this.props.lineRefCallback}
