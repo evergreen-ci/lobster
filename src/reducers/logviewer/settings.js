@@ -7,7 +7,7 @@ const initialState: Settings = {
   wrap: window.localStorage.getItem('lobster-line-wrap') === 'true',
   caseSensitive: false,
   filterIntersection: false,
-  expandableRows: false,
+  expandableRows: true,
 };
 
 export default function(state: Settings = initialState, action: Action): Settings {

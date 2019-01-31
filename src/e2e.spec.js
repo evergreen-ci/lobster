@@ -87,6 +87,11 @@ describe('e2e', function() {
       const l = new Lobster(driver);
       await l.init();
 
+      // Disable expandable rows
+      await l.showDetails();
+      await l.expandableRowsToggle(false)
+      await l.showDetails();
+
       await l.search('Line ');
       await l.search(Key.ENTER);
 
@@ -244,6 +249,11 @@ describe('e2e', function() {
       await l.init();
 
       await l.get(`${lobsterURL('simple.log')}#bookmarks=0,6&f=10Line&h=11Line 4`);
+
+      // Disable expandable rows
+      await l.showDetails();
+      await l.expandableRowsToggle(false)
+      await l.showDetails();
 
       const lines = await l.lines();
       const highlights = await l.highlightedLines();

@@ -30,7 +30,7 @@ function makeWrapper(state) {
         caseSensitive: false,
         wrap: false,
         filterIntersection: false,
-        expandableRows: false,
+        expandableRows: true,
       }}
       filterList={[]}
       highlightList={[]}

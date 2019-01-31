@@ -15,6 +15,7 @@ const addHighlight = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/form/div/di
 const highlightLine = '//*[@id="root"]/div/main/div/div[2]/div[1]/div/div/div[2]/div/div/div[2]/label[2]';
 const lines = '//*[@id="root"]/div/main/div/div[2]/div[2]/div/div/div/div';
 const logicToggleGroup = '(//input[@name="filter-intersection-and-or"])[1]/parent::*/parent::*';
+const expandableToggleGroup = '(//input[@name="expandable-rows-on-off"])[1]/parent::*/parent::*';
 const caseToggleGroup = '(//input[@name="case-sensitive-on-off"])[1]/parent::*/parent::*';
 const dropArea = '//*[@id="root"]/div/main/div/div';
 const processLogButton = '//*[@id="root"]/div/main/div/div/p[2]/button';
@@ -157,6 +158,15 @@ export class Lobster {
   async caseToggleSearch() {
     const group = await this._driver.wait(until.elementLocated(By.xpath(caseToggleGroup)));
     const button = await group.findElement(By.xpath('.//label[not(contains(@class, " active"))]'));
+    await button.click();
+  }
+
+  async expandableRowsToggle(state?: boolean | 'unset' = 'unset') {
+    const group = await this._driver.wait(until.elementLocated(By.xpath(expandableToggleGroup)));
+    let button = await group.findElement(By.xpath(state === 'unset'
+      ? './/label[not(contains(@class, " active"))]'
+      : `.//label[${state ? 1 : 2}]`
+    ));
     await button.click();
   }
 
