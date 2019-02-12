@@ -9,7 +9,7 @@ const cacheSettings = (): CacheState => {
     window.webkitResolveLocalFileSystemURL;
 
   if (!window.requestFileSystem) {
-    console.info('No FileSystem API available. Lobster will NOT cache');
+    console.warn('No FileSystem API available. Lobster will NOT cache');
   }
   if (!window.localStorage || !window.requestFileSystem) {
     return {
