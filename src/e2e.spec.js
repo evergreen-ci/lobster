@@ -50,7 +50,7 @@ describe('e2e', function() {
 
       // Add a highlight
       await l.addHighlight();
-      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&h~=100~Line%20&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
+      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&h~=100~Line%20&l=1&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
 
       await l.showDetails();
       await l.highlightLine();
@@ -97,7 +97,7 @@ describe('e2e', function() {
 
       await l.addFilter();
 
-      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f~=100~Line%20&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
+      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f~=100~Line%20&l=1&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
 
       let divs = await l.lines();
       expect(divs).toHaveLength(6);
@@ -113,20 +113,20 @@ describe('e2e', function() {
       await l.search(Key.ENTER);
 
       await l.addFilter();
-      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f~=101~Line%20&f~=100~2&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
+      expect(await driver.getCurrentUrl()).toBe(`http://${lobsterServer()}/lobster/logdrop#bookmarks=0%2C6&f~=101~Line%20&f~=100~2&l=1&server=${encodeURIComponent(lobsterServer())}%2Fapi%2Flog&url=simple.log`);
       await l.showDetails();
       await l.caseToggleFilter(1);
       await l.showDetails();
 
       divs = await l.lines();
-      expect(divs).toHaveLength(6);
+      expect(divs).toHaveLength(3);
 
       await l.showDetails();
       await l.logicToggle();
       await l.showDetails();
 
       divs = await l.lines();
-      expect(divs).toHaveLength(3);
+      expect(divs).toHaveLength(6);
 
       done();
     } catch (err) {
