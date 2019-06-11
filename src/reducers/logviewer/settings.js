@@ -8,7 +8,7 @@ const expandableRowsLocalSetting = window.localStorage.getItem('lobster-expandab
 const initialState: Settings = {
   wrap: window.localStorage.getItem('lobster-line-wrap') === 'true',
   caseSensitive: false,
-  filterIntersection: false,
+  filterIntersection: true,
   expandableRows: expandableRowsLocalSetting === null ? true : // Enabled by default
                   expandableRowsLocalSetting === 'true' // when opt set, use local setting
 };
