@@ -25,7 +25,12 @@ const search = createSelector(
   getFilteredLineData,
   selectors.getLogViewerSettingsCaseSensitive,
   function(searchTerm: string, lines: Line[], caseSensitive: boolean): SearchResults {
-    const filteredLines = lines;
+    const filteredLines = lines.filter((line) => {
+      if (line.isMatched) {
+        return true;
+      }
+      return false;
+    });
     const findRegexp = makeRegexp(searchTerm, caseSensitive);
     if (findRegexp == null) {
       return [];
