@@ -25,6 +25,7 @@ const search = createSelector(
   getFilteredLineData,
   selectors.getLogViewerSettingsCaseSensitive,
   function(searchTerm: string, lines: Line[], caseSensitive: boolean): SearchResults {
+    console.log(lines);
     const filteredLines = lines.filter((line) => {
       if (line.isMatched) {
         return true;

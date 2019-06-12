@@ -11,8 +11,7 @@ test('lines are filtered correctly', () => {
         { lineNumber: 2, text: 'foo two', isMatched: true },
         { lineNumber: 3, text: 'idk', isMatched: true },
         { lineNumber: 4, text: 'hello', isMatched: true },
-        { lineNumber: 5, text: 'tell me a foo', isMatched: true },
-        { lineNumber: 6, text: 'unmatched foo', isMatched: false}
+        { lineNumber: 5, text: 'tell me a foo', isMatched: true }
     ];
     const state: ReduxState = {
         cache: {
