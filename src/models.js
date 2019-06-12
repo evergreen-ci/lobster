@@ -10,6 +10,7 @@ type LineKind = {
   kind: 'Line'
 }
 
+// $FlowFixMe this intersection type is used in an unsafe manner in many places
 export type Line = $Exact<FilterMatchAnnotation & LineKind & $ReadOnly<{
   lineNumber: number,
   text: string,

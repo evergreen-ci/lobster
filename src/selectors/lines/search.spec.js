@@ -6,12 +6,13 @@ import type { ReduxState } from 'src/models';
 test('lines are filtered correctly', () => {
     const searchString = 'foo';
     const logLines = [
-        { lineNumber: 0, text: 'one' },
-        { lineNumber: 1, text: 'foo' },
-        { lineNumber: 2, text: 'foo two' },
-        { lineNumber: 3, text: 'idk' },
-        { lineNumber: 4, text: 'hello' },
-        { lineNumber: 5, text: 'tell me a foo' },
+        { lineNumber: 0, text: 'one', isMatched: true },
+        { lineNumber: 1, text: 'foo', isMatched: true },
+        { lineNumber: 2, text: 'foo two', isMatched: true },
+        { lineNumber: 3, text: 'idk', isMatched: true },
+        { lineNumber: 4, text: 'hello', isMatched: true },
+        { lineNumber: 5, text: 'tell me a foo', isMatched: true },
+        { lineNumber: 6, text: 'unmatched foo', isMatched: false}
     ];
     const state: ReduxState = {
         cache: {
