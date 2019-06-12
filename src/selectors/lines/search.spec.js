@@ -4,19 +4,19 @@ import search from './search';
 import type { ReduxState } from 'src/models';
 
 test('lines are filtered correctly', () => {
-    const searchString = "foo";
+    const searchString = 'foo';
     const logLines = [
-        {lineNumber: 0, text: "one"},
-        {lineNumber: 1, text: "foo"},
-        {lineNumber: 2, text: "foo two"},
-        {lineNumber: 3, text: "idk"},
-        {lineNumber: 4, text: "hello"},
-        {lineNumber: 5, text: "tell me a foo"},
+        { lineNumber: 0, text: 'one' },
+        { lineNumber: 1, text: 'foo' },
+        { lineNumber: 2, text: 'foo two' },
+        { lineNumber: 3, text: 'idk' },
+        { lineNumber: 4, text: 'hello' },
+        { lineNumber: 5, text: 'tell me a foo' },
     ];
     const state: ReduxState = {
         cache: {
-            size:0,
-            status: "never"
+            size: 0,
+            status: 'never'
         },
         log: {
             colorMap: {},
@@ -45,6 +45,6 @@ test('lines are filtered correctly', () => {
         }
     };
 
-    let results = search(state);
+    const results = search(state);
     expect(results).toEqual([1, 2, 5]);
 })
