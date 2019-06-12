@@ -25,7 +25,7 @@ type Props = {
   caseSensitive: boolean,
   scrollLine: number,
   highlights: HighlightLineData,
-  filteredLines: Line[],
+  lines: Line[],
   expandableFilterData: Array<Line | number>,
   findResults: SearchResults,
   toggleBookmark: (number[]) => void,
@@ -62,7 +62,7 @@ class LogView extends React.Component<Props, State> {
       selectStartIndex: null,
       selectEndIndex: null,
       clicks: [],
-      lines: this.foldUnmatchedLines(props.filteredLines),
+      lines: this.foldUnmatchedLines(props.lines),
       expandedRanges: [],
     };
   }
@@ -97,7 +97,7 @@ class LogView extends React.Component<Props, State> {
     const midIdx = (depth === MAX_REC_DEPTH)
       // First run. Attemtp to guess the index.
       // Use linear proportion for efficient index approximation
-      ? Math.floor(lineNumber * end / (this.props.filteredLines.length - 1))
+      ? Math.floor(lineNumber * end / (this.props.lines.length - 1))
       : Math.floor((end - start) / 2) + start // Middle idx calc
     const midItem = data[midIdx]
     // disjoint union refinement
@@ -334,7 +334,7 @@ class LogView extends React.Component<Props, State> {
 
     if (this.props !== prevProps || this.state.expandedRanges !== prevState.expandedRanges) {
       this.setState({
-        lines: this.foldUnmatchedLines(this.props.filteredLines)
+        lines: this.foldUnmatchedLines(this.props.lines)
       })
     }
   }
@@ -360,6 +360,7 @@ class LogView extends React.Component<Props, State> {
 
 function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Props> {
   const settings = selectors.getLogViewerSettings(state);
+  const lines = selectors.getFilteredLineData(state);
   return {
     ...ownProps,
     colorMap: selectors.getLogColorMap(state),
@@ -371,7 +372,7 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Pro
     searchFindIdx: selectors.getLogViewerFindIdx(state),
     bookmarks: selectors.getLogViewerBookmarks(state),
     highlights: selectors.getHighlights(state),
-    filteredLines: selectors.getFilteredLineData(state),
+    lines: lines,
     findResults: selectors.getFindResults(state),
     expandableFilterData: [],
   };
