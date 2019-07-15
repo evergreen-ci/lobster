@@ -14,6 +14,7 @@ type Props = {
   port: ?string,
   text: string,
   highlightText: string[],
+  handleDoubleClick: ()=> void,
 }
 
 export default class LogLineText extends React.PureComponent<Props> {
@@ -44,7 +45,7 @@ export default class LogLineText extends React.PureComponent<Props> {
     }
 
     return (
-      <span ref={this.setRef}>
+      <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
         <Highlighter
           highlightClassName={'findResult' + this.props.lineNumber}
           caseSensitive={this.props.caseSensitive}

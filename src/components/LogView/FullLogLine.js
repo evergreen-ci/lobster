@@ -74,6 +74,7 @@ export default class FullLogLine extends React.PureComponent<Props> {
           lineRefCallback={this.props.lineRefCallback}
           text={this.props.line.text}
           lineNumber={this.props.line.lineNumber}
+          handleDoubleClick={this.props.handleDoubleClick}
           port={this.props.line.port}
           colorMap={this.props.colorMap}
           searchTerm={this.props.searchTerm}
