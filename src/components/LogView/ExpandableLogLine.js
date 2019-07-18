@@ -26,14 +26,23 @@ export default class ExpandableLogLine extends React.PureComponent<Props> {
     const skipped = this.props.end - this.props.start + 1
     return (
       <div
+        className="expandable-container"
+      >
+      <span
         className="expandable"
       >
-        ⬍ ~ ~ ~ {skipped} line{skipped > 1 ? 's' : ''} skipped.
+        ⬍ ~ ~ ~ 
+      </span>
+      <span className="expandable expandable-selectable">
+      {skipped} line{skipped > 1 ? 's' : ''} skipped. 
+      </span>
+      <span className="expandable">
         Expand:&nbsp;
         <a onClick={this.expandRange(skipped)}>All</a>
         ,&nbsp;
         <a onClick={this.expandRange(5)}>Five</a>&nbsp;
       ~ ~ ~
+      </span>
       </div>
     )
   }
