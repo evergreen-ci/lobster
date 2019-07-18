@@ -15,12 +15,6 @@
   user-select: none;
 }
 .expandable-selectable {
-  -webkit-user-select: text;
-  -khtml-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  -o-user-select: text;
-  user-select: text;
   margin-inline: 1em;
 }
 .monospace { font-family: monospace;}
