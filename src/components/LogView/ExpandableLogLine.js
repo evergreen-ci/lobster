@@ -31,10 +31,10 @@ export default class ExpandableLogLine extends React.PureComponent<Props> {
       <span
         className="expandable"
       >
-        ⬍ ~ ~ ~ 
+        ⬍ ~ ~ ~
       </span>
       <span className="expandable-selectable">
-      {skipped} line{skipped > 1 ? 's' : ''} skipped. 
+      {skipped} line{skipped > 1 ? 's' : ''} skipped.
       </span>
       <span className="expandable">
         Expand:&nbsp;
