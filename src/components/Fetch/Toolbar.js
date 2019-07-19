@@ -170,8 +170,8 @@ export class Toolbar extends React.PureComponent<Props> {
               <ButtonToolbar>
                 <Button id="formSubmit" onClick={this.handleSearchClickFind}>Find</Button>
                 {this.showFind()}
-                <Button onClick={this.addFilter}>Add Filter</Button>
-                <Button onClick={this.addHighlight}>Add Highlight</Button>
+                <Button disabled={this.props.searchTermError != null} onClick={this.addFilter}>Add Filter</Button>
+                <Button disabled={this.props.searchTermError != null} onClick={this.addHighlight}>Add Highlight</Button>
                 <Button onClick={this.props.togglePanel}>{this.props.detailsOpen ? 'Hide Details \u25B4' : 'Show Details \u25BE'}</Button>
               </ButtonToolbar>
             </FormGroup>
