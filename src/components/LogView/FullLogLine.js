@@ -11,6 +11,8 @@ type Props = {
   caseSensitive: boolean,
   colorMap: ColorMap,
   searchTerm: string,
+  startRange: number,
+  endRange: number,
   found: boolean,
   highlight: boolean,
   line: Line,
@@ -77,6 +79,8 @@ export default class FullLogLine extends React.PureComponent<Props> {
           port={this.props.line.port}
           colorMap={this.props.colorMap}
           searchTerm={this.props.searchTerm}
+          startRange={this.props.startRange}
+          endRange={this.props.endRange}
           caseSensitive={this.props.caseSensitive}
           highlightText={this.props.highlightText}
         />

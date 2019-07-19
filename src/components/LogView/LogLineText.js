@@ -9,6 +9,8 @@ type Props = {
   caseSensitive: boolean,
   colorMap: ColorMap,
   searchTerm: string,
+  startRange: number,
+  endRange: number,
   lineNumber: number,
   lineRefCallback: (?HTMLSpanElement, number, isUnmount?: boolean) => void,
   port: ?string,
@@ -43,6 +45,11 @@ export default class LogLineText extends React.PureComponent<Props> {
       highlightStyle.color = this.props.colorMap[this.props.port];
     }
 
+    let searchWords = [];
+    if (this.props.lineNumber >= this.props.startRange &&
+      (this.props.endRange < 0 || this.props.lineNumber <= this.props.endRange)) {
+      searchWords = this.props.highlightText;
+    }
     return (
       <span ref={this.setRef}>
         <Highlighter
@@ -51,7 +58,7 @@ export default class LogLineText extends React.PureComponent<Props> {
           unhighlightStyle={style}
           highlightStyle={highlightStyle}
           textToHighlight={this.props.text}
-          searchWords={this.props.highlightText}
+          searchWords={searchWords}
         />
       </span>
     );

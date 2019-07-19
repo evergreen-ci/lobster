@@ -12,6 +12,8 @@ export const LOGVIEWER_LOAD_BOOKMARKS = 'logviewer:load-bookmarks';
 export const LOGVIEWER_ENSURE_BOOKMARK = 'logviewer:ensure-bookmark';
 export const LOGVIEWER_CHANGE_FINDIDX = 'logviewer:change-findidx';
 export const LOGVIEWER_CHANGE_SEARCH = 'logviewer:change-search';
+export const LOGVIEWER_CHANGE_START_RANGE = 'logviewer:change-start-range';
+export const LOGVIEWER_CHANGE_END_RANGE = 'logviewer:change-end-range';
 export const LOGVIEWER_TOGGLE_SETTINGS_PANEL = 'logviewer:toggle-settings-panel';
 export const LOGVIEWER_SEARCH_EVENT = 'logviewer:search-event';
 export const LOGVIEWER_SCROLL_TO_LINE = 'logviewer:scroll-to-line';
@@ -77,6 +79,20 @@ export type ChangeSearch = {|
   |}
 |}
 
+export type ChangeStartRange = {|
+  type: 'logviewer:change-start-range',
+  +payload: {|
+    +start: number
+  |}
+|}
+
+export type ChangeEndRange = {|
+  type: 'logviewer:change-end-range',
+  +payload: {|
+    +end: number
+  |}
+|}
+
 export type LoadHighlights = {|
   type: 'logviewer:load-highlights',
   +payload: {|
@@ -125,6 +141,8 @@ export type Action = ChangeSetting
   | LoadBookmarks
   | ChangeFindIdx
   | ChangeSearch
+  | ChangeStartRange
+  | ChangeEndRange
   | LoadHighlights
   | LoadFilters
   | ToggleSettingsPanel
@@ -279,6 +297,24 @@ export function changeSearch(text: string): ChangeSearch {
       text: text
     }
   };
+}
+
+export function changeStartRange(start: number): ChangeStartRange {
+  return {
+    type: LOGVIEWER_CHANGE_START_RANGE,
+    payload: {
+      start: start
+    }
+  }
+}
+
+export function changeEndRange(end: number): ChangeEndRange {
+  return {
+    type: LOGVIEWER_CHANGE_END_RANGE,
+    payload: {
+      end: end
+    }
+  }
 }
 
 export function toggleSettingsPanel(): ToggleSettingsPanel {
