@@ -18,6 +18,8 @@ export const getLogViewerFind = (state: ReduxState) => getLogViewer(state).find;
 export const getLogViewerFindIdx = (state: ReduxState) => getLogViewerFind(state).findIdx;
 export const getLogViewerSearchTerm = (state: ReduxState) => getLogViewerFind(state).searchTerm;
 export const getLogViewerSearchTermError = (state: ReduxState) => getLogViewerFind(state).regexError;
+export const getLogViewerSearchStartRange = (state: ReduxState) => getLogViewerFind(state).startRange;
+export const getLogViewerSearchEndRange = (state: ReduxState) => getLogViewerFind(state).endRange;
 
 export const getLogViewerSettings = (state: ReduxState) => getLogViewer(state).settings;
 export const getLogViewerSettingsWrap = (state: ReduxState) => getLogViewerSettings(state).wrap;

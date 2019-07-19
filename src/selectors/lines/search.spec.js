@@ -31,7 +31,9 @@ test('lines are filtered correctly', () => {
             find: {
                 findIdx: -1,
                 searchTerm: searchString,
-                regexError: null
+                regexError: null,
+                startRange: 0,
+                endRange: -1
             },
             highlights: [],
             scrollLine: 0,
