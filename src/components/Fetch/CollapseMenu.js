@@ -69,39 +69,42 @@ function showDetailButtons(id: ?LogIdentity, clearCache: ?() => void): ?ReactNod
   if (!id) {
     return null;
   }
+  const col0Style = {"width":"7%"};
+  const col1Style= {"width":"5%"};
+  const col2Style = {"width":"6%"};
   const buttons = [];
   if (id.type === 'logkeeper') {
     if (id.test == null) {
       const { build } = id;
       buttons.push(...[
-        <Col key={0} lg={1}><Button href={`/build/${build}`}>Job Logs</Button></Col>,
-        <Col key={1} lg={1}><Button href={`/build/${build}/all?raw=1`}>Raw</Button></Col>,
-        <Col key={2} lg={1}><Button href={`/build/${build}/all?html=1`}>HTML</Button></Col>
+        <Col key={0} lg={1}><Button style={col0Style} href={`/build/${build}`}>Job Logs</Button></Col>,
+        <Col key={1} lg={1}><Button style={col1Style} href={`/build/${build}/all?raw=1`}>Raw</Button></Col>,
+        <Col key={2} lg={1}><Button style={col2Style} href={`/build/${build}/all?html=1`}>HTML</Button></Col>
       ]);
     } else {
       const { build, test } = id;
       buttons.push(...[
-        <Col key={0} lg={1}><Button href={`/build/${build}`}>Job Logs</Button></Col>,
-        <Col key={1} lg={1}><Button href={`/build/${build}/test/${test}?raw=1`}>Raw</Button></Col>,
-        <Col key={2} lg={1}><Button href={`/build/${build}/test/${test}?html=1`}>HTML</Button></Col>
+        <Col key={0} lg={1}><Button style={col0Style} href={`/build/${build}`}>Job Logs</Button></Col>,
+        <Col key={1} lg={1}><Button style={col1Style} href={`/build/${build}/test/${test}?raw=1`}>Raw</Button></Col>,
+        <Col key={2} lg={1}><Button style={col2Style} href={`/build/${build}/test/${test}?html=1`}>HTML</Button></Col>
       ]);
     }
   } else if (id.type === 'evergreen-task') {
     buttons.push(...[
-      <Col key={0} lg={1}><Button href={api.taskURL(id.id, id.execution)}>Task</Button></Col>,
-      <Col key={1} lg={1}><Button href={api.taskLogRawURL(id.id, id.execution, id.log)}>Raw</Button></Col>,
-      <Col key={2} lg={1}><Button href={api.taskLogURL(id.id, id.execution, id.log)}>HTML</Button></Col>
+      <Col key={0} lg={1}><Button style={col0Style} href={api.taskURL(id.id, id.execution)}>Task</Button></Col>,
+      <Col key={1} lg={1}><Button style={col1Style} href={api.taskLogRawURL(id.id, id.execution, id.log)}>Raw</Button></Col>,
+      <Col key={2} lg={1}><Button style={col2Style} href={api.taskLogURL(id.id, id.execution, id.log)}>HTML</Button></Col>
     ]);
   } else if (id.type === 'evergreen-test') {
     buttons.push(...[
-      <Col key={1} lg={1}><Button href={api.testLogRawURL(id.id)}>Raw</Button></Col>,
-      <Col key={2} lg={1}><Button href={api.testLogURL(id.id)}>HTML</Button></Col>
+      <Col key={1} lg={1}><Button style={col0Style} href={api.testLogRawURL(id.id)}>Raw</Button></Col>,
+      <Col key={2} lg={1}><Button style={col1Style} href={api.testLogURL(id.id)}>HTML</Button></Col>
     ]);
   } else if (id.type === 'evergreen-test-by-name') {
     buttons.push(...[
-      <Col key={0} lg={1}><Button href={api.taskURL(id.task, id.execution)}>Task</Button></Col>,
-      <Col key={1} lg={1}><Button href={api.testLogByNameRawURL(id.task, id.execution, id.test)}>Raw</Button></Col>,
-      <Col key={2} lg={1}><Button href={api.testLogByNameURL(id.task, id.execution, id.test)}>HTML</Button></Col>
+      <Col key={0} lg={1}><Button style={col0Style} href={api.taskURL(id.task, id.execution)}>Task</Button></Col>,
+      <Col key={1} lg={1}><Button style={col1Style} href={api.testLogByNameRawURL(id.task, id.execution, id.test)}>Raw</Button></Col>,
+      <Col key={2} lg={1}><Button style={col2Style} href={api.testLogByNameURL(id.task, id.execution, id.test)}>HTML</Button></Col>
     ]);
   }
   if (clearCache != null) {
