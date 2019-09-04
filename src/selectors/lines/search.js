@@ -27,7 +27,6 @@ const search = createSelector(
   selectors.getLogViewerSearchStartRange,
   selectors.getLogViewerSearchEndRange,
   function(searchTerm: string, lines: Line[], caseSensitive: boolean, startRange: number, endRange: number): SearchResults {
-    console.log(lines);
     let start = startRange;
     if (startRange < 0 || isNaN(startRange)) {
       start = 0;

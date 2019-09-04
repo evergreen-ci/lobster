@@ -185,7 +185,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
                   inputRef={this.setEndRangeInputRef}
                   type="number"
                   placeholder="Ending line number (exclusive)"
-                  defaultValue={this.props.lines.length}
+                  defaultValue={this.props.lines ? this.props.lines.length-1 : ""}
                   onChange={this.handleChangeEndRangeEvent}
                 />
               </FormGroup>

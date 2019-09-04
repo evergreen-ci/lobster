@@ -42,16 +42,16 @@ export default function(state: Find = initialState, action: Action): Find {
   if (action.type === LOGVIEWER_CHANGE_START_RANGE) {
     const start = action.payload.start;
     if (isNaN(start)) {
-      return {...state, startRange: 0};
+      return { ...state, startRange: 0 };
     }
-    return {...state, startRange: start};
+    return { ...state, startRange: start };
   }
   if (action.type === LOGVIEWER_CHANGE_END_RANGE) {
     const end = action.payload.end;
     if (isNaN(end)) {
-      return {...state, endRange: -1};
+      return { ...state, endRange: -1 };
     }
-    return {...state, endRange: end};
+    return { ...state, endRange: end };
   }
   return state;
 }
