@@ -24,9 +24,19 @@ const search = createSelector(
   selectors.getLogViewerSearchTerm,
   getFilteredLineData,
   selectors.getLogViewerSettingsCaseSensitive,
-  function(searchTerm: string, lines: Line[], caseSensitive: boolean): SearchResults {
-    console.log(lines);
-    const filteredLines = lines.filter((line) => {
+  selectors.getLogViewerSearchStartRange,
+  selectors.getLogViewerSearchEndRange,
+  function(searchTerm: string, lines: Line[], caseSensitive: boolean, startRange: number, endRange: number): SearchResults {
+    let start = startRange;
+    if (startRange < 0 || isNaN(startRange)) {
+      start = 0;
+    }
+    let end = endRange;
+    if (endRange < 0 || isNaN(endRange)) {
+      end = lines.length;
+    }
+    const rangedLines = lines.slice(start, end);
+    const filteredLines = rangedLines.filter((line) => {
       if (line.isMatched) {
         return true;
       }

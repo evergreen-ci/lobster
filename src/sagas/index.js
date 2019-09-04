@@ -13,7 +13,9 @@ export default function* rootSaga(): Saga<void> {
   yield takeLatest(actions.WIPE_CACHE, boil);
   yield takeEvery([
     actions.LOGVIEWER_SEARCH_EVENT,
-    actions.LOGVIEWER_CHANGE_SEARCH
+    actions.LOGVIEWER_CHANGE_SEARCH,
+    actions.LOGVIEWER_CHANGE_START_RANGE,
+    actions.LOGVIEWER_CHANGE_END_RANGE
   ], search);
   yield takeEvery([
     actions.LOGVIEWER_CHANGE_FILTER,

@@ -49,6 +49,25 @@
     margin-left: 12px;
 }
 
+.range-div {
+    margin-bottom: 15px;
+}
+
+.range {
+    display: flex;
+    width: 75%;
+}
+
+.range-label {
+    margin-left: 3px;
+    width: 240px;
+}
+
+.range-input {
+    width: 120px;
+    margin-right: 24px;
+}
+
 .filter-highlight-lines {
     margin-bottom: 5px;
 }

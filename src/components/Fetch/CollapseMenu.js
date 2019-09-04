@@ -13,7 +13,7 @@ import * as api from '../../api';
 import * as actions from '../../actions';
 import { connect } from 'react-redux';
 import * as selectors from '../../selectors';
-import type { ReduxState, LogIdentity, Highlight, Filter, Bookmark } from '../../models';
+import type { ReduxState, LogIdentity, Highlight, Filter, Bookmark, Line } from '../../models';
 
 type Props = {
   settings: Settings,
@@ -44,6 +44,9 @@ type Props = {
   detailsOpen: boolean,
   valueJIRA: string,
   logIdentity: ?LogIdentity,
+  lines: Line[],
+  changeStartRange: (value: number) => void,
+  changeEndRange: (value: number) => void,
 }
 
 function showLogBox(id: ?LogIdentity, setURLRef: (?HTMLInputElement) => void): ?ReactNode {
@@ -115,6 +118,8 @@ function showDetailButtons(id: ?LogIdentity, clearCache: ?() => void): ?ReactNod
 
 export class CollapseMenu extends React.PureComponent<Props> {
   urlInput: ?HTMLInputElement;
+  startRangeInput: ?HTMLInputElement;
+  endRangeInput: ?HTMLInputElement;
 
   setURLRef = (ref: ?HTMLInputElement) => {
     this.urlInput = ref;
@@ -139,12 +144,56 @@ export class CollapseMenu extends React.PureComponent<Props> {
     }
   }
 
+  handleChangeStartRangeEvent = () => {
+    if (this.startRangeInput != null) {
+      this.props.changeStartRange(this.startRangeInput.valueAsNumber);
+    }
+  }
+
+  handleChangeEndRangeEvent = () => {
+    if (this.endRangeInput != null) {
+      this.props.changeEndRange(this.endRangeInput.valueAsNumber);
+    }
+  }
+
+  setStartRangeInputRef = (ref: ?HTMLInputElement) => {
+    this.startRangeInput = ref;
+  }
+
+  setEndRangeInputRef = (ref: ?HTMLInputElement) => {
+    this.endRangeInput = ref;
+  }
+
   render() {
     return (
       <Collapse className="collapse-menu" in={this.props.detailsOpen}>
         <div>
           <Form horizontal onSubmit={this.handleSubmit}>
             {showLogBox(this.props.logIdentity, this.setURLRef)}
+            <div className="range-div">
+              <FormGroup controlId="rangeInput" className="filter-header range">
+                <Col lg={3}>
+                  <label className="control-label range-label col-sm-8">Find in Range</label>
+                </Col>
+                <FormControl
+                  className="range-input"
+                  inputRef={this.setStartRangeInputRef}
+                  type="number"
+                  placeholder="Starting line number"
+                  defaultValue={0}
+                  onChange={this.handleChangeStartRangeEvent}
+                />
+                <FormControl
+                  className="range-input"
+                  inputRef={this.setEndRangeInputRef}
+                  type="number"
+                  placeholder="Ending line number (exclusive)"
+                  defaultValue={this.props.lines ? this.props.lines.length-1 : ""}
+                  onChange={this.handleChangeEndRangeEvent}
+                />
+              </FormGroup>
+            </div>
+
             <Col lg={3}>
               <FormGroup>
                 <label className="control-label col-sm-8">Wrap</label>
@@ -240,7 +289,8 @@ function mapStateToProps(state: ReduxState, ownProps) {
     findIdx: selectors.getLogViewerFindIdx(state),
     logIdentity: selectors.getLogIdentity(state),
     valueJIRA: selectors.getJiraTemplate(state),
-    detailsOpen: selectors.getIsLogViewerSettingsPanel(state)
+    detailsOpen: selectors.getIsLogViewerSettingsPanel(state),
+    lines: selectors.getLogLines(state),
   };
 }
 
@@ -269,6 +319,8 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
     toggleSettings: toggleSettings,
     filterActions, highlightActions,
     changeFindIdx: (index) => dispatch(actions.changeFindIdx(index)),
+    changeStartRange: (start) => dispatch(actions.changeStartRange(start)),
+    changeEndRange: (end) => dispatch(actions.changeEndRange(end)),
     wipeCache: () => dispatch(actions.wipeCache()),
     loadLogByIdentity: (identity: LogIdentity) => dispatch(actions.loadLog(identity)),
     loadBookmarks: (bookmarksArr) => dispatch(actions.loadBookmarks(bookmarksArr))

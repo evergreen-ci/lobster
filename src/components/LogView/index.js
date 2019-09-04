@@ -22,6 +22,8 @@ type Props = {
   expandableRows: boolean,
   colorMap: ColorMap,
   searchTerm: string,
+  startRange: number,
+  endRange: number,
   caseSensitive: boolean,
   scrollLine: number,
   highlights: HighlightLineData,
@@ -259,6 +261,7 @@ class LogView extends React.Component<Props, State> {
   }
 
   genListRegularRow = (line, lineNumber: number) => (
+
     <FullLogLine
       lineRefCallback={this.lineRefCallback}
       // $FlowFixMe
@@ -272,6 +275,8 @@ class LogView extends React.Component<Props, State> {
       toggleBookmark={this.props.toggleBookmark}
       colorMap={this.props.colorMap}
       searchTerm={this.props.searchTerm}
+      startRange={this.props.startRange}
+      endRange={this.props.endRange}
       highlightText={this.props.highlights.highlightText}
       caseSensitive={this.props.caseSensitive}
       updateSelectStartIndex={this.updateSelectStartIndex}
@@ -368,6 +373,8 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Pro
     wrap: settings.wrap,
     expandableRows: settings.expandableRows,
     searchTerm: selectors.getLogViewerSearchTerm(state),
+    startRange: selectors.getLogViewerSearchStartRange(state),
+    endRange: selectors.getLogViewerSearchEndRange(state),
     scrollLine: selectors.getLogViewerScrollLine(state),
     searchFindIdx: selectors.getLogViewerFindIdx(state),
     bookmarks: selectors.getLogViewerBookmarks(state),

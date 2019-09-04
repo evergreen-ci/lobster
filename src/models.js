@@ -222,7 +222,9 @@ export type Log = $Exact<$ReadOnly<{
 export type Find = $Exact<$ReadOnly<{
   findIdx: number,
   searchTerm: string,
-  regexError: ?Error
+  regexError: ?Error,
+  startRange: number,
+  endRange: number
 }>>
 
 export type Logviewer = $Exact<$ReadOnly<{
