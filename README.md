@@ -31,7 +31,7 @@ in the Log field and click on the navy colored lines to get to the corresponding
 * `git clone https://github.com/evergreen-ci/lobster.git`
 * `cd lobster`
 * `npm install`
-* `npm build`
+* `npm run build`
 * `node server`
 * You can now view lobster by going to `http://localhost:9000/lobster?server=localhost:9000/api/log`.
 
