@@ -1,6 +1,6 @@
 // @flow strict
 
-import type { Log } from '../../models';
+import type { Log, ResmokeLog } from '../../models';
 import resmokeTestEvents from './resmokeTestEvents';
 
 function getGitVersion(line: string): string {
@@ -54,7 +54,7 @@ export default function(state: Log, response: string): Log {
       gitVersionStr = getGitVersion(line);
     }
 
-    let lineText = line;
+    let lineText = parseLogLine(line);
     let gitRef: ?string = undefined;
     const gitStartIdx = line.indexOf(gitPrefix);
     if (gitStartIdx !== -1) {
@@ -103,4 +103,26 @@ export default function(state: Log, response: string): Log {
     isDone: true,
     events: events
   };
+}
+
+function parseLogLine(line: string): string {
+  const logParts = line.split('|');
+  if (logParts.length !== 2) {
+    return line;
+  }
+  const structedLog = parseMongoJson(logParts[1]);
+  if (structedLog === null) {
+    return line;
+  }
+  return `${logParts[0]}| ${ structedLog.t.$date } ${ structedLog.s.padEnd(2) } ${ structedLog.c.padEnd(8)} ${ structedLog.id.toString().padEnd(7)} [${ structedLog.ctx }] ${ JSON.stringify(structedLog.msg) }${ structedLog.attr ? ',"attr":' + JSON.stringify(structedLog.attr) : '' }`;
+}
+
+function parseMongoJson(toParse: string): ResmokeLog | null {
+  let log: ResmokeLog;
+  try {
+    log = JSON.parse(toParse);
+  } catch (err) {
+    return null;
+  }
+  return log
 }

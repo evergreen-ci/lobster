@@ -63,6 +63,22 @@ export type Event = {|
   +state?: string
 |}
 
+export type MongoDate = {
+  +$date: string,
+}
+
+export type ResmokeLog = {|
+  +t: MongoDate,
+  +s: string,
+  +c: string,
+  +id: number,
+  +ctx: string,
+  // $FlowFixMe
+  msg?: string | Object,
+  // $FlowFixMe
+  attr?: string | Object
+|}
+
 export type LogEvent = {|
   type: string,
   +title: string,
