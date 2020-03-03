@@ -106,9 +106,14 @@ export default function(state: Log, response: string): Log {
 }
 
 function parseLogLine(line: string): string {
-  const logParts = line.split('|');
+  let logParts = line.split('|'); // in many cases resmoke will insert a pipe between the metadata and json logs
   if (logParts.length !== 2) {
-    return line;
+    const startOfJson = line.indexOf('{'); // if not, attempt to find the first occurence of a json document and attempt to parse as a log
+    if (startOfJson > -1) {
+      logParts = [line.substring(0, startOfJson), line.substring(startOfJson)];
+    } else {
+      return line;
+    }
   }
   const structedLog = parseMongoJson(logParts[1]);
   if (structedLog === null) {
@@ -124,5 +129,8 @@ function parseMongoJson(toParse: string): ResmokeLog | null {
   } catch (err) {
     return null;
   }
-  return log
+  if (log.c && log.s && log.id) {
+    return log;
+  }
+  return null;
 }
