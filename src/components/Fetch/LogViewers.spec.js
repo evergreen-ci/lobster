@@ -2,8 +2,6 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import LogkeeperLogViewer from './LogkeeperLogViewer';
 import EvergreenLogViewer from './EvergreenLogViewer';
-import LogView from '../LogView';
-import configureStore from 'redux-mock-store'
 
 describe('EvergreenLogViewer', () => {
   test('test-with-line', () => {
