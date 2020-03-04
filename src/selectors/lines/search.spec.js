@@ -41,7 +41,8 @@ test('lines are filtered correctly', () => {
                 caseSensitive: false,
                 expandableRows: true,
                 filterIntersection: true,
-                wrap: false
+                wrap: false,
+                parseResmokeJson: false
             },
             settingsPanel: false
         }

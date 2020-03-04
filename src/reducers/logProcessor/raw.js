@@ -14,6 +14,7 @@ export default function(delimiter: string) {
       lines: lines.map((line, index) => {
         return {
           lineNumber: index,
+          originalText: line,
           text: line,
           port: null,
           gitRef: null

@@ -22,6 +22,7 @@ type Props = {
     toggleCaseSensitive: () => void,
     toggleFilterIntersection: () => void,
     toggleExpandableRows: () => void,
+    toggleParseResmokeJson: () => void,
   },
   filterActions: {
     removeFilter: (string) => void,
@@ -72,9 +73,9 @@ function showDetailButtons(id: ?LogIdentity, clearCache: ?() => void): ?ReactNod
   if (!id) {
     return null;
   }
-  const col0Style = {"width":"7%"};
-  const col1Style= {"width":"5%"};
-  const col2Style = {"width":"6%"};
+  const col0Style = { 'width': '7%' };
+  const col1Style = { 'width': '5%' };
+  const col2Style = { 'width': '6%' };
   const buttons = [];
   if (id.type === 'logkeeper') {
     if (id.test == null) {
@@ -188,7 +189,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
                   inputRef={this.setEndRangeInputRef}
                   type="number"
                   placeholder="Ending line number (exclusive)"
-                  defaultValue={this.props.lines ? this.props.lines.length-1 : ""}
+                  defaultValue={this.props.lines ? this.props.lines.length - 1 : ''}
                   onChange={this.handleChangeEndRangeEvent}
                 />
               </FormGroup>
@@ -217,6 +218,20 @@ export class CollapseMenu extends React.PureComponent<Props> {
                   name="case-sensitive-on-off"
                   value={this.props.settings.caseSensitive}
                   onChange={this.props.toggleSettings.toggleCaseSensitive}
+                >
+                  <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
+                  <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
+                </ToggleButtonGroup>
+              </FormGroup>
+
+              <FormGroup>
+                <label className="control-label col-sm-8">Format LogV2</label>
+                <ToggleButtonGroup
+                  className="toggle-buttons"
+                  type="radio"
+                  name="expandable-rows-on-off"
+                  value={this.props.settings.parseResmokeJson}
+                  onChange={this.props.toggleSettings.toggleParseResmokeJson}
                 >
                   <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
                   <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
@@ -312,6 +327,7 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
     toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
     toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection()),
     toggleExpandableRows: () => dispatch(actions.toggleExpandableRows()),
+    toggleParseResmokeJson: () => dispatch(actions.toggleParseResmokeJson())
   };
 
   return {

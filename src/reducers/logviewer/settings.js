@@ -9,6 +9,7 @@ const initialState: Settings = {
   wrap: window.localStorage.getItem('lobster-line-wrap') === 'true',
   caseSensitive: false,
   filterIntersection: true,
+  parseResmokeJson: true,
   expandableRows: expandableRowsLocalSetting === null ? true : // Enabled by default
                   expandableRowsLocalSetting === 'true' // when opt set, use local setting
 };
@@ -29,6 +30,10 @@ export default function(state: Settings = initialState, action: Action): Setting
 
   if (action.payload.setting === 'filter-intersection') {
     return { ...state, filterIntersection: !state.filterIntersection };
+  }
+
+  if (action.payload.setting === 'parse-resmoke-json') {
+    return { ...state, parseResmokeJson: !state.parseResmokeJson };
   }
 
   if (action.payload.setting === 'expandable-rows') {

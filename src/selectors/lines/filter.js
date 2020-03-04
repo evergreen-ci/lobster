@@ -2,6 +2,7 @@
 
 import { createSelector } from 'reselect';
 import type { ReduxState, Line, Filter, Bookmark } from '../../models';
+import { parseLogLine } from './transforms';
 import * as merge from './merge';
 import * as selectors from '../basic';
 
@@ -75,7 +76,8 @@ const getFilteredLineData = createSelector(
   selectors.getLogViewerFilters,
   selectors.getLogViewerBookmarks,
   selectors.getLogViewerSettingsFilterLogic,
-  function(lines: Line[], filters: Filter[], bookmarks: Bookmark[], filterIntersection: boolean): Line[] {
+  selectors.getLogViewerSettingsParseJson,
+  function(lines: Line[], filters: Filter[], bookmarks: Bookmark[], filterIntersection: boolean, parseResmokeJson: boolean): Line[] {
     const filter = merge.activeFilters(filters);
     const inverseFilter = merge.activeInverseFilters(filters);
 
@@ -84,6 +86,11 @@ const getFilteredLineData = createSelector(
         line.isMatched = false
       } else {
         line.isMatched = true
+      }
+      if (parseResmokeJson) {
+        line.text = parseLogLine(line.originalText);
+      } else {
+        line.text = line.originalText;
       }
     });
 

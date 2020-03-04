@@ -242,7 +242,7 @@ class LogView extends React.Component<Props, State> {
   }
 
   genList = (index: number) => {
-    const item = this.state.lines[index]
+    const item = this.state.lines[index];
     // disjoint union refinement
     if (item.kind === 'SkipLine') {
       // IF SkipLine
