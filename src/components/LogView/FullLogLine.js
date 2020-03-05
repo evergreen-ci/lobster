@@ -30,7 +30,7 @@ type State = {
 }
 
 export default class FullLogLine extends React.Component<Props, State> {
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       line: props.line
