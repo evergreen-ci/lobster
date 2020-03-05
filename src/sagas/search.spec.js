@@ -17,30 +17,35 @@ const runLinesSelector = () => {
         {
           lineNumber: 0,
           text: 'test noresults 0',
+          originalText: 'test noresults 0',
           port: null,
           gitRef: null
         },
         {
           lineNumber: 1,
           text: 'test noresults 1',
+          originalText: 'test noresults 1',
           port: null,
           gitRef: null
         },
         {
           lineNumber: 2,
           text: 'test noresults 2',
+          originalText: 'test noresults 2',
           port: null,
           gitRef: null
         },
         {
           lineNumber: 3,
           text: 'test noresults 3',
+          originalText: 'test noresults 3',
           port: null,
           gitRef: null
         },
         {
           lineNumber: 4,
           text: 'something else',
+          originalText: 'something else',
           port: null,
           gitRef: null
         }

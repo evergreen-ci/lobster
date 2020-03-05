@@ -174,6 +174,10 @@ export function toggleExpandableRows(): ChangeSetting {
   return toggleSetting('expandable-rows');
 }
 
+export function toggleParseResmokeJson(): ChangeSetting {
+  return toggleSetting('parse-resmoke-json');
+}
+
 export function loadInitialFilters(initialFilters: Filter[]): LoadFilters {
   return {
     type: LOGVIEWER_LOAD_FILTERS,

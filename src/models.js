@@ -13,7 +13,8 @@ type LineKind = {
 // $FlowFixMe this intersection type is used in an unsafe manner in many places
 export type Line = $Exact<FilterMatchAnnotation & LineKind & $ReadOnly<{
   lineNumber: number,
-  text: string,
+  text: string, // text is what should be visible to the user and may have been transformed from the source
+  originalText: string, // originalText is the verbatim text from the source
   port: ?string, // resmoke related attribute
   gitRef: ?string, // resmoke stuff again
 }>>
@@ -24,7 +25,8 @@ export type Settings = $ReadOnly<$Exact<{
   wrap: boolean,
   caseSensitive: boolean,
   filterIntersection: boolean,
-  expandableRows: boolean,
+  parseResmokeJson: boolean,
+  expandableRows: boolean
 }>>
 
 export type Bookmark = {|

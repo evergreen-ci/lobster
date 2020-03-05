@@ -25,6 +25,7 @@ export const getLogViewerSettings = (state: ReduxState) => getLogViewer(state).s
 export const getLogViewerSettingsWrap = (state: ReduxState) => getLogViewerSettings(state).wrap;
 export const getLogViewerSettingsFilterLogic = (state: ReduxState) => getLogViewerSettings(state).filterIntersection;
 export const getLogViewerSettingsCaseSensitive = (state: ReduxState) => getLogViewerSettings(state).caseSensitive;
+export const getLogViewerSettingsParseJson = (state: ReduxState) => getLogViewerSettings(state).parseResmokeJson;
 
 export const getIsLogViewerSettingsPanel = (state: ReduxState) => getLogViewer(state).settingsPanel;
 export const getLogViewerScrollLine = (state: ReduxState) => getLogViewer(state).scrollLine;

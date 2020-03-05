@@ -25,7 +25,18 @@ type Props = {
   handleDoubleClick: () => void
 } & FilterMatchAnnotation;
 
-export default class FullLogLine extends React.PureComponent<Props> {
+type State = {
+  line: Line,
+}
+
+export default class FullLogLine extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      line: props.line
+    }
+  }
+
   handleMouseUp = () => {
     let endIndex = this.props.line.lineNumber;
     const selection = window.getSelection();
@@ -74,7 +85,7 @@ export default class FullLogLine extends React.PureComponent<Props> {
         <LogOptions gitRef={this.props.line.gitRef} />
         <LogLineText
           lineRefCallback={this.props.lineRefCallback}
-          text={this.props.line.text}
+          text={this.state.line.text}
           lineNumber={this.props.line.lineNumber}
           handleDoubleClick={this.props.handleDoubleClick}
           port={this.props.line.port}

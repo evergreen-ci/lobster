@@ -31,6 +31,7 @@ function makeWrapper(state) {
         wrap: false,
         filterIntersection: false,
         expandableRows: true,
+        parseResmokeJson: false,
       }}
       filterList={[]}
       highlightList={[]}
