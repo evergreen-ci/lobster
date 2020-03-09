@@ -70,6 +70,7 @@ function makeWrapper(state) {
       setFormRef={jest.fn()}
       setSearch={jest.fn()}
       wipeCache={jest.fn()}
+      addPrettyPrint={jest.fn()}
     />
   );
 }

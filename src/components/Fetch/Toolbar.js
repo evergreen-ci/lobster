@@ -5,7 +5,7 @@ import './style.css';
 import { Overlay, Popover, Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col } from 'react-bootstrap';
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
-import { addFilter, addHighlight, search, toggleSettingsPanel, changeSearch } from '../../actions';
+import { addFilter, addHighlight, search, toggleSettingsPanel, changeSearch, addPrettyPrint } from '../../actions';
 import * as selectors from '../../selectors';
 import type { ReduxState, Settings, SearchResults } from '../../models';
 
@@ -16,6 +16,7 @@ type Props = {
   searchTermError: ?Error,
   addFilter: (string, boolean) => void,
   addHighlight: (string, boolean) => void,
+  addPrettyPrint: (string, boolean) => void,
   wipeCache: () => void,
   togglePanel: () => void,
   detailsOpen: boolean,
@@ -121,6 +122,17 @@ export class Toolbar extends React.PureComponent<Props> {
     this.findInput.value = '';
   }
 
+  addPrettyPrint = () => {
+    if (!this.findInput) {
+      return;
+    }
+    const { value } = this.findInput;
+
+    this.props.addPrettyPrint(value, this.props.settings.caseSensitive);
+    // $FlowFixMe
+    this.findInput.value = '';
+  }
+
   componentDidMount() {
     document.addEventListener('keydown', this.handleSearchShortcut);
     if (this.findInput) {
@@ -172,6 +184,7 @@ export class Toolbar extends React.PureComponent<Props> {
                 {this.showFind()}
                 <Button disabled={this.props.searchTermError != null} onClick={this.addFilter}>Add Filter</Button>
                 <Button disabled={this.props.searchTermError != null} onClick={this.addHighlight}>Add Highlight</Button>
+                <Button disabled={this.props.searchTermError != null} onClick={this.addPrettyPrint}>Pretty Print JSON</Button>
                 <Button onClick={this.props.togglePanel}>{this.props.detailsOpen ? 'Hide Details \u25B4' : 'Show Details \u25BE'}</Button>
               </ButtonToolbar>
             </FormGroup>
@@ -203,7 +216,8 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
     prevFind: () => dispatch(search('prev')),
     changeSearch: (value: string) => dispatch(changeSearch(value)),
     addFilter: (text: string, caseSensitive: boolean) => dispatch(addFilter(text, caseSensitive)),
-    addHighlight: (text: string, caseSensitive: boolean) => dispatch(addHighlight(text, caseSensitive))
+    addHighlight: (text: string, caseSensitive: boolean) => dispatch(addHighlight(text, caseSensitive)),
+    addPrettyPrint: (text: string, caseSensitive: boolean) => dispatch(addPrettyPrint(text, caseSensitive))
   };
 }
 
