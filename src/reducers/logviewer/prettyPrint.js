@@ -1,11 +1,14 @@
 // @flow strict
 
 import { LOGVIEWER_PRETTY_PRINT, type Action } from '../../actions';
-import type { Highlight } from '../../models';
+import type { PrettyPrint } from '../../models';
 
-const initialState: Highlight[] = [];
+const initialState: PrettyPrint = {
+    text: '',
+    caseSensitive: false
+};
 
-export default function(state: Highlight[] = initialState, action: Action): Highlight[] {
+export default function(state: PrettyPrint = initialState, action: Action): PrettyPrint {
   if (action.type !== LOGVIEWER_PRETTY_PRINT) {
     return state;
   }

@@ -282,3 +282,8 @@ export type ReduxState = $Exact<$ReadOnly<{
   log: Log,
   logviewer: LogViewerState
 }>>
+
+export type PrettyPrint = $Exact<$ReadOnly<{
+  text: string,
+  caseSensitive: boolean
+}>>
