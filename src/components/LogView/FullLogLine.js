@@ -22,7 +22,8 @@ type Props = {
   updateSelectStartIndex: (number) => void,
   updateSelectEndIndex: (number) => void,
   highlightText: string[],
-  handleDoubleClick: () => void
+  handleDoubleClick: () => void,
+  prettyPrint: boolean
 } & FilterMatchAnnotation;
 
 type State = {
