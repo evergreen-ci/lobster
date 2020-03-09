@@ -39,23 +39,18 @@ export default class LogLineText extends React.PureComponent<Props> {
     this.lineRef = element;
   };
 
-  lineContainsValidJSON() {
-    return false;
+  containsValidJSON(str: string) {
+    try {
+      return (JSON.parse(str) && !!str);
+    } catch (e) {
+      return false;
+    }
   }
 
   findJSONObjectsInLine() {
     // Pretty-printing is implemented natively in JSON.stringify(). The third argument enables pretty printing and sets the spacing to use:
     // var str = JSON.stringify(obj, null, 2); // spacing level = 2
     return [];
-  }
-
-  isJson(str: string) {
-    try {
-      JSON.parse(str);
-    } catch (e) {
-      return false;
-    }
-    return true;
   }
 
   render() {
@@ -72,10 +67,10 @@ export default class LogLineText extends React.PureComponent<Props> {
       searchWords = this.props.highlightText;
     }
 
-    if (this.lineContainsValidJSON()) {
-      const splitByObject = this.findJSONObjectsInLine();
+    if (this.props.prettyPrint && this.containsValidJSON(this.props.text)) {
+      const lineSplitByJSON = this.findJSONObjectsInLine();
       // note- using a different highlight class name might be problematic for 'find' operation but we'll see
-      const blocks = splitByObject.map((block, index) => {
+      const blocks = lineSplitByJSON.map((block, index) => {
         <Highlighter
           highlightClassName={'findResult' + this.props.lineNumber + '-block-' + index}
           caseSensitive={this.props.caseSensitive}
@@ -83,7 +78,7 @@ export default class LogLineText extends React.PureComponent<Props> {
           highlightStyle={highlightStyle}
           textToHighlight={block}
           searchWords={searchWords}
-          highlightTag={this.isJson(block) ? 'pre' : ''}
+          highlightTag={this.containsValidJSON(block) ? 'pre' : ''}
         />
       });
 
