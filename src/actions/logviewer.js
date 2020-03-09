@@ -17,7 +17,6 @@ export const LOGVIEWER_CHANGE_END_RANGE = 'logviewer:change-end-range';
 export const LOGVIEWER_TOGGLE_SETTINGS_PANEL = 'logviewer:toggle-settings-panel';
 export const LOGVIEWER_SEARCH_EVENT = 'logviewer:search-event';
 export const LOGVIEWER_SCROLL_TO_LINE = 'logviewer:scroll-to-line';
-export const LOGVIEWER_PRETTY_PRINT = 'logviewer:pretty-print';
 
 export type ChangeSetting = {|
   type: 'logviewer:change-setting',
@@ -134,14 +133,6 @@ export type ScrollToLine= $Exact<{
   }>>
 }>
 
-export type PrettyPrint = {|
-  type: 'logviewer:pretty-print',
-  +payload: {|
-    +text: string,
-    +caseSensitive?: boolean
-  |}
-|}
-
 export type Action = ChangeSetting
   | ChangeFilter
   | ChangeHighlight
@@ -156,7 +147,6 @@ export type Action = ChangeSetting
   | LoadFilters
   | ToggleSettingsPanel
   | ScrollToLine
-  | PrettyPrint
 
 function toggleSetting(setting: string): ChangeSetting {
   return {
@@ -186,6 +176,10 @@ export function toggleExpandableRows(): ChangeSetting {
 
 export function toggleParseResmokeJson(): ChangeSetting {
   return toggleSetting('parse-resmoke-json');
+}
+
+export function togglePrettyPrint(): ChangeSetting {
+  return toggleSetting('pretty-print');
 }
 
 export function loadInitialFilters(initialFilters: Filter[]): LoadFilters {
@@ -352,16 +346,6 @@ export function scrollToLine(n: number): ScrollToLine {
     type: LOGVIEWER_SCROLL_TO_LINE,
     payload: {
       line: n
-    }
-  };
-}
-
-export function addPrettyPrint(text: string, caseSensitive: boolean): PrettyPrint {
-  return {
-    type: LOGVIEWER_PRETTY_PRINT,
-    payload: {
-      text: text,
-      caseSensitive: caseSensitive
     }
   };
 }

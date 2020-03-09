@@ -32,6 +32,7 @@ function makeWrapper(state) {
         filterIntersection: false,
         expandableRows: true,
         parseResmokeJson: false,
+        prettyPrint: false,
       }}
       filterList={[]}
       highlightList={[]}
@@ -70,7 +71,6 @@ function makeWrapper(state) {
       setFormRef={jest.fn()}
       setSearch={jest.fn()}
       wipeCache={jest.fn()}
-      addPrettyPrint={jest.fn()}
     />
   );
 }

@@ -42,7 +42,8 @@ test('lines are filtered correctly', () => {
                 expandableRows: true,
                 filterIntersection: true,
                 wrap: false,
-                parseResmokeJson: false
+                parseResmokeJson: false,
+                prettyPrint: false
             },
             settingsPanel: false
         }

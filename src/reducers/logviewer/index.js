@@ -7,7 +7,6 @@ import find from './find';
 import settings from './settings';
 import settingsPanel from './settingsPanel';
 import scrollLine from './scrollLine';
-import prettyPrint from './prettyPrint';
 import { combineReducers } from 'redux';
 
 export default combineReducers({
@@ -17,6 +16,5 @@ export default combineReducers({
   find: find,
   settings: settings,
   settingsPanel: settingsPanel,
-  scrollLine: scrollLine, 
-  prettyPrint: prettyPrint
+  scrollLine: scrollLine
 });
