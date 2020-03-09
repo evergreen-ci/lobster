@@ -16,7 +16,8 @@ type Props = {
   port: ?string,
   text: string,
   highlightText: string[],
-  handleDoubleClick: ()=> void,
+  handleDoubleClick: () => void,
+  prettyPrint: boolean,
 }
 
 export default class LogLineText extends React.PureComponent<Props> {
@@ -38,6 +39,25 @@ export default class LogLineText extends React.PureComponent<Props> {
     this.lineRef = element;
   };
 
+  lineContainsValidJSON() {
+    return false;
+  }
+
+  findJSONObjectsInLine() {
+    // Pretty-printing is implemented natively in JSON.stringify(). The third argument enables pretty printing and sets the spacing to use:
+    // var str = JSON.stringify(obj, null, 2); // spacing level = 2
+    return [];
+  }
+
+  isJson(str: string) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
   render() {
     const style = {};
     const highlightStyle = { color: '', 'backgroundImage': 'inherit', 'backgroundColor': 'pink' };
@@ -51,17 +71,41 @@ export default class LogLineText extends React.PureComponent<Props> {
       (this.props.endRange < 0 || this.props.lineNumber <= this.props.endRange)) {
       searchWords = this.props.highlightText;
     }
-    return (
-      <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
+
+    if (this.lineContainsValidJSON()) {
+      const splitByObject = this.findJSONObjectsInLine();
+      // note- using a different highlight class name might be problematic for 'find' operation but we'll see
+      const blocks = splitByObject.map((block, index) => {
         <Highlighter
-          highlightClassName={'findResult' + this.props.lineNumber}
+          highlightClassName={'findResult' + this.props.lineNumber + '-block-' + index}
           caseSensitive={this.props.caseSensitive}
           unhighlightStyle={style}
           highlightStyle={highlightStyle}
-          textToHighlight={this.props.text}
+          textToHighlight={block}
           searchWords={searchWords}
+          highlightTag={this.isJson(block) ? 'pre' : ''}
         />
-      </span>
-    );
+      });
+
+      return (
+        <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
+          {blocks}
+        </span>
+      );
+
+    } else {
+      return (
+        <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
+          <Highlighter
+            highlightClassName={'findResult' + this.props.lineNumber}
+            caseSensitive={this.props.caseSensitive}
+            unhighlightStyle={style}
+            highlightStyle={highlightStyle}
+            textToHighlight={this.props.text}
+            searchWords={searchWords}
+          />
+        </span>
+      );
+    }
   }
 }

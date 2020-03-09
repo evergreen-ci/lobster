@@ -96,6 +96,7 @@ export default class FullLogLine extends React.Component<Props, State> {
           endRange={this.props.endRange}
           caseSensitive={this.props.caseSensitive}
           highlightText={this.props.highlightText}
+          prettyPrint={this.props.prettyPrint}
         />
       </div>
     );
