@@ -47,24 +47,24 @@ export default class LogLineText extends React.PureComponent<Props> {
     }
   }
 
-  findJSONObjectsInLine() {
+  findJSONObjectsInLine(text: string) {
     var startIndex = 0;
     var numBraces = 0;
     var chunks = [];
-    for (var i = 0; i < this.props.text.length; i++) {
-      if (this.props.text[i] === '{') {
-        if (numBraces === 0) {
+    for (var i = 0; i < text.length; i++) {
+      if (text[i] === '{') {
+        if (numBraces === 0 && startIndex !== 0) {
           const lineBreak = (startIndex === 0) ? '' : '\n';
-          chunks.push(lineBreak + this.props.text.substring(startIndex, i));
+          chunks.push(lineBreak + text.substring(startIndex, i));
           startIndex = i;
         }
         numBraces++;
-      } else if (this.props.text[i] === '}') {
+      } else if (text[i] === '}') {
         numBraces--;
         if (numBraces === 0) {
           try {
             const lineBreak = (startIndex === 0) ? '' : '\n';
-            const jsonObj = JSON.parse(this.props.text.substring(startIndex, i + 1));
+            const jsonObj = JSON.parse(text.substring(startIndex, i + 1));
             const formattedString = lineBreak + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:');
             chunks.push(formattedString);
             startIndex = i + 1;
@@ -75,8 +75,10 @@ export default class LogLineText extends React.PureComponent<Props> {
         }
       }
     }
-    const lineBreak = (startIndex === 0) ? '' : '\n';
-    chunks.push(lineBreak + this.props.text.substring(startIndex));
+    if (startIndex !== text.length) {
+      const lineBreak = (startIndex === 0) ? '' : '\n';
+      chunks.push(lineBreak + text.substring(startIndex));
+    }
     return chunks;
   }
 
@@ -95,7 +97,7 @@ export default class LogLineText extends React.PureComponent<Props> {
     }
 
     if (this.props.prettyPrint) {
-      const lineSplitByJSON = this.findJSONObjectsInLine();
+      const lineSplitByJSON = this.findJSONObjectsInLine(this.props.text);
       if (lineSplitByJSON.length > 1) {
         const blocks = lineSplitByJSON.map((block, index) => {
           return (
