@@ -54,7 +54,8 @@ export default class LogLineText extends React.PureComponent<Props> {
     for (var i = 0; i < this.props.text.length; i++) {
       if (this.props.text[i] === '{') {
         if (numBraces === 0) {
-          chunks.push(this.props.text.substring(startIndex, i));
+          const lineBreak = (startIndex === 0) ? '' : '\n';
+          chunks.push(lineBreak + this.props.text.substring(startIndex, i));
           startIndex = i;
         }
         numBraces++;
@@ -62,8 +63,9 @@ export default class LogLineText extends React.PureComponent<Props> {
         numBraces--;
         if (numBraces === 0) {
           try {
+            const lineBreak = (startIndex === 0) ? '' : '\n';
             const jsonObj = JSON.parse(this.props.text.substring(startIndex, i + 1));
-            const formattedString = '\n' + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:');
+            const formattedString = lineBreak + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:');
             chunks.push(formattedString);
             startIndex = i + 1;
           } catch (e) {
@@ -72,7 +74,8 @@ export default class LogLineText extends React.PureComponent<Props> {
         }
       }
     }
-    chunks.push(this.props.text.substring(startIndex));
+    const lineBreak = (startIndex === 0) ? '' : '\n';
+    chunks.push(lineBreak + this.props.text.substring(startIndex));
     return chunks;
   }
 
