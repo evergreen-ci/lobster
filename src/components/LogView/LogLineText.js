@@ -20,6 +20,40 @@ type Props = {
   prettyPrint: boolean,
 }
 
+export function findJSONObjectsInLine(text: string) {
+  var startIndex = 0;
+  var numBraces = 0;
+  var chunks = [];
+  for (var i = 0; i < text.length; i++) {
+    if (text[i] === '{') {
+      if (numBraces === 0 && i !== 0) {
+        const lineBreak = (startIndex === 0) ? '' : '\n';
+        chunks.push(lineBreak + text.substring(startIndex, i));
+        startIndex = i;
+      }
+      numBraces++;
+    } else if (text[i] === '}') {
+      numBraces--;
+      if (numBraces === 0) {
+        try {
+          const lineBreak = (startIndex === 0) ? '' : '\n';
+          const jsonObj = JSON.parse(text.substring(startIndex, i + 1));
+          const formattedString = lineBreak + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:');
+          chunks.push(formattedString);
+          startIndex = i + 1;
+          console.log('this time it works!')
+        } catch (e) {
+          console.log('this always happens on first attempt to parse, for some reason');
+        }
+      }
+    }
+  }
+  if (startIndex !== text.length) {
+    chunks.push('\n' + text.substring(startIndex));
+  }
+  return chunks;
+}
+
 export default class LogLineText extends React.PureComponent<Props> {
   lineRef: ?HTMLSpanElement = null;
 
@@ -47,39 +81,6 @@ export default class LogLineText extends React.PureComponent<Props> {
     }
   }
 
-  findJSONObjectsInLine(text: string) {
-    var startIndex = 0;
-    var numBraces = 0;
-    var chunks = [];
-    for (var i = 0; i < text.length; i++) {
-      if (text[i] === '{') {
-        if (numBraces === 0 && i !== 0) {
-          chunks.push(text.substring(startIndex, i));
-          startIndex = i;
-        }
-        numBraces++;
-      } else if (text[i] === '}') {
-        numBraces--;
-        if (numBraces === 0) {
-          try {
-            const lineBreak = (startIndex === 0) ? '' : '\n';
-            const jsonObj = JSON.parse(text.substring(startIndex, i + 1));
-            const formattedString = lineBreak + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:');
-            chunks.push(formattedString);
-            startIndex = i + 1;
-            console.log('this time it works!')
-          } catch (e) {
-            console.log('this always happens on first attempt to parse, for some reason');
-          }
-        }
-      }
-    }
-    if (startIndex !== text.length) {
-      chunks.push('\n' + text.substring(startIndex));
-    }
-    return chunks;
-  }
-
   render() {
     const style = {};
     const highlightStyle = { color: '', 'backgroundImage': 'inherit', 'backgroundColor': 'pink' };
@@ -95,7 +96,7 @@ export default class LogLineText extends React.PureComponent<Props> {
     }
 
     if (this.props.prettyPrint) {
-      const lineSplitByJSON = this.findJSONObjectsInLine(this.props.text);
+      const lineSplitByJSON = findJSONObjectsInLine(this.props.text);
       if (lineSplitByJSON.length > 1) {
         const blocks = lineSplitByJSON.map((block, index) => {
           return (
