@@ -63,7 +63,7 @@ export default class LogLineText extends React.PureComponent<Props> {
         if (numBraces === 0) {
           try {
             const jsonObj = JSON.parse(this.props.text.substring(startIndex, i + 1));
-            const formattedString = '\n' + JSON.stringify(jsonObj, null, 2);
+            const formattedString = '\n' + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:');
             chunks.push(formattedString);
             startIndex = i + 1;
           } catch (e) {
