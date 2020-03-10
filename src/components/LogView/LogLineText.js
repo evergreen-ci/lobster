@@ -68,6 +68,7 @@ export default class LogLineText extends React.PureComponent<Props> {
             const formattedString = lineBreak + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:');
             chunks.push(formattedString);
             startIndex = i + 1;
+            console.log('this time it works!')
           } catch (e) {
             console.log('this always happens on first attempt to parse, for some reason');
           }
@@ -95,7 +96,6 @@ export default class LogLineText extends React.PureComponent<Props> {
 
     if (this.props.prettyPrint) {
       const lineSplitByJSON = this.findJSONObjectsInLine();
-      // note- using a different highlight class name might be problematic for 'find' operation but we'll see
       if (lineSplitByJSON.length > 1) {
         const blocks = lineSplitByJSON.map((block, index) => {
           return (
