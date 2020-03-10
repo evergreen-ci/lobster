@@ -48,9 +48,32 @@ export default class LogLineText extends React.PureComponent<Props> {
   }
 
   findJSONObjectsInLine() {
-    // Pretty-printing is implemented natively in JSON.stringify(). The third argument enables pretty printing and sets the spacing to use:
-    // var str = JSON.stringify(obj, null, 2); // spacing level = 2
-    return [];
+    var startIndex = 0;
+    var numBraces = 0;
+    var chunks = [];
+    for (var i = 0; i < this.props.text.length; i++) {
+      if (this.props.text[i] === '{') {
+        if (numBraces === 0) {
+          chunks.push(this.props.text.substring(startIndex, i));
+          startIndex = i;
+        }
+        numBraces++;
+      } else if (this.props.text[i] === '}') {
+        numBraces--;
+        if (numBraces === 0) {
+          try {
+            const jsonObj = JSON.parse(this.props.text.substring(startIndex, i + 1));
+            const formattedString = JSON.stringify(jsonObj, null, 2);
+            chunks.push(formattedString);
+            startIndex = i + 1;
+          } catch (e) {
+            console.log('this always happens on first attempt to parse, for some reason');
+          }
+        }
+      }
+    }
+    chunks.push(this.props.text.substring(startIndex));
+    return chunks;
   }
 
   render() {
@@ -67,27 +90,36 @@ export default class LogLineText extends React.PureComponent<Props> {
       searchWords = this.props.highlightText;
     }
 
-    if (this.props.prettyPrint && this.containsValidJSON(this.props.text)) {
+    if (this.props.prettyPrint) {
       const lineSplitByJSON = this.findJSONObjectsInLine();
       // note- using a different highlight class name might be problematic for 'find' operation but we'll see
-      const blocks = lineSplitByJSON.map((block, index) => {
-        <Highlighter
-          highlightClassName={'findResult' + this.props.lineNumber + '-block-' + index}
-          caseSensitive={this.props.caseSensitive}
-          unhighlightStyle={style}
-          highlightStyle={highlightStyle}
-          textToHighlight={block}
-          searchWords={searchWords}
-          highlightTag={this.containsValidJSON(block) ? 'pre' : ''}
-        />
-      });
-
-      return (
-        <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
-          {blocks}
-        </span>
-      );
-
+      if (lineSplitByJSON.length > 1) {
+        const formattedText = lineSplitByJSON.join('\n');
+        return (
+          <Highlighter
+            highlightClassName={'findResult' + this.props.lineNumber}
+            caseSensitive={this.props.caseSensitive}
+            unhighlightStyle={style}
+            highlightStyle={highlightStyle}
+            textToHighlight={formattedText}
+            searchWords={searchWords}
+            highlightTag={'pre'}
+          />
+        );
+      } else {
+        return (
+          <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
+            <Highlighter
+              highlightClassName={'findResult' + this.props.lineNumber}
+              caseSensitive={this.props.caseSensitive}
+              unhighlightStyle={style}
+              highlightStyle={highlightStyle}
+              textToHighlight={this.props.text}
+              searchWords={searchWords}
+            />
+          </span>
+        );
+      }
     } else {
       return (
         <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>

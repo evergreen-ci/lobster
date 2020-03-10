@@ -12,7 +12,7 @@ const initialState: Settings = {
   parseResmokeJson: true,
   expandableRows: expandableRowsLocalSetting === null ? true : // Enabled by default
                   expandableRowsLocalSetting === 'true', // when opt set, use local setting
-  prettyPrint: false,
+  prettyPrint: true,
 };
 
 export default function(state: Settings = initialState, action: Action): Settings {
