@@ -63,7 +63,7 @@ export default class LogLineText extends React.PureComponent<Props> {
         if (numBraces === 0) {
           try {
             const jsonObj = JSON.parse(this.props.text.substring(startIndex, i + 1));
-            const formattedString = JSON.stringify(jsonObj, null, 2);
+            const formattedString = '\n' + JSON.stringify(jsonObj, null, 2);
             chunks.push(formattedString);
             startIndex = i + 1;
           } catch (e) {
@@ -94,17 +94,25 @@ export default class LogLineText extends React.PureComponent<Props> {
       const lineSplitByJSON = this.findJSONObjectsInLine();
       // note- using a different highlight class name might be problematic for 'find' operation but we'll see
       if (lineSplitByJSON.length > 1) {
-        const formattedText = lineSplitByJSON.join('\n');
+        const blocks = lineSplitByJSON.map((block, index) => {
+          return (
+            <Highlighter
+              key={'findResult' + this.props.lineNumber + '-block-' + index}
+              highlightClassName={'findResult' + this.props.lineNumber}
+              caseSensitive={this.props.caseSensitive}
+              unhighlightStyle={style}
+              highlightStyle={highlightStyle}
+              textToHighlight={block}
+              searchWords={searchWords}
+              highlightTag={'pre'}
+            />
+          );
+        });
+
         return (
-          <Highlighter
-            highlightClassName={'findResult' + this.props.lineNumber}
-            caseSensitive={this.props.caseSensitive}
-            unhighlightStyle={style}
-            highlightStyle={highlightStyle}
-            textToHighlight={formattedText}
-            searchWords={searchWords}
-            highlightTag={'pre'}
-          />
+          <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick} style={{ display: 'inline-block' }}>
+            {blocks}
+          </span>
         );
       } else {
         return (
