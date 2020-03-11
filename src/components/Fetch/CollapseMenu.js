@@ -270,11 +270,11 @@ export class CollapseMenu extends React.PureComponent<Props> {
               </FormGroup>
 
               <FormGroup>
-                <label className="control-label col-sm-8">Pretty Print JSON</label>
+                <label className="control-label col-sm-8">Pretty Print Bookmarks</label>
                 <ToggleButtonGroup
                   className="toggle-buttons"
                   type="radio"
-                  name="expandable-rows-on-off"
+                  name="pretty-print-on-off"
                   value={this.props.settings.prettyPrint}
                   onChange={this.props.toggleSettings.togglePrettyPrint}
                 >

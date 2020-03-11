@@ -23,7 +23,7 @@ type Props = {
 export function findJSONObjectsInLine(text: string) {
   var startIndex = 0;
   var numBraces = 0;
-  var chunks = [];
+  var chunks: string[] = [];
   for (var i = 0; i < text.length; i++) {
     if (text[i] === '{') {
       if (numBraces === 0 && i !== 0) {
@@ -41,9 +41,10 @@ export function findJSONObjectsInLine(text: string) {
           const formattedString = lineBreak + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:');
           chunks.push(formattedString);
           startIndex = i + 1;
-          console.log('this time it works!')
         } catch (e) {
-          console.log('this always happens on first attempt to parse, for some reason');
+          const lineBreak = (startIndex === 0) ? '' : '\n';
+          chunks.push(lineBreak + text.substring(startIndex, i));
+          startIndex = i;
         }
       }
     }
@@ -56,7 +57,7 @@ export function findJSONObjectsInLine(text: string) {
 
 export default class LogLineText extends React.PureComponent<Props> {
   lineRef: ?HTMLSpanElement = null;
-  prettyPrintedText: ?string[] = [];
+  prettyPrintedText: string[] = [];
 
   componentDidMount() {
     this.prettyPrintedText = findJSONObjectsInLine(this.props.text);
@@ -78,14 +79,6 @@ export default class LogLineText extends React.PureComponent<Props> {
     this.lineRef = element;
   };
 
-  containsValidJSON(str: string) {
-    try {
-      return (JSON.parse(str) && !!str);
-    } catch (e) {
-      return false;
-    }
-  }
-
   render() {
     const style = {};
     const highlightStyle = { color: '', 'backgroundImage': 'inherit', 'backgroundColor': 'pink' };
@@ -100,27 +93,27 @@ export default class LogLineText extends React.PureComponent<Props> {
       searchWords = this.props.highlightText;
     }
 
-    if (this.props.prettyPrint && this.prettyPrintedText && this.prettyPrintedText.length > 1) {
-        const blocks = this.prettyPrintedText.map((block, index) => {
-          return (
-            <Highlighter
-              key={'findResult' + this.props.lineNumber + '-block-' + index}
-              highlightClassName={'findResult' + this.props.lineNumber}
-              caseSensitive={this.props.caseSensitive}
-              unhighlightStyle={style}
-              highlightStyle={highlightStyle}
-              textToHighlight={block}
-              searchWords={searchWords}
-              highlightTag={'pre'}
-            />
-          );
-        });
-
+    if (this.props.prettyPrint && this.prettyPrintedText.length > 1) {
+      const blocks = this.prettyPrintedText.map((block, index) => {
         return (
-          <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick} style={{ display: 'inline-block' }}>
-            {blocks}
-          </span>
+          <Highlighter
+            key={'findResult' + this.props.lineNumber + '-block-' + index}
+            highlightClassName={'findResult' + this.props.lineNumber}
+            caseSensitive={this.props.caseSensitive}
+            unhighlightStyle={style}
+            highlightStyle={highlightStyle}
+            textToHighlight={block}
+            searchWords={searchWords}
+            highlightTag={'pre'}
+          />
         );
+      });
+
+      return (
+        <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick} style={{ display: 'inline-block' }}>
+          {blocks}
+        </span>
+      );
     } else {
       return (
         <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
