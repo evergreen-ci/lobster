@@ -56,6 +56,11 @@ export function findJSONObjectsInLine(text: string) {
 
 export default class LogLineText extends React.PureComponent<Props> {
   lineRef: ?HTMLSpanElement = null;
+  prettyPrintedText: ?string[] = [];
+
+  componentDidMount() {
+    this.prettyPrintedText = findJSONObjectsInLine(this.props.text);
+  }
 
   componentDidUpdate() {
     if (this.lineRef) {
@@ -95,10 +100,8 @@ export default class LogLineText extends React.PureComponent<Props> {
       searchWords = this.props.highlightText;
     }
 
-    if (this.props.prettyPrint) {
-      const lineSplitByJSON = findJSONObjectsInLine(this.props.text);
-      if (lineSplitByJSON.length > 1) {
-        const blocks = lineSplitByJSON.map((block, index) => {
+    if (this.props.prettyPrint && this.prettyPrintedText && this.prettyPrintedText.length > 1) {
+        const blocks = this.prettyPrintedText.map((block, index) => {
           return (
             <Highlighter
               key={'findResult' + this.props.lineNumber + '-block-' + index}
@@ -118,20 +121,6 @@ export default class LogLineText extends React.PureComponent<Props> {
             {blocks}
           </span>
         );
-      } else {
-        return (
-          <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
-            <Highlighter
-              highlightClassName={'findResult' + this.props.lineNumber}
-              caseSensitive={this.props.caseSensitive}
-              unhighlightStyle={style}
-              highlightStyle={highlightStyle}
-              textToHighlight={this.props.text}
-              searchWords={searchWords}
-            />
-          </span>
-        );
-      }
     } else {
       return (
         <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
