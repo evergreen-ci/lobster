@@ -8,7 +8,7 @@ describe('EvergreenLogViewer', () => {
       const simpleTextExpected = [JSON.stringify(JSON.parse(simpleText), null, 2).replace(/"([^"]+)":/g, '$1:')];
       const simpleTextActual = findJSONObjectsInLine(simpleText);
 
-      const complexTextExpected = ['[js_test:backup_restore_rolling] 2020-03-02T08:52:04.781+0000 d20521| ', '\n' + JSON.stringify(JSON.parse(complexText.substring(70, 293)), null, 2).replace(/"([^"]+)":/g, '$1:'), '\nand then some more text', '\n' + JSON.stringify(JSON.parse(simpleText), null, 2).replace(/"([^"]+)":/g, '$1:')];
+      const complexTextExpected = ['[js_test:backup_restore_rolling] 2020-03-02T08:52:04.781+0000 d20521| ', '\n' + JSON.stringify(JSON.parse(complexText.substring(70, 293)), null, 2).replace(/"([^"]+)":/g, '$1:') + '\n', 'and then some more text', '\n' + JSON.stringify(JSON.parse(simpleText), null, 2).replace(/"([^"]+)":/g, '$1:')];
       const complexTextActual = findJSONObjectsInLine(complexText);
 
       expect(simpleTextActual).toEqual(simpleTextExpected);
