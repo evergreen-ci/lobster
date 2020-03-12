@@ -22,7 +22,8 @@ type Props = {
   updateSelectStartIndex: (number) => void,
   updateSelectEndIndex: (number) => void,
   highlightText: string[],
-  handleDoubleClick: () => void
+  handleDoubleClick: () => void,
+  prettyPrint: boolean
 } & FilterMatchAnnotation;
 
 type State = {
@@ -95,6 +96,7 @@ export default class FullLogLine extends React.Component<Props, State> {
           endRange={this.props.endRange}
           caseSensitive={this.props.caseSensitive}
           highlightText={this.props.highlightText}
+          prettyPrint={this.props.prettyPrint && this.props.bookmarked}
         />
       </div>
     );

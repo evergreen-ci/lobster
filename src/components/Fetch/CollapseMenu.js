@@ -23,6 +23,7 @@ type Props = {
     toggleFilterIntersection: () => void,
     toggleExpandableRows: () => void,
     toggleParseResmokeJson: () => void,
+    togglePrettyPrint: () => void,
   },
   filterActions: {
     removeFilter: (string) => void,
@@ -267,6 +268,20 @@ export class CollapseMenu extends React.PureComponent<Props> {
                   <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
                 </ToggleButtonGroup>
               </FormGroup>
+
+              <FormGroup>
+                <label className="control-label col-sm-8">Pretty Print Bookmarks</label>
+                <ToggleButtonGroup
+                  className="toggle-buttons"
+                  type="radio"
+                  name="pretty-print-on-off"
+                  value={this.props.settings.prettyPrint}
+                  onChange={this.props.toggleSettings.togglePrettyPrint}
+                >
+                  <ToggleButton value={true} bsSize="small" bsStyle="primary">on</ToggleButton>
+                  <ToggleButton value={false} bsSize="small" bsStyle="primary">off</ToggleButton>
+                </ToggleButtonGroup>
+              </FormGroup>
             </Col>
 
             <FormGroup>
@@ -327,7 +342,8 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
     toggleCaseSensitive: () => dispatch(actions.toggleCaseSensitivity()),
     toggleFilterIntersection: () => dispatch(actions.toggleFilterIntersection()),
     toggleExpandableRows: () => dispatch(actions.toggleExpandableRows()),
-    toggleParseResmokeJson: () => dispatch(actions.toggleParseResmokeJson())
+    toggleParseResmokeJson: () => dispatch(actions.toggleParseResmokeJson()),
+    togglePrettyPrint: () => dispatch(actions.togglePrettyPrint()),
   };
 
   return {

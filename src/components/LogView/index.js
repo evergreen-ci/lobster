@@ -31,7 +31,8 @@ type Props = {
   expandableFilterData: Array<Line | number>,
   findResults: SearchResults,
   toggleBookmark: (number[]) => void,
-  scrollToLine: (number) => void
+  scrollToLine: (number) => void,
+  prettyPrint: boolean
 };
 
 type SkipLine = {|
@@ -282,6 +283,7 @@ class LogView extends React.Component<Props, State> {
       updateSelectStartIndex={this.updateSelectStartIndex}
       updateSelectEndIndex={this.updateSelectEndIndex}
       handleDoubleClick={this.handleDoubleClick}
+      prettyPrint={this.props.prettyPrint}
     />
   )
 
@@ -372,6 +374,7 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Pro
     caseSensitive: settings.caseSensitive,
     wrap: settings.wrap,
     expandableRows: settings.expandableRows,
+    prettyPrint: settings.prettyPrint,
     searchTerm: selectors.getLogViewerSearchTerm(state),
     startRange: selectors.getLogViewerSearchStartRange(state),
     endRange: selectors.getLogViewerSearchEndRange(state),

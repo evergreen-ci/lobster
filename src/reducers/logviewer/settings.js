@@ -11,7 +11,8 @@ const initialState: Settings = {
   filterIntersection: true,
   parseResmokeJson: true,
   expandableRows: expandableRowsLocalSetting === null ? true : // Enabled by default
-                  expandableRowsLocalSetting === 'true' // when opt set, use local setting
+                  expandableRowsLocalSetting === 'true', // when opt set, use local setting
+  prettyPrint: false,
 };
 
 export default function(state: Settings = initialState, action: Action): Settings {
@@ -39,6 +40,11 @@ export default function(state: Settings = initialState, action: Action): Setting
   if (action.payload.setting === 'expandable-rows') {
     window.localStorage.setItem('lobster-expandable-rows', !state.expandableRows);
     return { ...state, expandableRows: !state.expandableRows };
+  }
+
+  if (action.payload.setting === 'pretty-print') {
+    window.localStorage.setItem('pretty-print', !state.prettyPrint);
+    return { ...state, prettyPrint: !state.prettyPrint };
   }
 
   return state;

@@ -178,6 +178,10 @@ export function toggleParseResmokeJson(): ChangeSetting {
   return toggleSetting('parse-resmoke-json');
 }
 
+export function togglePrettyPrint(): ChangeSetting {
+  return toggleSetting('pretty-print');
+}
+
 export function loadInitialFilters(initialFilters: Filter[]): LoadFilters {
   return {
     type: LOGVIEWER_LOAD_FILTERS,

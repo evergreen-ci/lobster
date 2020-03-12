@@ -26,7 +26,8 @@ export type Settings = $ReadOnly<$Exact<{
   caseSensitive: boolean,
   filterIntersection: boolean,
   parseResmokeJson: boolean,
-  expandableRows: boolean
+  expandableRows: boolean,
+  prettyPrint: boolean
 }>>
 
 export type Bookmark = {|

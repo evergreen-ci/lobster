@@ -16,11 +16,51 @@ type Props = {
   port: ?string,
   text: string,
   highlightText: string[],
-  handleDoubleClick: ()=> void,
+  handleDoubleClick: () => void,
+  prettyPrint: boolean,
+}
+
+export function findJSONObjectsInLine(text: string): string[] {
+  let startIndex = 0;
+  let numBraces = 0;
+  const chunks: string[] = [];
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '{') {
+      if (numBraces === 0 && i !== 0) {
+        chunks.push(text.substring(startIndex, i));
+        startIndex = i;
+      }
+      numBraces++;
+    } else if (text[i] === '}') {
+      numBraces--;
+      if (numBraces === 0) {
+        try {
+          const startingLineBreak = (startIndex === 0) ? '' : '\n';
+          const endingLineBreak = (i === text.length - 1) ? '' : '\n';
+          const jsonObj = JSON.parse(text.substring(startIndex, i + 1));
+          const formattedString = startingLineBreak + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:') + endingLineBreak;
+          chunks.push(formattedString);
+          startIndex = i + 1;
+        } catch (e) {
+          chunks.push(text.substring(startIndex, i));
+          startIndex = i;
+        }
+      }
+    }
+  }
+  if (startIndex !== text.length) {
+    chunks.push(text.substring(startIndex));
+  }
+  return chunks;
 }
 
 export default class LogLineText extends React.PureComponent<Props> {
   lineRef: ?HTMLSpanElement = null;
+  prettyPrintedText: string[] = [];
+
+  componentDidMount() {
+    this.prettyPrintedText = findJSONObjectsInLine(this.props.text);
+  }
 
   componentDidUpdate() {
     if (this.lineRef) {
@@ -50,6 +90,27 @@ export default class LogLineText extends React.PureComponent<Props> {
     if (this.props.lineNumber >= this.props.startRange &&
       (this.props.endRange < 0 || this.props.lineNumber <= this.props.endRange)) {
       searchWords = this.props.highlightText;
+    }
+
+    if (this.props.prettyPrint && this.prettyPrintedText.length > 1) {
+      const blocks = this.prettyPrintedText.map((block, index) => {
+        return (
+          <Highlighter
+            key={'findResult' + this.props.lineNumber + '-block-' + index}
+            highlightClassName={'findResult' + this.props.lineNumber}
+            caseSensitive={this.props.caseSensitive}
+            unhighlightStyle={style}
+            highlightStyle={highlightStyle}
+            textToHighlight={block}
+            searchWords={searchWords}
+          />
+        );
+      });
+      return (
+        <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick} style={{ display: 'inline-block' }}>
+          {blocks}
+        </span>
+      );
     }
     return (
       <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
