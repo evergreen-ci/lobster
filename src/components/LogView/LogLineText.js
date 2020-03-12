@@ -111,19 +111,18 @@ export default class LogLineText extends React.PureComponent<Props> {
           {blocks}
         </span>
       );
-    } else {
-      return (
-        <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
-          <Highlighter
-            highlightClassName={'findResult' + this.props.lineNumber}
-            caseSensitive={this.props.caseSensitive}
-            unhighlightStyle={style}
-            highlightStyle={highlightStyle}
-            textToHighlight={this.props.text}
-            searchWords={searchWords}
-          />
-        </span>
-      );
     }
+    return (
+      <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
+        <Highlighter
+          highlightClassName={'findResult' + this.props.lineNumber}
+          caseSensitive={this.props.caseSensitive}
+          unhighlightStyle={style}
+          highlightStyle={highlightStyle}
+          textToHighlight={this.props.text}
+          searchWords={searchWords}
+        />
+      </span>
+    );
   }
 }
