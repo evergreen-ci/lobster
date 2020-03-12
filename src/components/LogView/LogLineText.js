@@ -20,15 +20,14 @@ type Props = {
   prettyPrint: boolean,
 }
 
-export function findJSONObjectsInLine(text: string) {
+export function findJSONObjectsInLine(text: string): string[] {
   var startIndex = 0;
   var numBraces = 0;
   var chunks: string[] = [];
   for (var i = 0; i < text.length; i++) {
     if (text[i] === '{') {
       if (numBraces === 0 && i !== 0) {
-        const lineBreak = (startIndex === 0) ? '' : '\n';
-        chunks.push(lineBreak + text.substring(startIndex, i));
+        chunks.push(text.substring(startIndex, i));
         startIndex = i;
       }
       numBraces++;
@@ -36,21 +35,21 @@ export function findJSONObjectsInLine(text: string) {
       numBraces--;
       if (numBraces === 0) {
         try {
-          const lineBreak = (startIndex === 0) ? '' : '\n';
+          const startingLineBreak = (startIndex === 0) ? '' : '\n';
+          const endingLineBreak = (i === text.length - 1) ? '' : '\n';
           const jsonObj = JSON.parse(text.substring(startIndex, i + 1));
-          const formattedString = lineBreak + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:');
+          const formattedString = startingLineBreak + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:') + endingLineBreak;
           chunks.push(formattedString);
           startIndex = i + 1;
         } catch (e) {
-          const lineBreak = (startIndex === 0) ? '' : '\n';
-          chunks.push(lineBreak + text.substring(startIndex, i));
+          chunks.push(text.substring(startIndex, i));
           startIndex = i;
         }
       }
     }
   }
   if (startIndex !== text.length) {
-    chunks.push('\n' + text.substring(startIndex));
+    chunks.push(text.substring(startIndex));
   }
   return chunks;
 }
