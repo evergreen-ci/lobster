@@ -1,5 +1,3 @@
-import React from 'react';
-import Enzyme from 'enzyme';
 import  { findJSONObjectsInLine } from './LogLineText';
 
 describe('EvergreenLogViewer', () => {

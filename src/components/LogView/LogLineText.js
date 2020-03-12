@@ -21,10 +21,10 @@ type Props = {
 }
 
 export function findJSONObjectsInLine(text: string): string[] {
-  var startIndex = 0;
-  var numBraces = 0;
-  var chunks: string[] = [];
-  for (var i = 0; i < text.length; i++) {
+  let startIndex = 0;
+  let numBraces = 0;
+  const chunks: string[] = [];
+  for (let i = 0; i < text.length; i++) {
     if (text[i] === '{') {
       if (numBraces === 0 && i !== 0) {
         chunks.push(text.substring(startIndex, i));
@@ -107,7 +107,6 @@ export default class LogLineText extends React.PureComponent<Props> {
           />
         );
       });
-
       return (
         <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick} style={{ display: 'inline-block' }}>
           {blocks}
