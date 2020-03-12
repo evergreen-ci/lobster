@@ -103,7 +103,6 @@ export default class LogLineText extends React.PureComponent<Props> {
             highlightStyle={highlightStyle}
             textToHighlight={block}
             searchWords={searchWords}
-            highlightTag={'pre'}
           />
         );
       });
