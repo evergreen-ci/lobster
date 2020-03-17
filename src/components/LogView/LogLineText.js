@@ -56,7 +56,12 @@ export function findJSONObjectsInLine(text: string): string[] {
 
 export default class LogLineText extends React.PureComponent<Props> {
   lineRef: ?HTMLSpanElement = null;
-  prettyPrintedText: string[] = findJSONObjectsInLine(this.props.text);
+  prettyPrintedText: string[] = [];
+
+  constructor(props: Props) {
+    super(props);
+    this.prettyPrintedText = findJSONObjectsInLine(props.text);
+  }
 
   componentDidUpdate() {
     if (this.lineRef) {
