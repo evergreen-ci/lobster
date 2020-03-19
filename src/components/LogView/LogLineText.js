@@ -56,12 +56,7 @@ export function findJSONObjectsInLine(text: string): string[] {
 
 export default class LogLineText extends React.PureComponent<Props> {
   lineRef: ?HTMLSpanElement = null;
-  prettyPrintedText: string[] = [];
-
-  constructor(props: Props) {
-    super(props);
-    this.prettyPrintedText = findJSONObjectsInLine(props.text);
-  }
+  prettyPrintedText: string[] = findJSONObjectsInLine(this.props.text);
 
   componentDidUpdate() {
     if (this.lineRef) {
@@ -97,7 +92,7 @@ export default class LogLineText extends React.PureComponent<Props> {
       const blocks = this.prettyPrintedText.map((block, index) => {
         return (
           <Highlighter
-            key={'findResult' + this.props.lineNumber + '-block-' + index}
+            key={this.props.lineNumber + '-block-' + index}
             highlightClassName={'findResult' + this.props.lineNumber}
             caseSensitive={this.props.caseSensitive}
             unhighlightStyle={style}
