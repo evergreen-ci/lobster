@@ -367,7 +367,7 @@ class LogView extends React.Component<Props, State> {
             itemSizeEstimator={this.getLineHeight}
             length={this.state.lines.length}
             initialIndex={this.props.scrollLine}
-            type={(this.props.wrap || this.props.prettyPrint) ? 'variable' : 'uniform'}
+            type={'variable'}
             useStaticSize={false}
           />
         </div>
