@@ -4,6 +4,7 @@ import React from 'react';
 import ReactList from 'react-list';
 import FullLogLine from './FullLogLine';
 import ExpandableLogLine from './ExpandableLogLine';
+import  { findJSONObjectsInLine } from './LogLineText';
 import { connect } from 'react-redux';
 import { scrollToLine, toggleBookmark } from '../../actions';
 import * as selectors from '../../selectors';
@@ -287,6 +288,15 @@ class LogView extends React.Component<Props, State> {
     />
   )
 
+  getLineHeight = (index: number) => {
+    if (this.props.prettyPrint && this.findBookmark(this.props.bookmarks, index) !== -1) {
+      const line: Line = this.state.lines[index];
+      const numBlocks = findJSONObjectsInLine(line.text).length;
+      return numBlocks * 20;
+    }
+    return 20;
+  };
+
   scrollToLine(lineNumber: number) {
     const visibleIndex = this.findLineIdx(this.state.lines, lineNumber)
     if (visibleIndex === null || visibleIndex === undefined) {
@@ -353,10 +363,11 @@ class LogView extends React.Component<Props, State> {
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
+            itemSizeEstimator={this.getLineHeight}
             length={this.state.lines.length}
             initialIndex={this.props.scrollLine}
-            type={this.props.wrap ? 'variable' : 'uniform'}
-            useStaticSize={true}
+            type={'variable'}
+            useStaticSize={false}
           />
         </div>
       );
