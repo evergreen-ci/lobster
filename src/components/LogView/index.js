@@ -292,7 +292,6 @@ class LogView extends React.Component<Props, State> {
     if (this.props.prettyPrint && this.findBookmark(this.props.bookmarks, index) !== -1) {
       const line: Line = this.state.lines[index];
       const numBlocks = findJSONObjectsInLine(line.text).length;
-      console.log('Line #' + index + 'has ' + numBlocks + ' blocks')
       return numBlocks * 20;
     }
     return 20;
