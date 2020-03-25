@@ -16,6 +16,7 @@ describe('log transformations', () => {
             '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521| {"t":{"$date":"2020-03-02T08:52:04.792+0000"},"s":"D2","c":"RECOVERY","id":4615631,"ctx":"initandlisten","msg":"loadCatalog:"}',
             '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521| {"t":{"$date":"2020-03-02T08:52:04.792+0000"},"s":"I", "c":"STORAGE", "id":22262,"ctx":"initandlisten","msg":"Timestamp monitor starting"}',
             '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521 {"t":{"$date":"2020-03-02T08:52:04.792+0000"},"s":"I", "c":"STORAGE", "id":22262,"ctx":"initandlisten","msg":"Timestamp monitor starting"}',
+            '[js_test:timestamp_index_builds] 2020-03-06T10:55:58.643+0000 d21021| {"t":{"$date":"2020-03-06T10:55:58.643+0000"},"s":"D2","c":"RECOVERY","id":23988,"ctx":"SignalHandler","msg":"Shutdown timestamps. StableTimestamp: {stableTimestamp_load} Initial data timestamp: {initialDataTimestamp_load}","attr":{"stableTimestamp_load":6801047027787497476,"initialDataTimestamp_load":6801047023492530184}}',
         ];
 
         const expected = [
@@ -29,7 +30,8 @@ describe('log transformations', () => {
         '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.174+0000 d20521| 2020-03-02T08:52:04.173+0000 I  CONTROL  51765   [initandlisten] \"operating system: {name}, version: {version}\",\"attr\":{\"name\":\"Red Hat Enterprise Linux Server release 6.2 (Santiago)\",\"version\":\"Kernel 2.6.32-220.el6.x86_64\"}',
         '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521| 2020-03-02T08:52:04.792+0000 D2 RECOVERY 4615631 [initandlisten] \"loadCatalog:\"',
         '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521| 2020-03-02T08:52:04.792+0000 I  STORAGE  22262   [initandlisten] \"Timestamp monitor starting\"',
-        '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521 | 2020-03-02T08:52:04.792+0000 I  STORAGE  22262   [initandlisten] \"Timestamp monitor starting\"'
+        '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521 | 2020-03-02T08:52:04.792+0000 I  STORAGE  22262   [initandlisten] \"Timestamp monitor starting\"',
+        '[js_test:timestamp_index_builds] 2020-03-06T10:55:58.643+0000 d21021| 2020-03-06T10:55:58.643+0000 D2 RECOVERY 23988   [SignalHandler] \"Shutdown timestamps. StableTimestamp: {stableTimestamp_load} Initial data timestamp: {initialDataTimestamp_load}\",\"attr\":{\"stableTimestamp_load\":6801047027787497476,\"initialDataTimestamp_load\":6801047023492530184}'
         ]
 
         for (let i = 0; i < data.length; i++) {
