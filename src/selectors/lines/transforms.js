@@ -1,7 +1,6 @@
 // @flow strict
 
 import type { ResmokeLog } from 'src/models';
-import { parse, stringify } from 'lossless-json';
 
 export function parseLogLine(line: string): string {
     let logParts = line.split('|'); // in many cases mongod will insert a pipe between the metadata and json logs
@@ -17,13 +16,13 @@ export function parseLogLine(line: string): string {
     if (structedLog === null) {
       return line;
     }
-    return `${logParts[0]}| ${ structedLog.t.$date } ${ structedLog.s.padEnd(2) } ${ structedLog.c.padEnd(8)} ${ structedLog.id.toString().padEnd(7)} [${ structedLog.ctx }] ${ stringify(structedLog.msg) }${ structedLog.attr ? ',"attr":' + stringify(structedLog.attr) : '' }`;
+    return `${logParts[0]}| ${ structedLog.t.$date } ${ structedLog.s.padEnd(2) } ${ structedLog.c.padEnd(8)} ${ structedLog.id.toString().padEnd(7)} [${ structedLog.ctx }] ${ JSON.stringify(structedLog.msg) }${ structedLog.attr ? ',"attr":' + JSON.stringify(structedLog.attr) : '' }`;
 }
 
 function parseMongoJson(toParse: string): ResmokeLog | null {
     let log: ResmokeLog;
     try {
-      log = parse(toParse);
+      log = JSON.parse(toParse);
     } catch (err) {
       return null;
     }
