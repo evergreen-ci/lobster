@@ -23,8 +23,10 @@ export function parseLogLine(line: string): string {
   }] ${JSON.stringify(structedLog.msg)}${
     structedLog.attr ? ',"attr":' + JSON.stringify(structedLog.attr) : ''
   }${
-    structedLog.t ? ',"truncated":' + JSON.stringify(structedLog.truncated) : ''
-  }${structedLog.s ? ',"size":' + JSON.stringify(structedLog.size) : ''}`;
+    structedLog.truncated
+      ? ',"truncated":' + JSON.stringify(structedLog.truncated)
+      : ''
+  }${structedLog.size ? ',"size":' + JSON.stringify(structedLog.size) : ''}`;
 }
 
 function parseMongoJson(toParse: string): ResmokeLog | null {
