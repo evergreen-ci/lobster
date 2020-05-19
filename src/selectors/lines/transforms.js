@@ -21,10 +21,10 @@ export function parseLogLine(line: string): string {
   )} ${structedLog.c.padEnd(8)} ${structedLog.id.toString().padEnd(7)} [${
     structedLog.ctx
   }] ${JSON.stringify(structedLog.msg)}${
-    structedLog.t ? ',"t":' + JSON.stringify(structedLog.t) : ''
-  }${structedLog.s ? ',"s":' + JSON.stringify(structedLog.s) : ''}${
     structedLog.attr ? ',"attr":' + JSON.stringify(structedLog.attr) : ''
-  }`;
+  }${
+    structedLog.t ? ',"truncated":' + JSON.stringify(structedLog.truncated) : ''
+  }${structedLog.s ? ',"size":' + JSON.stringify(structedLog.size) : ''}`;
 }
 
 function parseMongoJson(toParse: string): ResmokeLog | null {
