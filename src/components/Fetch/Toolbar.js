@@ -15,6 +15,7 @@ import {
 } from 'react-bootstrap';
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
+// $FlowFixMe
 import debounce from 'lodash.debounce';
 import {
   addFilter,
@@ -72,6 +73,7 @@ export class Toolbar extends React.PureComponent<Props> {
   handleChangeFindEvent = () => {
     if (this.findInput != null) {
       debounce(() => {
+        // $FlowFixMe
         const { value } = this.findInput;
         this.props.changeSearch(value);
       }, 1000)();
