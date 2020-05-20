@@ -111,7 +111,6 @@ const getFilteredLineData = createSelector(
   ): Line[] {
     const filter = merge.activeFilters(filters);
     const inverseFilter = merge.activeInverseFilters(filters);
-    console.log('Calling this function');
     lines.forEach(line => {
       if (
         !shouldPrintLine(
