@@ -3,50 +3,53 @@
 // Could be used with types that might be filtered
 // Especially, when you want matched and not matched items at the same time
 export type FilterMatchAnnotation = {
-  isMatched: boolean,
-}
+  isMatched: boolean
+};
 
 type LineKind = {
-  kind: 'Line'
-}
+  kind: "Line"
+};
 
 // $FlowFixMe this intersection type is used in an unsafe manner in many places
-export type Line = $Exact<FilterMatchAnnotation & LineKind & $ReadOnly<{
-  lineNumber: number,
-  text: string, // text is what should be visible to the user and may have been transformed from the source
-  originalText: string, // originalText is the verbatim text from the source
-  port: ?string, // resmoke related attribute
-  gitRef: ?string, // resmoke stuff again
-}>>
+export type Line = $Exact<FilterMatchAnnotation &
+    LineKind &
+    $ReadOnly<{
+      lineNumber: number,
+      text: string, // text is what should be visible to the user and may have been transformed from the source
+      originalText: string, // originalText is the verbatim text from the source
+      port: ?string, // resmoke related attribute
+      gitRef: ?string, // resmoke stuff again
+      resmokeText: ?string // Version of the line that was parsed with resmoke
+    }>>;
 
-export type ColorMap = $ReadOnly<{ [string]: string }>
+export type ColorMap = $ReadOnly<{ [string]: string }>;
 
 export type Settings = $ReadOnly<$Exact<{
-  wrap: boolean,
-  caseSensitive: boolean,
-  filterIntersection: boolean,
-  parseResmokeJson: boolean,
-  expandableRows: boolean,
-  prettyPrint: boolean
-}>>
+    wrap: boolean,
+    caseSensitive: boolean,
+    filterIntersection: boolean,
+    parseResmokeJson: boolean,
+    expandableRows: boolean,
+    prettyPrint: boolean
+  }>>;
 
 export type Bookmark = {|
   lineNumber: number
-|}
+|};
 
 export type Filter = $Exact<$ReadOnly<{
-  text: string,
-  on: boolean,
-  inverse: boolean,
-  caseSensitive: boolean
-}>>
+    text: string,
+    on: boolean,
+    inverse: boolean,
+    caseSensitive: boolean
+  }>>;
 
 export type Highlight = $Exact<$ReadOnly<{
-  text: string,
-  on: boolean,
-  line: boolean,
-  caseSensitive: boolean
-}>>
+    text: string,
+    on: boolean,
+    line: boolean,
+    caseSensitive: boolean
+  }>>;
 
 export type MongoLine = {|
   +ts: ?Date,
@@ -55,7 +58,7 @@ export type MongoLine = {|
   +logComponent: string,
   +thread: string,
   messages: string[]
-|}
+|};
 
 export type Event = {|
   +type: string,
@@ -64,11 +67,11 @@ export type Event = {|
   +fixture_id?: string,
   +line?: string,
   +state?: string
-|}
+|};
 
 export type MongoDate = {
-  +$date: string,
-}
+  +$date: string
+};
 
 export type ResmokeLog = {|
   +t: MongoDate,
@@ -80,7 +83,7 @@ export type ResmokeLog = {|
   msg?: string | Object,
   // $FlowFixMe
   attr?: string | Object
-|}
+|};
 
 export type LogEvent = {|
   type: string,
@@ -101,7 +104,7 @@ export type LogEvent = {|
   time?: string,
   requestId?: string,
   +stacktrace?: string[]
-|}
+|};
 
 export type Prefix = {|
   +prefixes: string[],
@@ -109,20 +112,20 @@ export type Prefix = {|
   +isFixture: boolean,
   +isShell: boolean,
   +fixture_id: string
-|}
+|};
 
 export type Processed = {|
   +lineNumber: number,
   +text: string,
   +port: ?string,
   +gitRef: ?string
-|}
+|};
 
 export type ElectionUpdate = {|
   +currentElectionStartEvent: ?LogEvent,
-  +currentElectionVoteEvents: ?LogEvent[],
+  +currentElectionVoteEvents: ?(LogEvent[]),
   +evt: LogEvent
-|}
+|};
 
 export type FixtureLogList = {|
   isResmoke: boolean,
@@ -133,12 +136,12 @@ export type FixtureLogList = {|
   curThread: string,
   curLogLine: ?MongoLine,
   events: LogEvent[],
-  currentElectionVoteEvents: ?LogEvent[], // EletionVoteEvent[]
+  currentElectionVoteEvents: ?(LogEvent[]), // EletionVoteEvent[]
   currentElectionStartEvent: ?LogEvent, // ElectionStartEvent
   logStart: ?Date,
   logEnd: ?Date,
-  +logLines: {[key: string]: MongoLine[]}
-|}
+  +logLines: { [key: string]: MongoLine[] }
+|};
 
 export type ShellLogLine = {|
   +ts: ?Date,
@@ -146,7 +149,7 @@ export type ShellLogLine = {|
   +component: ?string,
   +thread: ?string,
   +message: string
-|}
+|};
 
 export type ShellLogList = {|
   +shellLogLines: ShellLogLine[],
@@ -155,22 +158,22 @@ export type ShellLogList = {|
   +parallelSuiteEvent?: LogEvent, // type ParallelSuiteErrorEvent
   +jsStackTraceClass?: string,
   +startupLogLine: MongoLine
-|}
+|};
 
 const logProcessors_ = {
-  'resmoke': '',
-  'raw': ''
+  resmoke: '',
+  raw: ''
 };
 
 export const logProcessors = (): string[] => Object.keys(logProcessors_);
 
-export type LogProcessor = $Keys<typeof logProcessors_>
+export type LogProcessor = $Keys<typeof logProcessors_>;
 
 const evergreenTaskLogTypes: { [string]: string } = {
-  'all': 'ALL',
-  'task': 'T',
-  'agent': 'E',
-  'system': 'S'
+  all: 'ALL',
+  task: 'T',
+  agent: 'E',
+  system: 'S'
   // 'event': '?' // Not actually supported by the api
 };
 
@@ -183,7 +186,9 @@ export function stringToInteralEvergreenTaskLogType(a: ?string): ?string {
   return evergreenTaskLogTypes[a];
 }
 
-export function stringToEvergreenTaskLogType(a: ?string): ?EvergreenTaskLogType {
+export function stringToEvergreenTaskLogType(
+  a: ?string
+): ?EvergreenTaskLogType {
   if (a == null || !(a in evergreenTaskLogTypes)) {
     return null;
   }
@@ -192,94 +197,99 @@ export function stringToEvergreenTaskLogType(a: ?string): ?EvergreenTaskLogType 
 }
 
 export type EvergreenTaskLog = $ReadOnly<{
-  type: 'evergreen-task',
+  type: "evergreen-task",
   id: string,
   execution: number,
   log: EvergreenTaskLogType
-}>
+}>;
 
 export type EvergreenTestLog = $ReadOnly<{
-  type: 'evergreen-test',
+  type: "evergreen-test",
   id: string
-}>
+}>;
 
 export type EvergreenTestByNameLog = $ReadOnly<{
-  type: 'evergreen-test-by-name',
+  type: "evergreen-test-by-name",
   task: string,
   execution: number,
   test: string
-}>
+}>;
 
-export type EvergreenLog = EvergreenTaskLog
+export type EvergreenLog =
+  | EvergreenTaskLog
   | EvergreenTestLog
-  | EvergreenTestByNameLog
+  | EvergreenTestByNameLog;
 
 export type LobsterLog = $ReadOnly<{
-  type: 'lobster',
+  type: "lobster",
   server: string,
   url: string
-}>
+}>;
 
 export type LogkeeperLog = $ReadOnly<{
-  type: 'logkeeper',
+  type: "logkeeper",
   build: string,
   test?: string
-}>
+}>;
 
-export type LogIdentity = LogkeeperLog
-  | LobsterLog
-  | EvergreenLog
+export type LogIdentity = LogkeeperLog | LobsterLog | EvergreenLog;
 
 export type Log = $Exact<$ReadOnly<{
-  identity: ?LogIdentity,
-  lines: Line[],
-  colorMap: ColorMap,
-  isDone: boolean,
-  events: Event[]
-}>>
+    identity: ?LogIdentity,
+    lines: Line[],
+    colorMap: ColorMap,
+    isDone: boolean,
+    events: Event[]
+  }>>;
 
 export type Find = $Exact<$ReadOnly<{
-  findIdx: number,
-  searchTerm: string,
-  regexError: ?Error,
-  startRange: number,
-  endRange: number
-}>>
+    findIdx: number,
+    searchTerm: string,
+    regexError: ?Error,
+    startRange: number,
+    endRange: number
+  }>>;
 
 export type Logviewer = $Exact<$ReadOnly<{
-  filters: Filter[],
-  highlights: Highlight[],
-  bookmarks: Bookmark[],
-  find: Find,
-  settings: Settings,
-}>>
+    filters: Filter[],
+    highlights: Highlight[],
+    bookmarks: Bookmark[],
+    find: Find,
+    settings: Settings
+  }>>;
 
 export type HighlightLineData = $Exact<$ReadOnly<{
-  highlightLines: Line[],
-  highlightText: string[]
-}>>
+    highlightLines: Line[],
+    highlightText: string[]
+  }>>;
 
-export type SearchResults = number[]
+export type SearchResults = number[];
 
-export type CacheStatus = 'ok' | 'error' | 'never' | 'later' | 'unsupported' | null;
+export type CacheStatus =
+  | "ok"
+  | "error"
+  | "never"
+  | "later"
+  | "unsupported"
+  | null;
 
 export type CacheState = $Exact<$ReadOnly<{
-  status: CacheStatus,
-  size: number
-}>>
+    status: CacheStatus,
+    size: number
+  }>>;
 
 export type LogViewerState = $Exact<$ReadOnly<{
-  filters: Filter[],
-  highlights: Highlight[],
-  bookmarks: Bookmark[],
-  find: Find,
-  settings: Settings,
-  settingsPanel: boolean,
-  scrollLine: number
-}>>
+    filters: Filter[],
+    highlights: Highlight[],
+    bookmarks: Bookmark[],
+    find: Find,
+    settings: Settings,
+    settingsPanel: boolean,
+    scrollLine: number
+  }>>;
 
 export type ReduxState = $Exact<$ReadOnly<{
-  cache: CacheState,
-  log: Log,
-  logviewer: LogViewerState
-}>>
+    cache: CacheState,
+    log: Log,
+    logviewer: LogViewerState
+  }>>;
