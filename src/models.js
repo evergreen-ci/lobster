@@ -82,7 +82,9 @@ export type ResmokeLog = {|
   // $FlowFixMe
   msg?: string | Object,
   // $FlowFixMe
-  attr?: string | Object
+  attr?: string | Object,
+  size?: string,
+  truncated?: string
 |};
 
 export type LogEvent = {|
