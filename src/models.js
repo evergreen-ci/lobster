@@ -18,7 +18,8 @@ export type Line = $Exact<FilterMatchAnnotation &
       text: string, // text is what should be visible to the user and may have been transformed from the source
       originalText: string, // originalText is the verbatim text from the source
       port: ?string, // resmoke related attribute
-      gitRef: ?string // resmoke stuff again
+      gitRef: ?string, // resmoke stuff again
+      resmokeText: ?string // Version of the line that was parsed with resmoke
     }>>;
 
 export type ColorMap = $ReadOnly<{ [string]: string }>;
