@@ -2,10 +2,28 @@
 
 import React from 'react';
 import './style.css';
-import { Overlay, Popover, Button, ButtonToolbar, Form, FormControl, ControlLabel, FormGroup, Col } from 'react-bootstrap';
+import {
+  Overlay,
+  Popover,
+  Button,
+  ButtonToolbar,
+  Form,
+  FormControl,
+  ControlLabel,
+  FormGroup,
+  Col
+} from 'react-bootstrap';
 import CollapseMenu from './CollapseMenu';
 import { connect } from 'react-redux';
-import { addFilter, addHighlight, search, toggleSettingsPanel, changeSearch } from '../../actions';
+// $FlowFixMe
+import debounce from 'lodash.debounce';
+import {
+  addFilter,
+  addHighlight,
+  search,
+  toggleSettingsPanel,
+  changeSearch
+} from '../../actions';
 import * as selectors from '../../selectors';
 import type { ReduxState, Settings, SearchResults } from '../../models';
 
@@ -21,7 +39,7 @@ type Props = {
   detailsOpen: boolean,
   setURLRef: (?HTMLInputElement) => void,
   findIdx: number,
-  changeFindIdx: (number) => void,
+  changeFindIdx: number => void,
   nextFind: () => void,
   prevFind: () => void,
   changeSearch: (value: string) => void,
@@ -29,27 +47,38 @@ type Props = {
 };
 
 export class Toolbar extends React.PureComponent<Props> {
-  findInput: ?HTMLInputElement
+  findInput: ?HTMLInputElement;
 
   showFind = () => {
     if (this.props.searchTerm !== '') {
       if (this.props.findResults.length > 0) {
         return (
-          <span><Col lg={1} componentClass={ControlLabel} className="next-prev" >{this.props.findIdx + 1}/{this.props.findResults.length}</Col>
+          <span>
+            <Col lg={1} componentClass={ControlLabel} className="next-prev">
+              {this.props.findIdx + 1}/{this.props.findResults.length}
+            </Col>
             <Button onClick={this.props.nextFind}>Next</Button>
             <Button onClick={this.props.prevFind}>Prev</Button>
-          </span>);
+          </span>
+        );
       }
-      return <Col lg={1} componentClass={ControlLabel} className="not-found" >Not Found</Col>;
+      return (
+        <Col lg={1} componentClass={ControlLabel} className="not-found">
+          Not Found
+        </Col>
+      );
     }
-  }
+  };
 
   handleChangeFindEvent = () => {
     if (this.findInput != null) {
-      const { value } = this.findInput;
-      this.props.changeSearch(value);
+      debounce(() => {
+        // $FlowFixMe
+        const { value } = this.findInput;
+        this.props.changeSearch(value);
+      }, 1000)();
     }
-  }
+  };
 
   handleSearchClickFind = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -58,7 +87,7 @@ export class Toolbar extends React.PureComponent<Props> {
     } else {
       this.props.nextFind();
     }
-  }
+  };
 
   handleSearchEnterKey = (event: KeyboardEvent) => {
     if (event.keyCode === 13) {
@@ -69,7 +98,7 @@ export class Toolbar extends React.PureComponent<Props> {
         this.props.nextFind();
       }
     }
-  }
+  };
 
   focusOnFind(event: KeyboardEvent) {
     event.preventDefault();
@@ -93,11 +122,11 @@ export class Toolbar extends React.PureComponent<Props> {
         break;
       // no default
     }
-  }
+  };
 
   setFindInputRef = (ref: ?HTMLInputElement) => {
     this.findInput = ref;
-  }
+  };
 
   addFilter = () => {
     if (!this.findInput) {
@@ -108,7 +137,7 @@ export class Toolbar extends React.PureComponent<Props> {
     this.props.addFilter(value, this.props.settings.caseSensitive);
     // $FlowFixMe
     this.findInput.value = '';
-  }
+  };
 
   addHighlight = () => {
     if (!this.findInput) {
@@ -119,7 +148,7 @@ export class Toolbar extends React.PureComponent<Props> {
     this.props.addHighlight(value, this.props.settings.caseSensitive);
     // $FlowFixMe
     this.findInput.value = '';
-  }
+  };
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleSearchShortcut);
@@ -140,14 +169,18 @@ export class Toolbar extends React.PureComponent<Props> {
     }
 
     return null;
-  }
+  };
 
   render() {
     return (
       <Col lg={11} lgOffset={1}>
         <div className="find-box">
           <Form horizontal>
-            <FormGroup controlId="findInput" className="filter-header" validationState={this.regexValidationState()}>
+            <FormGroup
+              controlId="findInput"
+              className="filter-header"
+              validationState={this.regexValidationState()}
+            >
               <Overlay
                 show={this.props.searchTermError != null}
                 target={this.findInput}
@@ -156,10 +189,12 @@ export class Toolbar extends React.PureComponent<Props> {
                 containerPadding={0}
               >
                 <Popover id="popover-contained" title="Invalid search term">
-                  {this.props.searchTermError != null ? this.props.searchTermError.toString() : ''}
+                  {this.props.searchTermError != null
+                    ? this.props.searchTermError.toString()
+                    : ''}
                 </Popover>
               </Overlay>
-              <Col lg={6} >
+              <Col lg={6}>
                 <FormControl
                   inputRef={this.setFindInputRef}
                   type="text"
@@ -168,11 +203,27 @@ export class Toolbar extends React.PureComponent<Props> {
                 />
               </Col>
               <ButtonToolbar>
-                <Button id="formSubmit" onClick={this.handleSearchClickFind}>Find</Button>
+                <Button id="formSubmit" onClick={this.handleSearchClickFind}>
+                  Find
+                </Button>
                 {this.showFind()}
-                <Button disabled={this.props.searchTermError != null} onClick={this.addFilter}>Add Filter</Button>
-                <Button disabled={this.props.searchTermError != null} onClick={this.addHighlight}>Add Highlight</Button>
-                <Button onClick={this.props.togglePanel}>{this.props.detailsOpen ? 'Hide Details \u25B4' : 'Show Details \u25BE'}</Button>
+                <Button
+                  disabled={this.props.searchTermError != null}
+                  onClick={this.addFilter}
+                >
+                  Add Filter
+                </Button>
+                <Button
+                  disabled={this.props.searchTermError != null}
+                  onClick={this.addHighlight}
+                >
+                  Add Highlight
+                </Button>
+                <Button onClick={this.props.togglePanel}>
+                  {this.props.detailsOpen
+                    ? 'Hide Details \u25B4'
+                    : 'Show Details \u25BE'}
+                </Button>
               </ButtonToolbar>
             </FormGroup>
           </Form>
@@ -183,7 +234,10 @@ export class Toolbar extends React.PureComponent<Props> {
   }
 }
 
-function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>): $Shape<Props> {
+function mapStateToProps(
+  state: ReduxState,
+  ownProps: $Shape<Props>
+): $Shape<Props> {
   return {
     ...ownProps,
     settings: selectors.getLogViewerSettings(state),
@@ -202,9 +256,14 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
     nextFind: () => dispatch(search('next')),
     prevFind: () => dispatch(search('prev')),
     changeSearch: (value: string) => dispatch(changeSearch(value)),
-    addFilter: (text: string, caseSensitive: boolean) => dispatch(addFilter(text, caseSensitive)),
-    addHighlight: (text: string, caseSensitive: boolean) => dispatch(addHighlight(text, caseSensitive))
+    addFilter: (text: string, caseSensitive: boolean) =>
+      dispatch(addFilter(text, caseSensitive)),
+    addHighlight: (text: string, caseSensitive: boolean) =>
+      dispatch(addHighlight(text, caseSensitive))
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Toolbar);
