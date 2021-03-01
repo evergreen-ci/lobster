@@ -28,7 +28,7 @@ export default function(state: Log, response: string): Log {
   const gitPrefixLen = gitPrefix.length + 2;
   let gitVersionStr: string = 'master';
   const portRegex = / [sdbc](\d{1,5})\|/;
-  const stateRegex = /(:shard\d*|:configsvr)?:(initsync|primary|mongos|secondary\d*|node\d*)]/;
+  const stateRegex = /(:s(hard)?\d*|:c(onfigsvr)?)?:(initsync|prim(ary)?|(mongo)?s|sec(ondary)?\d*|n(ode)?\d*)]/;
 
   const colorMap = {};
 
