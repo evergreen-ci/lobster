@@ -1,11 +1,18 @@
 // @flow
 
-import React from 'react';
-import Fetch from '.';
-import { stringToEvergreenTaskLogType, type LogIdentity } from '../../models';
-import type { ContextRouter } from 'react-router-dom';
+import React from "react";
+import Fetch from ".";
+import { stringToEvergreenTaskLogType } from "../../models";
+import type { ContextRouter } from "react-router-dom";
 
-function makeEvergreenLogID(isTest: boolean, id: ?string, type: ?string, execution: ?string): ?LogIdentity {
+function makeEvergreenLogID(
+  isTest: boolean,
+  id: ?string,
+  type: ?string,
+  execution: ?string,
+  groupId: ?string,
+  taskId: ?string
+): ?LogIdentity {
   if (id == null) {
     return null;
   }
@@ -13,10 +20,10 @@ function makeEvergreenLogID(isTest: boolean, id: ?string, type: ?string, executi
   if (type != null) {
     if (isTest) {
       return {
-        type: 'evergreen-test-by-name',
+        type: "evergreen-test-by-name",
         task: id,
         execution: parseInt(execution, 10),
-        test: type
+        test: type,
       };
     }
     const logType = stringToEvergreenTaskLogType(type);
@@ -24,20 +31,23 @@ function makeEvergreenLogID(isTest: boolean, id: ?string, type: ?string, executi
       return null;
     }
     return {
-      type: 'evergreen-task',
+      type: "evergreen-task",
       id: id,
       execution: parseInt(execution, 10) || 0,
-      log: logType
+      log: logType,
     };
   }
 
   return {
-    type: 'evergreen-test',
-    id: id
+    type: "evergreen-test",
+    id,
+    execution,
+    groupId,
+    taskId,
   };
 }
 
-const lineRegex = new RegExp('#L([0-9]+)');
+const lineRegex = new RegExp("#L([0-9]+)");
 
 const EvergreenLogViewer = (props: ContextRouter) => {
   const newProps = Object.assign({}, props);
@@ -46,10 +56,16 @@ const EvergreenLogViewer = (props: ContextRouter) => {
     const line = matches[1];
     newProps.location.hash = `#scroll=${line}&bookmarks=${line}`;
   }
-  const { id, type, execution } = props.match.params;
-  const logID = makeEvergreenLogID(props.location.pathname.startsWith('/lobster/evergreen/test/'), id, type, execution);
+  const { id, type, execution, taskId, groupId } = props.match.params;
+  const logID = makeEvergreenLogID(
+    props.location.pathname.startsWith("/lobster/evergreen/test/"),
+    id,
+    type,
+    execution,
+    taskId
+  );
 
-  return (<Fetch {...newProps} logIdentity={logID} />);
+  return <Fetch {...newProps} logIdentity={logID} />;
 };
 
 export default EvergreenLogViewer;

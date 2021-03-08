@@ -25,8 +25,13 @@ export function testLogURL(id: string): string {
   return `${EVERGREEN_BASE}/test_log/${id}`;
 }
 
-export function testLogRawURL(id: string): string {
-  return `${testLogURL(id)}?raw=1`;
+export function testLogRawURL(
+  id: string,
+  taskId: string,
+  execution: string,
+  groupId: string
+): string {
+  return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}/${id}?text=true&group_id=${groupId}`;
 }
 
 export function testLogByNameURL(
@@ -61,7 +66,10 @@ export function fetchEvergreen(log: EvergreenLog): Promise<Response> {
   if (log.type === "evergreen-task") {
     req = new Request(taskLogRawURL(log.id, log.execution, log.log), init);
   } else if (log.type === "evergreen-test") {
-    req = new Request(testLogRawURL(log.id), init);
+    req = new Request(
+      testLogRawURL(log.id, log.taskId, log.execution, log.groupId),
+      init
+    );
   } else if (log.type === "evergreen-test-by-name") {
     req = new Request(
       testLogByNameRawURL(log.task, log.execution, log.test),

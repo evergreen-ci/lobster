@@ -1,29 +1,39 @@
 // @flow
 
-import React from 'react';
-import { Switch, Route, BrowserRouter, Redirect, type ContextRouter } from 'react-router-dom';
-import { LinkContainer } from 'react-router-bootstrap';
-import './style.css';
-import About from '../About';
-import NotFound from '../NotFound';
-import EvergreenLogViewer from '../Fetch/EvergreenLogViewer';
-import LogkeeperLogViewer from '../Fetch/LogkeeperLogViewer';
-import { Nav, NavItem } from 'react-bootstrap';
-import CacheModal from './CacheModal';
-import LogDrop from '../LogDrop';
-import queryString from '../../thirdparty/query-string';
+import React from "react";
+import {
+  Switch,
+  Route,
+  BrowserRouter,
+  Redirect,
+  type ContextRouter,
+} from "react-router-dom";
+import { LinkContainer } from "react-router-bootstrap";
+import "./style.css";
+import About from "../About";
+import NotFound from "../NotFound";
+import EvergreenLogViewer from "../Fetch/EvergreenLogViewer";
+import LogkeeperLogViewer from "../Fetch/LogkeeperLogViewer";
+import { Nav, NavItem } from "react-bootstrap";
+import CacheModal from "./CacheModal";
+import LogDrop from "../LogDrop";
+import queryString from "../../thirdparty/query-string";
 
 const logdrop = (props: ContextRouter) => {
-  const parsed = queryString.parse(props.location.search === '' ? props.location.hash : props.location.search);
-  if ('url' in parsed && 'server' in parsed) {
-    return (<Redirect to={`/lobster/logdrop?${queryString.stringify(parsed)}`} />);
+  const parsed = queryString.parse(
+    props.location.search === "" ? props.location.hash : props.location.search
+  );
+  if ("url" in parsed && "server" in parsed) {
+    return (
+      <Redirect to={`/lobster/logdrop?${queryString.stringify(parsed)}`} />
+    );
   }
-  return (<LogDrop {...props} />);
+  return <LogDrop {...props} />;
 };
-const logviewer = (props) => (<LogkeeperLogViewer {...props} />);
-const evergreenLogviewer = (props) => (<EvergreenLogViewer {...props} />);
-const about = (props) => (<About {...props} />);
-const notfound = (props) => (<NotFound {...props} />);
+const logviewer = (props) => <LogkeeperLogViewer {...props} />;
+const evergreenLogviewer = (props) => <EvergreenLogViewer {...props} />;
+const about = (props) => <About {...props} />;
+const notfound = (props) => <NotFound {...props} />;
 
 const Main = () => (
   <main className="lobster">
@@ -31,9 +41,21 @@ const Main = () => (
       <Route exact path="/lobster/about" render={about} />
       <Route path="/lobster/build/:build/test/:test" render={logviewer} />
       <Route path="/lobster/build/:build/all" render={logviewer} />
-      <Route exact path="/lobster/evergreen/task/:id/:execution/:type" render={evergreenLogviewer} />
-      <Route exact path="/lobster/evergreen/test/:id" render={evergreenLogviewer} />
-      <Route exact path="/lobster/evergreen/test/:id/:execution/:type" render={evergreenLogviewer} />
+      <Route
+        exact
+        path="/lobster/evergreen/task/:id/:execution/:type"
+        render={evergreenLogviewer}
+      />
+      <Route
+        exact
+        path="/lobster/evergreen/test/:taskId/:execution/:id/:groupId"
+        render={evergreenLogviewer}
+      />
+      <Route
+        exact
+        path="/lobster/evergreen/test/:id/:execution/:type"
+        render={evergreenLogviewer}
+      />
       <Route path="/lobster/logdrop" render={logviewer} />
       <Route path="/lobster" render={logdrop} />
       <Route path="*" render={notfound} />
