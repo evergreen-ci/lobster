@@ -6,14 +6,14 @@ It also includes a node based backend to view local log files or cache the resul
 
 Lobster can:
 
-- search any bookmarked or filtered lines by regexp (the "Find" button). If the regexp finds multiple occurrences in the same log line, it will only count one, but it will 
-  highlight them all
+- search any bookmarked, filtered, or otherwise visible lines by regexp (the "Find" button). If the regexp finds multiple occurrences in the same log line, it will only count 
+  one, but it will highlight them all
 - apply one or more regexp filters to the log lines (the "Add Filter" button)
 - enable and disable individual filters
 - match or inverse match filters
 - cache the recently accessed files locally to improve load time
 - view locally-stored log files
-- double click on a line number to bookmark (or unbookmark) that line and click on that number on the left-hand side to jump to it
+- double click on a line to bookmark (or unbookmark) that line and click on that line number on the left-hand side to jump to it
 - click on the "Wrap" toggle to turn line wrapping on and off
 - pre-format all bookmarked lines for display in JIRA. The JIRA text area contains the formatted bookmark content
 - ...and more!
