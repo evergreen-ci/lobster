@@ -8,7 +8,7 @@ Lobster can:
 
 - search any bookmarked or filtered lines by regexp (the "Find" button). If the regexp finds multiple occurrences in the same log line, it will only count one, but it will 
   highlight them all
-- apply one or more regexp filters to the log lines returned by the backend (the "Add Filter" button)
+- apply one or more regexp filters to the log lines (the "Add Filter" button)
 - enable and disable individual filters
 - match or inverse match filters
 - cache the recently accessed files locally to improve load time
