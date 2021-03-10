@@ -4,6 +4,7 @@ import React from "react";
 import Fetch from ".";
 import { stringToEvergreenTaskLogType } from "../../models";
 import type { ContextRouter } from "react-router-dom";
+import type { LogIdentity } from "../../models";
 
 function makeEvergreenLogID(
   isTest: boolean,
@@ -17,12 +18,14 @@ function makeEvergreenLogID(
     return null;
   }
 
+  const executionAsNumber = parseInt(execution, 10) || 0;
+
   if (type != null) {
     if (isTest) {
       return {
         type: "evergreen-test-by-name",
         task: id,
-        execution: parseInt(execution, 10),
+        execution: executionAsNumber,
         test: type,
       };
     }
@@ -33,7 +36,7 @@ function makeEvergreenLogID(
     return {
       type: "evergreen-task",
       id: id,
-      execution: parseInt(execution, 10) || 0,
+      execution: executionAsNumber,
       log: logType,
     };
   }
@@ -41,9 +44,9 @@ function makeEvergreenLogID(
   return {
     type: "evergreen-test",
     id,
-    execution,
-    groupId,
-    taskId,
+    execution: executionAsNumber,
+    groupId: groupId || "",
+    taskId: taskId || "",
   };
 }
 
@@ -62,6 +65,7 @@ const EvergreenLogViewer = (props: ContextRouter) => {
     id,
     type,
     execution,
+    groupId,
     taskId
   );
 
