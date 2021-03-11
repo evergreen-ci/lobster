@@ -13,14 +13,15 @@ const About = () => (
     <p> Lobster can: </p>
     <ul>
       <li>
-        search any bookmarked or filtered lines by regexp (the &quot;Find&quot;
-        button). If the regexp finds multiple occurrences in the same log line,
-        it will only count one, but it will highlight them all. As of now, it
-        will also not scroll to the right if the matching text is off screen.
+        search any bookmarked, filtered, or otherwise visible lines by regexp
+        (the &quot;Find&quot; button). If the regexp finds multiple occurrences
+        in the same log line, it will only count one, but it will highlight them
+        all. As of now, it will also not scroll to the right if the matching
+        text is off screen.
       </li>
       <li>
-        apply multiple regexp filters to the log lines returned by the backend
-        (the &quot;Add Filter&quot; button)
+        apply one or more regexp filters to the log lines (the &quot;Add
+        Filter&quot; button)
       </li>
       <li>enable and disable filters</li>
       <li>match or inverse match filters</li>
@@ -34,16 +35,17 @@ const About = () => (
         server command line argument
       </li>
       <li>
-        double click on a line number to bookmark (or unbookmark) that line and
-        click on that number on the left-hand side to scroll to it.
+        double click on a line to bookmark (or unbookmark) that line and click
+        on that line number on the left-hand side to jump to it
       </li>
       <li>
-        click on the &apos;wrap&apos; toggle to turn line wrapping on and off
+        click on the &apos;Wrap&apos; toggle to turn line wrapping on and off
       </li>
       <li>
-        the JIRA text area displays text you can copy into a JIRA ticket to
-        properly format all bookmarked lines
+        pre-format all bookmarked lines for display in JIRA. The JIRA text area
+        contains the formatted bookmark content
       </li>
+      <li>...and more!</li>
     </ul>
     <p></p>
     <p>
