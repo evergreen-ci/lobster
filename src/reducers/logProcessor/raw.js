@@ -1,11 +1,11 @@
 // @flow strict
 
-import type { Log } from '../../models';
+import type { Log } from "../../models";
 
-export default function(delimiter: string) {
-  return function(state: Log, response: string): Log {
+export default function (delimiter: string) {
+  return function (state: Log, response: string): Log {
     let lines = response.split(delimiter);
-    if (lines.length > 0 && lines[lines.length - 1] === '') {
+    if (lines.length > 0 && lines[lines.length - 1] === "") {
       lines = lines.slice(0, lines.length - 1);
     }
 
@@ -17,12 +17,12 @@ export default function(delimiter: string) {
           originalText: line,
           text: line,
           port: null,
-          gitRef: null
+          gitRef: null,
         };
       }),
       colorMap: {},
       isDone: true,
-      events: []
+      events: [],
     };
   };
 }

@@ -1,44 +1,44 @@
 // @flow
 
-import React from 'react';
-import { Button, Modal } from 'react-bootstrap';
-import { connect } from 'react-redux';
-import * as actions from '../../actions';
+import React from "react";
+import { Button, Modal } from "react-bootstrap";
+import { connect } from "react-redux";
+import * as actions from "../../actions";
 
 type Props = {
   show: boolean,
   save: (value: number) => void,
   never: () => void,
-  later: () => void
-}
+  later: () => void,
+};
 
 type State = {
-  value: number
-}
+  value: number,
+};
 
 export class CacheModal extends React.PureComponent<Props, State> {
-  inputRef: ?HTMLInputElement
+  inputRef: ?HTMLInputElement;
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      value: 2048
+      value: 2048,
     };
   }
 
   bindRef = (ref: ?HTMLInputElement) => {
     this.inputRef = ref;
-  }
+  };
 
   onChange = () => {
     if (this.inputRef) {
       this.setState({ value: parseInt(this.inputRef.value, 10) });
     }
-  }
+  };
 
   save = () => {
     this.props.save(this.state.value);
-  }
+  };
 
   render() {
     if (!this.props.show) {
@@ -54,21 +54,32 @@ export class CacheModal extends React.PureComponent<Props, State> {
           <Modal.Body>
             <p>Lobster can now locally cache logs as you view them!</p>
             <p>
-              If you would like to enable this feature, use the slider to
-              select the size of your cache, and click Yes. Otherwise, select
-              No to be asked the next time you load a lobster page, or Never
-              to not be asked again.
+              If you would like to enable this feature, use the slider to select
+              the size of your cache, and click Yes. Otherwise, select No to be
+              asked the next time you load a lobster page, or Never to not be
+              asked again.
             </p>
             <p>
-              <input type="range" ref={this.bindRef} min="128" max="10240" value={this.state.value} onChange={this.onChange} />
+              <input
+                type="range"
+                ref={this.bindRef}
+                min="128"
+                max="10240"
+                value={this.state.value}
+                onChange={this.onChange}
+              />
               <label htmlFor={this.inputRef}>{this.state.value} MiB</label>
             </p>
           </Modal.Body>
 
           <Modal.Footer>
-            <Button bsStyle="danger" onClick={this.props.never}>Never</Button>
+            <Button bsStyle="danger" onClick={this.props.never}>
+              Never
+            </Button>
             <Button onClick={this.props.later}>Not Now</Button>
-            <Button bsStyle="primary" onClick={this.save}>Yes</Button>
+            <Button bsStyle="primary" onClick={this.save}>
+              Yes
+            </Button>
           </Modal.Footer>
         </Modal.Dialog>
       </div>
@@ -82,9 +93,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch: Dispatch<*>) {
   return {
-    save: (value: number) => dispatch(actions.setCache('ok', value * 1024 * 1024)),
-    never: () => dispatch(actions.setCache('never', 0)),
-    later: () => dispatch(actions.setCache('later', 0))
+    save: (value: number) =>
+      dispatch(actions.setCache("ok", value * 1024 * 1024)),
+    never: () => dispatch(actions.setCache("never", 0)),
+    later: () => dispatch(actions.setCache("later", 0)),
   };
 }
 

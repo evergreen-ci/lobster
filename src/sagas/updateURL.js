@@ -1,36 +1,36 @@
 // @flow
 
-import queryString from '../thirdparty/query-string';
-import { select } from 'redux-saga/effects';
-import type { Saga } from 'redux-saga';
-import * as selectors from '../selectors';
-import type { Highlight, Filter, LogIdentity } from '../models';
+import queryString from "../thirdparty/query-string";
+import { select } from "redux-saga/effects";
+import type { Saga } from "redux-saga";
+import * as selectors from "../selectors";
+import type { Highlight, Filter, LogIdentity } from "../models";
 
 function boolToInt(b: boolean): string {
-  return b ? '1' : '0';
+  return b ? "1" : "0";
 }
 
 function makeFilterURLString(filter: Filter): string {
-  let res = '';
+  let res = "";
   res += boolToInt(filter.on);
   res += boolToInt(filter.inverse);
   res += boolToInt(filter.caseSensitive);
-  res += '~';
+  res += "~";
   res += filter.text;
   return res;
 }
 
 function makeHighlightURLString(highlight: Highlight): string {
-  let res = '';
+  let res = "";
   res += boolToInt(highlight.on);
   res += boolToInt(highlight.line);
   res += boolToInt(highlight.caseSensitive);
-  res += '~';
+  res += "~";
   res += highlight.text;
   return res;
 }
 
-export default function*(): Saga<void> {
+export default function* (): Saga<void> {
   const identity: LogIdentity = yield select(selectors.getLogIdentity);
   const filters = yield select(selectors.getLogViewerFilters);
   const highlights = yield select(selectors.getLogViewerHighlights);
@@ -38,20 +38,20 @@ export default function*(): Saga<void> {
   const settings = yield select(selectors.getLogViewerSettings);
 
   const parsed = {};
-  parsed['f~'] = [];
-  parsed['h~'] = [];
+  parsed["f~"] = [];
+  parsed["h~"] = [];
   for (let i = 0; i < filters.length; i++) {
-    parsed['f~'].push(makeFilterURLString(filters[i]));
+    parsed["f~"].push(makeFilterURLString(filters[i]));
   }
   for (let i = 0; i < highlights.length; i++) {
-    parsed['h~'].push(makeHighlightURLString(highlights[i]));
+    parsed["h~"].push(makeHighlightURLString(highlights[i]));
   }
   if (bookmarks.length > 0) {
-    let bookmarkStr = '';
+    let bookmarkStr = "";
     for (let i = 0; i < bookmarks.length; i++) {
       bookmarkStr += bookmarks[i].lineNumber;
       if (i !== bookmarks.length - 1) {
-        bookmarkStr += ',';
+        bookmarkStr += ",";
       }
     }
     parsed.bookmarks = bookmarkStr;
@@ -60,7 +60,7 @@ export default function*(): Saga<void> {
   Object.keys(parsed)
     .filter((k) => {
       switch (typeof parsed[k]) {
-        case 'object':
+        case "object":
           if (Array.isArray(parsed[k])) {
             return parsed[k].length === 0;
           }
@@ -74,7 +74,7 @@ export default function*(): Saga<void> {
       delete parsed[k];
     });
 
-  if (identity != null && identity.type === 'lobster') {
+  if (identity != null && identity.type === "lobster") {
     if (identity.server) {
       parsed.server = identity.server;
     }
@@ -88,7 +88,11 @@ export default function*(): Saga<void> {
 
   if (Object.keys(parsed).length !== 0) {
     try {
-      window.history.replaceState({}, '', window.location.pathname + '#' + queryString.stringify(parsed));
+      window.history.replaceState(
+        {},
+        "",
+        window.location.pathname + "#" + queryString.stringify(parsed)
+      );
     } catch (e) {
       console.error(e);
     }

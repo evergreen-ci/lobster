@@ -1,13 +1,13 @@
 // @flow strict
 
-import { createSelector } from 'reselect';
-import type { ReduxState, Line, Filter, Bookmark } from '../../models';
-import { parseLogLine } from './transforms';
-import * as merge from './merge';
-import * as selectors from '../basic';
+import { createSelector } from "reselect";
+import type { ReduxState, Line, Filter, Bookmark } from "../../models";
+import { parseLogLine } from "./transforms";
+import * as merge from "./merge";
+import * as selectors from "../basic";
 
 function findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
-  return bookmarkList.findIndex(function(bookmark) {
+  return bookmarkList.findIndex(function (bookmark) {
     return bookmark.lineNumber === lineNum;
   });
 }
@@ -22,9 +22,9 @@ function matchFilters(
   isIntersection: boolean
 ): boolean {
   if (isIntersection) {
-    return filter.every(regex => string.match(regex));
+    return filter.every((regex) => string.match(regex));
   }
-  return filter.some(regex => string.match(regex));
+  return filter.some((regex) => string.match(regex));
 }
 
 // Sibling of matchFilters
@@ -38,9 +38,9 @@ function inverseMatchFilters(
   isIntersection: boolean
 ): boolean {
   if (isIntersection) {
-    return filter.every(regex => !string.match(regex));
+    return filter.every((regex) => !string.match(regex));
   }
-  return filter.some(regex => !string.match(regex));
+  return filter.some((regex) => !string.match(regex));
 }
 
 // Tells if the line matches all filters
@@ -49,7 +49,7 @@ function inverseMatchFilters(
 // :param filterIntersection: predicate operator True = AND, False = OR
 // :param filter: list of inclusionary filters
 // :param inverseFilter: list of exlusionary filters
-export const shouldPrintLine = function(
+export const shouldPrintLine = function (
   line: Line,
   bookmarks: Bookmark[],
   filterIntersection: boolean,
@@ -102,7 +102,7 @@ const getFilteredLineData = createSelector(
   selectors.getLogViewerBookmarks,
   selectors.getLogViewerSettingsFilterLogic,
   selectors.getLogViewerSettingsParseJson,
-  function(
+  function (
     lines: Line[],
     filters: Filter[],
     bookmarks: Bookmark[],
@@ -111,7 +111,7 @@ const getFilteredLineData = createSelector(
   ): Line[] {
     const filter = merge.activeFilters(filters);
     const inverseFilter = merge.activeInverseFilters(filters);
-    lines.forEach(line => {
+    lines.forEach((line) => {
       if (
         !shouldPrintLine(
           line,
@@ -139,6 +139,6 @@ const getFilteredLineData = createSelector(
   }
 );
 
-export default function(state: ReduxState) {
+export default function (state: ReduxState) {
   return getFilteredLineData(state);
 }

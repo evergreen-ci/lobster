@@ -1,18 +1,26 @@
 // @flow strict
 
-import { put, call, select } from 'redux-saga/effects';
-import type { Saga } from 'redux-saga';
-import type { LogProcessor, LogkeeperLog, EvergreenLog, LobsterLog } from '../models';
-import * as actions from '../actions';
-import { ensureBookmark } from '../actions/logviewer';
-import * as api from '../api';
-import { fetchEvergreen } from '../api/evergreen';
-import { writeToCache, readFromCache } from './lobstercage';
-import { getLogLines } from '../selectors';
-
+import { put, call, select } from "redux-saga/effects";
+import type { Saga } from "redux-saga";
+import type {
+  LogProcessor,
+  LogkeeperLog,
+  EvergreenLog,
+  LobsterLog,
+} from "../models";
+import * as actions from "../actions";
+import { ensureBookmark } from "../actions/logviewer";
+import * as api from "../api";
+import { fetchEvergreen } from "../api/evergreen";
+import { writeToCache, readFromCache } from "./lobstercage";
+import { getLogLines } from "../selectors";
 
 // $FlowFixMe
-function* cacheFetch(f: string, processor: LogProcessor, ...args: any[]): Saga<void> {
+function* cacheFetch(
+  f: string,
+  processor: LogProcessor,
+  ...args: any[]
+): Saga<void> {
   try {
     try {
       const log = yield call(readFromCache, f);
@@ -39,16 +47,22 @@ function* cacheFetch(f: string, processor: LogProcessor, ...args: any[]): Saga<v
 }
 
 export function* logkeeperLoadData(identity: LogkeeperLog): Saga<void> {
-  console.info('fetch (logkeeper)', identity.build, identity.test);
-  const test = identity.test || 'all';
+  console.info("fetch (logkeeper)", identity.build, identity.test);
+  const test = identity.test || "all";
   const f = `fetchLogkeeper-${identity.build}-${test}.json`;
 
-  yield cacheFetch(f, 'resmoke', api.fetchLogkeeper, identity.build, identity.test);
+  yield cacheFetch(
+    f,
+    "resmoke",
+    api.fetchLogkeeper,
+    identity.build,
+    identity.test
+  );
 }
 
 export function* lobsterLoadData(identity: LobsterLog): Saga<void> {
   const { server, url } = identity;
-  console.info('fetch (lobster server)', server, url);
+  console.info("fetch (lobster server)", server, url);
   try {
     const resp = yield call(api.fetchLobster, server, url);
     if (resp.status !== 200) {
@@ -56,7 +70,7 @@ export function* lobsterLoadData(identity: LobsterLog): Saga<void> {
     }
 
     const data = yield resp.text();
-    yield put(actions.processData(data, 'resmoke', true));
+    yield put(actions.processData(data, "resmoke", true));
   } catch (error) {
     yield put(actions.processDataError(error));
   }
@@ -65,13 +79,13 @@ export function* lobsterLoadData(identity: LobsterLog): Saga<void> {
 export function* evergreenLoadData(identity: EvergreenLog): Saga<void> {
   console.info(`fetch (evergreen) ${JSON.stringify(identity)}`);
   // DO NOT cache Evergreen task logs without checking if the task is done
-  if (identity.type === 'evergreen-test') {
+  if (identity.type === "evergreen-test") {
     const f = `fetchEvergreen-test-${identity.id}.json`;
-    yield cacheFetch(f, 'raw', api.fetchEvergreen, identity);
+    yield cacheFetch(f, "raw", api.fetchEvergreen, identity);
     return;
-  } else if (identity.type === 'evergreen-test-by-name') {
+  } else if (identity.type === "evergreen-test-by-name") {
     const f = `fetchEvergreen-test-${identity.task}-${identity.execution}-${identity.test}.json`;
-    yield cacheFetch(f, 'raw', api.fetchEvergreen, identity);
+    yield cacheFetch(f, "raw", api.fetchEvergreen, identity);
     return;
   }
   try {
@@ -81,26 +95,26 @@ export function* evergreenLoadData(identity: EvergreenLog): Saga<void> {
     }
 
     const body = yield resp.text();
-    yield put(actions.processData(body, 'raw', true));
+    yield put(actions.processData(body, "raw", true));
   } catch (error) {
     yield put(actions.processDataError(error));
   }
 }
 
-export default function*(action: actions.LoadLog): Saga<void> {
+export default function* (action: actions.LoadLog): Saga<void> {
   const { identity } = action.payload;
   switch (identity.type) {
-    case 'evergreen-test':
-    case 'evergreen-test-by-name':
-    case 'evergreen-task':
+    case "evergreen-test":
+    case "evergreen-test-by-name":
+    case "evergreen-task":
       yield call(evergreenLoadData, identity);
       break;
 
-    case 'lobster':
+    case "lobster":
       yield call(lobsterLoadData, identity);
       break;
 
-    case 'logkeeper':
+    case "logkeeper":
       yield call(logkeeperLoadData, identity);
       break;
 

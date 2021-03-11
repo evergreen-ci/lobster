@@ -1,40 +1,41 @@
 // @flow strict
 
-import React from 'react';
-import { Button, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
-import type { Highlight as HighlightType } from '../../models';
+import React from "react";
+import { Button, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import type { Highlight as HighlightType } from "../../models";
 
 type HighlightProps = {
   highlight: HighlightType,
   removeHighlight: (string) => void,
   toggleHighlight: (string) => void,
   toggleCaseSensitive: (string) => void,
-  toggleHighlightLine: (string) => void
-}
+  toggleHighlightLine: (string) => void,
+};
 
 type HighlightsProps = {
   highlights: HighlightType[],
   removeHighlight: (string) => void,
   toggleHighlight: (string) => void,
   toggleCaseSensitive: (string) => void,
-  toggleHighlightLine: (string) => void
-}
+  toggleHighlightLine: (string) => void,
+};
 
 export const Highlights = (props: HighlightsProps) => {
   return (
     <div className="highlightBox">
-      <div className="highlight-box">{props.highlights.map(function(highlight) {
-        return (
-          <Highlight
-            key={JSON.stringify(highlight)}
-            highlight={highlight}
-            removeHighlight={props.removeHighlight}
-            toggleHighlight={props.toggleHighlight}
-            toggleCaseSensitive={props.toggleCaseSensitive}
-            toggleHighlightLine={props.toggleHighlightLine}
-          />
-        );
-      })}
+      <div className="highlight-box">
+        {props.highlights.map(function (highlight) {
+          return (
+            <Highlight
+              key={JSON.stringify(highlight)}
+              highlight={highlight}
+              removeHighlight={props.removeHighlight}
+              toggleHighlight={props.toggleHighlight}
+              toggleCaseSensitive={props.toggleCaseSensitive}
+              toggleHighlightLine={props.toggleHighlightLine}
+            />
+          );
+        })}
       </div>
     </div>
   );
@@ -43,13 +44,22 @@ export const Highlights = (props: HighlightsProps) => {
 export class Highlight extends React.PureComponent<HighlightProps> {
   removeHighlight = () => this.props.removeHighlight(this.props.highlight.text);
   toggleHighlight = () => this.props.toggleHighlight(this.props.highlight.text);
-  toggleCaseSensitive= () => this.props.toggleCaseSensitive(this.props.highlight.text);
-  toggleHighlightLine = () => this.props.toggleHighlightLine(this.props.highlight.text);
+  toggleCaseSensitive = () =>
+    this.props.toggleCaseSensitive(this.props.highlight.text);
+  toggleHighlightLine = () =>
+    this.props.toggleHighlightLine(this.props.highlight.text);
 
   render() {
     return (
       <div className="filter-highlight-lines">
-        <Button className="exit-button" onClick={this.removeHighlight} bsStyle="danger" bsSize="xsmall">{'\u2715'}</Button>
+        <Button
+          className="exit-button"
+          onClick={this.removeHighlight}
+          bsStyle="danger"
+          bsSize="xsmall"
+        >
+          {"\u2715"}
+        </Button>
         <span className="toggle-label">Highlight Options</span>
         <ToggleButtonGroup
           className="toggle-buttons"
@@ -59,10 +69,10 @@ export class Highlight extends React.PureComponent<HighlightProps> {
           onChange={this.toggleHighlight}
         >
           <ToggleButton value={true} bsSize="small" bsStyle="info">
-              on
+            on
           </ToggleButton>
           <ToggleButton value={false} bsSize="small" bsStyle="info">
-              off
+            off
           </ToggleButton>
         </ToggleButtonGroup>
         <ToggleButtonGroup
@@ -93,7 +103,9 @@ export class Highlight extends React.PureComponent<HighlightProps> {
             case insensitive
           </ToggleButton>
         </ToggleButtonGroup>
-        <span className="filter-highlight-text">{this.props.highlight.text}</span>
+        <span className="filter-highlight-text">
+          {this.props.highlight.text}
+        </span>
       </div>
     );
   }

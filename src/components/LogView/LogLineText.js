@@ -1,9 +1,8 @@
 // @flow strict
 
-import React from 'react';
-import Highlighter from 'react-highlight-words';
-import type { ColorMap } from 'src/models';
-
+import React from "react";
+import Highlighter from "react-highlight-words";
+import type { ColorMap } from "src/models";
 
 type Props = {
   caseSensitive: boolean,
@@ -18,27 +17,30 @@ type Props = {
   highlightText: string[],
   handleDoubleClick: () => void,
   prettyPrint: boolean,
-}
+};
 
 export function findJSONObjectsInLine(text: string): string[] {
   let startIndex = 0;
   let numBraces = 0;
   const chunks: string[] = [];
   for (let i = 0; i < text.length; i++) {
-    if (text[i] === '{') {
+    if (text[i] === "{") {
       if (numBraces === 0 && i !== 0) {
         chunks.push(text.substring(startIndex, i));
         startIndex = i;
       }
       numBraces++;
-    } else if (text[i] === '}') {
+    } else if (text[i] === "}") {
       numBraces--;
       if (numBraces === 0) {
         try {
-          const startingLineBreak = (startIndex === 0) ? '' : '\n';
-          const endingLineBreak = (i === text.length - 1) ? '' : '\n';
+          const startingLineBreak = startIndex === 0 ? "" : "\n";
+          const endingLineBreak = i === text.length - 1 ? "" : "\n";
           const jsonObj = JSON.parse(text.substring(startIndex, i + 1));
-          const formattedString = startingLineBreak + JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, '$1:') + endingLineBreak;
+          const formattedString =
+            startingLineBreak +
+            JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, "$1:") +
+            endingLineBreak;
           chunks.push(formattedString);
           startIndex = i + 1;
         } catch (e) {
@@ -76,15 +78,21 @@ export default class LogLineText extends React.PureComponent<Props> {
 
   render() {
     const style = {};
-    const highlightStyle = { color: '', 'backgroundImage': 'inherit', 'backgroundColor': 'pink' };
+    const highlightStyle = {
+      color: "",
+      backgroundImage: "inherit",
+      backgroundColor: "pink",
+    };
     if (this.props.port != null) {
       style.color = this.props.colorMap[this.props.port];
       highlightStyle.color = this.props.colorMap[this.props.port];
     }
 
     let searchWords = [];
-    if (this.props.lineNumber >= this.props.startRange &&
-      (this.props.endRange < 0 || this.props.lineNumber <= this.props.endRange)) {
+    if (
+      this.props.lineNumber >= this.props.startRange &&
+      (this.props.endRange < 0 || this.props.lineNumber <= this.props.endRange)
+    ) {
       searchWords = this.props.highlightText;
     }
 
@@ -92,8 +100,8 @@ export default class LogLineText extends React.PureComponent<Props> {
       const blocks = this.prettyPrintedText.map((block, index) => {
         return (
           <Highlighter
-            key={this.props.lineNumber + '-block-' + index}
-            highlightClassName={'findResult' + this.props.lineNumber}
+            key={this.props.lineNumber + "-block-" + index}
+            highlightClassName={"findResult" + this.props.lineNumber}
             caseSensitive={this.props.caseSensitive}
             unhighlightStyle={style}
             highlightStyle={highlightStyle}
@@ -103,7 +111,11 @@ export default class LogLineText extends React.PureComponent<Props> {
         );
       });
       return (
-        <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick} style={{ display: 'inline-block' }}>
+        <span
+          ref={this.setRef}
+          onDoubleClick={this.props.handleDoubleClick}
+          style={{ display: "inline-block" }}
+        >
           {blocks}
         </span>
       );
@@ -111,7 +123,7 @@ export default class LogLineText extends React.PureComponent<Props> {
     return (
       <span ref={this.setRef} onDoubleClick={this.props.handleDoubleClick}>
         <Highlighter
-          highlightClassName={'findResult' + this.props.lineNumber}
+          highlightClassName={"findResult" + this.props.lineNumber}
           caseSensitive={this.props.caseSensitive}
           unhighlightStyle={style}
           highlightStyle={highlightStyle}
