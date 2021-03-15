@@ -1,18 +1,18 @@
 // @flow strict
 
-import { createSelector } from 'reselect';
-import * as selectors from '../basic';
-import getFilteredLineData from './filter';
-import type { ReduxState, SearchResults, Line } from 'src/models';
+import { createSelector } from "reselect";
+import * as selectors from "../basic";
+import getFilteredLineData from "./filter";
+import type { ReduxState, SearchResults, Line } from "src/models";
 
 function makeRegexp(regexp: ?string, caseSensitive: boolean): ?RegExp {
   try {
-    if (regexp == null || regexp === '') {
-      return new RegExp('');
+    if (regexp == null || regexp === "") {
+      return new RegExp("");
     }
 
     if (!caseSensitive) {
-      return new RegExp(regexp, 'i');
+      return new RegExp(regexp, "i");
     }
     return new RegExp(regexp);
   } catch (_e) {
@@ -26,7 +26,13 @@ const search = createSelector(
   selectors.getLogViewerSettingsCaseSensitive,
   selectors.getLogViewerSearchStartRange,
   selectors.getLogViewerSearchEndRange,
-  function(searchTerm: string, lines: Line[], caseSensitive: boolean, startRange: number, endRange: number): SearchResults {
+  function (
+    searchTerm: string,
+    lines: Line[],
+    caseSensitive: boolean,
+    startRange: number,
+    endRange: number
+  ): SearchResults {
     let start = startRange;
     if (startRange < 0 || isNaN(startRange)) {
       start = 0;
@@ -52,6 +58,6 @@ const search = createSelector(
   }
 );
 
-export default function(state: ReduxState): SearchResults {
+export default function (state: ReduxState): SearchResults {
   return search(state);
 }

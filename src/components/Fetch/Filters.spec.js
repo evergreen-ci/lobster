@@ -1,19 +1,19 @@
-import Enzyme from 'enzyme';
-import { Filters, Filter } from './Filters';
-import React from 'react';
+import Enzyme from "enzyme";
+import { Filters, Filter } from "./Filters";
+import React from "react";
 
-test('Filters', function() {
+test("Filters", function () {
   let data = [
     {
-      text: 'Hello',
+      text: "Hello",
       on: true,
-      inverse: false
+      inverse: false,
     },
     {
-      text: 'Goodbye',
+      text: "Goodbye",
       on: true,
-      inverse: false
-    }
+      inverse: false,
+    },
   ];
 
   const removeFilter = (text) => {
@@ -21,11 +21,11 @@ test('Filters', function() {
     data = data.filter((_elem, i) => i !== index);
   };
   const toggleFilter = (text) => {
-    const d = data.find(elem => text === elem.text);
+    const d = data.find((elem) => text === elem.text);
     d.on = !d.on;
   };
   const toggleFilterInverse = (text) => {
-    const d = data.find(elem => text === elem.text);
+    const d = data.find((elem) => text === elem.text);
     d.inverse = !d.inverse;
   };
 
@@ -35,37 +35,39 @@ test('Filters', function() {
       removeFilter={removeFilter}
       toggleFilter={toggleFilter}
       toggleFilterInverse={toggleFilterInverse}
-    />);
-
-  expect(wrapper.containsAllMatchingElements([
-    <Filter
-      filter={data[0]}
-      removeFilter={removeFilter}
-      toggleFilter={toggleFilter}
-      toggleFilterInverse={toggleFilterInverse}
-    />,
-    <Filter
-      filter={data[1]}
-      removeFilter={removeFilter}
-      toggleFilter={toggleFilter}
-      toggleFilterInverse={toggleFilterInverse}
     />
-  ]
-  )).toBe(true);
+  );
 
-  const buttons = wrapper.find('Button');
+  expect(
+    wrapper.containsAllMatchingElements([
+      <Filter
+        filter={data[0]}
+        removeFilter={removeFilter}
+        toggleFilter={toggleFilter}
+        toggleFilterInverse={toggleFilterInverse}
+      />,
+      <Filter
+        filter={data[1]}
+        removeFilter={removeFilter}
+        toggleFilter={toggleFilter}
+        toggleFilterInverse={toggleFilterInverse}
+      />,
+    ])
+  ).toBe(true);
+
+  const buttons = wrapper.find("Button");
   expect(buttons).toHaveLength(14);
-  buttons.at(0).simulate('click', {});
+  buttons.at(0).simulate("click", {});
   expect(data).toHaveLength(1);
   wrapper.setProps({ filters: data });
-  expect(wrapper.find('Button')).toHaveLength(7);
+  expect(wrapper.find("Button")).toHaveLength(7);
 });
 
-test('Filter', function() {
+test("Filter", function () {
   let data = {
-    text: 'Hello',
+    text: "Hello",
     on: true,
-    inverse: false
+    inverse: false,
   };
 
   const removeFilter = () => {
@@ -84,24 +86,23 @@ test('Filter', function() {
       removeFilter={removeFilter}
       toggleFilter={toggleFilter}
       toggleFilterInverse={toggleFilterInverse}
-    />);
+    />
+  );
 
-  expect(wrapper.containsAllMatchingElements([
-    <span>Hello</span>
-  ])).toBe(true);
+  expect(wrapper.containsAllMatchingElements([<span>Hello</span>])).toBe(true);
 
-  const buttons = wrapper.find('Button');
+  const buttons = wrapper.find("Button");
   expect(buttons).toHaveLength(7);
-  buttons.forEach(function(e, index) {
+  buttons.forEach(function (e, index) {
     data = {
-      text: 'Hello',
+      text: "Hello",
       on: true,
-      inverse: false
+      inverse: false,
     };
 
     if (index === 0) {
       expect(data).not.toBe(null);
-      e.simulate('click', {});
+      e.simulate("click", {});
       expect(data).toBe(null);
     }
   });

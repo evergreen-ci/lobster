@@ -1,12 +1,17 @@
 // @flow strict
 
-import { LOGVIEWER_CHANGE_BOOKMARK, LOGVIEWER_LOAD_BOOKMARKS, LOGVIEWER_ENSURE_BOOKMARK, type Action } from '../../actions/logviewer';
-import type { Bookmark } from '../../models';
+import {
+  LOGVIEWER_CHANGE_BOOKMARK,
+  LOGVIEWER_LOAD_BOOKMARKS,
+  LOGVIEWER_ENSURE_BOOKMARK,
+  type Action,
+} from "../../actions/logviewer";
+import type { Bookmark } from "../../models";
 
 const initialState: Bookmark[] = [];
 
 function findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
-  return bookmarkList.findIndex(function(bookmark) {
+  return bookmarkList.findIndex(function (bookmark) {
     return bookmark.lineNumber === lineNum;
   });
 }
@@ -25,7 +30,10 @@ function ensureBookmark(lineNum: number, bookmarks: Bookmark[]): Bookmark[] {
   return newBookmarks;
 }
 
-export default function(state: Bookmark[] = initialState, action: Action): Bookmark[] {
+export default function (
+  state: Bookmark[] = initialState,
+  action: Action
+): Bookmark[] {
   if (action.type === LOGVIEWER_LOAD_BOOKMARKS) {
     return action.payload.bookmarksArr;
   }

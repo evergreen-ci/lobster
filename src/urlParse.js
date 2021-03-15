@@ -1,7 +1,7 @@
 // @flow
 
-import queryString from './thirdparty/query-string';
-import type { Filter, Highlight } from './models';
+import queryString from "./thirdparty/query-string";
+import type { Filter, Highlight } from "./models";
 
 function parseBookmarks(bookmarks: ?string): Set<number> {
   if (bookmarks == null) {
@@ -9,7 +9,7 @@ function parseBookmarks(bookmarks: ?string): Set<number> {
   }
 
   return bookmarks
-    .split(',')
+    .split(",")
     .map((n) => {
       return parseInt(n, 10);
     })
@@ -18,16 +18,18 @@ function parseBookmarks(bookmarks: ?string): Set<number> {
 }
 
 function charToBool(s: string): ?boolean {
-  if (s === '0') {
+  if (s === "0") {
     return false;
   }
-  if (s === '1') {
+  if (s === "1") {
     return true;
   }
   return null;
 }
 
-function parseSingleLegacyFilter(s: string): ?[boolean, boolean, boolean, string] {
+function parseSingleLegacyFilter(
+  s: string
+): ?[boolean, boolean, boolean, string] {
   if (s == null || s.length < 3) {
     return null;
   }
@@ -46,7 +48,7 @@ function parseSingleLegacyFilter(s: string): ?[boolean, boolean, boolean, string
 }
 
 function parseSingleFilter(s: string): ?[boolean, boolean, boolean, string] {
-  if (s == null || s.length < 4 || s[3] !== '~') {
+  if (s == null || s.length < 4 || s[3] !== "~") {
     return null;
   }
 
@@ -78,7 +80,10 @@ function parseFilters(filters: string[], oldFilters: string[]): Filter[] {
     if (!dedup.has(text)) {
       dedup.add(text);
       ret.push({
-        text, on, inverse, caseSensitive
+        text,
+        on,
+        inverse,
+        caseSensitive,
       });
     }
   });
@@ -92,7 +97,10 @@ function parseFilters(filters: string[], oldFilters: string[]): Filter[] {
     if (!dedup.has(text)) {
       dedup.add(text);
       ret.push({
-        text, on, inverse, caseSensitive
+        text,
+        on,
+        inverse,
+        caseSensitive,
       });
     }
   });
@@ -100,7 +108,10 @@ function parseFilters(filters: string[], oldFilters: string[]): Filter[] {
   return ret;
 }
 
-function parseHighlights(highlights: string[], oldHighlights: string[]): Highlight[] {
+function parseHighlights(
+  highlights: string[],
+  oldHighlights: string[]
+): Highlight[] {
   const dedup = new Set();
   const ret = [];
   highlights.forEach((h) => {
@@ -112,7 +123,10 @@ function parseHighlights(highlights: string[], oldHighlights: string[]): Highlig
     if (!dedup.has(text)) {
       dedup.add(text);
       ret.push({
-        text, on, line, caseSensitive
+        text,
+        on,
+        line,
+        caseSensitive,
       });
     }
   });
@@ -126,7 +140,10 @@ function parseHighlights(highlights: string[], oldHighlights: string[]): Highlig
     if (!dedup.has(text)) {
       dedup.add(text);
       ret.push({
-        text, on, line, caseSensitive
+        text,
+        on,
+        line,
+        caseSensitive,
       });
     }
   });
@@ -137,7 +154,7 @@ function parseHighlights(highlights: string[], oldHighlights: string[]): Highlig
 function arrayify(obj: { [string]: mixed }, field: string) {
   if (obj[field] == null) {
     obj[field] = [];
-  } else if (typeof obj[field] === 'string') {
+  } else if (typeof obj[field] === "string") {
     obj[field] = [obj[field]];
   }
 }
@@ -149,31 +166,36 @@ function parseOptionalString(s: ?string): ?string {
   return s;
 }
 
-export type URLParseData = $Exact<$ReadOnly<{
-  bookmarks: Set<number>,
-  filters: Filter[],
-  highlights: Highlight[],
-  scroll: ?number,
-  server: ?string,
-  url: ?string,
-  caseSensitive: ?boolean,
-  filterIsIntersection: ?boolean
-}>>
+export type URLParseData = $Exact<
+  $ReadOnly<{
+    bookmarks: Set<number>,
+    filters: Filter[],
+    highlights: Highlight[],
+    scroll: ?number,
+    server: ?string,
+    url: ?string,
+    caseSensitive: ?boolean,
+    filterIsIntersection: ?boolean,
+  }>
+>;
 
-export default function(hashString: ?string = '', queryParams: ?string = ''): URLParseData {
-  const hash = queryString.parseUrl(`?${(hashString || '').substring(1)}`);
-  const query = queryString.parseUrl(queryParams || '');
+export default function (
+  hashString: ?string = "",
+  queryParams: ?string = ""
+): URLParseData {
+  const hash = queryString.parseUrl(`?${(hashString || "").substring(1)}`);
+  const query = queryString.parseUrl(queryParams || "");
 
   [hash, query].forEach((obj) => {
-    arrayify(obj.query, 'f');
-    arrayify(obj.query, 'f~');
-    arrayify(obj.query, 'h');
-    arrayify(obj.query, 'h~');
+    arrayify(obj.query, "f");
+    arrayify(obj.query, "f~");
+    arrayify(obj.query, "h");
+    arrayify(obj.query, "h~");
   });
 
   const bookmarks: Set<number> = new Set([
     ...parseBookmarks(hash.query.bookmarks),
-    ...parseBookmarks(query.query.bookmarks)
+    ...parseBookmarks(query.query.bookmarks),
   ]);
 
   let scroll = parseInt(hash.query.scroll || query.query.scroll, 10);
@@ -181,14 +203,25 @@ export default function(hashString: ?string = '', queryParams: ?string = ''): UR
     scroll = undefined;
   }
 
-  const filters = parseFilters(hash.query['f~'], [...hash.query.f, ...query.query.f]);
-  const highlights = parseHighlights(hash.query['h~'], [...hash.query.h, ...query.query.h]);
+  const filters = parseFilters(hash.query["f~"], [
+    ...hash.query.f,
+    ...query.query.f,
+  ]);
+  const highlights = parseHighlights(hash.query["h~"], [
+    ...hash.query.h,
+    ...query.query.h,
+  ]);
   const server = parseOptionalString(hash.query.server || query.query.server);
   const url = parseOptionalString(hash.query.url || query.query.url);
 
   return {
-    bookmarks, scroll, filters, highlights, server, url,
+    bookmarks,
+    scroll,
+    filters,
+    highlights,
+    server,
+    url,
     caseSensitive: charToBool(hash.query.c),
-    filterIsIntersection: charToBool(hash.query.l)
+    filterIsIntersection: charToBool(hash.query.l),
   };
 }

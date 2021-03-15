@@ -1,30 +1,30 @@
 // @flow strict
 
-import type { Log, EvergreenTaskLogType } from '../models';
-import type { Action } from '../actions';
-import { PROCESS_RESPONSE, LOAD_CACHED_DATA, LOAD_LOG } from '../actions';
-import * as logProcessor from './logProcessor';
+import type { Log, EvergreenTaskLogType } from "../models";
+import type { Action } from "../actions";
+import { PROCESS_RESPONSE, LOAD_CACHED_DATA, LOAD_LOG } from "../actions";
+import * as logProcessor from "./logProcessor";
 
 const initialState: Log = {
   identity: null,
   lines: [],
   colorMap: new Map(),
   isDone: false,
-  events: []
+  events: [],
 };
 
-type ProcessorFunc = (Log, string) => Log
+type ProcessorFunc = (Log, string) => Log;
 
-const processors: {[EvergreenTaskLogType]: ProcessorFunc} = {
+const processors: { [EvergreenTaskLogType]: ProcessorFunc } = {
   resmoke: logProcessor.resmoke,
-  raw: logProcessor.raw('\n')
+  raw: logProcessor.raw("\n"),
 };
 
-export default function(state: Log = initialState, action: Action): Log {
+export default function (state: Log = initialState, action: Action): Log {
   if (action.type === LOAD_LOG) {
     return {
       ...state,
-      identity: action.payload.identity
+      identity: action.payload.identity,
     };
   }
   if (action.type === LOAD_CACHED_DATA) {

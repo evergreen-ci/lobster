@@ -1,6 +1,6 @@
 // @flow strict
 
-import type { Line } from '../../models';
+import type { Line } from "../../models";
 
 /* eslint-disable flowtype/no-flow-fix-me-comments,flowtype/no-weak-types */
 
@@ -10,7 +10,11 @@ function defaultEqualityCheck(a, b) {
 }
 
 // $FlowFixMe
-function areArgumentsShallowlyEqual(equalityCheck: (a: any, b: any) => boolean, prev: any, next: any) {
+function areArgumentsShallowlyEqual(
+  equalityCheck: (a: any, b: any) => boolean,
+  prev: any,
+  next: any
+) {
   if (prev === null || next === null || prev.length !== next.length) {
     return false;
   }
@@ -27,17 +31,23 @@ function areArgumentsShallowlyEqual(equalityCheck: (a: any, b: any) => boolean, 
 }
 
 // $FlowFixMe
-export default function(func: Function, equalityCheck: (a: any, b: any) => boolean = defaultEqualityCheck) {
+export default function (
+  func: Function,
+  equalityCheck: (a: any, b: any) => boolean = defaultEqualityCheck
+) {
   // $FlowFixMe
   const m: Map<number, [Object, any]> = new Map();
 
   // we reference arguments instead of spreading them for performance reasons
   // $FlowFixMe
-  return function(_line: Line, ..._args: any) {
+  return function (_line: Line, ..._args: any) {
     const lineNum = arguments[0].lineNumber;
     let result = m.get(lineNum);
 
-    if (result == null || !areArgumentsShallowlyEqual(equalityCheck, result[0], arguments)) {
+    if (
+      result == null ||
+      !areArgumentsShallowlyEqual(equalityCheck, result[0], arguments)
+    ) {
       // apply arguments instead of spreading for performance.
       result = [arguments, func.apply(null, arguments)];
       m.set(lineNum, result);

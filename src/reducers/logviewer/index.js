@@ -1,13 +1,13 @@
 // @flow strict
 
-import filters from './filters';
-import highlights from './highlights';
-import bookmarks from './bookmarks';
-import find from './find';
-import settings from './settings';
-import settingsPanel from './settingsPanel';
-import scrollLine from './scrollLine';
-import { combineReducers } from 'redux';
+import filters from "./filters";
+import highlights from "./highlights";
+import bookmarks from "./bookmarks";
+import find from "./find";
+import settings from "./settings";
+import settingsPanel from "./settingsPanel";
+import scrollLine from "./scrollLine";
+import { combineReducers } from "redux";
 
 export default combineReducers({
   filters: filters,
@@ -16,5 +16,5 @@ export default combineReducers({
   find: find,
   settings: settings,
   settingsPanel: settingsPanel,
-  scrollLine: scrollLine
+  scrollLine: scrollLine,
 });

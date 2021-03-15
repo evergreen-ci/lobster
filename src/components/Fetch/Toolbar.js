@@ -1,7 +1,7 @@
 // @flow strict
 
-import React from 'react';
-import './style.css';
+import React from "react";
+import "./style.css";
 import {
   Overlay,
   Popover,
@@ -11,21 +11,21 @@ import {
   FormControl,
   ControlLabel,
   FormGroup,
-  Col
-} from 'react-bootstrap';
-import CollapseMenu from './CollapseMenu';
-import { connect } from 'react-redux';
+  Col,
+} from "react-bootstrap";
+import CollapseMenu from "./CollapseMenu";
+import { connect } from "react-redux";
 // $FlowFixMe
-import debounce from 'lodash.debounce';
+import debounce from "lodash.debounce";
 import {
   addFilter,
   addHighlight,
   search,
   toggleSettingsPanel,
-  changeSearch
-} from '../../actions';
-import * as selectors from '../../selectors';
-import type { ReduxState, Settings, SearchResults } from '../../models';
+  changeSearch,
+} from "../../actions";
+import * as selectors from "../../selectors";
+import type { ReduxState, Settings, SearchResults } from "../../models";
 
 type Props = {
   setFormRef: (?HTMLInputElement) => void,
@@ -39,18 +39,18 @@ type Props = {
   detailsOpen: boolean,
   setURLRef: (?HTMLInputElement) => void,
   findIdx: number,
-  changeFindIdx: number => void,
+  changeFindIdx: (number) => void,
   nextFind: () => void,
   prevFind: () => void,
   changeSearch: (value: string) => void,
-  findResults: SearchResults
+  findResults: SearchResults,
 };
 
 export class Toolbar extends React.PureComponent<Props> {
   findInput: ?HTMLInputElement;
 
   showFind = () => {
-    if (this.props.searchTerm !== '') {
+    if (this.props.searchTerm !== "") {
       if (this.props.findResults.length > 0) {
         return (
           <span>
@@ -136,7 +136,7 @@ export class Toolbar extends React.PureComponent<Props> {
 
     this.props.addFilter(value, this.props.settings.caseSensitive);
     // $FlowFixMe
-    this.findInput.value = '';
+    this.findInput.value = "";
   };
 
   addHighlight = () => {
@@ -147,25 +147,25 @@ export class Toolbar extends React.PureComponent<Props> {
 
     this.props.addHighlight(value, this.props.settings.caseSensitive);
     // $FlowFixMe
-    this.findInput.value = '';
+    this.findInput.value = "";
   };
 
   componentDidMount() {
-    document.addEventListener('keydown', this.handleSearchShortcut);
+    document.addEventListener("keydown", this.handleSearchShortcut);
     if (this.findInput) {
-      this.findInput.addEventListener('keydown', this.handleSearchEnterKey);
+      this.findInput.addEventListener("keydown", this.handleSearchEnterKey);
     }
   }
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleSearchEnterKey);
+    document.removeEventListener("keydown", this.handleSearchEnterKey);
     if (this.findInput) {
-      this.findInput.removeEventListener('keydown', this.handleSearchEnterKey);
+      this.findInput.removeEventListener("keydown", this.handleSearchEnterKey);
     }
   }
 
   regexValidationState = () => {
     if (this.props.searchTermError != null) {
-      return 'error';
+      return "error";
     }
 
     return null;
@@ -191,7 +191,7 @@ export class Toolbar extends React.PureComponent<Props> {
                 <Popover id="popover-contained" title="Invalid search term">
                   {this.props.searchTermError != null
                     ? this.props.searchTermError.toString()
-                    : ''}
+                    : ""}
                 </Popover>
               </Overlay>
               <Col lg={6}>
@@ -221,8 +221,8 @@ export class Toolbar extends React.PureComponent<Props> {
                 </Button>
                 <Button onClick={this.props.togglePanel}>
                   {this.props.detailsOpen
-                    ? 'Hide Details \u25B4'
-                    : 'Show Details \u25BE'}
+                    ? "Hide Details \u25B4"
+                    : "Show Details \u25BE"}
                 </Button>
               </ButtonToolbar>
             </FormGroup>
@@ -245,7 +245,7 @@ function mapStateToProps(
     searchTerm: selectors.getLogViewerSearchTerm(state),
     searchTermError: selectors.getLogViewerSearchTermError(state),
     detailsOpen: selectors.getIsLogViewerSettingsPanel(state),
-    findResults: selectors.getFindResults(state)
+    findResults: selectors.getFindResults(state),
   };
 }
 
@@ -253,17 +253,14 @@ function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
   return {
     ...ownProps,
     togglePanel: () => dispatch(toggleSettingsPanel()),
-    nextFind: () => dispatch(search('next')),
-    prevFind: () => dispatch(search('prev')),
+    nextFind: () => dispatch(search("next")),
+    prevFind: () => dispatch(search("prev")),
     changeSearch: (value: string) => dispatch(changeSearch(value)),
     addFilter: (text: string, caseSensitive: boolean) =>
       dispatch(addFilter(text, caseSensitive)),
     addHighlight: (text: string, caseSensitive: boolean) =>
-      dispatch(addHighlight(text, caseSensitive))
+      dispatch(addHighlight(text, caseSensitive)),
   };
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Toolbar);
+export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);

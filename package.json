@@ -65,6 +65,7 @@
     "jest-junit": "^5.1.0",
     "localstorage-memory": "^1.0.2",
     "node-fetch": "^2.2.0",
+    "prettier": "^2.2.1",
     "react-test-renderer": "^16.4.1",
     "redux-logger": "^3.0.6",
     "redux-saga-test-plan": "^3.7.0",

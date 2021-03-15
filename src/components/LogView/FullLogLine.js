@@ -1,10 +1,10 @@
 // @flow strict
 
-import React from 'react';
-import LogLineText from './LogLineText';
-import LineNumber from './LineNumber';
-import LogOptions from './LogOptions';
-import type { Line, ColorMap, FilterMatchAnnotation } from 'src/models';
+import React from "react";
+import LogLineText from "./LogLineText";
+import LineNumber from "./LineNumber";
+import LogOptions from "./LogOptions";
+import type { Line, ColorMap, FilterMatchAnnotation } from "src/models";
 
 type Props = {
   bookmarked: boolean,
@@ -17,67 +17,75 @@ type Props = {
   highlight: boolean,
   line: Line,
   wrap: boolean,
-  lineRefCallback: (element: ?HTMLSpanElement, line: number, isUnmount?: boolean) => void,
+  lineRefCallback: (
+    element: ?HTMLSpanElement,
+    line: number,
+    isUnmount?: boolean
+  ) => void,
   toggleBookmark: (number[]) => void,
   updateSelectStartIndex: (number) => void,
   updateSelectEndIndex: (number) => void,
   highlightText: string[],
   handleDoubleClick: () => void,
-  prettyPrint: boolean
+  prettyPrint: boolean,
 } & FilterMatchAnnotation;
 
 type State = {
   line: Line,
-}
+};
 
 export default class FullLogLine extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      line: props.line
-    }
+      line: props.line,
+    };
   }
 
   handleMouseUp = () => {
     let endIndex = this.props.line.lineNumber;
     const selection = window.getSelection();
-    if (selection.type === 'Range') {
+    if (selection.type === "Range") {
       const selectionString = selection.toString();
-      if (selectionString !== '') {
+      if (selectionString !== "") {
         const lastTwo = selectionString.substr(-1);
-        if (lastTwo === '\n') {
+        if (lastTwo === "\n") {
           endIndex = this.props.line.lineNumber - 1;
         }
       }
     }
     this.props.updateSelectEndIndex(endIndex);
-  }
+  };
 
   handleMouseDown = () => {
     this.props.updateSelectStartIndex(this.props.line.lineNumber);
-  }
+  };
 
   render() {
-    let className = 'monospace hover-highlight inline';
+    let className = "monospace hover-highlight inline";
     if (this.props.bookmarked) {
-      className += ' bookmark-line';
+      className += " bookmark-line";
     }
     if (!this.props.wrap) {
-      className += ' no-wrap';
+      className += " no-wrap";
     } else {
-      className += ' wrap';
+      className += " wrap";
     }
     if (this.props.found) {
-      className += ' highlighted';
+      className += " highlighted";
     }
     if (this.props.highlight) {
-      className += ' filtered';
+      className += " filtered";
     }
     if (!this.props.line.isMatched) {
-      className += ' no-match'
+      className += " no-match";
     }
     return (
-      <div className={className} onMouseUp={this.handleMouseUp} onMouseDown={this.handleMouseDown} >
+      <div
+        className={className}
+        onMouseUp={this.handleMouseUp}
+        onMouseDown={this.handleMouseDown}
+      >
         <LineNumber
           lineNumber={this.props.line.lineNumber}
           toggleBookmark={this.props.toggleBookmark}

@@ -1,27 +1,27 @@
 // @flow
 
-import shouldLineMemoizer from './shouldLineMemoizer';
-import { type Line } from '../../models';
+import shouldLineMemoizer from "./shouldLineMemoizer";
+import { type Line } from "../../models";
 
 let x = 0;
 function terrifyingGlobalFunc() {
   return ++x;
 }
 
-test('linememo', function() {
+test("linememo", function () {
   const l: Line[] = [
     {
       lineNumber: 0,
-      text: 'asd',
+      text: "asd",
       port: null,
-      gitRef: null
+      gitRef: null,
     },
     {
       lineNumber: 1,
-      text: 'asd',
+      text: "asd",
       port: null,
-      gitRef: null
-    }
+      gitRef: null,
+    },
   ];
 
   const f = shouldLineMemoizer(terrifyingGlobalFunc);
@@ -35,7 +35,7 @@ test('linememo', function() {
   // shallow compare means this shouldn't call the memoised func
   // eslint-disable-next-line flowtype/no-flow-fix-me-comments
   // $FlowFixMe
-  l.text = 'something else';
+  l.text = "something else";
   expect(f(l[0])).toBe(1);
   expect(x).toBe(1);
   expect(f(l[0])).toBe(1);

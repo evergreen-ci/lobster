@@ -1,6 +1,24 @@
 # Lobster
 
-## Quick Start
+## What is Lobster
+Lobster is a log viewer implemented as a React-based frontend. As such its an easy to extend system.
+It also includes a node based backend to view local log files or cache the results locally.
+
+Lobster can:
+
+- search any bookmarked, filtered, or otherwise visible lines by regexp (the "Find" button). If the regexp finds multiple occurrences in the same log line, it will only count 
+  one, but it will highlight them all
+- apply one or more regexp filters to the log lines (the "Add Filter" button)
+- enable and disable individual filters
+- match or inverse match filters
+- cache the recently accessed files locally to improve load time
+- view locally-stored log files
+- double click on a line to bookmark (or unbookmark) that line and click on that line number on the left-hand side to jump to it
+- click on the "Wrap" toggle to turn line wrapping on and off
+- pre-format all bookmarked lines for display in JIRA. The JIRA text area contains the formatted bookmark content
+- ...and more!
+
+## Running Locally
 * `git clone https://github.com/evergreen-ci/lobster.git`
 * `cd lobster`
 * `npm install`
@@ -10,30 +28,6 @@ You can now view lobster by going to `http://localhost:9000/lobster?server=local
 
 Type `node server --help` for additional options, including the option to bind
 to 0.0.0.0
-
-## What is Lobster
-Lobster is a log viewer implemented as a React-based frontend. As such its an easy to extend system.
-It also includes a node based dummy backend to load files from the provided URI and optionally cache them locally.
-
-Lobster can:
-
-- apply a regexp filter to the log lines returned by the backend (e.g. ```primary|secondary``` will
-  show only lines that has primary or secondary etc.)
-- cache the recently accessed files locally to imporve load time. It can be set with the --cache
-  server command line argument (e.g. ```node server --cache=/tmp/lobster```)
-- once it's supported by the mongod and mongos binaries it will link the log lines of the evergreen
-log viewer raw output to the corresponding lines of code that printed them (those line are
-hightlighted). This feature is available in a demo-mode with the POC evergreen build:
-You can put ```https://logkeeper.mongodb.org/build/db6fa7c6a6d5fae2c959dd0996b71ead/test/59811f87c2ab68415701df6d?raw=1```
-in the Log field and click on the navy colored lines to get to the corresponding github line.
-
-## Running locally
-* `git clone https://github.com/evergreen-ci/lobster.git`
-* `cd lobster`
-* `npm install`
-* `npm run build`
-* `node server`
-* You can now view lobster by going to `http://localhost:9000/lobster?server=localhost:9000/api/log`.
 
 The root directory for the local server is build`./build `, so you can place local log files in this directory to allow them to be resolved by the local server.
 

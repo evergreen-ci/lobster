@@ -2,9 +2,8 @@
 
 import React from "react";
 import Fetch from ".";
-import { stringToEvergreenTaskLogType } from "../../models";
+import { stringToEvergreenTaskLogType, type LogIdentity } from "../../models";
 import type { ContextRouter } from "react-router-dom";
-import type { LogIdentity } from "../../models";
 
 function makeEvergreenLogID(
   isTest: boolean,
