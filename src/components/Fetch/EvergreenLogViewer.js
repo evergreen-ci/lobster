@@ -9,18 +9,22 @@ function makeEvergreenLogID(
   isTest: boolean,
   id: ?string,
   type: ?string,
-  execution: ?string
+  execution: ?string,
+  groupId: ?string,
+  taskId: ?string
 ): ?LogIdentity {
   if (id == null) {
     return null;
   }
+
+  const executionAsNumber = parseInt(execution, 10) || 0;
 
   if (type != null) {
     if (isTest) {
       return {
         type: "evergreen-test-by-name",
         task: id,
-        execution: parseInt(execution, 10),
+        execution: executionAsNumber,
         test: type,
       };
     }
@@ -31,14 +35,17 @@ function makeEvergreenLogID(
     return {
       type: "evergreen-task",
       id: id,
-      execution: parseInt(execution, 10) || 0,
+      execution: executionAsNumber,
       log: logType,
     };
   }
 
   return {
     type: "evergreen-test",
-    id: id,
+    id,
+    execution: executionAsNumber,
+    groupId: groupId || "",
+    taskId: taskId || "",
   };
 }
 
@@ -51,12 +58,14 @@ const EvergreenLogViewer = (props: ContextRouter) => {
     const line = matches[1];
     newProps.location.hash = `#scroll=${line}&bookmarks=${line}`;
   }
-  const { id, type, execution } = props.match.params;
+  const { id, type, execution, taskId, groupId } = props.match.params;
   const logID = makeEvergreenLogID(
     props.location.pathname.startsWith("/lobster/evergreen/test/"),
     id,
     type,
-    execution
+    execution,
+    groupId,
+    taskId
   );
 
   return <Fetch {...newProps} logIdentity={logID} />;

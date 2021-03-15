@@ -48,7 +48,7 @@ const Main = () => (
       />
       <Route
         exact
-        path="/lobster/evergreen/test/:id"
+        path="/lobster/evergreen/test/:taskId/:execution/:id/:groupId"
         render={evergreenLogviewer}
       />
       <Route
