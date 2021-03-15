@@ -1,9 +1,9 @@
 // @flow
 
-import { parseLogLine } from './transforms';
+import { parseLogLine } from "./transforms";
 
-describe('log transformations', () => {
-  test('json logs are formatted correctly', () => {
+describe("log transformations", () => {
+  test("json logs are formatted correctly", () => {
     const data = [
       '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.170+0000 d20521| {"t":{"$date":"2020-03-02T08:52:04.166+0000"},"s":"W", "c":"ASIO",    "id":22601,"ctx":"main","msg":"No TransportLayer configured during NetworkInterface startup"}',
       '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.170+0000 d20520| {"t":{"$date":"2020-03-02T08:52:04.167+0000"},"s":"I", "c":"STORAGE", "id":22315,"ctx":"initandlisten","msg":"wiredtiger_open config: {config}","attr":{"config":"create,cache_size=1024M,cache_overflow=(file_max=0M),session_max=33000,eviction=(threads_min=4,threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,archive=true,path=journal,compressor=snappy),file_manager=(close_idle_time=100000,close_scan_interval=10,close_handle_minimum=250),statistics_log=(wait=0),verbose=[recovery_progress,checkpoint_progress,compact_progress],"}}',
@@ -16,7 +16,7 @@ describe('log transformations', () => {
       '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521| {"t":{"$date":"2020-03-02T08:52:04.792+0000"},"s":"D2","c":"RECOVERY","id":4615631,"ctx":"initandlisten","msg":"loadCatalog:"}',
       '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521| {"t":{"$date":"2020-03-02T08:52:04.792+0000"},"s":"I", "c":"STORAGE", "id":22262,"ctx":"initandlisten","msg":"Timestamp monitor starting"}',
       '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521 {"t":{"$date":"2020-03-02T08:52:04.792+0000"},"s":"I", "c":"STORAGE", "id":22262,"ctx":"initandlisten","msg":"Timestamp monitor starting"}',
-      '[js_test:rollback_recovery_commit_transaction_before_stable_timestamp] 2020-05-04T00:19:23.903+0000 d21781| {"t":{"$date":"2020-05-04T00:19:23.887+00:00"},"s":"I",  "c":"REPL",     "id":51801,   "ctx":"ReplWriterWorker-2","msg":"Applied op","attr":{"command":{"lsid":{"id":{"$uuid":"da0c516c-95af-4e5d-8aaa-04fdf4244f18"},"uid":{"$binary":{"base64":"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=","subType":"0"}}},"txnNumber":0,"op":"c","ns":"admin.$cmd","o":{"applyOps":[{"op":"u","ns":"test.commit_transaction_rollback_recovery_data_already_applied","ui":{"$uuid":"57bf46ec-b85b-4aba-8c84-5141cd6ccb3e"},"o":{"$v":1,"$set":{}}}]}},"durationMillis":201},"truncated":{"command":{"o":{"applyOps":{"0":{"o":{"$set":{"c":{"type":"string","size":7340036}}}}}}}},"size":{"command":7340469}}'
+      '[js_test:rollback_recovery_commit_transaction_before_stable_timestamp] 2020-05-04T00:19:23.903+0000 d21781| {"t":{"$date":"2020-05-04T00:19:23.887+00:00"},"s":"I",  "c":"REPL",     "id":51801,   "ctx":"ReplWriterWorker-2","msg":"Applied op","attr":{"command":{"lsid":{"id":{"$uuid":"da0c516c-95af-4e5d-8aaa-04fdf4244f18"},"uid":{"$binary":{"base64":"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=","subType":"0"}}},"txnNumber":0,"op":"c","ns":"admin.$cmd","o":{"applyOps":[{"op":"u","ns":"test.commit_transaction_rollback_recovery_data_already_applied","ui":{"$uuid":"57bf46ec-b85b-4aba-8c84-5141cd6ccb3e"},"o":{"$v":1,"$set":{}}}]}},"durationMillis":201},"truncated":{"command":{"o":{"applyOps":{"0":{"o":{"$set":{"c":{"type":"string","size":7340036}}}}}}}},"size":{"command":7340469}}',
     ];
 
     const expected = [
@@ -31,7 +31,7 @@ describe('log transformations', () => {
       '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521| 2020-03-02T08:52:04.792+0000 D2 RECOVERY 4615631 [initandlisten] "loadCatalog:"',
       '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521| 2020-03-02T08:52:04.792+0000 I  STORAGE  22262   [initandlisten] "Timestamp monitor starting"',
       '[js_test:backup_restore_rolling] 2020-03-02T08:52:04.792+0000 d20521 | 2020-03-02T08:52:04.792+0000 I  STORAGE  22262   [initandlisten] "Timestamp monitor starting"',
-      '[js_test:rollback_recovery_commit_transaction_before_stable_timestamp] 2020-05-04T00:19:23.903+0000 d21781| 2020-05-04T00:19:23.887+00:00 I  REPL     51801   [ReplWriterWorker-2] "Applied op","attr":{"command":{"lsid":{"id":{"$uuid":"da0c516c-95af-4e5d-8aaa-04fdf4244f18"},"uid":{"$binary":{"base64":"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=","subType":"0"}}},"txnNumber":0,"op":"c","ns":"admin.$cmd","o":{"applyOps":[{"op":"u","ns":"test.commit_transaction_rollback_recovery_data_already_applied","ui":{"$uuid":"57bf46ec-b85b-4aba-8c84-5141cd6ccb3e"},"o":{"$v":1,"$set":{}}}]}},"durationMillis":201},"truncated":{"command":{"o":{"applyOps":{"0":{"o":{"$set":{"c":{"type":"string","size":7340036}}}}}}}},"size":{"command":7340469}'
+      '[js_test:rollback_recovery_commit_transaction_before_stable_timestamp] 2020-05-04T00:19:23.903+0000 d21781| 2020-05-04T00:19:23.887+00:00 I  REPL     51801   [ReplWriterWorker-2] "Applied op","attr":{"command":{"lsid":{"id":{"$uuid":"da0c516c-95af-4e5d-8aaa-04fdf4244f18"},"uid":{"$binary":{"base64":"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=","subType":"0"}}},"txnNumber":0,"op":"c","ns":"admin.$cmd","o":{"applyOps":[{"op":"u","ns":"test.commit_transaction_rollback_recovery_data_already_applied","ui":{"$uuid":"57bf46ec-b85b-4aba-8c84-5141cd6ccb3e"},"o":{"$v":1,"$set":{}}}]}},"durationMillis":201},"truncated":{"command":{"o":{"applyOps":{"0":{"o":{"$set":{"c":{"type":"string","size":7340036}}}}}}}},"size":{"command":7340469}',
     ];
 
     for (let i = 0; i < data.length; i++) {

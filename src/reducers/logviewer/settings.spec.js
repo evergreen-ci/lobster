@@ -1,7 +1,7 @@
-import settings from './settings';
-import * as actions from '../../actions/logviewer';
+import settings from "./settings";
+import * as actions from "../../actions/logviewer";
 
-describe('settings', function() {
+describe("settings", function () {
   const initialState = {
     wrap: false,
     caseSensitive: false,
@@ -9,7 +9,7 @@ describe('settings', function() {
     expandableRows: true,
   };
 
-  test('line-wrap', function() {
+  test("line-wrap", function () {
     const action = actions.toggleLineWrap();
 
     const state0 = settings(initialState, action);
@@ -18,17 +18,17 @@ describe('settings', function() {
     expect(state0.filterIntersection).toBe(false);
     expect(state0.expandableRows).toBe(true);
 
-    expect(window.localStorage.getItem('lobster-line-wrap')).toBe('true');
+    expect(window.localStorage.getItem("lobster-line-wrap")).toBe("true");
 
     const state1 = settings(state0, action);
     expect(state1.wrap).toBe(false);
     expect(state1.caseSensitive).toBe(false);
     expect(state1.filterIntersection).toBe(false);
     expect(state0.expandableRows).toBe(true);
-    expect(window.localStorage.getItem('lobster-line-wrap')).toBe('false');
+    expect(window.localStorage.getItem("lobster-line-wrap")).toBe("false");
   });
 
-  test('case-sensitivity', function() {
+  test("case-sensitivity", function () {
     const action = actions.toggleCaseSensitivity();
 
     const state0 = settings(initialState, action);
@@ -44,7 +44,7 @@ describe('settings', function() {
     expect(state0.expandableRows).toBe(true);
   });
 
-  test('filter-intersection', function() {
+  test("filter-intersection", function () {
     const action = actions.toggleFilterIntersection();
 
     const state0 = settings(initialState, action);
@@ -60,13 +60,13 @@ describe('settings', function() {
     expect(state0.expandableRows).toBe(true);
   });
 
-  test('expandable-rows', function() {
-    const state0 = initialState
+  test("expandable-rows", function () {
+    const state0 = initialState;
     expect(state0.wrap).toBe(false);
     expect(state0.caseSensitive).toBe(false);
     expect(state0.filterIntersection).toBe(false);
     expect(state0.expandableRows).toBe(true);
-    expect(window.localStorage.getItem('lobster-expabable-rows')).toBe(null);
+    expect(window.localStorage.getItem("lobster-expabable-rows")).toBe(null);
 
     const action = actions.toggleExpandableRows();
 
@@ -75,13 +75,15 @@ describe('settings', function() {
     expect(state1.caseSensitive).toBe(false);
     expect(state1.filterIntersection).toBe(false);
     expect(state1.expandableRows).toBe(false);
-    expect(window.localStorage.getItem('lobster-expandable-rows')).toBe('false');
+    expect(window.localStorage.getItem("lobster-expandable-rows")).toBe(
+      "false"
+    );
 
     const state2 = settings(state1, action);
     expect(state2.wrap).toBe(false);
     expect(state2.caseSensitive).toBe(false);
     expect(state2.filterIntersection).toBe(false);
     expect(state2.expandableRows).toBe(true);
-    expect(window.localStorage.getItem('lobster-expandable-rows')).toBe('true');
+    expect(window.localStorage.getItem("lobster-expandable-rows")).toBe("true");
   });
 });

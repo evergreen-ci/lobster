@@ -1,23 +1,23 @@
 // @flow strict
 
-import React from 'react';
-import type { Node as ReactNode } from 'react';
-import * as actions from '../../actions';
-import './style.css';
-import LogView from '../LogView/index';
-import Bookmarks from './Bookmarks';
-import { connect } from 'react-redux';
-import Toolbar from './Toolbar';
-import * as selectors from '../../selectors';
-import type { Dispatch } from 'redux';
-import type { ReduxState, LogIdentity, Line } from '../../models';
-import type { ContextRouter } from 'react-router-dom';
+import React from "react";
+import type { Node as ReactNode } from "react";
+import * as actions from "../../actions";
+import "./style.css";
+import LogView from "../LogView/index";
+import Bookmarks from "./Bookmarks";
+import { connect } from "react-redux";
+import Toolbar from "./Toolbar";
+import * as selectors from "../../selectors";
+import type { Dispatch } from "redux";
+import type { ReduxState, LogIdentity, Line } from "../../models";
+import type { ContextRouter } from "react-router-dom";
 
 type Props = {
   lines: Line[],
   logIdentity: ?LogIdentity,
-  loadLogByIdentity: (LogIdentity) => void
-} & ContextRouter
+  loadLogByIdentity: (LogIdentity) => void,
+} & ContextRouter;
 
 export class Fetch extends React.PureComponent<Props> {
   constructor(props: Props) {
@@ -31,7 +31,7 @@ export class Fetch extends React.PureComponent<Props> {
     if (!this.props.lines) {
       return <div />;
     }
-    return (<LogView />);
+    return <LogView />;
   }
 
   render() {
@@ -40,9 +40,7 @@ export class Fetch extends React.PureComponent<Props> {
         <Bookmarks />
         <div className="main">
           <Toolbar />
-          <div className="log-list">
-            {this.showLines()}
-          </div>
+          <div className="log-list">{this.showLines()}</div>
         </div>
       </div>
     );
@@ -52,14 +50,15 @@ export class Fetch extends React.PureComponent<Props> {
 function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>) {
   return {
     ...ownProps,
-    lines: selectors.getLogLines(state)
+    lines: selectors.getLogLines(state),
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<*>, ownProps) {
   return {
     ...ownProps,
-    loadLogByIdentity: (identity: LogIdentity) => dispatch(actions.loadLog(identity))
+    loadLogByIdentity: (identity: LogIdentity) =>
+      dispatch(actions.loadLog(identity)),
   };
 }
 

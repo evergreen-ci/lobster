@@ -1,19 +1,30 @@
 // @flow strict
 
-import { LOGVIEWER_CHANGE_FINDIDX, LOGVIEWER_CHANGE_SEARCH, LOGVIEWER_CHANGE_HIGHLIGHT, LOGVIEWER_CHANGE_FILTER, LOGVIEWER_CHANGE_START_RANGE, LOGVIEWER_CHANGE_END_RANGE, type Action } from '../../actions';
-import type { Find } from '../../models';
+import {
+  LOGVIEWER_CHANGE_FINDIDX,
+  LOGVIEWER_CHANGE_SEARCH,
+  LOGVIEWER_CHANGE_HIGHLIGHT,
+  LOGVIEWER_CHANGE_FILTER,
+  LOGVIEWER_CHANGE_START_RANGE,
+  LOGVIEWER_CHANGE_END_RANGE,
+  type Action,
+} from "../../actions";
+import type { Find } from "../../models";
 
 const initialState: Find = {
   findIdx: -1,
-  searchTerm: '',
+  searchTerm: "",
   regexError: null,
   startRange: 0,
-  endRange: -1
+  endRange: -1,
 };
 
-export default function(state: Find = initialState, action: Action): Find {
-  if (action.type === LOGVIEWER_CHANGE_HIGHLIGHT || action.type === LOGVIEWER_CHANGE_FILTER) {
-    return { ...state, searchTerm: '' };
+export default function (state: Find = initialState, action: Action): Find {
+  if (
+    action.type === LOGVIEWER_CHANGE_HIGHLIGHT ||
+    action.type === LOGVIEWER_CHANGE_FILTER
+  ) {
+    return { ...state, searchTerm: "" };
   }
   if (action.type === LOGVIEWER_CHANGE_FINDIDX) {
     return { ...state, findIdx: action.payload.index };
@@ -21,21 +32,21 @@ export default function(state: Find = initialState, action: Action): Find {
   if (action.type === LOGVIEWER_CHANGE_SEARCH) {
     const { text } = action.payload;
     if (!text) {
-      return { ...state, searchTerm: '', findIdx: -1 };
+      return { ...state, searchTerm: "", findIdx: -1 };
     }
     try {
       RegExp(text);
       return {
         ...state,
         regexError: null,
-        searchTerm: text
+        searchTerm: text,
       };
     } catch (e) {
       return {
         ...state,
         searchTerm: text,
         regexError: e,
-        findIdx: -1
+        findIdx: -1,
       };
     }
   }

@@ -1,14 +1,24 @@
 // @flow
 
-import urlParse from '../urlParse';
-import { toggleFilterIntersection, toggleCaseSensitivity, scrollToLine, ensureBookmark, loadBookmarks, loadInitialFilters, loadInitialHighlights } from '../actions';
-import { put, select } from 'redux-saga/effects';
-import type { Saga } from 'redux-saga';
-import { getLogViewerSettings } from '../selectors';
+import urlParse from "../urlParse";
+import {
+  toggleFilterIntersection,
+  toggleCaseSensitivity,
+  scrollToLine,
+  ensureBookmark,
+  loadBookmarks,
+  loadInitialFilters,
+  loadInitialHighlights,
+} from "../actions";
+import { put, select } from "redux-saga/effects";
+import type { Saga } from "redux-saga";
+import { getLogViewerSettings } from "../selectors";
 
-export default function*(): Saga<void> {
+export default function* (): Saga<void> {
   const urlData = urlParse(window.location.hash, window.location.href);
-  yield put(loadBookmarks([...urlData.bookmarks].map((n) => ({ lineNumber: n }))));
+  yield put(
+    loadBookmarks([...urlData.bookmarks].map((n) => ({ lineNumber: n })))
+  );
   yield put(loadInitialFilters([...urlData.filters]));
   yield put(loadInitialHighlights([...urlData.highlights]));
 
@@ -25,7 +35,10 @@ export default function*(): Saga<void> {
     }
   }
 
-  if (urlData.filterIsIntersection !== null && urlData.filterIsIntersection !== undefined) {
+  if (
+    urlData.filterIsIntersection !== null &&
+    urlData.filterIsIntersection !== undefined
+  ) {
     if (settings !== urlData.filterIsIntersection) {
       yield put(toggleFilterIntersection());
     }

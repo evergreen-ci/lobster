@@ -1,17 +1,22 @@
 // @flow
 
-import React from 'react';
-import Fetch from '.';
-import type { LogIdentity } from '../../models';
-import type { ContextRouter } from 'react-router-dom';
-import queryString from '../../thirdparty/query-string';
+import React from "react";
+import Fetch from ".";
+import type { LogIdentity } from "../../models";
+import type { ContextRouter } from "react-router-dom";
+import queryString from "../../thirdparty/query-string";
 
-function makeLogkeeperLogID(build: ?string, test: ?string, server: ?string, url: ?string): ?LogIdentity {
+function makeLogkeeperLogID(
+  build: ?string,
+  test: ?string,
+  server: ?string,
+  url: ?string
+): ?LogIdentity {
   if (server != null && url != null) {
     return {
-      type: 'lobster',
+      type: "lobster",
       server: server,
-      url: url
+      url: url,
     };
   }
 
@@ -21,25 +26,27 @@ function makeLogkeeperLogID(build: ?string, test: ?string, server: ?string, url:
 
   if (test == null) {
     return {
-      type: 'logkeeper',
-      build: build
+      type: "logkeeper",
+      build: build,
     };
   }
 
   return {
-    type: 'logkeeper',
+    type: "logkeeper",
     build: build,
-    test: test
+    test: test,
   };
 }
 
 const LogkeeperLogViewer = (props: ContextRouter) => {
-  const { server, url } = queryString.parse(props.location.search === '' ? props.location.hash : props.location.search);
+  const { server, url } = queryString.parse(
+    props.location.search === "" ? props.location.hash : props.location.search
+  );
 
   const { build, test } = props.match.params;
   const logID = makeLogkeeperLogID(build, test, server, url);
 
-  return (<Fetch {...props} logIdentity={logID} />);
+  return <Fetch {...props} logIdentity={logID} />;
 };
 
 export default LogkeeperLogViewer;
