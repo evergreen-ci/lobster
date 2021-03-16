@@ -6,7 +6,7 @@ import FullLogLine from "./FullLogLine";
 import ExpandableLogLine from "./ExpandableLogLine";
 import { findJSONObjectsInLine } from "./LogLineText";
 import { connect } from "react-redux";
-import { scrollToLine, toggleBookmark } from "../../actions";
+import { scrollToLine, toggleBookmark, toggleLineWrap } from "../../actions";
 import * as selectors from "../../selectors";
 import type {
   ReduxState,
@@ -39,6 +39,7 @@ type Props = {
   toggleBookmark: (number[]) => void,
   scrollToLine: (number) => void,
   prettyPrint: boolean,
+  toggleWrap: () => void,
 };
 
 type SkipLine = {|
@@ -368,9 +369,18 @@ class LogView extends React.Component<Props, State> {
     }
   }
 
+  componentDidMount() {
+    if (this.props.wrap) {
+      this.props.toggleWrap();
+    }
+  }
+
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const currBookmarksSet = new Set(this.props.bookmarks.map(({lineNumber}) => lineNumber));
+    const currBookmarksSet = new Set(
+      this.props.bookmarks.map(({ lineNumber }) => lineNumber)
+    );
     const lastLineNo = this.state.lines.length - 1;
+    // handle initial bookmark scroll
     if (
       // Don't scroll unless lines are rendered and bookmarks exist
       this.state.lines.length > 0 &&
@@ -399,6 +409,7 @@ class LogView extends React.Component<Props, State> {
         }
       }
     }
+
     if (
       this.props.scrollLine !== null &&
       this.props.scrollLine >= 0 &&
@@ -475,8 +486,9 @@ function mapStateToProps(
 function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
   return {
     ...ownProps,
-    toggleBookmark: (bk: number[]) => dispatch(toggleBookmark(bk)),
     scrollToLine: (n: number) => dispatch(scrollToLine(n)),
+    toggleBookmark: (bk: number[]) => dispatch(toggleBookmark(bk)),
+    toggleWrap: () => dispatch(toggleLineWrap()),
   };
 }
 
