@@ -53,6 +53,7 @@ function newSkipLine(start, end): SkipLine {
 }
 
 type State = {
+  hasScrolledToFirstBookmark: boolean,
   selectStartIndex: ?number,
   selectEndIndex: ?number,
   lines: Array<Line | SkipLine>,
@@ -67,6 +68,7 @@ class LogView extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
+      hasScrolledToFirstBookmark: props.bookmarks.length === 0,
       selectStartIndex: null,
       selectEndIndex: null,
       clicks: [],
@@ -367,6 +369,36 @@ class LogView extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
+    const currBookmarksSet = new Set(this.props.bookmarks.map(({lineNumber}) => lineNumber));
+    const lastLineNo = this.state.lines.length - 1;
+    if (
+      // Don't scroll unless lines are rendered and bookmarks exist
+      this.state.lines.length > 0 &&
+      prevState.lines.length === 0 &&
+      this.props.bookmarks.length &&
+      // Don't scroll when the bookmarks look like [0, last line]
+      !(
+        currBookmarksSet.size === 2 &&
+        currBookmarksSet.has(0) &&
+        currBookmarksSet.has(lastLineNo)
+      ) &&
+      // Don't scroll when we already tried to scroll before lol
+      !this.state.hasScrolledToFirstBookmark
+    ) {
+      const sortedBookmarks = [...this.props.bookmarks].sort(
+        (a, b) => a.lineNumber - b.lineNumber
+      );
+      for (let i = 0; i < sortedBookmarks.length; i++) {
+        const { lineNumber } = sortedBookmarks[i];
+        // don't bother scrolling to first line bc it's visible on render
+        if (lineNumber !== 0) {
+          this.setState({ hasScrolledToFirstBookmark: true }, () => {
+            this.props.scrollToLine(lineNumber);
+          });
+          break;
+        }
+      }
+    }
     if (
       this.props.scrollLine !== null &&
       this.props.scrollLine >= 0 &&
