@@ -385,7 +385,7 @@ class LogView extends React.Component<Props, State> {
       // Don't scroll unless lines are rendered and bookmarks exist
       this.state.lines.length > 0 &&
       prevState.lines.length === 0 &&
-      this.props.bookmarks.length &&
+      this.props.bookmarks.length > 0 &&
       // Don't scroll when the bookmarks look like [0, last line]
       !(
         currBookmarksSet.size === 2 &&
@@ -398,16 +398,11 @@ class LogView extends React.Component<Props, State> {
       const sortedBookmarks = [...this.props.bookmarks].sort(
         (a, b) => a.lineNumber - b.lineNumber
       );
-      for (let i = 0; i < sortedBookmarks.length; i++) {
-        const { lineNumber } = sortedBookmarks[i];
-        // don't bother scrolling to first line bc it's visible on render
-        if (lineNumber !== 0) {
-          this.setState({ hasScrolledToFirstBookmark: true }, () => {
-            this.props.scrollToLine(lineNumber);
-          });
-          break;
-        }
-      }
+      const { lineNumber } =
+        sortedBookmarks.find(({ lineNumber }) => lineNumber !== 0) || {};
+      this.setState({ hasScrolledToFirstBookmark: true }, () => {
+        this.props.scrollToLine(lineNumber);
+      });
     }
 
     if (
