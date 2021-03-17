@@ -1,7 +1,6 @@
 // @flow strict
 
 import React from "react";
-import type { Node as ReactNode } from "react";
 import * as actions from "../../actions";
 import "./style.css";
 import LogView from "../LogView/index";
@@ -27,20 +26,15 @@ export class Fetch extends React.PureComponent<Props> {
     }
   }
 
-  showLines(): ?ReactNode {
-    if (!this.props.lines) {
-      return <div />;
-    }
-    return <LogView />;
-  }
-
   render() {
     return (
       <div>
         <Bookmarks />
         <div className="main">
           <Toolbar />
-          <div className="log-list">{this.showLines()}</div>
+          <div className="log-list">
+            <LogView />
+          </div>
         </div>
       </div>
     );

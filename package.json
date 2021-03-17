@@ -44,7 +44,8 @@
     "lint:fix": "eslint --ext .js,.jsx --fix .",
     "eslint": "eslint --ext .js,.jsx",
     "debug": "react-scripts --inspect-brk test --runInBand --env=jsdom",
-    "generate-tasks": "node generate-tasks.js"
+    "generate-tasks": "node generate-tasks.js",
+    "prettier": "./node_modules/.bin/prettier --write ./src"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.6",
