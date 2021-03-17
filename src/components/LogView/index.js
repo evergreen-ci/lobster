@@ -400,9 +400,11 @@ class LogView extends React.Component<Props, State> {
       );
       const { lineNumber } =
         sortedBookmarks.find(({ lineNumber }) => lineNumber !== 0) || {};
-      this.setState({ hasScrolledToFirstBookmark: true }, () => {
-        this.props.scrollToLine(lineNumber);
-      });
+      if (lineNumber !== undefined) {
+        this.setState({ hasScrolledToFirstBookmark: true }, () => {
+          this.props.scrollToLine(lineNumber);
+        });
+      }
     }
 
     if (
