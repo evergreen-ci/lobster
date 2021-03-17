@@ -26,7 +26,6 @@ export class Fetch extends React.PureComponent<Props> {
     }
   }
 
-
   render() {
     return (
       <div>
