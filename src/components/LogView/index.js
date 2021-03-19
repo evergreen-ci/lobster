@@ -316,24 +316,25 @@ class LogView extends React.Component<Props, State> {
     ) {
       const line: Line = this.state.lines[index];
       const numBlocks = findJSONObjectsInLine(line.text).length;
+      console.log(index, "we up");
       return numBlocks * 20;
     }
     return 20;
   };
 
   scrollToLine(lineNumber: number) {
+    console.log("SCROLL TO LINE", lineNumber);
     const visibleIndex = this.findLineIdx(this.state.lines, lineNumber);
     if (visibleIndex === null || visibleIndex === undefined) {
       return;
     }
+    console.log(visibleIndex, lineNumber);
     let scrollIndex = visibleIndex - 20;
     if (scrollIndex < 0) {
       scrollIndex = 0;
     }
     if (this.logListRef != null) {
       this.logListRef.scrollTo(scrollIndex);
-
-      window.scrollBy(0, -45);
     }
   }
 
@@ -370,6 +371,7 @@ class LogView extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    // turn off toggle wrap if it's on
     if (this.props.wrap) {
       this.props.toggleWrap();
     }
@@ -437,17 +439,15 @@ class LogView extends React.Component<Props, State> {
   render() {
     if (this.state.lines.length !== 0) {
       return (
-        <div>
-          <ReactList
-            ref={this.setLogListRef}
-            itemRenderer={this.genList}
-            itemSizeEstimator={this.getLineHeight}
-            length={this.state.lines.length}
-            initialIndex={this.props.scrollLine}
-            type={"variable"}
-            useStaticSize={false}
-          />
-        </div>
+        <ReactList
+          ref={this.setLogListRef}
+          itemRenderer={this.genList}
+          itemSizeEstimator={this.getLineHeight}
+          length={this.state.lines.length}
+          initialIndex={0}
+          type={"variable"}
+          useStaticSize={false}
+        />
       );
     }
     return <div></div>;
