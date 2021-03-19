@@ -29,10 +29,9 @@ export class Fetch extends React.PureComponent<Props> {
   render() {
     return (
       <div>
-        <Bookmarks />
         <div className="main">
           <Toolbar />
-          <div className="log-list">
+            <Bookmarks />
             <LogView />
           </div>
         </div>

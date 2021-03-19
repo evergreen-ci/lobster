@@ -82,7 +82,7 @@ const Header = () => (
 
 const App = () => (
   <BrowserRouter>
-    <div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <CacheModal />
       <Header />
       <Main />

@@ -439,15 +439,17 @@ class LogView extends React.Component<Props, State> {
   render() {
     if (this.state.lines.length !== 0) {
       return (
-        <ReactList
-          ref={this.setLogListRef}
-          itemRenderer={this.genList}
-          itemSizeEstimator={this.getLineHeight}
-          length={this.state.lines.length}
-          initialIndex={0}
-          type={"variable"}
-          useStaticSize={false}
-        />
+        <div>
+          <ReactList
+            ref={this.setLogListRef}
+            itemRenderer={this.genList}
+            itemSizeEstimator={this.getLineHeight}
+            length={this.state.lines.length}
+            initialIndex={0}
+            type={"variable"}
+            useStaticSize={false}
+          />
+        </div>
       );
     }
     return <div></div>;
