@@ -31,9 +31,8 @@ export class Fetch extends React.PureComponent<Props> {
       <div>
         <div className="main">
           <Toolbar />
-            <Bookmarks />
-            <LogView />
-          </div>
+          <Bookmarks />
+          <LogView />
         </div>
       </div>
     );
