@@ -1,13 +1,13 @@
 // @flow strict
 
-import React from "react";
-import ReactList from "react-list";
-import FullLogLine from "./FullLogLine";
-import ExpandableLogLine from "./ExpandableLogLine";
-import { findJSONObjectsInLine } from "./LogLineText";
-import { connect } from "react-redux";
-import { scrollToLine, toggleBookmark, toggleLineWrap } from "../../actions";
-import * as selectors from "../../selectors";
+import React from 'react';
+import ReactList from 'react-list';
+import FullLogLine from './FullLogLine';
+import ExpandableLogLine from './ExpandableLogLine';
+import { findJSONObjectsInLine } from './LogLineText';
+import { connect } from 'react-redux';
+import { scrollToLine, toggleBookmark, toggleLineWrap } from '../../actions';
+import * as selectors from '../../selectors';
 import type {
   ReduxState,
   ColorMap,
@@ -15,9 +15,9 @@ import type {
   HighlightLineData,
   Bookmark,
   Line,
-} from "src/models";
+} from 'src/models';
 
-import "./style.css";
+import './style.css';
 
 const MAX_REC_DEPTH = 64; // Should be ok until there < 18446744073709551616 lines
 
@@ -50,7 +50,7 @@ type SkipLine = {|
 
 // Just a helper
 function newSkipLine(start, end): SkipLine {
-  return { start: start, end: end, kind: "SkipLine" };
+  return { start: start, end: end, kind: 'SkipLine' };
 }
 
 type State = {
@@ -102,7 +102,7 @@ class LogView extends React.Component<Props, State> {
     // Should never happen, but in case of bugs it's better
     // than infinite recursion loop
     if (depth < 0) {
-      throw new Error("Max depth reached!");
+      throw new Error('Max depth reached!');
     }
 
     const midIdx =
@@ -113,7 +113,7 @@ class LogView extends React.Component<Props, State> {
         : Math.floor((end - start) / 2) + start; // Middle idx calc
     const midItem = data[midIdx];
     // disjoint union refinement
-    if (midItem.kind === "SkipLine") {
+    if (midItem.kind === 'SkipLine') {
       if (midItem.start <= lineNumber && lineNumber <= midItem.end) {
         return midIdx;
       } else if (lineNumber < midItem.start) {
@@ -250,7 +250,7 @@ class LogView extends React.Component<Props, State> {
   };
 
   findBookmark(bookmarkList: Bookmark[], lineNum: number): number {
-    return bookmarkList.findIndex(function (bookmark) {
+    return bookmarkList.findIndex(function(bookmark) {
       return bookmark.lineNumber === lineNum;
     });
   }
@@ -268,7 +268,7 @@ class LogView extends React.Component<Props, State> {
   genList = (index: number) => {
     const item = this.state.lines[index];
     // disjoint union refinement
-    if (item.kind === "SkipLine") {
+    if (item.kind === 'SkipLine') {
       // IF SkipLine
       const skipLine: SkipLine = item;
       return (
@@ -288,7 +288,7 @@ class LogView extends React.Component<Props, State> {
     <FullLogLine
       lineRefCallback={this.lineRefCallback}
       // $FlowFixMe
-      key={lineNumber + ":" + line.isMatched}
+      key={lineNumber + ':' + line.isMatched}
       found={lineNumber === this.props.findResults[this.props.searchFindIdx]}
       bookmarked={this.findBookmark(this.props.bookmarks, lineNumber) !== -1}
       highlight={this.props.highlights.highlightLines.includes(line)}
@@ -321,19 +321,23 @@ class LogView extends React.Component<Props, State> {
     return 20;
   };
 
+  // Scroll to a line number
   scrollToLine(lineNumber: number) {
     const visibleIndex = this.findLineIdx(this.state.lines, lineNumber);
     if (visibleIndex === null || visibleIndex === undefined) {
       return;
     }
-    let scrollIndex = visibleIndex - 20;
+    let scrollIndex = visibleIndex;
     if (scrollIndex < 0) {
       scrollIndex = 0;
     }
     if (this.logListRef != null) {
-      this.logListRef.scrollTo(scrollIndex);
-
-      window.scrollBy(0, -45);
+      // Use react list ref scroll to function to scroll to a specific line index.
+      this.logListRef.scrollTo(scrollIndex - 2);
+      if (scrollIndex === 0) {
+        // Account for toolbar padding if we are scrolling to the first item on the list
+        window.scrollBy(0, -45);
+      }
     }
   }
 
@@ -352,7 +356,7 @@ class LogView extends React.Component<Props, State> {
       return;
     }
     const findElements = line.getElementsByClassName(
-      "findResult" + renderedLineNum
+      'findResult' + renderedLineNum
     );
     if (findElements.length > 0) {
       const elem = findElements[0];
@@ -365,7 +369,7 @@ class LogView extends React.Component<Props, State> {
         // Scroll so the leftmost part of the component is 2/3 of the way into the screen.
         scrollX = position.left - windowWidth / 3;
       }
-      window.scrollTo(scrollX, scrollY);
+      window.scrollTo(scrollX, scrollY + 45);
     }
   }
 
@@ -444,7 +448,7 @@ class LogView extends React.Component<Props, State> {
             itemSizeEstimator={this.getLineHeight}
             length={this.state.lines.length}
             initialIndex={this.props.scrollLine}
-            type={"variable"}
+            type={'variable'}
             useStaticSize={false}
           />
         </div>
