@@ -323,21 +323,14 @@ class LogView extends React.Component<Props, State> {
 
   // Scroll to a line number
   scrollToLine(lineNumber: number) {
-    const visibleIndex = this.findLineIdx(this.state.lines, lineNumber);
-    if (visibleIndex === null || visibleIndex === undefined) {
+    const scrollIndex = this.findLineIdx(this.state.lines, lineNumber);
+    if (scrollIndex === null || scrollIndex === undefined) {
       return;
     }
-    let scrollIndex = visibleIndex;
-    if (scrollIndex < 0) {
-      scrollIndex = 0;
-    }
+
     if (this.logListRef != null) {
       // Use react list ref scroll to function to scroll to a specific line index.
-      this.logListRef.scrollTo(scrollIndex - 2);
-      if (scrollIndex === 0) {
-        // Account for toolbar padding if we are scrolling to the first item on the list
-        window.scrollBy(0, -45);
-      }
+      this.logListRef.scrollTo(scrollIndex);
     }
   }
 
@@ -441,7 +434,7 @@ class LogView extends React.Component<Props, State> {
   render() {
     if (this.state.lines.length !== 0) {
       return (
-        <div>
+        <div className="react-list-container" >
           <ReactList
             ref={this.setLogListRef}
             itemRenderer={this.genList}
