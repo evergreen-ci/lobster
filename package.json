@@ -17,7 +17,7 @@
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.4.1",
     "react-highlight-words": "^0.12.0",
-    "react-list": "^0.8.10",
+    "react-list": "^0.8.16",
     "react-redux": "^5.0.7",
     "react-router-bootstrap": "^0.24.4",
     "react-router-dom": "^4.3.1",

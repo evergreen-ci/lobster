@@ -33,3 +33,10 @@
 [data-pseudo-content]::before {
     content: attr(data-pseudo-content);
 }
+
+.react-list-container {
+  /* Full page height - the height of the header bar */
+  height: calc(100vh - 45px); 
+  overflow: auto;
+  width: 100%;
+}

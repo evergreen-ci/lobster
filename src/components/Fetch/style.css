@@ -128,3 +128,7 @@
     resize: none;
     width: 75px;
 }
+
+.bookmark:hover {
+    cursor: pointer;
+}

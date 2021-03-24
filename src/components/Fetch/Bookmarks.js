@@ -9,6 +9,7 @@ import type {
   Bookmark as BookmarkType,
   LogIdentity,
 } from "../../models";
+import "./style.css";
 
 type Props = {|
   bookmarks: BookmarkType[],
@@ -48,7 +49,7 @@ export type BookmarkProps = {
 
 export const Bookmark = (props: BookmarkProps) => {
   return (
-    <div onClick={props.scrollFunc} key={props.lineNumber}>
+    <div className="bookmark" onClick={props.scrollFunc} key={props.lineNumber}>
       {props.lineNumber}
     </div>
   );
