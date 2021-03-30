@@ -28,10 +28,9 @@ export function testLogURL(id: string): string {
 export function testLogRawURL(
   id: string,
   taskId: string,
-  execution: string,
-  groupId: string
+  execution: string
 ): string {
-  return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}/${id}?text=true&group_id=${groupId}`;
+  return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}/${id}?text=true`;
 }
 
 export function testLogByNameURL(
@@ -60,14 +59,23 @@ export function taskURL(taskID: string, execution: ?number): string {
   return base + `/${execution}`;
 }
 
-export function fetchEvergreen(log: EvergreenLog): Promise<Response> {
+export async function fetchEvergreen(log: EvergreenLog): Promise<Response> {
   const init = { method: "GET", credentials: "include" };
   let req;
   if (log.type === "evergreen-task") {
     req = new Request(taskLogRawURL(log.id, log.execution, log.log), init);
   } else if (log.type === "evergreen-test") {
+    const evgAPITestReq = new Request(
+      `${EVERGREEN_BASE}/rest/v2/tasks/${log.taskId}/tests?execution=${log.execution}&test_name=${log.testfile}`
+    );
+    const res = await window.fetch(evgAPITestReq, {
+      credentials: "include",
+    });
+    console.log(res);
+
     req = new Request(
-      testLogRawURL(log.id, log.taskId, log.execution, log.groupId),
+      "lol",
+      //testLogRawURL(log.id, log.taskId, log.execution, log.groupId),
       init
     );
   } else if (log.type === "evergreen-test-by-name") {

@@ -11,7 +11,8 @@ function makeEvergreenLogID(
   type: ?string,
   execution: ?string,
   groupId: ?string,
-  taskId: ?string
+  taskId: ?string,
+  testfile: ?string
 ): ?LogIdentity {
   if (id == null) {
     return null;
@@ -42,7 +43,8 @@ function makeEvergreenLogID(
 
   return {
     type: "evergreen-test",
-    id,
+    testfile: testfile || "",
+    testId: id,
     execution: executionAsNumber,
     groupId: groupId || "",
     taskId: taskId || "",
@@ -58,14 +60,15 @@ const EvergreenLogViewer = (props: ContextRouter) => {
     const line = matches[1];
     newProps.location.hash = `#scroll=${line}&bookmarks=${line}`;
   }
-  const { id, type, execution, taskId, groupId } = props.match.params;
+  const { id, type, execution, taskId, groupId, testfile } = props.match.params;
   const logID = makeEvergreenLogID(
     props.location.pathname.startsWith("/lobster/evergreen/test/"),
     id,
     type,
     execution,
     groupId,
-    taskId
+    taskId,
+    testfile
   );
 
   return <Fetch {...newProps} logIdentity={logID} />;
