@@ -388,9 +388,11 @@ class LogView extends React.Component<Props, State> {
     } else if (
       this.props.shareLine > -1 &&
       this.state.lines.length > 0 &&
-      prevState.lines.length === 0
+      !this.state.hasScrolledToFirstBookmark
     ) {
-      this.scrollToLine(this.props.shareLine);
+      this.setState({ hasScrolledToFirstBookmark: true }, () => {
+        this.props.scrollToLine(this.props.shareLine);
+      });
     } else if (
       // Only process bookmark scrolling when scroll query param is omitted from URL.
       // Don't scroll unless lines are rendered and bookmarks exist
