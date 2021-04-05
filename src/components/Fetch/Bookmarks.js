@@ -2,6 +2,8 @@
 
 import React from "react";
 import { connect } from "react-redux";
+import { faArrowCircleLeft } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as actions from "../../actions";
 import * as selectors from "../../selectors";
 import type {
@@ -14,6 +16,7 @@ import "./style.css";
 type Props = {|
   bookmarks: BookmarkType[],
   scrollToLine: (number) => void,
+  shareLine: number,
 |};
 
 export class Bookmarks extends React.PureComponent<Props> {
@@ -33,6 +36,7 @@ export class Bookmarks extends React.PureComponent<Props> {
                 key={key}
                 lineNumber={bookmark.lineNumber}
                 scrollFunc={this.scroll}
+                emphasize={bookmark.lineNumber === this.props.shareLine}
               />
             );
           })}
@@ -45,12 +49,14 @@ export class Bookmarks extends React.PureComponent<Props> {
 export type BookmarkProps = {
   lineNumber: number,
   scrollFunc: (event: SyntheticMouseEvent<HTMLInputElement>) => void,
+  emphasize: boolean,
 };
 
 export const Bookmark = (props: BookmarkProps) => {
   return (
     <div className="bookmark" onClick={props.scrollFunc} key={props.lineNumber}>
-      {props.lineNumber}
+      {props.lineNumber}{" "}
+      {props.emphasize && <FontAwesomeIcon icon={faArrowCircleLeft} />}
     </div>
   );
 };
@@ -59,6 +65,7 @@ function mapStateToProps(state: ReduxState, ownProps: $Shape<Props>) {
   return {
     ...ownProps,
     bookmarks: selectors.getLogViewerBookmarks(state),
+    shareLine: selectors.getLogViewerShareLine(state),
   };
 }
 
