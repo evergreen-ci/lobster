@@ -201,6 +201,7 @@ export default function (
   const bookmarks: Set<number> = new Set([
     ...parseBookmarks(hash.query.bookmarks),
     ...parseBookmarks(query.query.bookmarks),
+    ...(shareLine > -1 ? [shareLine] : []),
   ]);
 
   let scroll = parseInt(hash.query.scroll || query.query.scroll, 10);
