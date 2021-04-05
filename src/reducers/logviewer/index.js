@@ -7,6 +7,8 @@ import find from "./find";
 import settings from "./settings";
 import settingsPanel from "./settingsPanel";
 import scrollLine from "./scrollLine";
+import shareLine from "./shareLine";
+
 import { combineReducers } from "redux";
 
 export default combineReducers({
@@ -17,4 +19,5 @@ export default combineReducers({
   settings: settings,
   settingsPanel: settingsPanel,
   scrollLine: scrollLine,
+  shareLine: shareLine,
 });

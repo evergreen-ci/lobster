@@ -16,6 +16,8 @@ export const getLogViewerHighlights = (state: ReduxState) =>
   getLogViewer(state).highlights;
 export const getLogViewerBookmarks = (state: ReduxState) =>
   getLogViewer(state).bookmarks;
+const getLogViewerShareLine = (state: ReduxState) =>
+  getLogViewer(state).shareLine;
 
 export const getLogViewerFind = (state: ReduxState) => getLogViewer(state).find;
 export const getLogViewerFindIdx = (state: ReduxState) =>
