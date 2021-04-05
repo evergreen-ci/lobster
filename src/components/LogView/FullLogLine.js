@@ -1,12 +1,24 @@
 // @flow strict
 
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
 import LogLineText from "./LogLineText";
+import { connect } from "react-redux";
 import LineNumber from "./LineNumber";
+import * as selectors from "../../selectors";
+import * as actions from "../../actions";
 import LogOptions from "./LogOptions";
-import type { Line, ColorMap, FilterMatchAnnotation } from "src/models";
+import queryString from "../../thirdparty/query-string";
+import type {
+  ReduxState,
+  Line,
+  ColorMap,
+  FilterMatchAnnotation,
+} from "src/models";
 
 type Props = {
+  shareLine: number,
   bookmarked: boolean,
   caseSensitive: boolean,
   colorMap: ColorMap,
@@ -34,7 +46,7 @@ type State = {
   line: Line,
 };
 
-export default class FullLogLine extends React.Component<Props, State> {
+class FullLogLine extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -86,6 +98,23 @@ export default class FullLogLine extends React.Component<Props, State> {
         onMouseUp={this.handleMouseUp}
         onMouseDown={this.handleMouseDown}
       >
+        <FontAwesomeIcon
+          onClick={() => {
+            const nextHash = queryString.stringify({
+              ...queryString.parseUrl(window.location.href.replace("#", "?"))
+                .query,
+              shareLine: this.props.line.lineNumber,
+            });
+            window.history.replaceState(
+              {},
+              "",
+              window.location.pathname + "#" + nextHash
+            );
+            window.dispatchEvent(new HashChangeEvent("hashchange"));
+          }}
+          style={{ cursor: "pointer" }}
+          icon={faLink}
+        />
         <LineNumber
           lineNumber={this.props.line.lineNumber}
           toggleBookmark={this.props.toggleBookmark}
@@ -110,3 +139,23 @@ export default class FullLogLine extends React.Component<Props, State> {
     );
   }
 }
+
+function mapStateToProps(
+  state: ReduxState,
+  ownProps: $Shape<Props>
+): $Shape<Props> {
+  return {
+    ...ownProps,
+    shareLine: selectors.getLogViewerShareLine(state),
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
+  return {
+    ...ownProps,
+    loadShareLine: (lineNum: number) =>
+      dispatch(actions.loadShareLine(lineNum)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FullLogLine);
