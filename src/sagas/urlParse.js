@@ -9,6 +9,7 @@ import {
   loadBookmarks,
   loadInitialFilters,
   loadInitialHighlights,
+  loadShareLine,
 } from "../actions";
 import { put, select } from "redux-saga/effects";
 import type { Saga } from "redux-saga";
@@ -19,6 +20,7 @@ export default function* (): Saga<void> {
   yield put(
     loadBookmarks([...urlData.bookmarks].map((n) => ({ lineNumber: n })))
   );
+  yield put(loadShareLine(urlData.shareLine));
   yield put(loadInitialFilters([...urlData.filters]));
   yield put(loadInitialHighlights([...urlData.highlights]));
 

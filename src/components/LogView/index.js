@@ -40,6 +40,7 @@ type Props = {
   scrollToLine: (number) => void,
   prettyPrint: boolean,
   toggleWrap: () => void,
+  shareLine: number,
 };
 
 type SkipLine = {|
@@ -65,9 +66,9 @@ type State = {
 class LogView extends React.Component<Props, State> {
   logListRef: ?ReactList = null;
   lineMap: Map<number, HTMLSpanElement> = new Map();
-
   constructor(props) {
     super(props);
+    console.log("shareline", props.shareLine);
     this.state = {
       hasScrolledToFirstBookmark: props.bookmarks.length === 0,
       selectStartIndex: null,
@@ -379,6 +380,19 @@ class LogView extends React.Component<Props, State> {
     const lastLineNo = this.state.lines.length - 1;
     // handle initial bookmark scroll
     if (
+      this.props.scrollLine !== null &&
+      this.props.scrollLine !== prevProps.scrollLine &&
+      this.state.lines.length > 0
+    ) {
+      this.scrollToLine(this.props.scrollLine);
+    } else if (
+      this.props.shareLine > -1 &&
+      this.state.lines.length > 0 &&
+      prevState.lines.length === 0
+    ) {
+      this.scrollToLine(this.props.shareLine);
+    } else if (
+      // Only process bookmark scrolling when scroll query param is omitted from URL.
       // Don't scroll unless lines are rendered and bookmarks exist
       this.state.lines.length > 0 &&
       prevState.lines.length === 0 &&
@@ -402,14 +416,6 @@ class LogView extends React.Component<Props, State> {
           this.props.scrollToLine(lineNumber);
         });
       }
-    }
-
-    if (
-      this.props.scrollLine !== null &&
-      this.props.scrollLine >= 0 &&
-      this.props.scrollLine !== prevProps.scrollLine
-    ) {
-      this.scrollToLine(this.props.scrollLine);
     }
 
     // If the find index changed, scroll to the right if necessary.
@@ -474,6 +480,7 @@ function mapStateToProps(
     lines: lines,
     findResults: selectors.getFindResults(state),
     expandableFilterData: [],
+    shareLine: selectors.getLogViewerShareLine(state),
   };
 }
 
