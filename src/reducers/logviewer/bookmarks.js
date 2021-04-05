@@ -35,7 +35,9 @@ export default function (
   action: Action
 ): Bookmark[] {
   if (action.type === LOGVIEWER_LOAD_BOOKMARKS) {
-    return action.payload.bookmarksArr;
+    const clone = [...action.payload.bookmarksArr];
+    clone.sort((a, b) => a.lineNumber - b.lineNumber);
+    return clone;
   }
 
   if (action.type === LOGVIEWER_ENSURE_BOOKMARK) {
