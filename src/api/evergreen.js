@@ -61,23 +61,27 @@ export function taskURL(taskID: string, execution: ?number): string {
 
 export async function fetchEvergreen(log: EvergreenLog): Promise<Response> {
   const init = { method: "GET", credentials: "include" };
-  let req;
+  let req = "";
   if (log.type === "evergreen-task") {
     req = new Request(taskLogRawURL(log.id, log.execution, log.log), init);
   } else if (log.type === "evergreen-test") {
-    const evgAPITestReq = new Request(
-      `${EVERGREEN_BASE}/rest/v2/tasks/${log.taskId}/tests?execution=${log.execution}&test_name=${log.testfile}`
-    );
-    const res = await window.fetch(evgAPITestReq, {
+    const testMetadataUrl = `${EVERGREEN_BASE}/rest/v2/tasks/${log.taskId}/tests?execution=${log.execution}&test_id=${log.testId}`;
+    const testMetadataReq = new Request(testMetadataUrl);
+    const res = await window.fetch(testMetadataReq, {
       credentials: "include",
     });
-    console.log(res);
-
-    req = new Request(
-      "lol",
-      //testLogRawURL(log.id, log.taskId, log.execution, log.groupId),
-      init
-    );
+    const data = await res.json();
+    let testLogUrl = "";
+    if (Array.isArray(data) && data.length) {
+      if (data.length > 1) {
+        console.error(
+          "Multiple results error: multiple results came back from the rest v2 tests endpoint instead of 1. Url:",
+          testMetadataUrl
+        );
+      }
+      testLogUrl = data[0].logs.url_raw_display;
+      req = new Request(`${EVERGREEN_BASE}${testLogUrl}`, init);
+    }
   } else if (log.type === "evergreen-test-by-name") {
     req = new Request(
       testLogByNameRawURL(log.task, log.execution, log.test),
