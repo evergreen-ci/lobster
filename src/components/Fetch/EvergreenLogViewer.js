@@ -14,7 +14,7 @@ function makeEvergreenLogID(params: {
   const { logType, execution, testId, taskId } = params;
   const executionAsNumber = parseInt(execution, 10) || 0;
 
-  if (logType != null) {
+  if (logType) {
     return {
       type: "evergreen-task",
       id: taskId || "",
