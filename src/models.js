@@ -215,7 +215,7 @@ export type EvergreenTaskLog = $ReadOnly<{
 
 export type EvergreenTestLog = $ReadOnly<{
   type: "evergreen-test",
-  testId: string,
+  testfile: string,
   taskId: string,
   execution: number,
   testId: string,

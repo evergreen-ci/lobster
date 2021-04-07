@@ -66,7 +66,7 @@ export async function fetchEvergreen(log: EvergreenLog): Promise<Response> {
     req = new Request(taskLogRawURL(log.id, log.execution, log.log), init);
   } else if (log.type === "evergreen-test") {
     const evgAPITestReq = new Request(
-      `${EVERGREEN_BASE}/rest/v2/tasks/${log.taskId}/tests?execution=${log.execution}&test_name=${log.testId}`
+      `${EVERGREEN_BASE}/rest/v2/tasks/${log.taskId}/tests?execution=${log.execution}&test_name=${log.testfile}`
     );
     const res = await window.fetch(evgAPITestReq, {
       credentials: "include",
