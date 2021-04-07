@@ -59,13 +59,25 @@ export function taskURL(taskID: string, execution: ?number): string {
   return base + `/${execution}`;
 }
 
+const getTestMetadataURL = ({
+  taskId,
+  execution,
+  testId,
+}: {
+  taskId: string,
+  execution: number,
+  testId: string,
+}) =>
+  `${EVERGREEN_BASE}/rest/v2/tasks/${taskId}/tests?execution=${execution}&test_id=${testId}`;
+
 export async function fetchEvergreen(log: EvergreenLog): Promise<Response> {
   const init = { method: "GET", credentials: "include" };
   let req = "";
   if (log.type === "evergreen-task") {
     req = new Request(taskLogRawURL(log.id, log.execution, log.log), init);
   } else if (log.type === "evergreen-test") {
-    const testMetadataUrl = `${EVERGREEN_BASE}/rest/v2/tasks/${log.taskId}/tests?execution=${log.execution}&test_id=${log.testId}`;
+    const { taskId, testId, execution } = log;
+    const testMetadataUrl = getTestMetadataURL({ execution, taskId, testId });
     const testMetadataReq = new Request(testMetadataUrl);
     const res = await window.fetch(testMetadataReq, {
       credentials: "include",
