@@ -68,7 +68,6 @@ class LogView extends React.Component<Props, State> {
   lineMap: Map<number, HTMLSpanElement> = new Map();
   constructor(props) {
     super(props);
-    console.log("shareline", props.shareLine);
     this.state = {
       hasScrolledToFirstBookmark: props.bookmarks.length === 0,
       selectStartIndex: null,
