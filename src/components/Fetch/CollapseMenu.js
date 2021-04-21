@@ -314,7 +314,6 @@ export class CollapseMenu extends React.PureComponent<Props> {
     }
   }
   render() {
-    console.log(this.state);
     return (
       <Collapse className="collapse-menu" in={this.props.detailsOpen}>
         <div>
