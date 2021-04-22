@@ -55,7 +55,7 @@ function newSkipLine(start, end): SkipLine {
 }
 
 type State = {
-  hasScrolledToFirstBookmark: boolean,
+  hasScrolledToShareLine: boolean,
   selectStartIndex: ?number,
   selectEndIndex: ?number,
   lines: Array<Line | SkipLine>,
@@ -69,7 +69,7 @@ class LogView extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
-      hasScrolledToFirstBookmark: props.bookmarks.length === 0,
+      hasScrolledToShareLine: props.bookmarks.length === 0,
       selectStartIndex: null,
       selectEndIndex: null,
       clicks: [],
@@ -388,36 +388,11 @@ class LogView extends React.Component<Props, State> {
     } else if (
       this.props.shareLine > -1 &&
       this.state.lines.length > 0 &&
-      !this.state.hasScrolledToFirstBookmark
+      !this.state.hasScrolledToShareLine
     ) {
-      this.setState({ hasScrolledToFirstBookmark: true }, () => {
+      this.setState({ hasScrolledToShareLine: true }, () => {
         this.props.scrollToLine(this.props.shareLine);
       });
-    } else if (
-      // Only process bookmark scrolling when scroll query param is omitted from URL.
-      // Don't scroll unless lines are rendered and bookmarks exist
-      this.state.lines.length > 0 &&
-      prevState.lines.length === 0 &&
-      this.props.bookmarks.length > 0 &&
-      // Don't scroll when the bookmarks look like [0, last line]
-      !(
-        currBookmarksSet.size === 2 &&
-        currBookmarksSet.has(0) &&
-        currBookmarksSet.has(lastLineNo)
-      ) &&
-      // Don't scroll when we already tried to scroll before lol
-      !this.state.hasScrolledToFirstBookmark
-    ) {
-      const sortedBookmarks = [...this.props.bookmarks].sort(
-        (a, b) => a.lineNumber - b.lineNumber
-      );
-      const { lineNumber } =
-        sortedBookmarks.find(({ lineNumber }) => lineNumber !== 0) || {};
-      if (lineNumber !== undefined) {
-        this.setState({ hasScrolledToFirstBookmark: true }, () => {
-          this.props.scrollToLine(lineNumber);
-        });
-      }
     }
 
     // If the find index changed, scroll to the right if necessary.
