@@ -43,17 +43,12 @@ const Main = () => (
       <Route path="/lobster/build/:build/all" render={logviewer} />
       <Route
         exact
-        path="/lobster/evergreen/task/:id/:execution/:type"
+        path="/lobster/evergreen/task/:taskId/:execution/:logType"
         render={evergreenLogviewer}
       />
       <Route
         exact
-        path="/lobster/evergreen/test/:taskId/:execution/:id/:groupId"
-        render={evergreenLogviewer}
-      />
-      <Route
-        exact
-        path="/lobster/evergreen/test/:id/:execution/:type"
+        path="/lobster/evergreen/test/:taskId/:execution/:testId"
         render={evergreenLogviewer}
       />
       <Route path="/lobster/logdrop" render={logviewer} />

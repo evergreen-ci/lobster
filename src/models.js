@@ -196,13 +196,10 @@ export function stringToInteralEvergreenTaskLogType(a: ?string): ?string {
   return evergreenTaskLogTypes[a];
 }
 
-export function stringToEvergreenTaskLogType(
-  a: ?string
-): ?EvergreenTaskLogType {
+export function stringToEvergreenTaskLogType(a: ?string): EvergreenTaskLogType {
   if (a == null || !(a in evergreenTaskLogTypes)) {
-    return null;
+    return evergreenTaskLogTypes.all;
   }
-
   return a;
 }
 
@@ -215,10 +212,9 @@ export type EvergreenTaskLog = $ReadOnly<{
 
 export type EvergreenTestLog = $ReadOnly<{
   type: "evergreen-test",
-  id: string,
   taskId: string,
-  groupId: string,
   execution: number,
+  testId: string,
 }>;
 
 export type EvergreenTestByNameLog = $ReadOnly<{

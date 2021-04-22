@@ -80,7 +80,7 @@ export function* evergreenLoadData(identity: EvergreenLog): Saga<void> {
   console.info(`fetch (evergreen) ${JSON.stringify(identity)}`);
   // DO NOT cache Evergreen task logs without checking if the task is done
   if (identity.type === "evergreen-test") {
-    const f = `fetchEvergreen-test-${identity.id}.json`;
+    const f = `fetchEvergreen-test-${identity.taskId}-${identity.execution}-${identity.testId}.json`;
     yield cacheFetch(f, "raw", api.fetchEvergreen, identity);
     return;
   } else if (identity.type === "evergreen-test-by-name") {
