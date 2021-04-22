@@ -103,7 +103,10 @@ class FullLogLine extends React.Component<Props, State> {
             const nextHash = queryString.stringify({
               ...queryString.parseUrl(window.location.href.replace("#", "?"))
                 .query,
-              shareLine: this.props.line.lineNumber,
+              shareLine:
+                this.props.line.lineNumber === this.props.shareLine
+                  ? -1
+                  : this.props.line.lineNumber,
             });
             window.history.replaceState(
               {},
