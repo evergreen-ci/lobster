@@ -291,6 +291,7 @@ class LogView extends React.Component<Props, State> {
       key={lineNumber + ":" + line.isMatched}
       found={lineNumber === this.props.findResults[this.props.searchFindIdx]}
       bookmarked={this.findBookmark(this.props.bookmarks, lineNumber) !== -1}
+      isShareLine={lineNumber === this.props.shareLine}
       highlight={this.props.highlights.highlightLines.includes(line)}
       wrap={this.props.wrap}
       line={line}

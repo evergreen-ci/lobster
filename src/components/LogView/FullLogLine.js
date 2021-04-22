@@ -2,7 +2,7 @@
 
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink } from "@fortawesome/free-solid-svg-icons";
+import { faLink, faArrowCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import LogLineText from "./LogLineText";
 import { connect } from "react-redux";
 import LineNumber from "./LineNumber";
@@ -18,7 +18,7 @@ import type {
 } from "src/models";
 
 type Props = {
-  shareLine: number,
+  isShareLine: boolean,
   bookmarked: boolean,
   caseSensitive: boolean,
   colorMap: ColorMap,
@@ -78,6 +78,9 @@ class FullLogLine extends React.Component<Props, State> {
     if (this.props.bookmarked) {
       className += " bookmark-line";
     }
+    if (this.props.isShareLine) {
+      className += " share-line";
+    }
     if (!this.props.wrap) {
       className += " no-wrap";
     } else {
@@ -94,6 +97,7 @@ class FullLogLine extends React.Component<Props, State> {
     }
     return (
       <div
+        style={{ paddingLeft: 5 }}
         className={className}
         onMouseUp={this.handleMouseUp}
         onMouseDown={this.handleMouseDown}
@@ -103,10 +107,9 @@ class FullLogLine extends React.Component<Props, State> {
             const nextHash = queryString.stringify({
               ...queryString.parseUrl(window.location.href.replace("#", "?"))
                 .query,
-              shareLine:
-                this.props.line.lineNumber === this.props.shareLine
-                  ? -1
-                  : this.props.line.lineNumber,
+              shareLine: this.props.isShareLine
+                ? -1
+                : this.props.line.lineNumber,
             });
             window.history.replaceState(
               {},
@@ -122,7 +125,12 @@ class FullLogLine extends React.Component<Props, State> {
           lineNumber={this.props.line.lineNumber}
           toggleBookmark={this.props.toggleBookmark}
           handleDoubleClick={this.props.handleDoubleClick}
-        />
+        >
+          {this.props.isShareLine && (
+            <FontAwesomeIcon icon={faArrowCircleLeft} />
+          )}
+        </LineNumber>
+
         <LogOptions gitRef={this.props.line.gitRef} />
         <LogLineText
           lineRefCallback={this.props.lineRefCallback}
@@ -149,7 +157,6 @@ function mapStateToProps(
 ): $Shape<Props> {
   return {
     ...ownProps,
-    shareLine: selectors.getLogViewerShareLine(state),
   };
 }
 

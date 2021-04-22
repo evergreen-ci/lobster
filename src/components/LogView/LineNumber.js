@@ -16,7 +16,9 @@ export default class LineNumber extends React.PureComponent<Props> {
         className="padded-text"
         style={style}
         onDoubleClick={this.props.handleDoubleClick}
-      ></span>
+      >
+        {this.props.children ? <span> {this.props.children}</span> : null}
+      </span>
     );
   }
 }
