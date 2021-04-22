@@ -2,7 +2,7 @@
 
 import React from "react";
 import type { Node as ReactNode } from "react";
-import { getTestMetadata } from "../../util";
+import { getTestMetadata, type TestMetadata } from "../../util";
 import { EVERGREEN_BASE } from "../../config";
 import "./style.css";
 import {
@@ -67,6 +67,9 @@ type Props = {
   changeStartRange: (value: number) => void,
   changeEndRange: (value: number) => void,
 };
+type State = {|
+  testMetadata: ?TestMetadata,
+|};
 
 function showLogBox(
   id: ?LogIdentity,
@@ -98,7 +101,7 @@ function showLogBox(
 function showDetailButtons(
   id: ?LogIdentity,
   clearCache: ?() => void,
-  testMetadata: any
+  testMetadata: TestMetadata
 ): ?ReactNode {
   if (!id) {
     return null;
@@ -247,7 +250,7 @@ function showDetailButtons(
   return <span>{buttons}</span>;
 }
 
-export class CollapseMenu extends React.PureComponent<Props> {
+export class CollapseMenu extends React.PureComponent<Props, State> {
   urlInput: ?HTMLInputElement;
   startRangeInput: ?HTMLInputElement;
   endRangeInput: ?HTMLInputElement;
