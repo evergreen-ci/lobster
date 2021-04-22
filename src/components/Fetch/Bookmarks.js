@@ -27,19 +27,27 @@ export class Bookmarks extends React.PureComponent<Props> {
   };
 
   render() {
+    const { shareLine, bookmarks } = this.props;
     return (
       <div className="bookmarks-bar monospace">
         <div>
-          {this.props.bookmarks.map((bookmark, key) => {
-            return (
-              <Bookmark
-                key={key}
-                lineNumber={bookmark.lineNumber}
-                scrollFunc={this.scroll}
-                emphasize={bookmark.lineNumber === this.props.shareLine}
-              />
-            );
-          })}
+          {Array.from(
+            new Set([
+              ...bookmarks.map(({ lineNumber }) => lineNumber),
+              ...(shareLine > -1 ? [shareLine] : []),
+            ])
+          )
+            .sort((a, b) => (a < b ? -1 : 1))
+            .map((bookmark, key) => {
+              return (
+                <Bookmark
+                  key={key}
+                  lineNumber={bookmark}
+                  scrollFunc={this.scroll}
+                  emphasize={bookmark === shareLine}
+                />
+              );
+            })}
         </div>
       </div>
     );
