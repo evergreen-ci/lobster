@@ -2,6 +2,8 @@
 
 import React from "react";
 import type { Node as ReactNode } from "react";
+import { getTestMetadata, type TestMetadata } from "../../util";
+import { EVERGREEN_BASE } from "../../config";
 import "./style.css";
 import {
   Button,
@@ -65,6 +67,9 @@ type Props = {
   changeStartRange: (value: number) => void,
   changeEndRange: (value: number) => void,
 };
+type State = {|
+  testMetadata: ?TestMetadata,
+|};
 
 function showLogBox(
   id: ?LogIdentity,
@@ -95,7 +100,8 @@ function showLogBox(
 
 function showDetailButtons(
   id: ?LogIdentity,
-  clearCache: ?() => void
+  clearCache: ?() => void,
+  testMetadata: TestMetadata
 ): ?ReactNode {
   if (!id) {
     return null;
@@ -181,20 +187,30 @@ function showDetailButtons(
       ]
     );
   } else if (id.type === "evergreen-test") {
-    buttons.push(
-      ...[
-        <Col key={1} lg={1}>
-          <Button style={col0Style} href={api.testLogRawURL(id.id)}>
-            Raw
-          </Button>
-        </Col>,
-        <Col key={2} lg={1}>
-          <Button style={col1Style} href={api.testLogURL(id.id)}>
-            HTML
-          </Button>
-        </Col>,
-      ]
-    );
+    const { logs } = testMetadata || {};
+    const { url_html_display, url_raw_display } = logs || {};
+    if (url_html_display && url_raw_display) {
+      buttons.push(
+        ...[
+          <Col key={1} lg={1}>
+            <Button
+              style={col0Style}
+              href={`${EVERGREEN_BASE}/${url_raw_display}`}
+            >
+              Raw
+            </Button>
+          </Col>,
+          <Col key={2} lg={1}>
+            <Button
+              style={col1Style}
+              href={`${EVERGREEN_BASE}/${url_html_display}`}
+            >
+              HTML
+            </Button>
+          </Col>,
+        ]
+      );
+    }
   } else if (id.type === "evergreen-test-by-name") {
     buttons.push(
       ...[
@@ -234,11 +250,14 @@ function showDetailButtons(
   return <span>{buttons}</span>;
 }
 
-export class CollapseMenu extends React.PureComponent<Props> {
+export class CollapseMenu extends React.PureComponent<Props, State> {
   urlInput: ?HTMLInputElement;
   startRangeInput: ?HTMLInputElement;
   endRangeInput: ?HTMLInputElement;
-
+  constructor(props) {
+    super(props);
+    this.state = { testMetadata: null };
+  }
   setURLRef = (ref: ?HTMLInputElement) => {
     this.urlInput = ref;
   };
@@ -285,6 +304,18 @@ export class CollapseMenu extends React.PureComponent<Props> {
     this.endRangeInput = ref;
   };
 
+  componentDidUpdate(prevProps: Props) {
+    if (
+      this.props.logIdentity &&
+      this.props.logIdentity.type === "evergreen-test" &&
+      !this.state.testMetadata
+    ) {
+      const { execution, testId, taskId } = this.props.logIdentity;
+      getTestMetadata({ execution, testId, taskId }).then((data) =>
+        this.setState({ testMetadata: data })
+      );
+    }
+  }
   render() {
     return (
       <Collapse className="collapse-menu" in={this.props.detailsOpen}>
@@ -446,7 +477,11 @@ export class CollapseMenu extends React.PureComponent<Props> {
                   value={this.props.valueJIRA}
                 ></textarea>
               </Col>
-              {showDetailButtons(this.props.logIdentity, this.props.wipeCache)}
+              {showDetailButtons(
+                this.props.logIdentity,
+                this.props.wipeCache,
+                this.state.testMetadata
+              )}
             </FormGroup>
           </Form>
           <Filters
