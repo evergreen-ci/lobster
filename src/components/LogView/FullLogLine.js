@@ -6,7 +6,6 @@ import { faLink, faArrowCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import LogLineText from "./LogLineText";
 import { connect } from "react-redux";
 import LineNumber from "./LineNumber";
-import * as selectors from "../../selectors";
 import * as actions from "../../actions";
 import LogOptions from "./LogOptions";
 import queryString from "../../thirdparty/query-string";
