@@ -69,7 +69,7 @@ class LogView extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
-      hasScrolledToShareLine: props.bookmarks.length === 0,
+      hasScrolledToShareLine: false,
       selectStartIndex: null,
       selectEndIndex: null,
       clicks: [],
@@ -374,10 +374,6 @@ class LogView extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const currBookmarksSet = new Set(
-      this.props.bookmarks.map(({ lineNumber }) => lineNumber)
-    );
-    const lastLineNo = this.state.lines.length - 1;
     // handle initial bookmark scroll
     if (
       this.props.scrollLine !== null &&
