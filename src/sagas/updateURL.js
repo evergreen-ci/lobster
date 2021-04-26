@@ -36,6 +36,7 @@ export default function* (): Saga<void> {
   const highlights = yield select(selectors.getLogViewerHighlights);
   const bookmarks = yield select(selectors.getLogViewerBookmarks);
   const settings = yield select(selectors.getLogViewerSettings);
+  const shareLine = yield select(selectors.getLogViewerShareLine);
 
   const parsed = {};
   parsed["f~"] = [];
@@ -86,6 +87,9 @@ export default function* (): Saga<void> {
     parsed.l = boolToInt(true);
   }
 
+  if (shareLine > -1) {
+    parsed.shareLine = shareLine;
+  }
   if (Object.keys(parsed).length !== 0) {
     try {
       window.history.replaceState(

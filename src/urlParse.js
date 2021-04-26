@@ -3,6 +3,10 @@
 import queryString from "./thirdparty/query-string";
 import type { Filter, Highlight } from "./models";
 
+function parseShareLine(shareLine: ?string): number {
+  const parsed = parseInt(shareLine, 10);
+  return isNaN(parsed) ? -1 : parsed;
+}
 function parseBookmarks(bookmarks: ?string): Set<number> {
   if (bookmarks == null) {
     return new Set();
@@ -176,6 +180,7 @@ export type URLParseData = $Exact<
     url: ?string,
     caseSensitive: ?boolean,
     filterIsIntersection: ?boolean,
+    shareLine: number,
   }>
 >;
 
@@ -192,7 +197,7 @@ export default function (
     arrayify(obj.query, "h");
     arrayify(obj.query, "h~");
   });
-
+  const shareLine = parseShareLine(hash.query.shareLine);
   const bookmarks: Set<number> = new Set([
     ...parseBookmarks(hash.query.bookmarks),
     ...parseBookmarks(query.query.bookmarks),
@@ -223,5 +228,6 @@ export default function (
     url,
     caseSensitive: charToBool(hash.query.c),
     filterIsIntersection: charToBool(hash.query.l),
+    shareLine,
   };
 }

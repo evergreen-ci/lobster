@@ -40,6 +40,7 @@ type Props = {
   scrollToLine: (number) => void,
   prettyPrint: boolean,
   toggleWrap: () => void,
+  shareLine: number,
 };
 
 type SkipLine = {|
@@ -54,7 +55,7 @@ function newSkipLine(start, end): SkipLine {
 }
 
 type State = {
-  hasScrolledToFirstBookmark: boolean,
+  hasScrolledToShareLine: boolean,
   selectStartIndex: ?number,
   selectEndIndex: ?number,
   lines: Array<Line | SkipLine>,
@@ -65,11 +66,10 @@ type State = {
 class LogView extends React.Component<Props, State> {
   logListRef: ?ReactList = null;
   lineMap: Map<number, HTMLSpanElement> = new Map();
-
   constructor(props) {
     super(props);
     this.state = {
-      hasScrolledToFirstBookmark: props.bookmarks.length === 0,
+      hasScrolledToShareLine: props.bookmarks.length === 0,
       selectStartIndex: null,
       selectEndIndex: null,
       clicks: [],
@@ -291,6 +291,7 @@ class LogView extends React.Component<Props, State> {
       key={lineNumber + ":" + line.isMatched}
       found={lineNumber === this.props.findResults[this.props.searchFindIdx]}
       bookmarked={this.findBookmark(this.props.bookmarks, lineNumber) !== -1}
+      isShareLine={lineNumber === this.props.shareLine}
       highlight={this.props.highlights.highlightLines.includes(line)}
       wrap={this.props.wrap}
       line={line}
@@ -379,37 +380,19 @@ class LogView extends React.Component<Props, State> {
     const lastLineNo = this.state.lines.length - 1;
     // handle initial bookmark scroll
     if (
-      // Don't scroll unless lines are rendered and bookmarks exist
-      this.state.lines.length > 0 &&
-      prevState.lines.length === 0 &&
-      this.props.bookmarks.length > 0 &&
-      // Don't scroll when the bookmarks look like [0, last line]
-      !(
-        currBookmarksSet.size === 2 &&
-        currBookmarksSet.has(0) &&
-        currBookmarksSet.has(lastLineNo)
-      ) &&
-      // Don't scroll when we already tried to scroll before lol
-      !this.state.hasScrolledToFirstBookmark
-    ) {
-      const sortedBookmarks = [...this.props.bookmarks].sort(
-        (a, b) => a.lineNumber - b.lineNumber
-      );
-      const { lineNumber } =
-        sortedBookmarks.find(({ lineNumber }) => lineNumber !== 0) || {};
-      if (lineNumber !== undefined) {
-        this.setState({ hasScrolledToFirstBookmark: true }, () => {
-          this.props.scrollToLine(lineNumber);
-        });
-      }
-    }
-
-    if (
       this.props.scrollLine !== null &&
-      this.props.scrollLine >= 0 &&
-      this.props.scrollLine !== prevProps.scrollLine
+      this.props.scrollLine !== prevProps.scrollLine &&
+      this.state.lines.length > 0
     ) {
       this.scrollToLine(this.props.scrollLine);
+    } else if (
+      this.props.shareLine > -1 &&
+      this.state.lines.length > 0 &&
+      !this.state.hasScrolledToShareLine
+    ) {
+      this.setState({ hasScrolledToShareLine: true }, () => {
+        this.props.scrollToLine(this.props.shareLine);
+      });
     }
 
     // If the find index changed, scroll to the right if necessary.
@@ -474,6 +457,7 @@ function mapStateToProps(
     lines: lines,
     findResults: selectors.getFindResults(state),
     expandableFilterData: [],
+    shareLine: selectors.getLogViewerShareLine(state),
   };
 }
 

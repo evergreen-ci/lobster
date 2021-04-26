@@ -1,12 +1,24 @@
 // @flow strict
 
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLink, faArrowCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import LogLineText from "./LogLineText";
+import { connect } from "react-redux";
 import LineNumber from "./LineNumber";
+import * as selectors from "../../selectors";
+import * as actions from "../../actions";
 import LogOptions from "./LogOptions";
-import type { Line, ColorMap, FilterMatchAnnotation } from "src/models";
+import queryString from "../../thirdparty/query-string";
+import type {
+  ReduxState,
+  Line,
+  ColorMap,
+  FilterMatchAnnotation,
+} from "src/models";
 
 type Props = {
+  isShareLine: boolean,
   bookmarked: boolean,
   caseSensitive: boolean,
   colorMap: ColorMap,
@@ -34,7 +46,7 @@ type State = {
   line: Line,
 };
 
-export default class FullLogLine extends React.Component<Props, State> {
+class FullLogLine extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -66,6 +78,9 @@ export default class FullLogLine extends React.Component<Props, State> {
     if (this.props.bookmarked) {
       className += " bookmark-line";
     }
+    if (this.props.isShareLine) {
+      className += " share-line";
+    }
     if (!this.props.wrap) {
       className += " no-wrap";
     } else {
@@ -82,15 +97,40 @@ export default class FullLogLine extends React.Component<Props, State> {
     }
     return (
       <div
+        style={{ paddingLeft: 5 }}
         className={className}
         onMouseUp={this.handleMouseUp}
         onMouseDown={this.handleMouseDown}
       >
+        <FontAwesomeIcon
+          onClick={() => {
+            const nextHash = queryString.stringify({
+              ...queryString.parseUrl(window.location.href.replace("#", "?"))
+                .query,
+              shareLine: this.props.isShareLine
+                ? -1
+                : this.props.line.lineNumber,
+            });
+            window.history.replaceState(
+              {},
+              "",
+              window.location.pathname + "#" + nextHash
+            );
+            window.dispatchEvent(new HashChangeEvent("hashchange"));
+          }}
+          style={{ cursor: "pointer" }}
+          icon={faLink}
+        />
         <LineNumber
           lineNumber={this.props.line.lineNumber}
           toggleBookmark={this.props.toggleBookmark}
           handleDoubleClick={this.props.handleDoubleClick}
-        />
+        >
+          {this.props.isShareLine && (
+            <FontAwesomeIcon icon={faArrowCircleLeft} />
+          )}
+        </LineNumber>
+
         <LogOptions gitRef={this.props.line.gitRef} />
         <LogLineText
           lineRefCallback={this.props.lineRefCallback}
@@ -110,3 +150,22 @@ export default class FullLogLine extends React.Component<Props, State> {
     );
   }
 }
+
+function mapStateToProps(
+  state: ReduxState,
+  ownProps: $Shape<Props>
+): $Shape<Props> {
+  return {
+    ...ownProps,
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch<*>, ownProps: $Shape<Props>) {
+  return {
+    ...ownProps,
+    loadShareLine: (lineNum: number) =>
+      dispatch(actions.loadShareLine(lineNum)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FullLogLine);

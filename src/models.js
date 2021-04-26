@@ -306,6 +306,7 @@ export type LogViewerState = $Exact<
     settings: Settings,
     settingsPanel: boolean,
     scrollLine: number,
+    shareLine: number,
   }>
 >;
 

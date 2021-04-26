@@ -18,6 +18,7 @@ export const LOGVIEWER_TOGGLE_SETTINGS_PANEL =
   "logviewer:toggle-settings-panel";
 export const LOGVIEWER_SEARCH_EVENT = "logviewer:search-event";
 export const LOGVIEWER_SCROLL_TO_LINE = "logviewer:scroll-to-line";
+export const LOGVIEWER_LOAD_SHARE_LINE = "logviewer:load-share-line";
 
 export type ChangeSetting = {|
   type: "logviewer:change-setting",
@@ -140,6 +141,15 @@ export type ScrollToLine = $Exact<{
   >,
 }>;
 
+export type LoadShareLine = $Exact<{
+  type: "logviewer:load-share-line",
+  +payload: $Exact<
+    $ReadOnly<{
+      lineNum: number,
+    }>
+  >,
+}>;
+
 export type Action =
   | ChangeSetting
   | ChangeFilter
@@ -154,7 +164,8 @@ export type Action =
   | LoadHighlights
   | LoadFilters
   | ToggleSettingsPanel
-  | ScrollToLine;
+  | ScrollToLine
+  | LoadShareLine;
 
 function toggleSetting(setting: string): ChangeSetting {
   return {
@@ -367,6 +378,15 @@ export function scrollToLine(n: number): ScrollToLine {
     type: LOGVIEWER_SCROLL_TO_LINE,
     payload: {
       line: n,
+    },
+  };
+}
+
+export function loadShareLine(n: number): loadScrollLine {
+  return {
+    type: LOGVIEWER_LOAD_SHARE_LINE,
+    payload: {
+      lineNum: n,
     },
   };
 }

@@ -54,9 +54,13 @@ export const shouldPrintLine = function (
   bookmarks: Bookmark[],
   filterIntersection: boolean,
   filter: RegExp[],
-  inverseFilter: RegExp[]
+  inverseFilter: RegExp[],
+  shareLine: number
 ): boolean {
-  if (findBookmark(bookmarks, line.lineNumber) !== -1) {
+  if (
+    findBookmark(bookmarks, line.lineNumber) !== -1 ||
+    shareLine === line.lineNumber
+  ) {
     return true;
   }
 
@@ -102,12 +106,14 @@ const getFilteredLineData = createSelector(
   selectors.getLogViewerBookmarks,
   selectors.getLogViewerSettingsFilterLogic,
   selectors.getLogViewerSettingsParseJson,
+  selectors.getLogViewerShareLine,
   function (
     lines: Line[],
     filters: Filter[],
     bookmarks: Bookmark[],
     filterIntersection: boolean,
-    parseResmokeJson: boolean
+    parseResmokeJson: boolean,
+    shareLine: number
   ): Line[] {
     const filter = merge.activeFilters(filters);
     const inverseFilter = merge.activeInverseFilters(filters);
@@ -118,7 +124,8 @@ const getFilteredLineData = createSelector(
           bookmarks,
           filterIntersection,
           filter,
-          inverseFilter
+          inverseFilter,
+          shareLine
         )
       ) {
         line.isMatched = false;
