@@ -3,7 +3,7 @@
 import React from "react";
 import type { Node as ReactNode } from "react";
 import { getTestMetadata, type TestMetadata } from "../../util";
-import { EVERGREEN_BASE } from "../../config";
+import { EVERGREEN_BASE, LOGKEEPER_BASE } from "../../config";
 import "./style.css";
 import {
   Button,
@@ -116,17 +116,17 @@ function showDetailButtons(
       buttons.push(
         ...[
           <Col key={0} lg={1}>
-            <Button style={col0Style} href={`/build/${build}`}>
+            <Button style={col0Style} href={`${LOGKEEPER_BASE}/build/${build}`}>
               Job Logs
             </Button>
           </Col>,
           <Col key={1} lg={1}>
-            <Button style={col1Style} href={`/build/${build}/all?raw=1`}>
+            <Button style={col1Style} href={`${LOGKEEPER_BASE}/build/${build}/all?raw=1`}>
               Raw
             </Button>
           </Col>,
           <Col key={2} lg={1}>
-            <Button style={col2Style} href={`/build/${build}/all?html=1`}>
+            <Button style={col2Style} href={`${LOGKEEPER_BASE}/build/${build}/all?html=1`}>
               HTML
             </Button>
           </Col>,
@@ -137,14 +137,14 @@ function showDetailButtons(
       buttons.push(
         ...[
           <Col key={0} lg={1}>
-            <Button style={col0Style} href={`/build/${build}`}>
+            <Button style={col0Style} href={`${LOGKEEPER_BASE}/build/${build}`}>
               Job Logs
             </Button>
           </Col>,
           <Col key={1} lg={1}>
             <Button
               style={col1Style}
-              href={`/build/${build}/test/${test}?raw=1`}
+              href={`${LOGKEEPER_BASE}/build/${build}/test/${test}?raw=1`}
             >
               Raw
             </Button>
@@ -152,7 +152,7 @@ function showDetailButtons(
           <Col key={2} lg={1}>
             <Button
               style={col2Style}
-              href={`/build/${build}/test/${test}?html=1`}
+              href={`${LOGKEEPER_BASE}/build/${build}/test/${test}?html=1`}
             >
               HTML
             </Button>
