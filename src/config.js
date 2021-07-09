@@ -5,3 +5,6 @@ export const LOGKEEPER_BASE: string =
   process.env.REACT_APP_LOGKEEPER_BASE || 'https://logkeeper.mongodb.org';
 export const EVERGREEN_BASE: string =
   process.env.REACT_APP_EVERGREEN_BASE || 'https://evergreen.mongodb.com';
+ export const SPRUCE_BASE: string =
+  process.env.REACT_APP_SPRUCE_BASE || 'https://spruce.mongodb.com';
+
