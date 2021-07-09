@@ -188,7 +188,6 @@ function showDetailButtons(
     );
   } else if (id.type === "evergreen-test") {
     const { logs, group_id, execution, task_id } = testMetadata || {};
-
     const { url_html_display, url_raw_display } = logs || {};
     if (Number.isFinite(execution) && group_id && task_id) {
       buttons.push(
