@@ -34,6 +34,14 @@ export function testLogRawURL(
   return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}/${id}?text=true`;
 }
 
+export function testLogCompleteRawURL(
+  taskId: string,
+  groupId: string,
+  execution: string
+): string {
+  return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}?group_id=${groupId}&text=true`;
+}
+
 export function testLogByNameURL(
   task: string,
   execution: number,
