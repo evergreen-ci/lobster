@@ -62,6 +62,7 @@ export function taskURL(taskID: string, execution: ?number): string {
 
 export async function fetchEvergreen(log: EvergreenLog): Promise<Response> {
   const init = { method: "GET", credentials: "include" };
+  test;
   let req = "";
   if (log.type === "evergreen-task") {
     req = new Request(taskLogRawURL(log.id, log.execution, log.log), init);
