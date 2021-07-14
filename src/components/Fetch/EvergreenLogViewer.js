@@ -10,8 +10,9 @@ function makeEvergreenLogID(params: {
   execution: ?string,
   testId: ?string,
   taskId: ?string,
+  groupId: ?string
 }): ?LogIdentity {
-  const { logType, execution, testId, taskId } = params;
+  const { logType, execution, testId, taskId, groupId } = params;
   const executionAsNumber = parseInt(execution, 10) || 0;
 
   if (logType) {
@@ -20,6 +21,15 @@ function makeEvergreenLogID(params: {
       id: taskId || "",
       execution: executionAsNumber,
       log: stringToEvergreenTaskLogType(logType),
+    };
+  }
+
+  if (execution && taskId && groupId && !testId) {
+    return {
+      type: "evergreen-test-complete",
+      groupId,
+      execution: executionAsNumber,
+      taskId,
     };
   }
 
