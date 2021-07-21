@@ -189,10 +189,10 @@ function showDetailButtons(
   } else if (id.type === "evergreen-test") {
     const { logs, group_id, execution, task_id } = testMetadata || {};
     const { url_html_display, url_raw_display } = logs || {};
-    if (Number.isFinite(execution) && group_id && task_id) {
+    if (Number.isFinite(execution) && task_id) {
       buttons.push(
         <Col key={0} lg={1}>
-          <Button style={col0Style} href={`${SPRUCE_BASE}/job-logs/${task_id}/${execution}/${group_id}`}>
+          <Button style={col0Style} href={`${SPRUCE_BASE}/job-logs/${task_id}/${execution}${groupId ? `/${group_id}` : ""}`}>
             Job Logs
           </Button>
         </Col>
