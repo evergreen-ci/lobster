@@ -40,7 +40,7 @@ export function testLogCompleteURL(
   execution: string,
   html: boolean,
 ): string {
-  return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}?group_id=${groupId}${html ? "" : "&text=true"}`;
+  return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}?${groupId ? `group_id=${groupId}&`: ""}${html ? "" : "text=true"}`;
 }
 
 export function testLogByNameURL(

@@ -24,10 +24,10 @@ function makeEvergreenLogID(params: {
     };
   }
 
-  if (execution && taskId && groupId && !testId) {
+  if (execution && taskId && !testId) {
     return {
       type: "evergreen-test-complete",
-      groupId,
+      groupId: groupId || "",
       execution: executionAsNumber,
       taskId,
     };
