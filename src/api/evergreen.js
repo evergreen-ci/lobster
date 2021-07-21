@@ -36,8 +36,8 @@ export function testLogRawURL(
 
 export function testLogCompleteURL(
   taskId: string,
-  groupId: string,
   execution: string,
+  groupId: string,
   html: boolean,
 ): string {
   return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}?${groupId ? `group_id=${groupId}&`: ""}${html ? "" : "text=true"}`;
