@@ -104,6 +104,7 @@ export function* evergreenLoadData(identity: EvergreenLog): Saga<void> {
 export default function* (action: actions.LoadLog): Saga<void> {
   const { identity } = action.payload;
   switch (identity.type) {
+    case "evergreen-test-complete":
     case "evergreen-test":
     case "evergreen-test-by-name":
     case "evergreen-task":

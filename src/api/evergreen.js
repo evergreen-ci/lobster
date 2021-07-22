@@ -34,6 +34,15 @@ export function testLogRawURL(
   return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}/${id}?text=true`;
 }
 
+export function testLogCompleteURL(
+  taskId: string,
+  execution: string,
+  groupId: string,
+  html: boolean,
+): string {
+  return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}?${groupId ? `group_id=${groupId}&`: ""}${html ? "" : "text=true"}`;
+}
+
 export function testLogByNameURL(
   task: string,
   execution: number,
@@ -63,7 +72,9 @@ export function taskURL(taskID: string, execution: ?number): string {
 export async function fetchEvergreen(log: EvergreenLog): Promise<Response> {
   const init = { method: "GET", credentials: "include" };
   let req = "";
-  if (log.type === "evergreen-task") {
+  if (log.type === "evergreen-test-complete") {
+    req = new Request(testLogCompleteURL(log.taskId, log.execution, log.groupId), init);
+  } else if (log.type === "evergreen-task") {
     req = new Request(taskLogRawURL(log.id, log.execution, log.log), init);
   } else if (log.type === "evergreen-test") {
     const { execution, testId, taskId } = log;

@@ -186,6 +186,29 @@ function showDetailButtons(
         </Col>,
       ]
     );
+  } else if (id.type === "evergreen-test-complete") {
+    console.log("evrgreen-test-complete collapse menu", id)
+    const { taskId, execution, groupId } = id
+    buttons.push(
+      ...[
+        <Col key={1} lg={1}>
+          <Button
+            style={col0Style}
+            href={api.testLogCompleteURL(taskId, execution, groupId)}
+          >
+            Raw
+          </Button>
+        </Col>,
+        <Col key={2} lg={1}>
+          <Button
+            style={col1Style}
+            href={api.testLogCompleteURL(taskId, execution, groupId, true)}
+          >
+            HTML
+          </Button>
+        </Col>,
+      ]
+    );
   } else if (id.type === "evergreen-test") {
     const { logs } = testMetadata || {};
     const { url_html_display, url_raw_display } = logs || {};
