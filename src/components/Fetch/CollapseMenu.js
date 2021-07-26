@@ -3,7 +3,7 @@
 import React from "react";
 import type { Node as ReactNode } from "react";
 import { getTestMetadata, type TestMetadata } from "../../util";
-import { EVERGREEN_BASE, LOGKEEPER_BASE } from "../../config";
+import { EVERGREEN_BASE, LOGKEEPER_BASE, SPRUCE_BASE } from "../../config";
 import "./style.css";
 import {
   Button,
@@ -210,8 +210,17 @@ function showDetailButtons(
       ]
     );
   } else if (id.type === "evergreen-test") {
-    const { logs } = testMetadata || {};
+    const { logs, group_id, execution, task_id } = testMetadata || {};
     const { url_html_display, url_raw_display } = logs || {};
+    if (Number.isFinite(execution) && task_id) {
+      buttons.push(
+        <Col key={0} lg={1}>
+          <Button style={col0Style} href={`${SPRUCE_BASE}/job-logs/${task_id}/${execution}${group_id ? `/${group_id}` : ""}`}>
+            Job Logs
+          </Button>
+        </Col>
+      )
+    }
     if (url_html_display && url_raw_display) {
       buttons.push(
         ...[
