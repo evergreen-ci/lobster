@@ -78,7 +78,7 @@ class FullLogLine extends React.Component<Props, State> {
       className += " bookmark-line";
     }
     if (this.props.isShareLine) {
-      className += " share-line";
+      className += " tan-background";
     }
     if (!this.props.wrap) {
       className += " no-wrap";
