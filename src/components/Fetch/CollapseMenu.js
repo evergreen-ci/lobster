@@ -2,7 +2,6 @@
 
 import React from "react";
 import type { Node as ReactNode } from "react";
-import { getTestMetadata, type TestMetadata } from "../../util";
 import { EVERGREEN_BASE, LOGKEEPER_BASE, SPRUCE_BASE } from "../../config";
 import "./style.css";
 import {
@@ -67,9 +66,6 @@ type Props = {
   changeStartRange: (value: number) => void,
   changeEndRange: (value: number) => void,
 };
-type State = {|
-  testMetadata: ?TestMetadata,
-|};
 
 function showLogBox(
   id: ?LogIdentity,
@@ -101,7 +97,6 @@ function showLogBox(
 function showDetailButtons(
   id: ?LogIdentity,
   clearCache: ?() => void,
-  testMetadata: TestMetadata
 ): ?ReactNode {
   if (!id) {
     return null;
@@ -171,7 +166,7 @@ function showDetailButtons(
         <Col key={1} lg={1}>
           <Button
             style={col1Style}
-            href={api.taskLogRawURL(id.id, id.execution, id.log)}
+            href={api.taskLogURL(id.id, id.execution, id.log, false)}
           >
             Raw
           </Button>
@@ -179,7 +174,7 @@ function showDetailButtons(
         <Col key={2} lg={1}>
           <Button
             style={col2Style}
-            href={api.taskLogURL(id.id, id.execution, id.log)}
+            href={api.taskLogURL(id.id, id.execution, id.log, true)}
           >
             HTML
           </Button>
@@ -187,7 +182,6 @@ function showDetailButtons(
       ]
     );
   } else if (id.type === "evergreen-test-complete") {
-    console.log("evrgreen-test-complete collapse menu", id)
     const { taskId, execution, groupId } = id
     buttons.push(
       ...[
@@ -210,8 +204,7 @@ function showDetailButtons(
       ]
     );
   } else if (id.type === "evergreen-test") {
-    const { logs, group_id, execution, task_id } = testMetadata || {};
-    const { url_html_display, url_raw_display } = logs || {};
+    const { taskId, execution, testId, groupId } = id
     if (Number.isFinite(execution) && task_id) {
       buttons.push(
         <Col key={0} lg={1}>
@@ -221,48 +214,20 @@ function showDetailButtons(
         </Col>
       )
     }
-    if (url_html_display && url_raw_display) {
-      buttons.push(
-        ...[
-          <Col key={1} lg={1}>
-            <Button
-              style={col0Style}
-              href={`${EVERGREEN_BASE}/${url_raw_display}`}
-            >
-              Raw
-            </Button>
-          </Col>,
-          <Col key={2} lg={1}>
-            <Button
-              style={col1Style}
-              href={`${EVERGREEN_BASE}/${url_html_display}`}
-            >
-              HTML
-            </Button>
-          </Col>,
-        ]
-      );
-    }
-  } else if (id.type === "evergreen-test-by-name") {
     buttons.push(
       ...[
-        <Col key={0} lg={1}>
-          <Button style={col0Style} href={api.taskURL(id.task, id.execution)}>
-            Task
-          </Button>
-        </Col>,
         <Col key={1} lg={1}>
           <Button
-            style={col1Style}
-            href={api.testLogByNameRawURL(id.task, id.execution, id.test)}
+            style={col0Style}
+            href={api.testLogURL(taskId, execution, testId, groupId, true)}
           >
             Raw
           </Button>
         </Col>,
         <Col key={2} lg={1}>
           <Button
-            style={col2Style}
-            href={api.testLogByNameURL(id.task, id.execution, id.test)}
+            style={col1Style}
+            href={api.testLogURL(taskId, execution, testId, groupId, false)}
           >
             HTML
           </Button>
@@ -282,13 +247,12 @@ function showDetailButtons(
   return <span>{buttons}</span>;
 }
 
-export class CollapseMenu extends React.PureComponent<Props, State> {
+export class CollapseMenu extends React.PureComponent<Props> {
   urlInput: ?HTMLInputElement;
   startRangeInput: ?HTMLInputElement;
   endRangeInput: ?HTMLInputElement;
   constructor(props) {
     super(props);
-    this.state = { testMetadata: null };
   }
   setURLRef = (ref: ?HTMLInputElement) => {
     this.urlInput = ref;
@@ -336,18 +300,6 @@ export class CollapseMenu extends React.PureComponent<Props, State> {
     this.endRangeInput = ref;
   };
 
-  componentDidUpdate(prevProps: Props) {
-    if (
-      this.props.logIdentity &&
-      this.props.logIdentity.type === "evergreen-test" &&
-      !this.state.testMetadata
-    ) {
-      const { execution, testId, taskId } = this.props.logIdentity;
-      getTestMetadata({ execution, testId, taskId }).then((data) =>
-        this.setState({ testMetadata: data })
-      );
-    }
-  }
   render() {
     return (
       <Collapse className="collapse-menu" in={this.props.detailsOpen}>
@@ -512,7 +464,6 @@ export class CollapseMenu extends React.PureComponent<Props, State> {
               {showDetailButtons(
                 this.props.logIdentity,
                 this.props.wipeCache,
-                this.state.testMetadata
               )}
             </FormGroup>
           </Form>

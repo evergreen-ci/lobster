@@ -215,6 +215,7 @@ export type EvergreenTestLog = $ReadOnly<{
   taskId: string,
   execution: number,
   testId: string,
+  groupId: string,
 }>;
 
 export type EvergreenTestLogComplete = $ReadOnly<{
@@ -222,13 +223,6 @@ export type EvergreenTestLogComplete = $ReadOnly<{
   taskId: string,
   execution: number,
   groupId: string,
-}>;
-
-export type EvergreenTestByNameLog = $ReadOnly<{
-  type: "evergreen-test-by-name",
-  task: string,
-  execution: number,
-  test: string,
 }>;
 
 export type EvergreenLog =
