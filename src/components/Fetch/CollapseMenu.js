@@ -109,7 +109,6 @@ function showDetailButtons(
     if (id.test == null) {
       const { build } = id;
       buttons.push(
-        ...[
           <Col key={0} lg={1}>
             <Button style={col0Style} href={`${LOGKEEPER_BASE}/build/${build}`}>
               Job Logs
@@ -125,12 +124,10 @@ function showDetailButtons(
               HTML
             </Button>
           </Col>,
-        ]
       );
     } else {
       const { build, test } = id;
       buttons.push(
-        ...[
           <Col key={0} lg={1}>
             <Button style={col0Style} href={`${LOGKEEPER_BASE}/build/${build}`}>
               Job Logs
@@ -152,12 +149,10 @@ function showDetailButtons(
               HTML
             </Button>
           </Col>,
-        ]
       );
     }
   } else if (id.type === "evergreen-task") {
     buttons.push(
-      ...[
         <Col key={0} lg={1}>
           <Button style={col0Style} href={api.taskURL(id.id, id.execution)}>
             Task
@@ -179,12 +174,10 @@ function showDetailButtons(
             HTML
           </Button>
         </Col>,
-      ]
     );
   } else if (id.type === "evergreen-test-complete") {
     const { taskId, execution, groupId } = id
     buttons.push(
-      ...[
         <Col key={1} lg={1}>
           <Button
             style={col0Style}
@@ -201,21 +194,18 @@ function showDetailButtons(
             HTML
           </Button>
         </Col>,
-      ]
     );
   } else if (id.type === "evergreen-test") {
     const { taskId, execution, testId, groupId } = id
-    if (Number.isFinite(execution) && task_id) {
-      buttons.push(
+    buttons.push(
         <Col key={0} lg={1}>
-          <Button style={col0Style} href={`${SPRUCE_BASE}/job-logs/${task_id}/${execution}${group_id ? `/${group_id}` : ""}`}>
+          <Button
+            style={col0Style}
+            href={`${SPRUCE_BASE}/job-logs/${taskId}/${execution}${groupId ? `/${groupId}` : ""}`}
+          >
             Job Logs
           </Button>
-        </Col>
-      )
-    }
-    buttons.push(
-      ...[
+        </Col>,
         <Col key={1} lg={1}>
           <Button
             style={col0Style}
@@ -232,7 +222,6 @@ function showDetailButtons(
             HTML
           </Button>
         </Col>,
-      ]
     );
   }
   if (clearCache != null) {
