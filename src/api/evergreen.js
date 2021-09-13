@@ -16,8 +16,8 @@ export function taskLogURL(
 
 export function testLogURL(
   taskId: string,
-  testId: string,
   execution: string,
+  testId: string,
   groupId: string,
   html: boolean,
 ): string {
