@@ -21,7 +21,7 @@ export function testLogURL(
   groupId: string,
   html: boolean,
 ): string {
-  return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}?test_name=${testId}groupId ? `&group_id=${groupId}`: ""}${html ? "" : "&text=true"}`;
+  return `${EVERGREEN_BASE}/test_log/${taskId}/${execution}?test_name=${testId}${groupId ? `&group_id=${groupId}`: ""}${html ? "" : "&text=true"}`;
 }
 
 export function testLogCompleteURL(
