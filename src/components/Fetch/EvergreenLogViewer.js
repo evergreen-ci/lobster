@@ -38,6 +38,7 @@ function makeEvergreenLogID(params: {
     testId: testId || "",
     execution: executionAsNumber,
     taskId: taskId || "",
+    groupId: groupId || "",
   };
 }
 
