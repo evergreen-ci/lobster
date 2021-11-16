@@ -34,7 +34,7 @@ export function testLogCompleteURL(
 }
 
 export function taskURL(taskID: string, execution: ?number): string {
-  return `${EVERGREEN_BASE}/task/${taskID}${Number.isFinite(execution) ? `/${execution}`: ""}`
+  return `${EVERGREEN_BASE}/task/${taskID}${Number.isFinite(execution) ? `/${execution}`: ""}?redirect_spruce_users=true`
 }
 
 export async function fetchEvergreen(log: EvergreenLog): Promise<Response> {
