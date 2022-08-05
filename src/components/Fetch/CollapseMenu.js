@@ -2,7 +2,7 @@
 
 import React from "react";
 import type { Node as ReactNode } from "react";
-import { EVERGREEN_BASE, LOGKEEPER_BASE, SPRUCE_BASE } from "../../config";
+import {  SPRUCE_BASE } from "../../config";
 import "./style.css";
 import {
   Button,
@@ -30,6 +30,7 @@ import type {
   Bookmark,
   Line,
 } from "../../models";
+import { getLogkeeperBaseURL } from "../../api";
 
 type Props = {
   settings: Settings,
@@ -97,6 +98,7 @@ function showLogBox(
 function showDetailButtons(
   id: ?LogIdentity,
   clearCache: ?() => void,
+  logkeeperBaseURL
 ): ?ReactNode {
   if (!id) {
     return null;
@@ -110,17 +112,17 @@ function showDetailButtons(
       const { build } = id;
       buttons.push(
           <Col key={0} lg={1}>
-            <Button style={col0Style} href={`${LOGKEEPER_BASE}/build/${build}`}>
+            <Button style={col0Style} href={`${logkeeperBaseURL}/build/${build}`}>
               Job Logs
             </Button>
           </Col>,
           <Col key={1} lg={1}>
-            <Button style={col1Style} href={`${LOGKEEPER_BASE}/build/${build}/all?raw=1`}>
+            <Button style={col1Style} href={`${logkeeperBaseURL}/build/${build}/all?raw=1`}>
               Raw
             </Button>
           </Col>,
           <Col key={2} lg={1}>
-            <Button style={col2Style} href={`${LOGKEEPER_BASE}/build/${build}/all?html=1`}>
+            <Button style={col2Style} href={`${logkeeperBaseURL}/build/${build}/all?html=1`}>
               HTML
             </Button>
           </Col>,
@@ -129,14 +131,14 @@ function showDetailButtons(
       const { build, test } = id;
       buttons.push(
           <Col key={0} lg={1}>
-            <Button style={col0Style} href={`${LOGKEEPER_BASE}/build/${build}`}>
+            <Button style={col0Style} href={`${logkeeperBaseURL}/build/${build}`}>
               Job Logs
             </Button>
           </Col>,
           <Col key={1} lg={1}>
             <Button
               style={col1Style}
-              href={`${LOGKEEPER_BASE}/build/${build}/test/${test}?raw=1`}
+              href={`${logkeeperBaseURL}/build/${build}/test/${test}?raw=1`}
             >
               Raw
             </Button>
@@ -144,7 +146,7 @@ function showDetailButtons(
           <Col key={2} lg={1}>
             <Button
               style={col2Style}
-              href={`${LOGKEEPER_BASE}/build/${build}/test/${test}?html=1`}
+              href={`${logkeeperBaseURL}/build/${build}/test/${test}?html=1`}
             >
               HTML
             </Button>
@@ -242,6 +244,15 @@ export class CollapseMenu extends React.PureComponent<Props> {
   endRangeInput: ?HTMLInputElement;
   constructor(props) {
     super(props);
+    this.state = {}
+  }
+  async componentDidUpdate() {
+    const { logIdentity } = this.props;
+    if(logIdentity.type === "logkeeper" && !this.state.logkeeperBaseURL) {
+      getLogkeeperBaseURL(logIdentity.build, logIdentity.test).then(logkeeperBaseURL => {
+        this.setState({ ...this.state, logkeeperBaseURL })
+      })
+    }
   }
   setURLRef = (ref: ?HTMLInputElement) => {
     this.urlInput = ref;
@@ -453,6 +464,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
               {showDetailButtons(
                 this.props.logIdentity,
                 this.props.wipeCache,
+                this.state.logkeeperBaseURL
               )}
             </FormGroup>
           </Form>
