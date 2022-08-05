@@ -1,24 +1,30 @@
 // @flow strict
 
-import { LOGKEEPER_BASE } from "../config";
+import { LOGKEEPER_BASE, NEW_LOGKEEPER_BASE } from "../config";
 
-function generateLogkeeperUrl(buildParam: string, testParam: ?string): string {
+export async function getLogkeeperBaseURL(buildParam: string, testParam: ?string): string {
+  const res = await window.fetch(generateLogkeeperUrl(NEW_LOGKEEPER_BASE, buildParam, testParam));
+  return res.ok ? NEW_LOGKEEPER_BASE : LOGKEEPER_BASE;
+} 
+
+function generateLogkeeperUrl(base: string, buildParam: string, testParam: ?string): string {
   if (!buildParam) {
     return "";
   }
   if (!testParam) {
-    return LOGKEEPER_BASE + "/build/" + buildParam + "/all?raw=1";
+    return base + "/build/" + buildParam + "/all?raw=1";
   }
   return (
-    LOGKEEPER_BASE + "/build/" + buildParam + "/test/" + testParam + "?raw=1"
+    base + "/build/" + buildParam + "/test/" + testParam + "?raw=1"
   );
 }
 
-export function fetchLogkeeper(
+export async function fetchLogkeeper(
   build: string,
   test: ?string
 ): Promise<Response> {
-  const req = new Request(generateLogkeeperUrl(build, test), { method: "GET" });
+  const baseURL = await getLogkeeperBaseURL(build, test) 
+  const req = new Request(generateLogkeeperUrl(baseURL, build, test), { method: "GET" });
   return window.fetch(req);
 }
 
@@ -33,5 +39,5 @@ export function fetchLobster(server: string, url: string): Promise<Response> {
     }),
   };
   const req = new Request(`http://${server}`, init);
-  return window.fetch(req);
+  return window.fetch(req);  
 }
