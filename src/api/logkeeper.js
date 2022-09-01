@@ -2,8 +2,8 @@
 
 import { LOGKEEPER_BASE, NEW_LOGKEEPER_BASE } from "../config";
 
-export async function getLogkeeperBaseURL(buildParam: string, testParam: ?string): string {
-  const res = await window.fetch(generateLogkeeperUrl(NEW_LOGKEEPER_BASE, buildParam, testParam));
+export async function getLogkeeperBaseURL(buildParam: string): string {
+  const res = await window.fetch(NEW_LOGKEEPER_BASE + "/build/"+ buildParam);
   return res.ok ? NEW_LOGKEEPER_BASE : LOGKEEPER_BASE;
 } 
 
@@ -23,7 +23,7 @@ export async function fetchLogkeeper(
   build: string,
   test: ?string
 ): Promise<Response> {
-  const baseURL = await getLogkeeperBaseURL(build, test) 
+  const baseURL = await getLogkeeperBaseURL(build)
   const req = new Request(generateLogkeeperUrl(baseURL, build, test), { method: "GET" });
   return window.fetch(req);
 }
