@@ -249,7 +249,7 @@ export class CollapseMenu extends React.PureComponent<Props> {
   async componentDidUpdate() {
     const { logIdentity } = this.props;
     if(logIdentity.type === "logkeeper" && !this.state.logkeeperBaseURL) {
-      getLogkeeperBaseURL(logIdentity.build, logIdentity.test).then(logkeeperBaseURL => {
+      getLogkeeperBaseURL(logIdentity.build).then(logkeeperBaseURL => {
         this.setState({ ...this.state, logkeeperBaseURL })
       })
     }
