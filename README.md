@@ -1,4 +1,7 @@
-# Lobster
+# Lobster 🦞
+
+### Lobster is now deprecated and is no longer maintained.
+It has been replaced by [Parsley](https://github.com/evergreen-ci/parsley).
 
 ## What is Lobster
 Lobster is a log viewer implemented as a React-based frontend. As such its an easy to extend system.
